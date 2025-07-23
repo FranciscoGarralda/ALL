@@ -22,8 +22,8 @@ function MenuItem({ icon: Icon, title, onClick, isActive, isSidebarOpen }) {
       className={`
         w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
         ${isActive
-          ? 'bg-primary-600 text-white shadow-medium transform scale-105'
-          : 'text-gray-700 hover:bg-primary-50 hover:text-primary-700 active:bg-primary-100 hover:scale-102'
+          ? 'menu-item-active'
+          : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'
         }
         ${isSidebarOpen ? '' : 'justify-center'}
         touch-manipulation select-none
@@ -63,8 +63,8 @@ function MainMenu({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) {
   return (
     <div className={`
       ${isSidebarOpen ? 'w-64' : 'w-20'}
-      fixed top-0 left-0 h-full bg-white shadow-strong flex flex-col 
-      transition-all duration-300 ease-in-out z-30
+      fixed top-0 left-0 h-full bg-white shadow-large flex flex-col 
+      sidebar-transition z-sidebar
       border-r border-gray-200
     `}>
       {/* Header del Sidebar */}
@@ -73,7 +73,7 @@ function MainMenu({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) {
         ${isSidebarOpen ? 'justify-between' : 'justify-center'}
       `}>
         {isSidebarOpen && (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 sidebar-enter">
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
               <DollarSign size={20} className="text-white" />
             </div>
@@ -112,7 +112,7 @@ function MainMenu({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) {
 
       {/* Footer del Sidebar */}
       {isSidebarOpen && (
-        <div className="p-4 border-t border-gray-200 bg-gray-50">
+        <div className="p-4 border-t border-gray-200 bg-gray-50 sidebar-enter">
           <div className="text-center">
             <p className="text-xs text-gray-500 mb-1">© 2024 Alliance F&R</p>
             <p className="text-xs text-gray-400">Sistema Financiero</p>
@@ -131,11 +131,20 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
     setIsSidebarOpen(prev => !prev);
   };
 
+  // Cerrar sidebar en móvil cuando se hace clic en un item
+  const handleNavigate = (page) => {
+    onNavigate(page);
+    // En móvil, cerrar el sidebar después de navegar
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
       <MainMenu 
-        onNavigate={onNavigate} 
+        onNavigate={handleNavigate} 
         activeItem={currentPage} 
         isSidebarOpen={isSidebarOpen} 
         toggleSidebar={toggleSidebar} 
@@ -143,19 +152,32 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
       
       {/* Contenido principal */}
       <div className={`
-        flex-1 transition-all duration-300 ease-in-out
+        flex-1 sidebar-transition content-shift
         ${isSidebarOpen ? 'ml-64' : 'ml-20'}
+        lg:${isSidebarOpen ? 'ml-64' : 'ml-20'}
+        max-lg:ml-0
       `}>
         {/* Overlay para móvil cuando el sidebar está abierto */}
         {isSidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+            className="overlay-mobile"
             onClick={toggleSidebar}
           />
         )}
         
+        {/* Botón hamburguesa para móvil */}
+        <div className="lg:hidden fixed top-4 left-4 z-content">
+          <button
+            onClick={toggleSidebar}
+            className="p-3 bg-white rounded-lg shadow-medium hover:shadow-large transition-all duration-200 touch-target"
+            aria-label="Abrir menú"
+          >
+            <List size={24} className="text-gray-700" />
+          </button>
+        </div>
+        
         {/* Contenido de la página */}
-        <main className="min-h-screen">
+        <main className="min-h-screen z-content relative">
           {children}
         </main>
       </div>
@@ -165,33 +187,33 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
 
 /** PÁGINA DE BIENVENIDA */
 const WelcomePage = () => (
-  <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4">
-    <div className="text-center max-w-md fade-in">
-      <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+  <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4 lg:p-8">
+    <div className="text-center max-w-md mx-auto">
+      <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
         <DollarSign size={32} className="text-primary-600" />
       </div>
-      <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-800">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-800 animate-fadeIn">
         Bienvenido a Alliance F&R
       </h2>
-      <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
+      <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-8 animate-slideUp">
         Sistema integral de gestión financiera. Selecciona una opción del menú lateral para comenzar a operar.
       </p>
-      <div className="mt-6 grid grid-cols-2 gap-4 text-sm text-gray-500">
-        <div className="text-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
-          <Users size={20} className="mx-auto mb-1 text-primary-500" />
-          <span>Gestión de Clientes</span>
+      <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
+        <div className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn">
+          <Users size={20} className="mx-auto mb-2 text-primary-500" />
+          <span className="block font-medium">Gestión de Clientes</span>
         </div>
-        <div className="text-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
-          <TrendingUp size={20} className="mx-auto mb-1 text-success-500" />
-          <span>Análisis de Utilidad</span>
+        <div className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn" style={{animationDelay: '0.1s'}}>
+          <TrendingUp size={20} className="mx-auto mb-2 text-success-500" />
+          <span className="block font-medium">Análisis de Utilidad</span>
         </div>
-        <div className="text-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
-          <Building2 size={20} className="mx-auto mb-1 text-purple-500" />
-          <span>Cuentas Corrientes</span>
+        <div className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn" style={{animationDelay: '0.2s'}}>
+          <Building2 size={20} className="mx-auto mb-2 text-warning-500" />
+          <span className="block font-medium">Cuentas Corrientes</span>
         </div>
-        <div className="text-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
-          <CreditCard size={20} className="mx-auto mb-1 text-warning-500" />
-          <span>Prestamistas</span>
+        <div className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn" style={{animationDelay: '0.3s'}}>
+          <CreditCard size={20} className="mx-auto mb-2 text-error-500" />
+          <span className="block font-medium">Prestamistas</span>
         </div>
       </div>
     </div>
@@ -201,12 +223,12 @@ const WelcomePage = () => (
 /** PÁGINA NO ENCONTRADA */
 const NotFoundPage = ({ onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4">
-    <div className="text-center fade-in">
-      <div className="w-16 h-16 bg-error-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Users size={32} className="text-error-600" />
+    <div className="text-center max-w-md mx-auto">
+      <div className="w-16 h-16 bg-error-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <span className="text-2xl">🔍</span>
       </div>
       <h2 className="text-xl font-bold mb-4 text-gray-800">Página no encontrada</h2>
-      <p className="mb-4 text-gray-600">La página que buscas no existe o está en desarrollo.</p>
+      <p className="mb-6 text-gray-600">La página que buscas no existe o está en desarrollo.</p>
       <button 
         onClick={() => onNavigate('mainMenu')} 
         className="btn-primary touch-target"
@@ -217,65 +239,47 @@ const NotFoundPage = ({ onNavigate }) => (
   </div>
 );
 
-/** PÁGINA DE MÓDULO EN DESARROLLO */
+/** PÁGINA EN DESARROLLO */
 const ModuleInDevelopmentPage = ({ moduleName, onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4">
-    <div className="text-center max-w-md fade-in">
-      <div className="w-16 h-16 bg-warning-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <TrendingUp size={32} className="text-warning-600" />
+    <div className="text-center max-w-md mx-auto">
+      <div className="w-16 h-16 bg-warning-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <span className="text-2xl">🚧</span>
       </div>
-      <h2 className="text-xl font-bold mb-4 text-gray-800">
-        {moduleName || 'Módulo'} en Desarrollo
-      </h2>
-      <p className="mb-6 text-gray-600 leading-relaxed">
-        Este módulo está siendo desarrollado y estará disponible próximamente.
+      <h2 className="text-xl font-bold mb-4 text-gray-800">Módulo en Desarrollo</h2>
+      <p className="mb-2 text-gray-600">
+        El módulo <strong>{moduleName}</strong> está actualmente en desarrollo.
       </p>
-      <div className="space-y-3">
-        <button 
-          onClick={() => onNavigate('nuevoMovimiento')} 
-          className="btn-primary w-full touch-target"
-        >
-          Ir a Nuevo Movimiento
-        </button>
+      <p className="mb-6 text-sm text-gray-500">
+        Estará disponible en una próxima actualización del sistema.
+      </p>
+      <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <button 
           onClick={() => onNavigate('mainMenu')} 
-          className="btn-secondary w-full touch-target"
+          className="btn-secondary touch-target"
         >
-          Volver al menú principal
+          Menú Principal
+        </button>
+        <button 
+          onClick={() => onNavigate('nuevoMovimiento')} 
+          className="btn-primary touch-target"
+        >
+          Nuevo Movimiento
         </button>
       </div>
     </div>
   </div>
 );
 
-/** HOOK PERSONALIZADO PARA MANEJO DE NAVEGACIÓN */
+/** HOOK PERSONALIZADO PARA NAVEGACIÓN */
 const useNavigation = (initialPage = 'mainMenu') => {
   const [currentPage, setCurrentPage] = useState(initialPage);
-  const [navigationHistory, setNavigationHistory] = useState([initialPage]);
 
   const navigateTo = (page) => {
     setCurrentPage(page);
-    setNavigationHistory(prev => [...prev, page]);
   };
 
-  const goBack = () => {
-    if (navigationHistory.length > 1) {
-      const newHistory = navigationHistory.slice(0, -1);
-      const previousPage = newHistory[newHistory.length - 1];
-      setCurrentPage(previousPage);
-      setNavigationHistory(newHistory);
-    }
-  };
-
-  const canGoBack = navigationHistory.length > 1;
-
-  return {
-    currentPage,
-    navigateTo,
-    goBack,
-    canGoBack,
-    navigationHistory
-  };
+  return { currentPage, navigateTo };
 };
 
 export {
