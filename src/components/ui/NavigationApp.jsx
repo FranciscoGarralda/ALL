@@ -62,10 +62,10 @@ function MainMenu({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) {
 
   return (
     <div className={`
-      ${isSidebarOpen ? 'w-64' : 'w-20'}
-      fixed top-0 left-0 h-full bg-white shadow-large flex flex-col 
-      sidebar-transition z-sidebar
-      border-r border-gray-200
+      fixed top-0 left-0 h-full bg-white shadow-large flex flex-col border-r border-gray-200
+      transition-all duration-300 ease-in-out z-30
+      ${isSidebarOpen ? 'w-64' : 'w-20 max-lg:w-0 max-lg:overflow-hidden'}
+      ${!isSidebarOpen ? 'max-lg:-translate-x-full' : ''}
     `}>
       {/* Header del Sidebar */}
       <div className={`
@@ -141,7 +141,7 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
       <MainMenu 
         onNavigate={handleNavigate} 
@@ -151,12 +151,11 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
       />
       
       {/* Contenido principal */}
-      <div className={`
-        flex-1 sidebar-transition content-shift
-        ${isSidebarOpen ? 'ml-64' : 'ml-20'}
-        lg:${isSidebarOpen ? 'ml-64' : 'ml-20'}
-        max-lg:ml-0
-      `}>
+      <div className={`main-content ${
+        isSidebarOpen 
+          ? 'lg:ml-64' 
+          : 'lg:ml-20'
+      }`}>
         {/* Overlay para móvil cuando el sidebar está abierto */}
         {isSidebarOpen && (
           <div 
@@ -166,7 +165,7 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
         )}
         
         {/* Botón hamburguesa para móvil */}
-        <div className="lg:hidden fixed top-4 left-4 z-content">
+        <div className="lg:hidden fixed top-4 left-4 z-50">
           <button
             onClick={toggleSidebar}
             className="p-3 bg-white rounded-lg shadow-medium hover:shadow-large transition-all duration-200 touch-target"
@@ -177,7 +176,7 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
         </div>
         
         {/* Contenido de la página */}
-        <main className="min-h-screen z-content relative">
+        <main className="min-h-screen w-full">
           {children}
         </main>
       </div>
