@@ -15,6 +15,7 @@ import FinancialOperationsApp from '../components/forms/FinancialOperationsApp';
 
 // Import modules
 import ClientesApp from '../components/modules/ClientesApp';
+import MovimientosApp from '../components/modules/MovimientosApp';
 
 /**
  * Main application component with navigation and module management
@@ -204,7 +205,7 @@ export default function MainApp() {
       
       case 'movimientos':
         return (
-          <MovementsListPage 
+          <MovimientosApp 
             movements={movements}
             onEditMovement={handleEditMovement}
             onDeleteMovement={handleDeleteMovement}
@@ -263,169 +264,5 @@ export default function MainApp() {
   );
 }
 
-/**
- * Movements List Page Component
- */
-function MovementsListPage({ movements, onEditMovement, onDeleteMovement, onNavigate }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('');
 
-  const filteredMovements = movements.filter(movement => {
-    const matchesSearch = movement.cliente?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         movement.detalle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         movement.operacion?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilter = !filterType || movement.operacion === filterType;
-    
-    return matchesSearch && matchesFilter;
-  });
-
-  return (
-    <div className="container-responsive py-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Movimientos</h1>
-          <p className="text-gray-600">Gestión de operaciones financieras</p>
-        </div>
-        <button
-          onClick={() => onNavigate('nuevoMovimiento')}
-          className="btn-primary"
-        >
-          Nuevo Movimiento
-        </button>
-      </div>
-
-      {/* Search and Filter */}
-      <div className="card mb-6">
-        <div className="card-body">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Buscar por cliente, detalle u operación..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            >
-              <option value="">Todos los tipos</option>
-              <option value="TRANSACCIONES">Transacciones</option>
-              <option value="CUENTAS_CORRIENTES">Cuentas Corrientes</option>
-              <option value="SOCIOS">Socios</option>
-              <option value="ADMINISTRATIVAS">Administrativas</option>
-              <option value="PRESTAMISTAS">Prestamistas</option>
-              <option value="INTERNAS">Internas</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Movements List */}
-      <div className="space-y-4">
-        {filteredMovements.length === 0 ? (
-          <div className="card">
-            <div className="card-body text-center py-12">
-              <p className="text-gray-500 mb-4">
-                {movements.length === 0 
-                  ? 'No hay movimientos registrados' 
-                  : 'No se encontraron movimientos que coincidan con los filtros'
-                }
-              </p>
-              <button
-                onClick={() => onNavigate('nuevoMovimiento')}
-                className="btn-primary"
-              >
-                Crear Primer Movimiento
-              </button>
-            </div>
-          </div>
-        ) : (
-          filteredMovements.map((movement) => (
-            <div key={movement.id} className="card">
-              <div className="card-body">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="status-info">{movement.operacion}</span>
-                      <span className="text-sm text-gray-500">
-                        {movement.subOperacion}
-                      </span>
-                      {movement.estado && (
-                        <span className={`status-${movement.estado === 'realizado' ? 'success' : 'warning'}`}>
-                          {movement.estado}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="font-medium text-gray-900">
-                      {movement.cliente || 'Sin cliente'}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {movement.detalle || 'Sin detalle'}
-                    </p>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                      <span>Fecha: {movement.fecha}</span>
-                      {movement.total && (
-                        <span className="font-medium text-primary-600">
-                          Total: {movement.total} {movement.monedaTC || movement.moneda}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => onEditMovement(movement)}
-                      className="btn-secondary text-sm"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => onDeleteMovement(movement.id)}
-                      className="btn-error text-sm"
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Summary */}
-      {movements.length > 0 && (
-        <div className="card mt-6">
-          <div className="card-body">
-            <h3 className="font-medium text-gray-900 mb-2">Resumen</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div>
-                <span className="text-gray-600">Total movimientos:</span>
-                <div className="font-medium">{movements.length}</div>
-              </div>
-              <div>
-                <span className="text-gray-600">Filtrados:</span>
-                <div className="font-medium">{filteredMovements.length}</div>
-              </div>
-              <div>
-                <span className="text-gray-600">Realizados:</span>
-                <div className="font-medium text-success-600">
-                  {movements.filter(m => m.estado === 'realizado').length}
-                </div>
-              </div>
-              <div>
-                <span className="text-gray-600">Pendientes:</span>
-                <div className="font-medium text-warning-600">
-                  {movements.filter(m => m.estado === 'pendiente').length}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 
