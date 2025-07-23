@@ -1,4 +1,4 @@
-import { monedas, cuentas, socios, proveedoresCC, prestamistaClientsDefault } from './constants.js';
+import { monedas, cuentas, socios, proveedoresCC, prestamistaClientsDefault } from './constants';
 
 /**
  * Configuration object for specific operation field layouts

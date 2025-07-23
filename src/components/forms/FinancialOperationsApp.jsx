@@ -12,7 +12,7 @@ import {
   operaciones,
   proveedoresCC
 } from '../base';
-import { specificFieldsConfig } from '../../config/fieldConfigs.js';
+import { specificFieldsConfig } from '../../config/fieldConfigs';
 
 /**
  * Dynamic Form Field Groups Component
