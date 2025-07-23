@@ -255,20 +255,20 @@
     transform: scale(1.02);
   }
   
-  .overlay-mobile {
-    @apply fixed inset-0 bg-black bg-opacity-50 z-overlay lg:hidden;
-  }
-  
-  .z-sidebar {
-    z-index: 30;
-  }
-  
-  .z-overlay {
+    .overlay-mobile {
+    @apply fixed inset-0 bg-black bg-opacity-50 lg:hidden;
     z-index: 20;
   }
+
+  /* Layout responsive para contenido principal */
+  .main-content {
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
   
-  .z-content {
-    z-index: 10;
+  @media (max-width: 1023px) {
+    .main-content {
+      margin-left: 0 !important;
+    }
   }
 }
 
