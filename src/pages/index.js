@@ -13,6 +13,9 @@ import {
 // Import form component
 import FinancialOperationsApp from '../components/forms/FinancialOperationsApp';
 
+// Import modules
+import ClientesApp from '../components/modules/ClientesApp';
+
 /**
  * Main application component with navigation and module management
  */
@@ -28,24 +31,53 @@ export default function MainApp() {
       nombre: 'Juan',
       apellido: 'Pérez',
       tipoCliente: 'prestamistas',
+      dni: '12.345.678',
+      telefono: '+54 11 1234-5678',
+      direccion: 'Av. Corrientes 1234, CABA',
       email: 'juan.perez@email.com',
-      telefono: '+54 11 1234-5678'
+      ultimaOperacion: '2024-01-15',
+      totalOperaciones: 5,
+      volumenTotal: 25000,
+      operaciones: [
+        { fecha: '2024-01-15', monto: 5000 },
+        { fecha: '2024-01-01', monto: 8000 },
+        { fecha: '2023-12-15', monto: 12000 }
+      ]
     },
     {
       id: 2,
       nombre: 'María',
       apellido: 'González',
-      tipoCliente: 'prestamistas',
+      tipoCliente: 'operaciones',
+      dni: '23.456.789',
+      telefono: '+54 11 8765-4321',
+      direccion: 'Av. Santa Fe 5678, CABA',
       email: 'maria.gonzalez@email.com',
-      telefono: '+54 11 8765-4321'
+      ultimaOperacion: '2024-01-20',
+      totalOperaciones: 8,
+      volumenTotal: 45000,
+      operaciones: [
+        { fecha: '2024-01-20', monto: 15000 },
+        { fecha: '2024-01-10', monto: 10000 },
+        { fecha: '2023-12-28', monto: 20000 }
+      ]
     },
     {
       id: 3,
       nombre: 'Carlos',
       apellido: 'Rodríguez',
-      tipoCliente: 'regular',
+      tipoCliente: 'operaciones',
+      dni: '34.567.890',
+      telefono: '+54 11 5555-0000',
+      direccion: 'Av. Rivadavia 9012, CABA',
       email: 'carlos.rodriguez@email.com',
-      telefono: '+54 11 5555-0000'
+      ultimaOperacion: '2023-12-01',
+      totalOperaciones: 3,
+      volumenTotal: 18000,
+      operaciones: [
+        { fecha: '2023-12-01', monto: 8000 },
+        { fecha: '2023-11-15', monto: 10000 }
+      ]
     }
   ]);
   const [editingMovement, setEditingMovement] = useState(null);
@@ -130,14 +162,28 @@ export default function MainApp() {
 
   // Client management functions
   const handleSaveClient = (clientData) => {
-    const newClient = {
-      ...clientData,
-      id: Date.now(),
-      createdAt: new Date().toISOString()
-    };
-    
-    setClients(prev => [...prev, newClient]);
-    console.log('Client saved:', newClient);
+    if (clientData.id) {
+      // Update existing client
+      setClients(prev => prev.map(c => 
+        c.id === clientData.id ? clientData : c
+      ));
+      console.log('Client updated:', clientData);
+    } else {
+      // Add new client
+      const newClient = {
+        ...clientData,
+        id: Date.now(),
+        createdAt: new Date().toISOString()
+      };
+      
+      setClients(prev => [...prev, newClient]);
+      console.log('Client saved:', newClient);
+    }
+  };
+
+  const handleDeleteClient = (clientId) => {
+    setClients(prev => prev.filter(c => c.id !== clientId));
+    console.log('Client deleted:', clientId);
   };
 
   // Page rendering function
@@ -168,10 +214,10 @@ export default function MainApp() {
       
       case 'clientes':
         return (
-          <ClientsPage 
-            clients={clients}
+          <ClientesApp 
+            clientes={clients}
             onSaveClient={handleSaveClient}
-            onNavigate={navigateTo}
+            onDeleteClient={handleDeleteClient}
           />
         );
       
@@ -383,46 +429,3 @@ function MovementsListPage({ movements, onEditMovement, onDeleteMovement, onNavi
   );
 }
 
-/**
- * Clients Page Component
- */
-function ClientsPage({ clients, onSaveClient, onNavigate }) {
-  return (
-    <div className="container-responsive py-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Clientes</h1>
-          <p className="text-gray-600">Gestión de clientes del sistema</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {clients.map((client) => (
-          <div key={client.id} className="card">
-            <div className="card-body">
-              <h3 className="font-medium text-gray-900 mb-2">
-                {client.nombre} {client.apellido}
-              </h3>
-              <div className="space-y-1 text-sm text-gray-600">
-                <p>Tipo: {client.tipoCliente}</p>
-                {client.email && <p>Email: {client.email}</p>}
-                {client.telefono && <p>Teléfono: {client.telefono}</p>}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {clients.length === 0 && (
-        <div className="card">
-          <div className="card-body text-center py-12">
-            <p className="text-gray-500 mb-4">No hay clientes registrados</p>
-            <p className="text-sm text-gray-400">
-              Los clientes se crean automáticamente al realizar operaciones
-            </p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
