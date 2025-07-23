@@ -1,0 +1,16 @@
+{
+  "name": "Alliance F&R - Sistema Financiero",
+  "short_name": "Alliance F&R",
+  "description": "Sistema integral de gestión financiera multiplataforma",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
