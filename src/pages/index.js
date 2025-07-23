@@ -16,6 +16,7 @@ import FinancialOperationsApp from '../components/forms/FinancialOperationsApp';
 // Import modules
 import ClientesApp from '../components/modules/ClientesApp';
 import MovimientosApp from '../components/modules/MovimientosApp';
+import GastosApp from '../components/modules/GastosApp';
 
 /**
  * Main application component with navigation and module management
@@ -241,7 +242,19 @@ export default function MainApp() {
         return <ModuleInDevelopmentPage moduleName="Prestamistas" onNavigate={navigateTo} />;
       
       case 'gastos':
-        return <ModuleInDevelopmentPage moduleName="Gastos" onNavigate={navigateTo} />;
+        return (
+          <GastosApp 
+            movements={movements}
+            onEditMovement={handleEditMovement}
+            onDeleteMovement={handleDeleteMovement}
+            onViewMovementDetail={(movement) => {
+              // Usar el componente MovimientoDetail del módulo de movimientos
+              setCurrentPage('movimientos');
+              // Aquí podrías implementar una navegación más específica si es necesario
+            }}
+            onNavigate={navigateTo}
+          />
+        );
       
       default:
         return <NotFoundPage onNavigate={navigateTo} />;

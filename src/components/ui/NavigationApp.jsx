@@ -164,16 +164,18 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
           />
         )}
         
-        {/* Botón hamburguesa para móvil */}
-        <div className="lg:hidden fixed top-4 left-4 z-50">
-          <button
-            onClick={toggleSidebar}
-            className="p-3 bg-white rounded-lg shadow-medium hover:shadow-large transition-all duration-200 touch-target"
-            aria-label="Abrir menú"
-          >
-            <List size={24} className="text-gray-700" />
-          </button>
-        </div>
+        {/* Botón hamburguesa para móvil - solo visible cuando sidebar está cerrada */}
+        {!isSidebarOpen && (
+          <div className="lg:hidden fixed top-4 left-4 z-50">
+            <button
+              onClick={toggleSidebar}
+              className="p-3 bg-white rounded-lg shadow-medium hover:shadow-large transition-all duration-200 touch-target"
+              aria-label="Abrir menú"
+            >
+              <List size={24} className="text-gray-700" />
+            </button>
+          </div>
+        )}
         
         {/* Contenido de la página */}
         <main className="min-h-screen w-full">
