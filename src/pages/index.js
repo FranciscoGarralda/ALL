@@ -20,6 +20,7 @@ import GastosApp from '../components/modules/GastosApp';
 import CuentasCorrientesApp from '../components/modules/CuentasCorrientesApp';
 import PrestamistasApp from '../components/modules/PrestamistasApp';
 import ComisionesApp from '../components/modules/ComisionesApp';
+import UtilidadApp from '../components/modules/UtilidadApp';
 
 /**
  * Main application component with navigation and module management
@@ -241,7 +242,12 @@ export default function MainApp() {
         return <ModuleInDevelopmentPage moduleName="Arbitraje" onNavigate={navigateTo} />;
       
       case 'utilidad':
-        return <ModuleInDevelopmentPage moduleName="Utilidad" onNavigate={navigateTo} />;
+        return (
+          <UtilidadApp 
+            movements={movements}
+            onNavigate={navigateTo}
+          />
+        );
       
       case 'comisiones':
         return (
