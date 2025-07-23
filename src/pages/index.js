@@ -17,6 +17,7 @@ import FinancialOperationsApp from '../components/forms/FinancialOperationsApp';
 import ClientesApp from '../components/modules/ClientesApp';
 import MovimientosApp from '../components/modules/MovimientosApp';
 import GastosApp from '../components/modules/GastosApp';
+import CuentasCorrientesApp from '../components/modules/CuentasCorrientesApp';
 
 /**
  * Main application component with navigation and module management
@@ -227,7 +228,12 @@ export default function MainApp() {
         return <ModuleInDevelopmentPage moduleName="Saldos" onNavigate={navigateTo} />;
       
       case 'cuentas':
-        return <ModuleInDevelopmentPage moduleName="Cuentas Corrientes" onNavigate={navigateTo} />;
+        return (
+          <CuentasCorrientesApp 
+            movements={movements}
+            onNavigate={navigateTo}
+          />
+        );
       
       case 'arbitraje':
         return <ModuleInDevelopmentPage moduleName="Arbitraje" onNavigate={navigateTo} />;
