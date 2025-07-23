@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { getFieldConfig, validateFieldConfig } from '../config/fieldConfigs.js';
-import { validationRules, errorMessages } from '../config/constants.js';
+import { getFieldConfig, validateFieldConfig } from '../config/fieldConfigs';
+import { validationRules, errorMessages } from '../config/constants';
 
 /**
  * Custom hook for managing form state with validation and automatic calculations

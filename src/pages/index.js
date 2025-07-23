@@ -8,10 +8,10 @@ import {
   NotFoundPage, 
   ModuleInDevelopmentPage, 
   useNavigation 
-} from '../components/ui/NavigationApp.jsx';
+} from '../components/ui/NavigationApp';
 
 // Import form component
-import FinancialOperationsApp from '../components/forms/FinancialOperationsApp.jsx';
+import FinancialOperationsApp from '../components/forms/FinancialOperationsApp';
 
 /**
  * Main application component with navigation and module management

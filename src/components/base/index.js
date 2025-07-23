@@ -1,10 +1,10 @@
 // Base form components exports
-export { default as FormInput } from './FormInput.jsx';
-export { default as FormSelect } from './FormSelect.jsx';
-export { default as FormFieldGroup } from './FormFieldGroup.jsx';
+export { default as FormInput } from './FormInput';
+export { default as FormSelect } from './FormSelect';
+export { default as FormFieldGroup } from './FormFieldGroup';
 
 // Re-export utility functions from other modules for convenience
-export { formatAmountWithCurrency } from '../../utils/formatters.js';
+export { formatAmountWithCurrency } from '../../utils/formatters';
 export { 
   monedas, 
   cuentas, 
@@ -15,9 +15,9 @@ export {
   tiposPago,
   prioridades,
   periodos
-} from '../../config/constants.js';
+} from '../../config/constants';
 export { 
   specificFieldsConfig, 
   getFieldConfig, 
   validateFieldConfig 
-} from '../../config/fieldConfigs.js';
+} from '../../config/fieldConfigs';
