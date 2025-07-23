@@ -21,6 +21,7 @@ import CuentasCorrientesApp from '../components/modules/CuentasCorrientesApp';
 import PrestamistasApp from '../components/modules/PrestamistasApp';
 import ComisionesApp from '../components/modules/ComisionesApp';
 import UtilidadApp from '../components/modules/UtilidadApp';
+import ArbitrajeApp from '../components/modules/ArbitrajeApp';
 
 /**
  * Main application component with navigation and module management
@@ -239,7 +240,12 @@ export default function MainApp() {
         );
       
       case 'arbitraje':
-        return <ModuleInDevelopmentPage moduleName="Arbitraje" onNavigate={navigateTo} />;
+        return (
+          <ArbitrajeApp 
+            movements={movements}
+            onNavigate={navigateTo}
+          />
+        );
       
       case 'utilidad':
         return (
