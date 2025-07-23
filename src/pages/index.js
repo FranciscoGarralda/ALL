@@ -18,6 +18,7 @@ import ClientesApp from '../components/modules/ClientesApp';
 import MovimientosApp from '../components/modules/MovimientosApp';
 import GastosApp from '../components/modules/GastosApp';
 import CuentasCorrientesApp from '../components/modules/CuentasCorrientesApp';
+import PrestamistasApp from '../components/modules/PrestamistasApp';
 
 /**
  * Main application component with navigation and module management
@@ -245,7 +246,13 @@ export default function MainApp() {
         return <ModuleInDevelopmentPage moduleName="Comisiones" onNavigate={navigateTo} />;
       
       case 'prestamistas':
-        return <ModuleInDevelopmentPage moduleName="Prestamistas" onNavigate={navigateTo} />;
+        return (
+          <PrestamistasApp 
+            clients={clients}
+            movements={movements}
+            onNavigate={navigateTo}
+          />
+        );
       
       case 'gastos':
         return (
