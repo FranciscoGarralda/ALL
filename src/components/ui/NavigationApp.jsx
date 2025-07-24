@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Plus,
   Users,
@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import FixedHeader from './FixedHeader';
 
 /** COMPONENTE DE ELEMENTO DEL MENÚ */
 function MenuItem({ icon: Icon, title, onClick, isActive, isSidebarOpen }) {
@@ -62,7 +63,7 @@ function MainMenu({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) {
 
   return (
     <div className={`
-      fixed top-0 left-0 h-full bg-white shadow-large flex flex-col border-r border-gray-200
+      fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow-large flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out z-30
       ${isSidebarOpen ? 'w-64' : 'w-20 max-lg:w-0 max-lg:overflow-hidden'}
       ${!isSidebarOpen ? 'max-lg:-translate-x-full' : ''}
@@ -125,7 +126,25 @@ function MainMenu({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) {
 
 /** COMPONENTE PRINCIPAL DE NAVEGACIÓN */
 const NavigationApp = ({ children, currentPage, onNavigate }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Iniciar cerrado en móvil
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar si es móvil y ajustar sidebar inicial
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile) {
+        setIsSidebarOpen(false); // Cerrar en móvil por defecto
+      } else {
+        setIsSidebarOpen(true); // Abrir en desktop por defecto
+      }
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prev => !prev);
@@ -135,13 +154,21 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
   const handleNavigate = (page) => {
     onNavigate(page);
     // En móvil, cerrar el sidebar después de navegar
-    if (window.innerWidth < 1024) {
+    if (isMobile) {
       setIsSidebarOpen(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header fijo */}
+      <FixedHeader 
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        currentPage={currentPage}
+        showMenuButton={true}
+      />
+
       {/* Sidebar */}
       <MainMenu 
         onNavigate={handleNavigate} 
@@ -151,34 +178,21 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
       />
       
       {/* Contenido principal */}
-      <div className={`main-content ${
+      <div className={`main-content pt-16 ${
         isSidebarOpen 
           ? 'lg:ml-64' 
           : 'lg:ml-20'
       }`}>
         {/* Overlay para móvil cuando el sidebar está abierto */}
-        {isSidebarOpen && (
+        {isSidebarOpen && isMobile && (
           <div 
-            className="overlay-mobile"
+            className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
             onClick={toggleSidebar}
           />
         )}
         
-        {/* Botón hamburguesa para móvil - solo visible cuando sidebar está cerrada */}
-        {!isSidebarOpen && (
-          <div className="lg:hidden fixed top-4 left-4 z-50">
-            <button
-              onClick={toggleSidebar}
-              className="p-3 bg-white rounded-lg shadow-medium hover:shadow-large transition-all duration-200 touch-target"
-              aria-label="Abrir menú"
-            >
-              <List size={24} className="text-gray-700" />
-            </button>
-          </div>
-        )}
-        
         {/* Contenido de la página */}
-        <main className="min-h-screen w-full">
+        <main className="min-h-[calc(100vh-4rem)] w-full">
           {children}
         </main>
       </div>
