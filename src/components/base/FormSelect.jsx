@@ -47,11 +47,11 @@ const FormSelect = ({
 
   // Select classes with responsive design and states
   const selectClasses = [
-    'w-full px-3 py-2 text-sm border rounded-lg transition-all duration-200 appearance-none',
+    'w-full px-3 py-2 text-base border rounded-lg transition-all duration-200 appearance-none',
     'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
     'bg-white text-gray-900',
-    // Responsive padding
-    'sm:px-4 sm:py-2.5',
+    // Responsive padding and font size (16px on mobile to prevent zoom)
+    'sm:px-4 sm:py-2.5 sm:text-sm',
     // State-based styling
     disabled 
       ? 'bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200' 
