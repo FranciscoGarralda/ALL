@@ -63,11 +63,11 @@ const FormInput = ({
 
   // Input classes with responsive design and states
   const inputClasses = [
-    'w-full px-3 py-2 text-sm border rounded-lg transition-all duration-200',
+    'w-full px-3 py-2 text-base border rounded-lg transition-all duration-200',
     'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
     'placeholder:text-gray-400',
-    // Responsive padding
-    'sm:px-4 sm:py-2.5',
+    // Responsive padding and font size (16px on mobile to prevent zoom)
+    'sm:px-4 sm:py-2.5 sm:text-sm',
     // State-based styling
     readOnly 
       ? 'bg-gray-50 text-gray-600 cursor-not-allowed border-gray-200' 
