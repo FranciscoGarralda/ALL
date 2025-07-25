@@ -4,6 +4,7 @@ import {
   FormInput,
   FormSelect,
   FormFieldGroup,
+  WalletPaymentGroup,
   formatAmountWithCurrency,
   monedas,
   cuentas,
@@ -62,7 +63,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     cuentaSalida: '',
     cuentaIngreso: '',
     pagoMixtoActivo: false,
-    pagosMixtos: [{ id: 1, cuenta: '', monto: '' }],
+    pagosMixtos: [],
     expectedTotalForMixedPayments: '',
     ...initialMovementData
   });
@@ -119,10 +120,22 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         if (value === true) {
           const expectedTotal = (parseFloat(prev.monto) || 0) * (parseFloat(prev.tc) || 1);
           newState.expectedTotalForMixedPayments = expectedTotal.toFixed(2);
-          newState.pagosMixtos = [
-            { id: 1, cuenta: '', monto: expectedTotal.toFixed(2) },
-            { id: Date.now(), cuenta: '', monto: '' }
-          ];
+          
+          // Determinar si estamos en modo wallet
+          const isWalletMode = specificFieldsConfig[operationType]?.pagoMixtoWalletMode;
+          
+          // Crear pagos iniciales con estructura apropiada
+          if (isWalletMode) {
+            newState.pagosMixtos = [
+              { id: 1, wallet: '', monto: expectedTotal.toFixed(2) },
+              { id: Date.now(), wallet: '', monto: '' }
+            ];
+          } else {
+            newState.pagosMixtos = [
+              { id: 1, cuenta: '', monto: expectedTotal.toFixed(2) },
+              { id: Date.now(), cuenta: '', monto: '' }
+            ];
+          }
           newState.total = expectedTotal.toFixed(2);
         } else {
           if (['COMPRA', 'VENTA'].includes(newState.subOperacion)) {
@@ -212,7 +225,15 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
   const addPagoMixto = () => {
     setFormData(prev => {
-      const newPagos = [...prev.pagosMixtos, { id: Date.now(), cuenta: '', monto: '' }];
+      // Determinar si estamos en modo wallet
+      const isWalletMode = specificFieldsConfig[operationType]?.pagoMixtoWalletMode;
+      
+      // Crear nuevo pago con campos apropiados
+      const newPago = isWalletMode 
+        ? { id: Date.now(), wallet: '', monto: '' }
+        : { id: Date.now(), cuenta: '', monto: '' };
+      
+      const newPagos = [...prev.pagosMixtos, newPago];
       let newTotal = prev.total;
       if (prev.pagoMixtoActivo) {
         newTotal = newPagos.reduce((sum, pago) => sum + (parseFloat(pago.monto) || 0), 0).toFixed(2);
@@ -286,7 +307,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       cuentaSalida: '',
       cuentaIngreso: '',
       pagoMixtoActivo: false,
-      pagosMixtos: [{ id: 1, cuenta: '', monto: '' }],
+      pagosMixtos: [],
       expectedTotalForMixedPayments: '',
     });
   };
@@ -376,57 +397,72 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
         {showPagoMixtoOption && (
           <div className="mt-4">
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                className="form-checkbox h-4 w-4 text-blue-600 rounded"
-                checked={formData.pagoMixtoActivo}
-                onChange={(e) => handleInputChange('pagoMixtoActivo', e.target.checked)}
+            {config.pagoMixtoWalletMode ? (
+              <WalletPaymentGroup
+                payments={formData.pagosMixtos}
+                onPaymentChange={handlePagoMixtoChange}
+                onAddPayment={addPagoMixto}
+                onRemovePayment={removePagoMixto}
+                totalExpected={formData.expectedTotalForMixedPayments || 0}
+                currency={formData.monedaTC || 'PESO'}
+                isActive={formData.pagoMixtoActivo}
+                onToggle={(active) => handleInputChange('pagoMixtoActivo', active)}
               />
-              <span className="text-sm font-medium text-gray-700">Pago Mixto</span>
-            </label>
+            ) : (
+              <div>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox h-4 w-4 text-blue-600 rounded"
+                    checked={formData.pagoMixtoActivo}
+                    onChange={(e) => handleInputChange('pagoMixtoActivo', e.target.checked)}
+                  />
+                  <span className="text-sm font-medium text-gray-700">Pago Mixto</span>
+                </label>
 
-            {formData.pagoMixtoActivo && (
-              <div className="mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">Detalle de Pago Mixto</h4>
-                {formData.pagosMixtos.map((pago, index) => (
-                  <div key={pago.id} className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2 items-end">
-                    <FormSelect
-                      label="Cuenta"
-                      value={pago.cuenta}
-                      onChange={(val) => handlePagoMixtoChange(pago.id, 'cuenta', val)}
-                      options={cuentas}
-                    />
-                    <FormInput
-                      label="Monto"
-                      type="number"
-                      value={pago.monto}
-                      onChange={(val) => handlePagoMixtoChange(pago.id, 'monto', val)}
-                      placeholder="Monto a pagar"
-                    />
+                {formData.pagoMixtoActivo && (
+                  <div className="mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Detalle de Pago Mixto</h4>
+                    {formData.pagosMixtos.map((pago, index) => (
+                      <div key={pago.id} className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2 items-end">
+                        <FormSelect
+                          label="Cuenta"
+                          value={pago.cuenta}
+                          onChange={(val) => handlePagoMixtoChange(pago.id, 'cuenta', val)}
+                          options={cuentas}
+                        />
+                        <FormInput
+                          label="Monto"
+                          type="number"
+                          value={pago.monto}
+                          onChange={(val) => handlePagoMixtoChange(pago.id, 'monto', val)}
+                          placeholder="Monto a pagar"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removePagoMixto(pago.id)}
+                          className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors touch-target"
+                          aria-label="Eliminar pago"
+                        >
+                          <XCircle size={20} />
+                        </button>
+                      </div>
+                    ))}
                     <button
                       type="button"
-                      onClick={() => removePagoMixto(pago.id)}
-                      className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors touch-target"
-                      aria-label="Eliminar pago"
+                      onClick={addPagoMixto}
+                      className="mt-2 flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors touch-target"
                     >
-                      <XCircle size={20} />
+                      <PlusCircle size={16} /> Añadir Pago
                     </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={addPagoMixto}
-                  className="mt-2 flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors touch-target"
-                >
-                  <PlusCircle size={16} /> Añadir Pago
-                </button>
-                <div className="mt-3 text-sm font-medium text-gray-800">
-                  Total Pagos Mixtos: {formatAmountWithCurrency(formData.pagosMixtos.reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0), formData.monedaTC || 'PESO')}
-                </div>
-                {formData.expectedTotalForMixedPayments && (
-                  <div className="text-xs text-gray-600 mt-1">
-                    Valor de la Operación: {formatAmountWithCurrency(formData.expectedTotalForMixedPayments, formData.monedaTC || 'PESO')}
+                    <div className="mt-3 text-sm font-medium text-gray-800">
+                      Total Pagos Mixtos: {formatAmountWithCurrency(formData.pagosMixtos.reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0), formData.monedaTC || 'PESO')}
+                    </div>
+                    {formData.expectedTotalForMixedPayments && (
+                      <div className="text-xs text-gray-600 mt-1">
+                        Valor de la Operación: {formatAmountWithCurrency(formData.expectedTotalForMixedPayments, formData.monedaTC || 'PESO')}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
