@@ -169,12 +169,25 @@ export default function MainApp() {
 
   // Client management functions
   const handleSaveClient = (clientData) => {
+    console.log('handleSaveClient called with:', clientData);
+    console.log('Client has ID:', !!clientData.id);
+    console.log('Current clients count:', clients.length);
+    
     if (clientData.id) {
       // Update existing client
-      setClients(prev => prev.map(c => 
-        c.id === clientData.id ? clientData : c
-      ));
-      console.log('Client updated:', clientData);
+      const existingClient = clients.find(c => c.id === clientData.id);
+      console.log('Existing client found:', !!existingClient);
+      
+      if (existingClient) {
+        setClients(prev => prev.map(c => 
+          c.id === clientData.id ? clientData : c
+        ));
+        console.log('Client updated:', clientData);
+      } else {
+        // Cliente con ID pero no existe, agregarlo como nuevo
+        setClients(prev => [...prev, clientData]);
+        console.log('Client with ID added as new:', clientData);
+      }
     } else {
       // Add new client
       const newClient = {
@@ -184,7 +197,7 @@ export default function MainApp() {
       };
       
       setClients(prev => [...prev, newClient]);
-      console.log('Client saved:', newClient);
+      console.log('Client saved as new:', newClient);
     }
   };
 

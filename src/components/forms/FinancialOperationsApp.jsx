@@ -527,13 +527,20 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               required={true}
               placeholder="Buscar o seleccionar cliente"
               onClientCreated={(newClient) => {
+                console.log('Cliente recibido para guardar:', newClient);
+                console.log('onSaveClient function exists:', !!onSaveClient);
+                
                 // Guardar el cliente en la base de datos
                 if (onSaveClient) {
                   onSaveClient(newClient);
+                  console.log('Cliente enviado a handleSaveClient');
+                } else {
+                  console.error('onSaveClient function not available');
                 }
+                
                 // Auto-seleccionar el cliente recién creado
                 handleInputChange('cliente', newClient.id || newClient.nombre);
-                console.log('Cliente creado y guardado:', newClient);
+                console.log('Cliente auto-seleccionado:', newClient.id || newClient.nombre);
               }}
             />
           )}
