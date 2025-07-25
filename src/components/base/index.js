@@ -3,6 +3,7 @@ export { default as FormInput } from './FormInput';
 export { default as FormSelect } from './FormSelect';
 export { default as FormFieldGroup } from './FormFieldGroup';
 export { default as ClientSelect } from './ClientSelect';
+export { default as ClientAutocomplete } from './ClientAutocomplete';
 export { default as ClientModal } from './ClientModal';
 export { default as WalletPaymentGroup } from './WalletPaymentGroup';
 

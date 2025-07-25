@@ -4,7 +4,6 @@ import {
   FormInput,
   FormSelect,
   FormFieldGroup,
-  ClientSelect,
   WalletPaymentGroup,
   formatAmountWithCurrency,
   monedas,
@@ -14,6 +13,7 @@ import {
   operaciones,
   proveedoresCC
 } from '../base';
+import ClientAutocomplete from '../base/ClientAutocomplete';
 import { specificFieldsConfig } from '../../config/fieldConfigs';
 
 /**
@@ -491,15 +491,15 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         </div>
 
         <div className="form-section">
-          {/* Campo Cliente - Universal con creación modal */}
+          {/* Campo Cliente - Universal con autocompletado */}
           {formData.operacion !== 'PRESTAMISTAS' && (
-            <ClientSelect
+            <ClientAutocomplete
               label="CLIENTE"
               value={formData.cliente}
               onChange={(val) => handleInputChange('cliente', val)}
               clients={clients || []}
               required={true}
-              placeholder="Seleccionar cliente"
+              placeholder="Buscar o seleccionar cliente"
               onClientCreated={(newClient) => {
                 // Auto-seleccionar el cliente recién creado
                 handleInputChange('cliente', newClient.id || newClient.nombre);
