@@ -69,6 +69,16 @@ export const operaciones = {
 };
 
 /**
+ * Wallet types for operations
+ */
+export const walletTypes = [
+  { value: 'socio1_efectivo', label: 'Socio 1 - Efectivo' },
+  { value: 'socio1_digital', label: 'Socio 1 - Digital' },
+  { value: 'socio2_efectivo', label: 'Socio 2 - Efectivo' },
+  { value: 'socio2_digital', label: 'Socio 2 - Digital' },
+];
+
+/**
  * Payment types for mixed payments
  */
 export const tiposPago = [

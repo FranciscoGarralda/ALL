@@ -1,4 +1,4 @@
-import { monedas, cuentas, socios, proveedoresCC, prestamistaClientsDefault } from './constants';
+import { monedas, cuentas, socios, proveedoresCC, prestamistaClientsDefault, walletTypes } from './constants';
 
 /**
  * Configuration object for specific operation field layouts
@@ -9,22 +9,29 @@ export const specificFieldsConfig = {
   COMPRA: {
     groups: [
       [
+        { label: 'Cliente', name: 'cliente', type: 'client-select', required: true, placeholder: 'Seleccionar cliente' }
+      ],
+      [
         { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true },
         { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true }
+      ],
+      [
+        { label: 'Wallet Compra', name: 'walletCompra', type: 'select', options: walletTypes, required: true, placeholder: 'Seleccionar wallet' }
       ],
       [
         { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true },
         { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true }
       ],
       [
-        { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true }
+        { label: 'Wallet TC', name: 'walletTC', type: 'select', options: walletTypes, required: true, placeholder: 'Seleccionar wallet' }
       ],
       [
-        { label: 'Cuenta', name: 'cuenta', type: 'select', options: cuentas, required: true }
+        { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true }
       ]
     ],
     includesEstadoYPor: true,
     includesPagoMixto: true,
+    pagoMixtoWalletMode: true, // Nueva flag para usar wallets en pago mixto
     calculations: {
       total: (formData) => {
         const monto = parseFloat(formData.monto) || 0;

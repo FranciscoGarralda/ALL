@@ -1,6 +1,7 @@
 import React from 'react';
 import FormInput from './FormInput.jsx';
 import FormSelect from './FormSelect.jsx';
+import ClientSelect from './ClientSelect.jsx';
 
 /**
  * Form field group component that organizes related fields in responsive layouts
@@ -90,6 +91,19 @@ const FormFieldGroup = ({
 
     // Render based on field type
     switch (type) {
+      case 'client-select':
+        return (
+          <ClientSelect
+            {...commonProps}
+            clients={[]} // TODO: Pasar clientes reales desde props
+            placeholder={placeholder || 'Seleccionar cliente'}
+            onClientCreated={(newClient) => {
+              // TODO: Manejar cliente recién creado
+              console.log('Cliente creado:', newClient);
+            }}
+          />
+        );
+
       case 'select':
         return (
           <FormSelect

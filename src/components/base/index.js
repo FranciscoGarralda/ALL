@@ -2,6 +2,8 @@
 export { default as FormInput } from './FormInput';
 export { default as FormSelect } from './FormSelect';
 export { default as FormFieldGroup } from './FormFieldGroup';
+export { default as ClientSelect } from './ClientSelect';
+export { default as ClientModal } from './ClientModal';
 
 // Re-export utility functions from other modules for convenience
 export { formatAmountWithCurrency } from '../../utils/formatters';
@@ -14,7 +16,8 @@ export {
   operaciones,
   tiposPago,
   prioridades,
-  periodos
+  periodos,
+  walletTypes
 } from '../../config/constants';
 export { 
   specificFieldsConfig, 
