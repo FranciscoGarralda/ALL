@@ -9,9 +9,6 @@ export const specificFieldsConfig = {
   COMPRA: {
     groups: [
       [
-        { label: 'Cliente', name: 'cliente', type: 'client-select', required: true, placeholder: 'Seleccionar cliente' }
-      ],
-      [
         { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true },
         { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true }
       ],

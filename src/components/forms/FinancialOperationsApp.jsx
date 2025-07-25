@@ -4,6 +4,7 @@ import {
   FormInput,
   FormSelect,
   FormFieldGroup,
+  ClientSelect,
   WalletPaymentGroup,
   formatAmountWithCurrency,
   monedas,
@@ -490,14 +491,21 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         </div>
 
         <div className="form-section">
-          {/* Campo Cliente - Condicional para no prestamistas */}
+          {/* Campo Cliente - Universal con creación modal */}
           {formData.operacion !== 'PRESTAMISTAS' && (
-            <FormInput
+            <ClientSelect
               label="CLIENTE"
-              name="cliente"
               value={formData.cliente}
               onChange={(val) => handleInputChange('cliente', val)}
-              placeholder="Nombre del cliente"
+              clients={clients || []}
+              required={true}
+              placeholder="Seleccionar cliente"
+              onClientCreated={(newClient) => {
+                // Auto-seleccionar el cliente recién creado
+                handleInputChange('cliente', newClient.id || newClient.nombre);
+                // TODO: Agregar cliente a la lista global si es necesario
+                console.log('Cliente creado:', newClient);
+              }}
             />
           )}
 
