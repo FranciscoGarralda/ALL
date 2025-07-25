@@ -173,32 +173,30 @@ export default function MainApp() {
     console.log('Client has ID:', !!clientData.id);
     console.log('Current clients count:', clients.length);
     
-    if (clientData.id) {
-      // Update existing client
-      const existingClient = clients.find(c => c.id === clientData.id);
-      console.log('Existing client found:', !!existingClient);
+    setClients(prev => {
+      // Verificar duplicados usando el estado actual (prev)
+      const existingClient = prev.find(c => c.id === clientData.id);
+      console.log('Existing client found in current state:', !!existingClient);
       
-      if (existingClient) {
-        setClients(prev => prev.map(c => 
-          c.id === clientData.id ? clientData : c
-        ));
+      if (clientData.id && existingClient) {
+        // Update existing client
         console.log('Client updated:', clientData);
-      } else {
+        return prev.map(c => c.id === clientData.id ? clientData : c);
+      } else if (clientData.id && !existingClient) {
         // Cliente con ID pero no existe, agregarlo como nuevo
-        setClients(prev => [...prev, clientData]);
         console.log('Client with ID added as new:', clientData);
+        return [...prev, clientData];
+      } else {
+        // Add new client without ID
+        const newClient = {
+          ...clientData,
+          id: Date.now(),
+          createdAt: new Date().toISOString()
+        };
+        console.log('Client saved as new:', newClient);
+        return [...prev, newClient];
       }
-    } else {
-      // Add new client
-      const newClient = {
-        ...clientData,
-        id: Date.now(),
-        createdAt: new Date().toISOString()
-      };
-      
-      setClients(prev => [...prev, newClient]);
-      console.log('Client saved as new:', newClient);
-    }
+    });
   };
 
   const handleDeleteClient = (clientId) => {
