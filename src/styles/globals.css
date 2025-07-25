@@ -408,7 +408,7 @@
   }
 }
 
-/* Mobile-specific styles */
+  /* Mobile-specific styles */
 @media (max-width: 768px) {
   .mobile-full-width {
     width: 100vw;
@@ -418,6 +418,17 @@
   .mobile-safe-area {
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+  }
+
+  /* Prevent pull-to-refresh on iOS when not needed */
+  body {
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent pull-to-refresh on main container */
+  .main-content {
+    overscroll-behavior: contain;
   }
 
   /* Improve touch targets on mobile */
