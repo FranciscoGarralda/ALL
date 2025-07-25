@@ -73,7 +73,7 @@ const ClientModal = ({
     try {
       // Simular creación del cliente
       const newClient = {
-        id: Date.now().toString(), // ID temporal
+        id: Date.now(), // ID numérico para coincidir con handleSaveClient
         ...formData,
         fechaCreacion: new Date().toISOString()
       };
