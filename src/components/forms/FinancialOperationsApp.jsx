@@ -29,7 +29,7 @@ function DynamicFormFieldGroups({ groups }) {
   );
 }
 
-const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelEdit, clients }) => {
+const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelEdit, clients, onSaveClient }) => {
   const [formData, setFormData] = useState({
     cliente: '',
     fecha: '',
@@ -123,7 +123,20 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           newState.expectedTotalForMixedPayments = expectedTotal.toFixed(2);
           
           // Determinar si estamos en modo wallet
-          const isWalletMode = specificFieldsConfig[operationType]?.pagoMixtoWalletMode;
+          let configKey = prev.subOperacion;
+          if (['INGRESO', 'EGRESO'].includes(prev.subOperacion) && prev.operacion === 'CUENTAS_CORRIENTES') {
+            configKey = 'CUENTAS_CORRIENTES_INGRESO_EGRESO';
+          } else if (['INGRESO', 'SALIDA', 'PRESTAMO', 'DEVOLUCION'].includes(prev.subOperacion) && prev.operacion === 'SOCIOS') {
+            configKey = 'SOCIOS_SHARED';
+          } else if (prev.subOperacion === 'PRESTAMO' && prev.operacion === 'PRESTAMISTAS') {
+            configKey = 'PRESTAMISTAS_PRESTAMO';
+          } else if (prev.subOperacion === 'RETIRO' && prev.operacion === 'PRESTAMISTAS') {
+            configKey = 'PRESTAMISTAS_RETIRO';
+          } else if (prev.subOperacion === 'TRANSFERENCIA' && prev.operacion === 'INTERNAS') {
+            configKey = 'TRANSFERENCIA';
+          }
+          
+          const isWalletMode = specificFieldsConfig[configKey]?.pagoMixtoWalletMode;
           
           // Crear pagos iniciales con estructura apropiada
           if (isWalletMode) {
@@ -227,7 +240,20 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   const addPagoMixto = () => {
     setFormData(prev => {
       // Determinar si estamos en modo wallet
-      const isWalletMode = specificFieldsConfig[operationType]?.pagoMixtoWalletMode;
+      let configKey = prev.subOperacion;
+      if (['INGRESO', 'EGRESO'].includes(prev.subOperacion) && prev.operacion === 'CUENTAS_CORRIENTES') {
+        configKey = 'CUENTAS_CORRIENTES_INGRESO_EGRESO';
+      } else if (['INGRESO', 'SALIDA', 'PRESTAMO', 'DEVOLUCION'].includes(prev.subOperacion) && prev.operacion === 'SOCIOS') {
+        configKey = 'SOCIOS_SHARED';
+      } else if (prev.subOperacion === 'PRESTAMO' && prev.operacion === 'PRESTAMISTAS') {
+        configKey = 'PRESTAMISTAS_PRESTAMO';
+      } else if (prev.subOperacion === 'RETIRO' && prev.operacion === 'PRESTAMISTAS') {
+        configKey = 'PRESTAMISTAS_RETIRO';
+      } else if (prev.subOperacion === 'TRANSFERENCIA' && prev.operacion === 'INTERNAS') {
+        configKey = 'TRANSFERENCIA';
+      }
+      
+      const isWalletMode = specificFieldsConfig[configKey]?.pagoMixtoWalletMode;
       
       // Crear nuevo pago con campos apropiados
       const newPago = isWalletMode 
@@ -501,10 +527,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               required={true}
               placeholder="Buscar o seleccionar cliente"
               onClientCreated={(newClient) => {
+                // Guardar el cliente en la base de datos
+                if (onSaveClient) {
+                  onSaveClient(newClient);
+                }
                 // Auto-seleccionar el cliente recién creado
                 handleInputChange('cliente', newClient.id || newClient.nombre);
-                // TODO: Agregar cliente a la lista global si es necesario
-                console.log('Cliente creado:', newClient);
+                console.log('Cliente creado y guardado:', newClient);
               }}
             />
           )}

@@ -206,6 +206,7 @@ export default function MainApp() {
             initialMovementData={editingMovement}
             onCancelEdit={handleCancelEdit}
             clients={clients}
+            onSaveClient={handleSaveClient}
           />
         );
       
