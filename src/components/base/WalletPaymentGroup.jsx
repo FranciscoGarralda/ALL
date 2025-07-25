@@ -15,9 +15,12 @@ const WalletPaymentGroup = ({
   onToggle,
   className = ''
 }) => {
+  // Validación defensiva
+  const safePayments = Array.isArray(payments) ? payments : [];
+  
   // Calcular total de pagos
-  const totalPayments = payments.reduce((sum, payment) => {
-    return sum + (parseFloat(payment.monto) || 0);
+  const totalPayments = safePayments.reduce((sum, payment) => {
+    return sum + (parseFloat(payment?.monto) || 0);
   }, 0);
 
   // Verificar si el total coincide
@@ -50,20 +53,20 @@ const WalletPaymentGroup = ({
               Detalle de Pago Mixto
             </h4>
             <div className="text-xs text-gray-500">
-              {payments.length} {payments.length === 1 ? 'pago' : 'pagos'}
+              {safePayments.length} {safePayments.length === 1 ? 'pago' : 'pagos'}
             </div>
           </div>
 
           {/* Lista de Pagos */}
           <div className="space-y-3">
-            {payments.map((payment, index) => (
+            {safePayments.map((payment, index) => (
               <WalletPaymentItem
-                key={payment.id}
+                key={payment?.id || index}
                 payment={payment}
                 index={index}
                 onPaymentChange={onPaymentChange}
                 onRemove={onRemovePayment}
-                showRemove={payments.length > 1}
+                showRemove={safePayments.length > 1}
               />
             ))}
           </div>
@@ -123,22 +126,28 @@ const WalletPaymentGroup = ({
 
 // Componente para cada item de pago individual
 const WalletPaymentItem = ({
-  payment,
-  index,
+  payment = {},
+  index = 0,
   onPaymentChange,
   onRemove,
   showRemove = true
 }) => {
   const handleWalletChange = (walletValue) => {
-    onPaymentChange(payment.id, 'wallet', walletValue);
+    if (onPaymentChange && payment?.id) {
+      onPaymentChange(payment.id, 'wallet', walletValue);
+    }
   };
 
   const handleMontoChange = (monto) => {
-    onPaymentChange(payment.id, 'monto', monto);
+    if (onPaymentChange && payment?.id) {
+      onPaymentChange(payment.id, 'monto', monto);
+    }
   };
 
   const handleRemove = () => {
-    onRemove(payment.id);
+    if (onRemove && payment?.id) {
+      onRemove(payment.id);
+    }
   };
 
   return (
@@ -160,16 +169,16 @@ const WalletPaymentItem = ({
             <label
               key={wallet.value}
               className={`flex items-center justify-center p-2 border rounded-lg cursor-pointer transition-all duration-200 text-xs ${
-                payment.wallet === wallet.value
+                payment?.wallet === wallet.value
                   ? 'border-primary-500 bg-primary-50 text-primary-700'
                   : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
               }`}
             >
               <input
                 type="radio"
-                name={`wallet-${payment.id}`}
+                name={`wallet-${payment?.id || index}`}
                 value={wallet.value}
-                checked={payment.wallet === wallet.value}
+                checked={payment?.wallet === wallet.value}
                 onChange={(e) => handleWalletChange(e.target.value)}
                 className="sr-only"
               />
@@ -184,7 +193,7 @@ const WalletPaymentItem = ({
         <FormInput
           label="Monto"
           type="number"
-          value={payment.monto}
+          value={payment?.monto || ''}
           onChange={handleMontoChange}
           placeholder="0.00"
           className="text-sm"
