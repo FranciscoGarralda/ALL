@@ -37,12 +37,13 @@ export const socios = [
 ];
 
 /**
- * Operation status options
+ * Operation status options - Updated for Estado de retiro
  */
 export const estados = [
   { value: '_ALL_STATUSES_', label: 'Todos los estados' },
+  { value: 'pendiente_retiro', label: 'Pendiente de retiro' },
+  { value: 'pendiente_entrega', label: 'Pendiente de entrega' },
   { value: 'realizado', label: 'Realizado' },
-  { value: 'pendiente', label: 'Pendiente' },
 ];
 
 /**

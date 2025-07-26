@@ -14,6 +14,7 @@ import {
 const FinancialOperationsApp = lazy(() => import('../components/forms/FinancialOperationsApp'));
 const ClientesApp = lazy(() => import('../components/modules/ClientesApp'));
 const MovimientosApp = lazy(() => import('../components/modules/MovimientosApp'));
+const PendientesRetiroApp = lazy(() => import('../components/modules/PendientesRetiroApp'));
 const GastosApp = lazy(() => import('../components/modules/GastosApp'));
 const CuentasCorrientesApp = lazy(() => import('../components/modules/CuentasCorrientesApp'));
 const PrestamistasApp = lazy(() => import('../components/modules/PrestamistasApp'));
@@ -99,6 +100,9 @@ export default function MainApp() {
   });
   const [editingMovement, setEditingMovement] = useState(null);
 
+  // Navigation state to track where user came from
+  const [previousPage, setPreviousPage] = useState('movimientos');
+
   // Load data from localStorage on mount
   useEffect(() => {
     try {
@@ -161,7 +165,9 @@ export default function MainApp() {
   };
 
   const handleEditMovement = (movement) => {
+    console.log('Editing movement:', movement);
     setEditingMovement(movement);
+    setPreviousPage(currentPage); // Remember where we came from
     navigateTo('nuevoMovimiento');
   };
 
@@ -174,7 +180,7 @@ export default function MainApp() {
 
   const handleCancelEdit = () => {
     setEditingMovement(null);
-    navigateTo('movimientos');
+    navigateTo(previousPage); // Return to previous page instead of always movimientos
   };
 
   // Client management functions
@@ -238,6 +244,20 @@ export default function MainApp() {
           <Suspense fallback={<LoadingSpinner />}>
             <MovimientosApp 
               movements={movements}
+              clients={clients}
+              onEditMovement={handleEditMovement}
+              onDeleteMovement={handleDeleteMovement}
+              onNavigate={navigateTo}
+            />
+          </Suspense>
+        );
+      
+      case 'pendientesRetiro':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <PendientesRetiroApp 
+              movements={movements}
+              clients={clients}
               onEditMovement={handleEditMovement}
               onDeleteMovement={handleDeleteMovement}
               onNavigate={navigateTo}
