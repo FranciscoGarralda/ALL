@@ -19,10 +19,8 @@ import FixedHeader from './FixedHeader';
 
 /** COMPONENTE DE ELEMENTO DEL MENÚ OPTIMIZADO */
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
-  const buttonRef = useRef(null);
-  
   const buttonClasses = useMemo(() => `
-    w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
+    w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 relative
     ${isActive
       ? 'menu-item-active'
       : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'
@@ -31,23 +29,13 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
     touch-manipulation select-none
   `, [isActive, isSidebarOpen]);
 
-  // Calculate tooltip position to prevent overflow
-  const handleMouseEnter = useCallback(() => {
-    if (!isSidebarOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      const tooltipTop = rect.top + (rect.height / 2);
-      document.documentElement.style.setProperty('--tooltip-top', `${tooltipTop}px`);
-    }
-  }, [isSidebarOpen]);
-
   return (
     <button
-      ref={buttonRef}
       className={buttonClasses}
       onClick={onClick}
-      onMouseEnter={handleMouseEnter}
       data-tooltip={!isSidebarOpen ? title : undefined}
       aria-label={!isSidebarOpen ? title : undefined}
+      title={!isSidebarOpen ? title : undefined}
     >
       <Icon size={24} className="flex-shrink-0" />
       {isSidebarOpen && (
@@ -85,7 +73,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar })
     <div className={`
       fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow-large flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out z-30
-      ${isSidebarOpen ? 'w-64' : 'w-20 max-lg:w-0 max-lg:overflow-hidden'}
+      ${isSidebarOpen ? 'w-64' : 'w-20 max-lg:w-0 max-lg:overflow-hidden overflow-x-visible'}
       ${!isSidebarOpen ? 'max-lg:-translate-x-full' : ''}
     `}>
       {/* Header del Sidebar */}
@@ -118,7 +106,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar })
       </div>
 
       {/* Menú de navegación */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-visible">
         {menuItems.map((item) => (
           <MenuItem
             key={item.id}
