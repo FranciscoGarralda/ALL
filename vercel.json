@@ -7,10 +7,5 @@
   "devCommand": "npm run dev",
   "env": {
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "pages/api/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
   }
 }
