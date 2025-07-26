@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Head from 'next/head';
 
 // Import navigation components
@@ -10,83 +10,93 @@ import {
   useNavigation 
 } from '../components/ui/NavigationApp';
 
-// Import form component
-import FinancialOperationsApp from '../components/forms/FinancialOperationsApp';
+// Lazy load heavy components for better performance
+const FinancialOperationsApp = lazy(() => import('../components/forms/FinancialOperationsApp'));
+const ClientesApp = lazy(() => import('../components/modules/ClientesApp'));
+const MovimientosApp = lazy(() => import('../components/modules/MovimientosApp'));
+const GastosApp = lazy(() => import('../components/modules/GastosApp'));
+const CuentasCorrientesApp = lazy(() => import('../components/modules/CuentasCorrientesApp'));
+const PrestamistasApp = lazy(() => import('../components/modules/PrestamistasApp'));
+const ComisionesApp = lazy(() => import('../components/modules/ComisionesApp'));
+const UtilidadApp = lazy(() => import('../components/modules/UtilidadApp'));
+const ArbitrajeApp = lazy(() => import('../components/modules/ArbitrajeApp'));
 
-// Import modules
-import ClientesApp from '../components/modules/ClientesApp';
-import MovimientosApp from '../components/modules/MovimientosApp';
-import GastosApp from '../components/modules/GastosApp';
-import CuentasCorrientesApp from '../components/modules/CuentasCorrientesApp';
-import PrestamistasApp from '../components/modules/PrestamistasApp';
-import ComisionesApp from '../components/modules/ComisionesApp';
-import UtilidadApp from '../components/modules/UtilidadApp';
-import ArbitrajeApp from '../components/modules/ArbitrajeApp';
+// Loading component for better UX
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    <span className="ml-3 text-gray-600">Cargando módulo...</span>
+  </div>
+);
 
 /**
  * Main application component with navigation and module management
+ * Optimized with lazy loading and performance improvements
  */
 export default function MainApp() {
   const { currentPage, navigateTo } = useNavigation('mainMenu');
   
-  // Global state management
+  // Global state management with performance optimizations
   const [movements, setMovements] = useState([]);
-  const [clients, setClients] = useState([
-    // Sample clients data
-    {
-      id: 1,
-      nombre: 'Juan',
-      apellido: 'Pérez',
-      tipoCliente: 'prestamistas',
-      dni: '12.345.678',
-      telefono: '+54 11 1234-5678',
-      direccion: 'Av. Corrientes 1234, CABA',
-      email: 'juan.perez@email.com',
-      ultimaOperacion: '2024-01-15',
-      totalOperaciones: 5,
-      volumenTotal: 25000,
-      operaciones: [
-        { fecha: '2024-01-15', monto: 5000 },
-        { fecha: '2024-01-01', monto: 8000 },
-        { fecha: '2023-12-15', monto: 12000 }
-      ]
-    },
-    {
-      id: 2,
-      nombre: 'María',
-      apellido: 'González',
-      tipoCliente: 'operaciones',
-      dni: '23.456.789',
-      telefono: '+54 11 8765-4321',
-      direccion: 'Av. Santa Fe 5678, CABA',
-      email: 'maria.gonzalez@email.com',
-      ultimaOperacion: '2024-01-20',
-      totalOperaciones: 8,
-      volumenTotal: 45000,
-      operaciones: [
-        { fecha: '2024-01-20', monto: 15000 },
-        { fecha: '2024-01-10', monto: 10000 },
-        { fecha: '2023-12-28', monto: 20000 }
-      ]
-    },
-    {
-      id: 3,
-      nombre: 'Carlos',
-      apellido: 'Rodríguez',
-      tipoCliente: 'operaciones',
-      dni: '34.567.890',
-      telefono: '+54 11 5555-0000',
-      direccion: 'Av. Rivadavia 9012, CABA',
-      email: 'carlos.rodriguez@email.com',
-      ultimaOperacion: '2023-12-01',
-      totalOperaciones: 3,
-      volumenTotal: 18000,
-      operaciones: [
-        { fecha: '2023-12-01', monto: 8000 },
-        { fecha: '2023-11-15', monto: 10000 }
-      ]
-    }
-  ]);
+  const [clients, setClients] = useState(() => {
+    // Initialize with sample data only when needed
+    return [
+      // Sample clients data
+      {
+        id: 1,
+        nombre: 'Juan',
+        apellido: 'Pérez',
+        tipoCliente: 'prestamistas',
+        dni: '12.345.678',
+        telefono: '+54 11 1234-5678',
+        direccion: 'Av. Corrientes 1234, CABA',
+        email: 'juan.perez@email.com',
+        ultimaOperacion: '2024-01-15',
+        totalOperaciones: 5,
+        volumenTotal: 25000,
+        operaciones: [
+          { fecha: '2024-01-15', monto: 5000 },
+          { fecha: '2024-01-01', monto: 8000 },
+          { fecha: '2023-12-15', monto: 12000 }
+        ]
+      },
+      {
+        id: 2,
+        nombre: 'María',
+        apellido: 'González',
+        tipoCliente: 'operaciones',
+        dni: '23.456.789',
+        telefono: '+54 11 8765-4321',
+        direccion: 'Av. Santa Fe 5678, CABA',
+        email: 'maria.gonzalez@email.com',
+        ultimaOperacion: '2024-01-20',
+        totalOperaciones: 8,
+        volumenTotal: 45000,
+        operaciones: [
+          { fecha: '2024-01-20', monto: 15000 },
+          { fecha: '2024-01-10', monto: 10000 },
+          { fecha: '2023-12-28', monto: 20000 }
+        ]
+      },
+      {
+        id: 3,
+        nombre: 'Carlos',
+        apellido: 'Rodríguez',
+        tipoCliente: 'operaciones',
+        dni: '34.567.890',
+        telefono: '+54 11 5555-0000',
+        direccion: 'Av. Rivadavia 9012, CABA',
+        email: 'carlos.rodriguez@email.com',
+        ultimaOperacion: '2023-12-01',
+        totalOperaciones: 3,
+        volumenTotal: 18000,
+        operaciones: [
+          { fecha: '2023-12-01', monto: 8000 },
+          { fecha: '2023-11-15', monto: 10000 }
+        ]
+      }
+    ];
+  });
   const [editingMovement, setEditingMovement] = useState(null);
 
   // Load data from localStorage on mount
@@ -212,32 +222,38 @@ export default function MainApp() {
       
       case 'nuevoMovimiento':
         return (
-          <FinancialOperationsApp
-            onSaveMovement={handleSaveMovement}
-            initialMovementData={editingMovement}
-            onCancelEdit={handleCancelEdit}
-            clients={clients}
-            onSaveClient={handleSaveClient}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <FinancialOperationsApp
+              onSaveMovement={handleSaveMovement}
+              initialMovementData={editingMovement}
+              onCancelEdit={handleCancelEdit}
+              clients={clients}
+              onSaveClient={handleSaveClient}
+            />
+          </Suspense>
         );
       
       case 'movimientos':
         return (
-          <MovimientosApp 
-            movements={movements}
-            onEditMovement={handleEditMovement}
-            onDeleteMovement={handleDeleteMovement}
-            onNavigate={navigateTo}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <MovimientosApp 
+              movements={movements}
+              onEditMovement={handleEditMovement}
+              onDeleteMovement={handleDeleteMovement}
+              onNavigate={navigateTo}
+            />
+          </Suspense>
         );
       
       case 'clientes':
         return (
-          <ClientesApp 
-            clientes={clients}
-            onSaveClient={handleSaveClient}
-            onDeleteClient={handleDeleteClient}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <ClientesApp 
+              clientes={clients}
+              onSaveClient={handleSaveClient}
+              onDeleteClient={handleDeleteClient}
+            />
+          </Suspense>
         );
       
       case 'saldos':
@@ -245,58 +261,70 @@ export default function MainApp() {
       
       case 'cuentas':
         return (
-          <CuentasCorrientesApp 
-            movements={movements}
-            onNavigate={navigateTo}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <CuentasCorrientesApp 
+              movements={movements}
+              onNavigate={navigateTo}
+            />
+          </Suspense>
         );
       
       case 'arbitraje':
         return (
-          <ArbitrajeApp 
-            movements={movements}
-            onNavigate={navigateTo}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <ArbitrajeApp 
+              movements={movements}
+              onNavigate={navigateTo}
+            />
+          </Suspense>
         );
       
       case 'utilidad':
         return (
-          <UtilidadApp 
-            movements={movements}
-            onNavigate={navigateTo}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <UtilidadApp 
+              movements={movements}
+              onNavigate={navigateTo}
+            />
+          </Suspense>
         );
       
       case 'comisiones':
         return (
-          <ComisionesApp 
-            movements={movements}
-            onNavigate={navigateTo}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <ComisionesApp 
+              movements={movements}
+              onNavigate={navigateTo}
+            />
+          </Suspense>
         );
       
       case 'prestamistas':
         return (
-          <PrestamistasApp 
-            clients={clients}
-            movements={movements}
-            onNavigate={navigateTo}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <PrestamistasApp 
+              clients={clients}
+              movements={movements}
+              onNavigate={navigateTo}
+            />
+          </Suspense>
         );
       
       case 'gastos':
         return (
-          <GastosApp 
-            movements={movements}
-            onEditMovement={handleEditMovement}
-            onDeleteMovement={handleDeleteMovement}
-            onViewMovementDetail={(movement) => {
-              // Usar el componente MovimientoDetail del módulo de movimientos
-              setCurrentPage('movimientos');
-              // Aquí podrías implementar una navegación más específica si es necesario
-            }}
-            onNavigate={navigateTo}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <GastosApp 
+              movements={movements}
+              onEditMovement={handleEditMovement}
+              onDeleteMovement={handleDeleteMovement}
+              onViewMovementDetail={(movement) => {
+                // Usar el componente MovimientoDetail del módulo de movimientos
+                setCurrentPage('movimientos');
+                // Aquí podrías implementar una navegación más específica si es necesario
+              }}
+              onNavigate={navigateTo}
+            />
+          </Suspense>
         );
       
       default:
