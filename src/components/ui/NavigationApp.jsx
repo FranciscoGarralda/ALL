@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react';
 import {
   Plus,
   Users,
@@ -19,6 +19,8 @@ import FixedHeader from './FixedHeader';
 
 /** COMPONENTE DE ELEMENTO DEL MENÚ OPTIMIZADO */
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
+  const buttonRef = useRef(null);
+  
   const buttonClasses = useMemo(() => `
     w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
     ${isActive
@@ -29,10 +31,21 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
     touch-manipulation select-none
   `, [isActive, isSidebarOpen]);
 
+  // Calculate tooltip position to prevent overflow
+  const handleMouseEnter = useCallback(() => {
+    if (!isSidebarOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const tooltipTop = rect.top + (rect.height / 2);
+      document.documentElement.style.setProperty('--tooltip-top', `${tooltipTop}px`);
+    }
+  }, [isSidebarOpen]);
+
   return (
     <button
+      ref={buttonRef}
       className={buttonClasses}
       onClick={onClick}
+      onMouseEnter={handleMouseEnter}
       data-tooltip={!isSidebarOpen ? title : undefined}
       aria-label={!isSidebarOpen ? title : undefined}
     >
@@ -192,11 +205,18 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
   }, [isSidebarOpen]);
 
   // Prevent body scroll when mobile sidebar is open
+  // Also prevent horizontal scroll when tooltips appear on collapsed menu
   useEffect(() => {
     if (isMobile && isSidebarOpen) {
       document.body.style.overflow = 'hidden';
       return () => {
         document.body.style.overflow = 'unset';
+      };
+    } else if (!isSidebarOpen && !isMobile) {
+      // Prevent horizontal scroll when tooltips appear
+      document.body.style.overflowX = 'hidden';
+      return () => {
+        document.body.style.overflowX = 'unset';
       };
     }
   }, [isMobile, isSidebarOpen]);

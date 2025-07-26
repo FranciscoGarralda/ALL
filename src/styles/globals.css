@@ -18,6 +18,8 @@
     -moz-osx-font-smoothing: grayscale;
     /* Optimize text rendering */
     text-rendering: optimizeLegibility;
+    /* Prevent horizontal scroll caused by tooltips and other elements */
+    overflow-x: hidden;
     /* Prevent layout shifts */
     font-display: swap;
   }
@@ -90,9 +92,9 @@
 
   .menu-tooltip[data-tooltip]:hover::after {
     content: attr(data-tooltip);
-    position: absolute;
-    left: calc(100% + 12px);
-    top: 50%;
+    position: fixed;
+    left: 84px; /* Fixed position from left edge (20px sidebar + 64px margin) */
+    top: var(--tooltip-top, 50%);
     transform: translateY(-50%);
     padding: 8px 12px;
     background: rgba(0, 0, 0, 0.9);
@@ -106,13 +108,16 @@
     opacity: 0;
     animation: tooltipFadeIn 0.2s ease-out forwards;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    max-width: calc(100vw - 100px); /* Prevent overflow on small screens */
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .menu-tooltip[data-tooltip]:hover::before {
     content: '';
-    position: absolute;
-    left: calc(100% + 6px);
-    top: 50%;
+    position: fixed;
+    left: 78px; /* Arrow position */
+    top: var(--tooltip-top, 50%);
     transform: translateY(-50%);
     border: 6px solid transparent;
     border-right-color: rgba(0, 0, 0, 0.9);
