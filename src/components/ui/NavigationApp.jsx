@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import {
   Plus,
   Users,
@@ -16,19 +16,21 @@ import {
 } from 'lucide-react';
 import FixedHeader from './FixedHeader';
 
-/** COMPONENTE DE ELEMENTO DEL MENÚ */
-function MenuItem({ icon: Icon, title, onClick, isActive, isSidebarOpen }) {
+/** COMPONENTE DE ELEMENTO DEL MENÚ OPTIMIZADO */
+const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
+  const buttonClasses = useMemo(() => `
+    w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
+    ${isActive
+      ? 'menu-item-active'
+      : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'
+    }
+    ${isSidebarOpen ? '' : 'justify-center'}
+    touch-manipulation select-none
+  `, [isActive, isSidebarOpen]);
+
   return (
     <button
-      className={`
-        w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
-        ${isActive
-          ? 'menu-item-active'
-          : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'
-        }
-        ${isSidebarOpen ? '' : 'justify-center'}
-        touch-manipulation select-none
-      `}
+      className={buttonClasses}
       onClick={onClick}
       title={!isSidebarOpen ? title : ''} // Tooltip cuando está colapsado
     >
@@ -40,11 +42,13 @@ function MenuItem({ icon: Icon, title, onClick, isActive, isSidebarOpen }) {
       )}
     </button>
   );
-}
+});
 
-/** COMPONENTE DEL MENÚ PRINCIPAL */
-function MainMenu({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) {
-  const menuItems = [
+MenuItem.displayName = 'MenuItem';
+
+/** COMPONENTE DEL MENÚ PRINCIPAL OPTIMIZADO */
+const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) => {
+  const menuItems = useMemo(() => [
     { id: 'nuevoMovimiento', icon: Plus, title: 'Nuevo Movimiento' },
     { id: 'saldos', icon: Wallet, title: 'Saldos' },
     { id: 'movimientos', icon: List, title: 'Movimientos' },
@@ -55,11 +59,11 @@ function MainMenu({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) {
     { id: 'prestamistas', icon: CreditCard, title: 'Prestamistas' },
     { id: 'gastos', icon: Receipt, title: 'Gastos' },
     { id: 'clientes', icon: UserCheck, title: 'Clientes' }
-  ];
+  ], []);
 
-  const handleItemClick = (itemId) => {
+  const handleItemClick = useCallback((itemId) => {
     onNavigate(itemId);
-  };
+  }, [onNavigate]);
 
   return (
     <div className={`
@@ -122,42 +126,77 @@ function MainMenu({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) {
       )}
     </div>
   );
-}
+});
 
-/** COMPONENTE PRINCIPAL DE NAVEGACIÓN */
-const NavigationApp = ({ children, currentPage, onNavigate }) => {
+MainMenu.displayName = 'MainMenu';
+
+/** COMPONENTE PRINCIPAL DE NAVEGACIÓN OPTIMIZADO */
+const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Iniciar cerrado en móvil
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detectar si es móvil y ajustar sidebar inicial
+  // Optimized mobile detection with cleanup
   useEffect(() => {
     const checkMobile = () => {
-      const mobile = window.innerWidth < 1024;
-      setIsMobile(mobile);
-      if (mobile) {
-        setIsSidebarOpen(false); // Cerrar en móvil por defecto
-      } else {
-        setIsSidebarOpen(true); // Abrir en desktop por defecto
-      }
+      setIsMobile(window.innerWidth < 1024);
     };
-
+    
+    // Initial check
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    
+    // Throttled resize handler to prevent excessive calls
+    let resizeTimer;
+    const throttledResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(checkMobile, 100);
+    };
+    
+    window.addEventListener('resize', throttledResize, { passive: true });
+    
+    // Cleanup function to prevent memory leaks
+    return () => {
+      window.removeEventListener('resize', throttledResize);
+      clearTimeout(resizeTimer);
+    };
   }, []);
 
-  const toggleSidebar = () => {
+  // Optimized toggle function with useCallback
+  const toggleSidebar = useCallback(() => {
     setIsSidebarOpen(prev => !prev);
-  };
+  }, []);
 
-  // Cerrar sidebar en móvil cuando se hace clic en un item
-  const handleNavigate = (page) => {
+  // Optimized navigation handler with useCallback
+  const handleNavigate = useCallback((page) => {
     onNavigate(page);
     // En móvil, cerrar el sidebar después de navegar
     if (isMobile) {
       setIsSidebarOpen(false);
     }
-  };
+  }, [onNavigate, isMobile]);
+
+  // Close sidebar on escape key
+  useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape' && isSidebarOpen) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    if (isSidebarOpen) {
+      document.addEventListener('keydown', handleEscapeKey);
+      return () => document.removeEventListener('keydown', handleEscapeKey);
+    }
+  }, [isSidebarOpen]);
+
+  // Prevent body scroll when mobile sidebar is open
+  useEffect(() => {
+    if (isMobile && isSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = 'unset';
+      };
+    }
+  }, [isMobile, isSidebarOpen]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -188,6 +227,10 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
           <div 
             className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
             onClick={toggleSidebar}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && toggleSidebar()}
+            aria-label="Cerrar menú"
           />
         )}
         
@@ -198,7 +241,7 @@ const NavigationApp = ({ children, currentPage, onNavigate }) => {
       </div>
     </div>
   );
-};
+});
 
 /** PÁGINA DE BIENVENIDA */
 const WelcomePage = () => (
