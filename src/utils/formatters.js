@@ -110,16 +110,7 @@ export const parseCurrencyAmount = (formattedAmount) => {
   return parseFloat(cleanAmount) || 0;
 };
 
-/**
- * Format percentage
- * @param {number} value - Value to format as percentage
- * @param {number} decimals - Number of decimal places
- * @returns {string} Formatted percentage
- */
-export const formatPercentage = (value, decimals = 2) => {
-  if (isNaN(value)) return '0%';
-  return `${value.toFixed(decimals)}%`;
-};
+
 
 /**
  * Format date with day of week
@@ -211,4 +202,180 @@ export const getProviderCurrencies = (provider) => {
   };
   
   return providerCurrencies[provider] || providerCurrencies.DEFAULT;
+};
+
+/**
+ * Utility functions for formatting data in the application
+ */
+
+/**
+ * Format currency amount with proper locale and currency symbol
+ * @param {number|string} amount - The amount to format
+ * @param {string} currency - Currency code (PESO, USD, EUR, etc.)
+ * @param {string} locale - Locale for formatting (default: 'es-ES')
+ * @returns {string} Formatted currency string
+ */
+export const formatCurrency = (amount, currency = 'PESO', locale = 'es-ES') => {
+  if (!amount && amount !== 0) return '0';
+  
+  const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+  if (isNaN(numericAmount)) return '0';
+  
+  const formatted = numericAmount.toLocaleString(locale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  
+  // Currency symbols mapping
+  const currencySymbols = {
+    'PESO': '$',
+    'USD': 'US$',
+    'EUR': '€',
+    'BRL': 'R$',
+    'UYU': '$U'
+  };
+  
+  const symbol = currencySymbols[currency] || currency;
+  return `${symbol} ${formatted}`;
+};
+
+/**
+ * Format date to localized string
+ * @param {string|Date} date - Date to format
+ * @param {string} locale - Locale for formatting (default: 'es-ES')
+ * @param {Object} options - Intl.DateTimeFormat options
+ * @returns {string} Formatted date string
+ */
+export const formatDate = (date, locale = 'es-ES', options = {}) => {
+  if (!date) return 'Sin fecha';
+  
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  if (isNaN(dateObj.getTime())) return 'Fecha inválida';
+  
+  const defaultOptions = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  };
+  
+  return dateObj.toLocaleDateString(locale, { ...defaultOptions, ...options });
+};
+
+/**
+ * Format phone number to a consistent format
+ * @param {string} phone - Phone number to format
+ * @returns {string} Formatted phone number
+ */
+export const formatPhone = (phone) => {
+  if (!phone) return '';
+  
+  // Remove all non-numeric characters
+  const cleaned = phone.replace(/\D/g, '');
+  
+  // Format based on length
+  if (cleaned.length >= 10) {
+    // Assume Argentine format: +54 11 1234-5678
+    const countryCode = cleaned.slice(0, 2);
+    const areaCode = cleaned.slice(2, 4);
+    const firstPart = cleaned.slice(4, 8);
+    const secondPart = cleaned.slice(8, 12);
+    
+    return `+${countryCode} ${areaCode} ${firstPart}-${secondPart}`;
+  }
+  
+  return phone; // Return original if can't format
+};
+
+/**
+ * Get client full name from client ID
+ * @param {string|number} clientId - The client ID to look up
+ * @param {Array} clients - Array of client objects
+ * @returns {string} Full client name or fallback text
+ */
+export const getClientName = (clientId, clients = []) => {
+  if (!clientId) return 'Sin cliente';
+  
+  const client = clients.find(c => c.id === clientId || c.id === parseInt(clientId));
+  
+  if (!client) return `Cliente ${clientId}`;
+  
+  const fullName = `${client.nombre || ''} ${client.apellido || ''}`.trim();
+  return fullName || `Cliente ${clientId}`;
+};
+
+/**
+ * Get client full info object from client ID
+ * @param {string|number} clientId - The client ID to look up
+ * @param {Array} clients - Array of client objects
+ * @returns {Object|null} Client object or null if not found
+ */
+export const getClientInfo = (clientId, clients = []) => {
+  if (!clientId) return null;
+  
+  return clients.find(c => c.id === clientId || c.id === parseInt(clientId)) || null;
+};
+
+/**
+ * Format percentage value
+ * @param {number|string} value - Percentage value to format
+ * @param {number} decimals - Number of decimal places (default: 2)
+ * @returns {string} Formatted percentage string
+ */
+export const formatPercentage = (value, decimals = 2) => {
+  if (!value && value !== 0) return '0%';
+  
+  const numericValue = typeof value === 'string' ? parseFloat(value) : value;
+  if (isNaN(numericValue)) return '0%';
+  
+  return `${numericValue.toFixed(decimals)}%`;
+};
+
+/**
+ * Truncate text to specified length
+ * @param {string} text - Text to truncate
+ * @param {number} maxLength - Maximum length (default: 50)
+ * @returns {string} Truncated text with ellipsis if needed
+ */
+export const truncateText = (text, maxLength = 50) => {
+  if (!text || typeof text !== 'string') return '';
+  
+  if (text.length <= maxLength) return text;
+  
+  return `${text.substring(0, maxLength)}...`;
+};
+
+/**
+ * Get operation status badge configuration
+ * @param {string} status - Operation status
+ * @returns {Object} Badge configuration with bg, text, and label
+ */
+export const getStatusBadge = (status) => {
+  const badges = {
+    'pendiente_retiro': {
+      bg: 'bg-yellow-100',
+      text: 'text-yellow-800',
+      label: 'Pendiente de retiro'
+    },
+    'pendiente_entrega': {
+      bg: 'bg-orange-100',
+      text: 'text-orange-800',
+      label: 'Pendiente de entrega'
+    },
+    'realizado': {
+      bg: 'bg-green-100',
+      text: 'text-green-800',
+      label: 'Realizado'
+    },
+    'pendiente': {
+      bg: 'bg-blue-100',
+      text: 'text-blue-800',
+      label: 'Pendiente'
+    }
+  };
+  
+  return badges[status] || {
+    bg: 'bg-gray-100',
+    text: 'text-gray-800',
+    label: status || 'Sin estado'
+  };
 };

@@ -24,7 +24,7 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
       ? 'menu-item-active'
       : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'
     }
-    ${isSidebarOpen ? '' : 'justify-center'}
+    ${isSidebarOpen ? '' : 'justify-center menu-tooltip'}
     touch-manipulation select-none
   `, [isActive, isSidebarOpen]);
 
@@ -32,7 +32,8 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
     <button
       className={buttonClasses}
       onClick={onClick}
-      title={!isSidebarOpen ? title : ''} // Tooltip cuando está colapsado
+      data-tooltip={!isSidebarOpen ? title : undefined}
+      aria-label={!isSidebarOpen ? title : undefined}
     >
       <Icon size={24} className="flex-shrink-0" />
       {isSidebarOpen && (
@@ -52,6 +53,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar })
     { id: 'nuevoMovimiento', icon: Plus, title: 'Nuevo Movimiento' },
     { id: 'saldos', icon: Wallet, title: 'Saldos' },
     { id: 'movimientos', icon: List, title: 'Movimientos' },
+    { id: 'pendientesRetiro', icon: List, title: 'Pendientes de retiro' },
     { id: 'cuentas', icon: Building2, title: 'Cuentas Corrientes' },
     { id: 'arbitraje', icon: ArrowUpDown, title: 'Arbitraje' },
     { id: 'utilidad', icon: TrendingUp, title: 'Utilidad' },

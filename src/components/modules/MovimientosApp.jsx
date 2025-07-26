@@ -12,9 +12,10 @@ import {
   Eye
 } from 'lucide-react';
 import { FormSelect, formatAmountWithCurrency, estados } from '../base';
+import { getClientName } from '../../utils/formatters';
 
 /** COMPONENTE PRINCIPAL DE MOVIMIENTOS */
-function MovimientosApp({ movements, onEditMovement, onDeleteMovement, onNavigate }) {
+function MovimientosApp({ movements = [], clients = [], onEditMovement, onDeleteMovement, onNavigate }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
@@ -78,6 +79,7 @@ function MovimientosApp({ movements, onEditMovement, onDeleteMovement, onNavigat
     return (
       <MovimientoDetail 
         movement={selectedMovement} 
+        clients={clients}
         onBack={handleBackToList}
         onEdit={onEditMovement}
         onDelete={onDeleteMovement}
@@ -216,6 +218,7 @@ function MovimientosApp({ movements, onEditMovement, onDeleteMovement, onNavigat
                 <MovimientoCard
                   key={movement.id}
                   movement={movement}
+                  clients={clients}
                   onEdit={onEditMovement}
                   onDelete={onDeleteMovement}
                   onViewDetail={handleViewDetail}
@@ -230,7 +233,7 @@ function MovimientosApp({ movements, onEditMovement, onDeleteMovement, onNavigat
 }
 
 /** COMPONENTE TARJETA DE MOVIMIENTO */
-function MovimientoCard({ movement, onEdit, onDelete, onViewDetail }) {
+function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = [] }) {
   const formattedDate = movement.fecha ? 
     new Date(movement.fecha).toLocaleDateString('es-ES', { 
       day: '2-digit', 
@@ -269,7 +272,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail }) {
 
   const handleDelete = () => {
     const confirmacion = window.confirm(
-      `¿Estás seguro de eliminar este movimiento de ${movement.cliente || 'cliente desconocido'}?`
+      `¿Estás seguro de eliminar este movimiento de ${getClientName(movement.cliente, clients)}?`
     );
     if (confirmacion) {
       onDelete(movement.id);
@@ -292,7 +295,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail }) {
             
             <h3 className="font-semibold text-gray-900 text-sm sm:text-base flex items-center gap-2 mb-2">
               <User size={14} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{movement.cliente || 'Sin Cliente'}</span>
+              <span className="truncate">{getClientName(movement.cliente, clients)}</span>
             </h3>
             
             {/* Información de la operación */}
@@ -390,7 +393,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail }) {
 }
 
 /** COMPONENTE DETALLE DE MOVIMIENTO */
-function MovimientoDetail({ movement, onBack, onEdit, onDelete }) {
+function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) {
   if (!movement) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600 p-4 safe-top safe-bottom">
@@ -437,7 +440,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete }) {
 
   const handleDelete = () => {
     const confirmacion = window.confirm(
-      `¿Estás seguro de eliminar este movimiento de ${movement.cliente || 'cliente desconocido'}?`
+      `¿Estás seguro de eliminar este movimiento de ${getClientName(movement.cliente, clients)}?`
     );
     if (confirmacion) {
       onDelete(movement.id);
@@ -507,7 +510,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete }) {
               </h3>
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1">
                 {formatDateField('Fecha', movement.fecha)}
-                {formatField('Cliente', movement.cliente)}
+                {formatField('Cliente', getClientName(movement.cliente, clients))}
                 {formatField('Operación', movement.operacion?.replace('_', ' '))}
                 {formatField('Sub-Operación', movement.subOperacion)}
                 {formatField('Detalle', movement.detalle)}

@@ -352,15 +352,25 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         return;
       }
     }
+    
     onSaveMovement(formData);
+    
+    // Show success message
+    alert('Movimiento guardado exitosamente');
+    
+    // Clear form and stay on current page
     clearForm();
-    if (onCancelEdit) onCancelEdit();
+    
+    // Only navigate away if we were editing (not creating new)
+    if (initialMovementData && onCancelEdit) {
+      onCancelEdit();
+    }
   };
 
   const renderEstadoYPor = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
       <FormSelect
-        label="Estado"
+        label="Estado de retiro"
         value={formData.estado}
         onChange={(val) => handleInputChange('estado', val)}
         options={estados}
