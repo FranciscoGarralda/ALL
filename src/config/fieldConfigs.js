@@ -42,22 +42,26 @@ export const specificFieldsConfig = {
   VENTA: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true }
+        { label: 'Wallet Venta', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true }
+        { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Cuenta', name: 'cuenta', type: 'select', options: cuentas, required: true }
+        { label: 'Wallet TC', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: true,
     includesPagoMixto: true,
+    pagoMixtoWalletMode: true, // Nueva flag para usar wallets en pago mixto
     calculations: {
       total: (formData) => {
         const monto = parseFloat(formData.monto) || 0;
