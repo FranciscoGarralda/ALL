@@ -88,10 +88,6 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
   // Función para manejar navegación bidimensional
   const handleKeyboardNavigation = useCallback((currentField, event) => {
-    // Si viene del botón +, usar 'crearCliente' como campo actual
-    if (event.target && event.target.name === 'crearCliente') {
-      currentField = 'crearCliente';
-    }
     // Definir el orden de campos dinámicamente
     const baseFields = ['cliente', 'crearCliente', 'fecha', 'detalle', 'operacion'];
     const conditionalFields = [];
@@ -250,16 +246,21 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
     };
 
+    // Prevenir comportamiento por defecto para todas las teclas de navegación
+    if (['Enter', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     switch (event.key) {
       case 'Enter':
-        event.preventDefault();
         // Enter abre el dropdown/menú del campo actual
         openField(currentField);
         break;
 
       case 'ArrowDown':
-        event.preventDefault();
-        // Flecha abajo va al siguiente campo
+      case 'ArrowRight':
+        // Flecha abajo/derecha va al siguiente campo
         if (currentIndex < currentFieldOrder.length - 1) {
           const nextField = currentFieldOrder[currentIndex + 1];
           focusField(nextField);
@@ -267,26 +268,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         break;
 
       case 'ArrowUp':
-        event.preventDefault();
-        // Flecha arriba va al campo anterior
-        if (currentIndex > 0) {
-          const prevField = currentFieldOrder[currentIndex - 1];
-          focusField(prevField);
-        }
-        break;
-
-      case 'ArrowRight':
-        event.preventDefault();
-        // Flecha derecha va al siguiente campo (igual que abajo)
-        if (currentIndex < currentFieldOrder.length - 1) {
-          const nextField = currentFieldOrder[currentIndex + 1];
-          focusField(nextField);
-        }
-        break;
-
       case 'ArrowLeft':
-        event.preventDefault();
-        // Flecha izquierda va al campo anterior (igual que arriba)
+        // Flecha arriba/izquierda va al campo anterior
         if (currentIndex > 0) {
           const prevField = currentFieldOrder[currentIndex - 1];
           focusField(prevField);

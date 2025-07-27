@@ -297,10 +297,12 @@ const ClientAutocomplete = forwardRef(({
             if (e.key === 'Enter') {
               e.preventDefault();
               handleCreateClient();
-            } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key) && onKeyDown) {
-              // Crear un evento personalizado para la navegación del botón +
-              const createButtonEvent = { ...e, target: { ...e.target, name: 'crearCliente' } };
-              onKeyDown(createButtonEvent);
+            } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+              e.preventDefault();
+              if (onKeyDown) {
+                // Pasar el evento de navegación con el campo correcto
+                onKeyDown('crearCliente', e);
+              }
             }
           }}
           className="flex-shrink-0 w-10 h-10 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 touch-target"

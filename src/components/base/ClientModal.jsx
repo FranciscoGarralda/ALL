@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { X, User, Phone, Mail, MapPin, Save } from 'lucide-react';
 import FormInput from './FormInput';
 import FormSelect from './FormSelect';
@@ -21,6 +21,80 @@ const ClientModal = ({
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Referencias para navegación
+  const fieldRefs = useRef({});
+  
+  // Función para registrar referencias de campos
+  const registerField = useCallback((fieldName, ref) => {
+    if (ref) {
+      fieldRefs.current[fieldName] = ref;
+    }
+  }, []);
+
+  // Función para navegación en el modal
+  const handleModalNavigation = useCallback((currentField, event) => {
+    const fieldOrder = ['nombre', 'apellido', 'telefono', 'email', 'dni', 'direccion', 'tipo', 'guardar', 'cancelar'];
+    const currentIndex = fieldOrder.indexOf(currentField);
+
+    // Prevenir comportamiento por defecto
+    if (['Enter', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    // Función para enfocar un campo
+    const focusField = (fieldName) => {
+      const fieldRef = fieldRefs.current[fieldName];
+      if (fieldRef) {
+        if (fieldRef.focus) {
+          fieldRef.focus();
+        } else if (fieldRef.querySelector) {
+          const input = fieldRef.querySelector('input, select, button');
+          if (input) input.focus();
+        }
+      }
+    };
+
+    switch (event.key) {
+      case 'Enter':
+        // Enter en botones ejecuta la acción
+        if (currentField === 'guardar') {
+          handleSubmit();
+        } else if (currentField === 'cancelar') {
+          onClose();
+        }
+        // En otros campos, ir al siguiente
+        else if (currentIndex < fieldOrder.length - 1) {
+          const nextField = fieldOrder[currentIndex + 1];
+          focusField(nextField);
+        }
+        break;
+
+      case 'ArrowDown':
+      case 'ArrowRight':
+        // Ir al siguiente campo
+        if (currentIndex < fieldOrder.length - 1) {
+          const nextField = fieldOrder[currentIndex + 1];
+          focusField(nextField);
+        }
+        break;
+
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        // Ir al campo anterior
+        if (currentIndex > 0) {
+          const prevField = fieldOrder[currentIndex - 1];
+          focusField(prevField);
+        }
+        break;
+
+      case 'Escape':
+        // Escape cierra el modal
+        onClose();
+        break;
+    }
+  }, [onClose]);
 
   const tiposCliente = [
     { value: 'operaciones', label: 'Operaciones' },
@@ -145,19 +219,23 @@ const ClientModal = ({
           {/* Nombre y Apellido */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormInput
+              ref={(el) => registerField('nombre', el)}
               label="Nombre"
               name="nombre"
               value={formData.nombre}
               onChange={(value) => handleInputChange('nombre', value)}
+              onKeyDown={(e) => handleModalNavigation('nombre', e)}
               placeholder="Ingresa el nombre"
               required
               error={errors.nombre}
             />
             <FormInput
+              ref={(el) => registerField('apellido', el)}
               label="Apellido"
               name="apellido"
               value={formData.apellido}
               onChange={(value) => handleInputChange('apellido', value)}
+              onKeyDown={(e) => handleModalNavigation('apellido', e)}
               placeholder="Ingresa el apellido"
             />
           </div>
@@ -216,15 +294,19 @@ const ClientModal = ({
           {/* Botones */}
           <div className="flex justify-end space-x-3 pt-4">
             <button
+              ref={(el) => registerField('cancelar', el)}
               type="button"
               onClick={handleClose}
+              onKeyDown={(e) => handleModalNavigation('cancelar', e)}
               disabled={isLoading}
               className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
+              ref={(el) => registerField('guardar', el)}
               type="submit"
+              onKeyDown={(e) => handleModalNavigation('guardar', e)}
               disabled={isLoading}
               className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 flex items-center space-x-2"
             >
