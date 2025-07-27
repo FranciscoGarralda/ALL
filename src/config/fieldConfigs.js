@@ -86,8 +86,8 @@ export const specificFieldsConfig = {
         { label: 'Total compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda venta', name: 'monedaVenta', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' },
+        { label: 'Moneda venta', name: 'monedaVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
       [
         { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
