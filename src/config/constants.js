@@ -69,20 +69,56 @@ export const operaciones = {
  * Wallet types for operations (without mixed payment)
  */
 export const walletTypes = [
-  { value: 'socio1_efectivo', label: 'Socio 1 - Efectivo' },
-  { value: 'socio1_digital', label: 'Socio 1 - Digital' },
-  { value: 'socio2_efectivo', label: 'Socio 2 - Efectivo' },
-  { value: 'socio2_digital', label: 'Socio 2 - Digital' },
+  // Socio 1 Wallets
+  { value: 'socio1_peso_fisico', label: 'Socio 1 - Peso Físico' },
+  { value: 'socio1_peso_digital', label: 'Socio 1 - Peso Digital' },
+  { value: 'socio1_usd_fisico', label: 'Socio 1 - USD Físico' },
+  { value: 'socio1_usd_digital', label: 'Socio 1 - USD Digital' },
+  { value: 'socio1_usdt_digital', label: 'Socio 1 - USDT Digital' },
+  { value: 'socio1_euro_fisico', label: 'Socio 1 - Euro Físico' },
+  { value: 'socio1_real_fisico', label: 'Socio 1 - Real Físico' },
+  { value: 'socio1_libra_fisico', label: 'Socio 1 - Libra Físico' },
+  { value: 'socio1_clp_fisico', label: 'Socio 1 - CLP Físico' },
+  
+  // Socio 2 Wallets
+  { value: 'socio2_peso_fisico', label: 'Socio 2 - Peso Físico' },
+  { value: 'socio2_peso_digital', label: 'Socio 2 - Peso Digital' },
+  { value: 'socio2_usd_fisico', label: 'Socio 2 - USD Físico' },
+  { value: 'socio2_usd_digital', label: 'Socio 2 - USD Digital' },
+  { value: 'socio2_usdt_digital', label: 'Socio 2 - USDT Digital' },
+  { value: 'socio2_euro_fisico', label: 'Socio 2 - Euro Físico' },
+  { value: 'socio2_real_fisico', label: 'Socio 2 - Real Físico' },
+  { value: 'socio2_libra_fisico', label: 'Socio 2 - Libra Físico' },
+  { value: 'socio2_clp_fisico', label: 'Socio 2 - CLP Físico' },
 ];
 
 /**
  * Wallet types for TC field (includes mixed payment)
  */
 export const walletTypesTC = [
-  { value: 'socio1_efectivo', label: 'Socio 1 - Efectivo' },
-  { value: 'socio1_digital', label: 'Socio 1 - Digital' },
-  { value: 'socio2_efectivo', label: 'Socio 2 - Efectivo' },
-  { value: 'socio2_digital', label: 'Socio 2 - Digital' },
+  // Socio 1 Wallets
+  { value: 'socio1_peso_fisico', label: 'Socio 1 - Peso Físico' },
+  { value: 'socio1_peso_digital', label: 'Socio 1 - Peso Digital' },
+  { value: 'socio1_usd_fisico', label: 'Socio 1 - USD Físico' },
+  { value: 'socio1_usd_digital', label: 'Socio 1 - USD Digital' },
+  { value: 'socio1_usdt_digital', label: 'Socio 1 - USDT Digital' },
+  { value: 'socio1_euro_fisico', label: 'Socio 1 - Euro Físico' },
+  { value: 'socio1_real_fisico', label: 'Socio 1 - Real Físico' },
+  { value: 'socio1_libra_fisico', label: 'Socio 1 - Libra Físico' },
+  { value: 'socio1_clp_fisico', label: 'Socio 1 - CLP Físico' },
+  
+  // Socio 2 Wallets
+  { value: 'socio2_peso_fisico', label: 'Socio 2 - Peso Físico' },
+  { value: 'socio2_peso_digital', label: 'Socio 2 - Peso Digital' },
+  { value: 'socio2_usd_fisico', label: 'Socio 2 - USD Físico' },
+  { value: 'socio2_usd_digital', label: 'Socio 2 - USD Digital' },
+  { value: 'socio2_usdt_digital', label: 'Socio 2 - USDT Digital' },
+  { value: 'socio2_euro_fisico', label: 'Socio 2 - Euro Físico' },
+  { value: 'socio2_real_fisico', label: 'Socio 2 - Real Físico' },
+  { value: 'socio2_libra_fisico', label: 'Socio 2 - Libra Físico' },
+  { value: 'socio2_clp_fisico', label: 'Socio 2 - CLP Físico' },
+  
+  // Pago Mixto
   { value: 'pago_mixto', label: 'Pago Mixto' },
 ];
 

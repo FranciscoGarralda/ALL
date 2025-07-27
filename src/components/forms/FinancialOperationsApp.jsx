@@ -136,10 +136,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         newState.subOperacion = '';
       }
 
-      // Auto-selección para transacciones - default a COMPRA
-      if (field === 'operacion' && value === 'TRANSACCIONES') {
-        newState.subOperacion = 'COMPRA';
-      } else if (field === 'operacion' && value !== 'TRANSACCIONES' && prev.operacion === 'TRANSACCIONES') {
+      // Limpiar sub-operación cuando cambia la operación principal
+      if (field === 'operacion' && value !== prev.operacion) {
         newState.subOperacion = '';
       }
 
