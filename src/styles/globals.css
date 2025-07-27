@@ -22,21 +22,28 @@
     overflow-x: hidden;
   }
   
-  /* Prevent horizontal scroll and ensure proper layout */
+  /* DEFINITIVE FIX: Prevent horizontal scroll completely */
+  * {
+    box-sizing: border-box;
+  }
+  
   html {
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     height: 100%;
+    max-width: 100vw;
   }
   
   body {
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     position: relative;
     min-height: 100%;
+    max-width: 100vw;
   }
   
   #__next {
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     min-height: 100vh;
+    max-width: 100vw;
     display: flex;
     flex-direction: column;
     /* Prevent layout shifts */
@@ -104,47 +111,49 @@
     }
   }
 
-  /* Enhanced tooltips for collapsed menu - FIXED VERSION */
+  /* INSTANT TOOLTIPS - No delay, immediate appearance */
   .menu-tooltip {
     position: relative;
     overflow: visible;
   }
 
-  /* Tooltip text */
+  /* Tooltip text - INSTANT appearance */
   .menu-tooltip[data-tooltip]:hover::after {
     content: attr(data-tooltip);
     position: absolute;
-    left: calc(100% + 16px);
+    left: calc(100% + 12px);
     top: 50%;
     transform: translateY(-50%);
-    padding: 10px 14px;
-    background: #1f2937;
+    padding: 8px 12px;
+    background: #111827;
     color: white;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
     white-space: nowrap;
-    z-index: 99999;
+    z-index: 999999;
     pointer-events: none;
     opacity: 1;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    animation: tooltipSlideIn 0.2s ease-out;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    /* REMOVED ANIMATION - Instant appearance */
+    transition: none;
     min-width: max-content;
   }
 
-  /* Tooltip arrow */
+  /* Tooltip arrow - INSTANT appearance */
   .menu-tooltip[data-tooltip]:hover::before {
     content: '';
     position: absolute;
-    left: calc(100% + 8px);
+    left: calc(100% + 6px);
     top: 50%;
     transform: translateY(-50%);
-    border: 8px solid transparent;
-    border-right-color: #1f2937;
-    z-index: 99999;
+    border: 6px solid transparent;
+    border-right-color: #111827;
+    z-index: 999999;
     pointer-events: none;
     opacity: 1;
-    animation: tooltipSlideIn 0.2s ease-out;
+    /* REMOVED ANIMATION - Instant appearance */
+    transition: none;
   }
 
      /* Improved animation */
@@ -179,6 +188,17 @@
       transform: translateY(-50%) translateX(0);
     }
   }
+}
+
+/* GLOBAL OVERFLOW PREVENTION */
+.main-content, main, div, section, article {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Sidebar overflow fix */
+.sidebar-collapsed {
+  overflow: visible !important;
 }
 
 /* Custom component styles */

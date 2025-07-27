@@ -74,9 +74,9 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar })
     <div className={`
       fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow-large flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out z-30
-      ${isSidebarOpen ? 'w-64' : 'w-20 max-lg:w-0 max-lg:overflow-hidden overflow-x-visible'}
-      ${!isSidebarOpen ? 'max-lg:-translate-x-full' : ''}
-    `}>
+      ${isSidebarOpen ? 'w-64' : 'w-20 max-lg:w-0 max-lg:overflow-hidden'}
+      ${!isSidebarOpen ? 'max-lg:-translate-x-full sidebar-collapsed' : ''}
+    `} style={{ overflowX: isSidebarOpen ? 'hidden' : 'visible' }}>
       {/* Header del Sidebar */}
       <div className={`
         p-4 border-b border-gray-200 flex items-center
@@ -107,7 +107,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar })
       </div>
 
       {/* Menú de navegación */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-visible">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto" style={{ overflowX: isSidebarOpen ? 'hidden' : 'visible' }}>
         {menuItems.map((item) => (
           <MenuItem
             key={item.id}
