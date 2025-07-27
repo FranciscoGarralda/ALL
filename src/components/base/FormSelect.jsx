@@ -157,15 +157,7 @@ const FormSelect = forwardRef(({
         </div>
       </div>
       
-      {/* Helper text for options count */}
-      {filteredOptions.length > 0 && !error && (
-        <p className="text-xs text-gray-500 mt-1">
-          {filteredOptions.length === 1 
-            ? '1 opción disponible'
-            : `${filteredOptions.length} opciones disponibles`
-          }
-        </p>
-      )}
+
       
       {/* Error Message */}
       {error && (

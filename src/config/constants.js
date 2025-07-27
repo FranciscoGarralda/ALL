@@ -2,7 +2,6 @@
  * Currency options with flags and symbols
  */
 export const monedas = [
-  { value: '', label: 'Seleccionar moneda' },
   { value: 'PESO', label: '🇦🇷 PESO' },
   { value: 'USD', label: '💵 USD' },
   { value: 'EURO', label: '🇪🇺 EURO' },
@@ -16,7 +15,6 @@ export const monedas = [
  * Account types configuration
  */
 export const cuentas = [
-  { value: '', label: 'Seleccionar cuenta' },
   { value: 'efectivo', label: 'Efectivo' },
   { value: 'bancaria_socio1', label: 'Cuenta Bancaria Socio1' },
   { value: 'bancaria_socio2', label: 'Cuenta Bancaria Socio2' },
@@ -30,7 +28,6 @@ export const cuentas = [
  * Partners/associates configuration
  */
 export const socios = [
-  { value: '', label: 'Seleccionar persona' },
   { value: 'socio1', label: 'Socio 1' },
   { value: 'socio2', label: 'Socio 2' },
   { value: 'otro', label: 'Otro' },
@@ -40,7 +37,6 @@ export const socios = [
  * Operation status options - Updated for Estado de retiro
  */
 export const estados = [
-  { value: '_ALL_STATUSES_', label: 'Todos los estados' },
   { value: 'pendiente_retiro', label: 'Pendiente de retiro' },
   { value: 'pendiente_entrega', label: 'Pendiente de entrega' },
   { value: 'realizado', label: 'Realizado' },
@@ -94,7 +90,6 @@ export const walletTypesTC = [
  * Payment types for mixed payments
  */
 export const tiposPago = [
-  { value: '', label: 'Seleccionar tipo de pago' },
   { value: 'efectivo', label: 'Efectivo' },
   { value: 'transferencia', label: 'Transferencia Bancaria' },
   { value: 'crypto', label: 'Criptomonedas' },

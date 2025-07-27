@@ -74,7 +74,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   // Filter clients for prestamistas
   const prestamistaClientsOptions = useMemo(() => {
     const filtered = clients?.filter(c => c.tipoCliente === 'prestamistas') || [];
-    return [{ value: '', label: 'Seleccionar cliente prestamista' }, ...filtered.map(c => ({ value: c.nombre, label: `${c.nombre} ${c.apellido}` }))];
+    return filtered.map(c => ({ value: c.nombre, label: `${c.nombre} ${c.apellido}` }));
   }, [clients]);
 
   // Custom hooks for clean separation of concerns
@@ -272,7 +272,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   };
 
   const handleGuardar = () => {
-    console.log("Attempting to save movement. Current formData:", formData);
+    
     // Validate mixed payments using hook
     const validation = validateMixedPayments();
     if (!validation.isValid) {
@@ -413,20 +413,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               required={true}
               placeholder="Buscar o seleccionar cliente"
               onClientCreated={(newClient) => {
-                console.log('Cliente recibido para guardar:', newClient);
-                console.log('onSaveClient function exists:', !!onSaveClient);
-                
                 // Guardar el cliente en la base de datos
                 if (onSaveClient) {
                   onSaveClient(newClient);
-                  console.log('Cliente enviado a handleSaveClient');
-                } else {
-                  console.error('onSaveClient function not available');
+                  // Auto-seleccionar el cliente recién creado
+                  handleInputChange('cliente', newClient.id || newClient.nombre);
                 }
-                
-                // Auto-seleccionar el cliente recién creado
-                handleInputChange('cliente', newClient.id || newClient.nombre);
-                console.log('Cliente auto-seleccionado:', newClient.id || newClient.nombre);
               }}
             />
           )}
@@ -464,9 +456,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             value={formData.operacion}
             onChange={(val) => handleInputChange('operacion', val)}
                           onKeyDown={(e) => handleKeyboardNavigation('operacion', e, formData, specificFieldsConfig)}
-            options={[
-              { value: '', label: 'Seleccionar operación' },
-              ...Object.entries(operaciones).map(([key, op]) => ({
+                          options={[
+                ...Object.entries(operaciones).map(([key, op]) => ({
                 value: key,
                 label: `${op.icon} ${key.replace('_', ' ')}`,
               })),
@@ -485,9 +476,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                 value={formData.subOperacion}
                 onChange={(val) => handleInputChange('subOperacion', val)}
                 onKeyDown={(e) => handleKeyboardNavigation('subOperacion', e, formData, specificFieldsConfig)}
-                options={[
-                  { value: '', label: 'Seleccionar detalle' },
-                  ...operaciones[formData.operacion].subMenu.map((sub) => ({
+                                  options={[
+                    ...operaciones[formData.operacion].subMenu.map((sub) => ({
                     value: sub,
                     label: sub,
                   })),

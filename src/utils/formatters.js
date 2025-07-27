@@ -193,7 +193,19 @@ export const formatDateWithDay = (date, options = {}) => {
   
   if (!date) return '';
   
-  const dateObj = date instanceof Date ? date : new Date(date);
+  // Fix timezone issue: parse date as local time instead of UTC
+  let dateObj;
+  if (date instanceof Date) {
+    dateObj = date;
+  } else {
+    // If it's a string in YYYY-MM-DD format, parse as local time
+    if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      const [year, month, day] = date.split('-').map(Number);
+      dateObj = new Date(year, month - 1, day); // month is 0-indexed
+    } else {
+      dateObj = new Date(date);
+    }
+  }
   
   if (isNaN(dateObj.getTime())) return '';
   

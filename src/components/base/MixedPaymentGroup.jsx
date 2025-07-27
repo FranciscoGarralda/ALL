@@ -5,14 +5,12 @@ import CurrencyInput from './CurrencyInput';
 
 // Opciones para socio
 const socioOptions = [
-  { value: '', label: 'Seleccionar socio' },
   { value: 'socio1', label: 'Socio 1' },
   { value: 'socio2', label: 'Socio 2' },
 ];
 
 // Opciones para tipo de pago
 const tipoOptions = [
-  { value: '', label: 'Seleccionar tipo' },
   { value: 'efectivo', label: 'Efectivo' },
   { value: 'digital', label: 'Digital' },
 ];
