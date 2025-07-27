@@ -101,12 +101,12 @@
     }
   }
 
-  /* Simple tooltips for collapsed menu only */
+  /* Floating tooltips for collapsed menu - fixed position to float above everything */
   .sidebar-collapsed .menu-tooltip[data-tooltip]:hover::after {
     content: attr(data-tooltip);
-    position: absolute;
-    left: calc(100% + 8px);
-    top: 50%;
+    position: fixed;
+    left: 84px; /* Fixed position from left edge */
+    top: var(--tooltip-y, 50%);
     transform: translateY(-50%);
     padding: 6px 10px;
     background: rgba(0, 0, 0, 0.9);
@@ -114,8 +114,13 @@
     font-size: 12px;
     border-radius: 4px;
     white-space: nowrap;
-    z-index: 1000;
+    z-index: 9999; /* Float above everything */
     pointer-events: none;
+  }
+
+  /* Prevent horizontal scroll completely */
+  html, body {
+    overflow-x: hidden;
   }
 
      /* Improved animation */

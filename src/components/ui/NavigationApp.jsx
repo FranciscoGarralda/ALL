@@ -20,6 +20,8 @@ import Footer from './Footer';
 
 /** COMPONENTE DE ELEMENTO DEL MENÚ OPTIMIZADO */
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
+  const buttonRef = useRef(null);
+  
   const buttonClasses = useMemo(() => `
     w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 relative
     ${isActive
@@ -30,10 +32,21 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
     touch-manipulation select-none
   `, [isActive, isSidebarOpen]);
 
+  // Calculate tooltip Y position for fixed positioning
+  const handleMouseEnter = useCallback(() => {
+    if (!isSidebarOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const tooltipY = rect.top + (rect.height / 2);
+      document.documentElement.style.setProperty('--tooltip-y', `${tooltipY}px`);
+    }
+  }, [isSidebarOpen]);
+
   return (
     <button
+      ref={buttonRef}
       className={buttonClasses}
       onClick={onClick}
+      onMouseEnter={handleMouseEnter}
       data-tooltip={!isSidebarOpen ? title : undefined}
       aria-label={!isSidebarOpen ? title : undefined}
     >
