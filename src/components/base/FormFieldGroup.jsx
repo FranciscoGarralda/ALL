@@ -130,7 +130,17 @@ const FormFieldGroup = ({
         );
       
       case 'number':
-        // ALL numeric fields get currency formatting
+        // Check if it's a time/quantity field (not currency)
+        if (name && ['lapso'].includes(name)) {
+          return (
+            <FormInput
+              {...commonProps}
+              type="number"
+              placeholder={placeholder || '0'}
+            />
+          );
+        }
+        // All other numeric fields get currency formatting
         return (
           <CurrencyInput
             {...commonProps}
