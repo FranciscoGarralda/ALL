@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { DollarSign, XCircle, PlusCircle } from 'lucide-react';
 import {
   FormInput,
   FormSelect,
   FormFieldGroup,
-  WalletPaymentGroup,
+  MixedPaymentGroup,
+  ClientAutocomplete,
   formatAmountWithCurrency,
   monedas,
   cuentas,
@@ -13,8 +14,9 @@ import {
   operaciones,
   proveedoresCC
 } from '../base';
-import ClientAutocomplete from '../base/ClientAutocomplete';
 import { specificFieldsConfig } from '../../config/fieldConfigs';
+import { useMixedPayments } from '../../hooks/useMixedPayments';
+import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 
 /**
  * Dynamic Form Field Groups Component
@@ -63,8 +65,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     montoVenta: '',
     cuentaSalida: '',
     cuentaIngreso: '',
-    // pagoMixtoActivo eliminado - ahora se controla por walletTC === 'pago_mixto'
-    pagosMixtos: [],
+    // Mixed payment system - controlled by walletTC === 'pago_mixto'
+    mixedPayments: [],
     expectedTotalForMixedPayments: '',
     ...initialMovementData
   });
@@ -417,11 +419,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     });
   };
 
-  const handlePagoMixtoChange = (id, field, value) => {
+  const handleMixedPaymentChange = (id, field, value) => {
     setFormData(prev => {
-      const updatedPagos = prev.pagosMixtos.map(pago =>
-        pago.id === id ? { ...pago, [field]: value } : pago
-      );
+              const updatedPayments = prev.mixedPayments.map(payment =>
+          payment.id === id ? { ...payment, [field]: value } : payment
+        );
 
       let newTotal = prev.total;
       const expectedTotal = parseFloat(prev.expectedTotalForMixedPayments) || 0;
@@ -442,7 +444,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     });
   };
 
-  const addPagoMixto = () => {
+  const addMixedPayment = () => {
     setFormData(prev => {
       // Determinar si estamos en modo wallet
       let configKey = prev.subOperacion;
@@ -478,7 +480,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     });
   };
 
-  const removePagoMixto = (id) => {
+  const removeMixedPayment = (id) => {
     setFormData(prev => {
       const filteredPagos = prev.pagosMixtos.filter(pago => pago.id !== id);
       let newTotal = prev.total;

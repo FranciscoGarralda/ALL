@@ -5,7 +5,7 @@ export { default as FormFieldGroup } from './FormFieldGroup';
 export { default as ClientSelect } from './ClientSelect';
 export { default as ClientAutocomplete } from './ClientAutocomplete';
 export { default as ClientModal } from './ClientModal';
-export { default as WalletPaymentGroup } from './WalletPaymentGroup';
+export { default as MixedPaymentGroup } from './MixedPaymentGroup';
 
 // Re-export utility functions from other modules for convenience
 export { formatAmountWithCurrency } from '../../utils/formatters';

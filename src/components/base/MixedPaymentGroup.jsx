@@ -4,7 +4,7 @@ import FormInput from './FormInput';
 import { walletTypes } from '../../config/constants';
 import { formatAmountWithCurrency } from '../../utils/formatters';
 
-const WalletPaymentGroup = ({
+const MixedPaymentGroup = ({
   payments = [],
   onPaymentChange,
   onAddPayment,
@@ -218,4 +218,4 @@ const WalletPaymentItem = ({
   );
 };
 
-export default WalletPaymentGroup;
+export default MixedPaymentGroup;
