@@ -300,8 +300,8 @@ const ClientAutocomplete = forwardRef(({
             } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
               e.preventDefault();
               if (onKeyDown) {
-                // Pasar el evento de navegación con el campo correcto
-                onKeyDown('crearCliente', e);
+                // Llamar la navegación con los parámetros correctos
+                onKeyDown(e);
               }
             }
           }}

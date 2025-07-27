@@ -246,14 +246,15 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
     };
 
-    // Prevenir comportamiento por defecto para todas las teclas de navegación
-    if (['Enter', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+    // Solo prevenir comportamiento por defecto para flechas (no Enter)
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
       event.preventDefault();
       event.stopPropagation();
     }
 
     switch (event.key) {
       case 'Enter':
+        event.preventDefault();
         // Enter abre el dropdown/menú del campo actual
         openField(currentField);
         break;
