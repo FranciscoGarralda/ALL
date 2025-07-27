@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import { Plus, User, ChevronDown, X } from 'lucide-react';
 import ClientModal from './ClientModal';
 
-const ClientAutocomplete = ({
+const ClientAutocomplete = forwardRef(({
   label,
   value,
   onChange,
@@ -12,12 +12,14 @@ const ClientAutocomplete = ({
   placeholder = 'Buscar o seleccionar cliente',
   className = '',
   onClientCreated,
+  onKeyDown,
   ...rest
-}) => {
+}, ref) => {
   const [showModal, setShowModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [filteredClients, setFilteredClients] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef(null);
   const dropdownRef = useRef(null);
 
@@ -67,10 +69,72 @@ const ClientAutocomplete = ({
     const newValue = e.target.value;
     setInputValue(newValue);
     setIsOpen(true);
+    setSelectedIndex(-1); // Reset selection when typing
     
     // Si se borra el input, limpiar la selección
     if (!newValue.trim()) {
       onChange('');
+    }
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e) => {
+    // Call parent onKeyDown for field navigation
+    if (onKeyDown && !isOpen) {
+      onKeyDown(e);
+      return;
+    }
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        if (!isOpen) {
+          setIsOpen(true);
+          setSelectedIndex(0);
+        } else {
+          setSelectedIndex(prev => 
+            prev < filteredClients.length - 1 ? prev + 1 : prev
+          );
+        }
+        break;
+
+      case 'ArrowUp':
+        e.preventDefault();
+        if (isOpen) {
+          setSelectedIndex(prev => prev > 0 ? prev - 1 : prev);
+        }
+        break;
+
+      case 'Enter':
+        e.preventDefault();
+        if (isOpen && selectedIndex >= 0 && filteredClients[selectedIndex]) {
+          handleClientSelect(filteredClients[selectedIndex]);
+        } else if (!isOpen) {
+          // If dropdown is closed and Enter is pressed, navigate to next field
+          if (onKeyDown) {
+            onKeyDown(e);
+          }
+        }
+        break;
+
+      case 'Escape':
+        e.preventDefault();
+        setIsOpen(false);
+        setSelectedIndex(-1);
+        break;
+
+      case 'Tab':
+        // Allow normal tab behavior
+        setIsOpen(false);
+        setSelectedIndex(-1);
+        break;
+
+      default:
+        // For other keys, open dropdown if not already open
+        if (!isOpen && e.key.length === 1) {
+          setIsOpen(true);
+        }
+        break;
     }
   };
 
@@ -133,11 +197,21 @@ const ClientAutocomplete = ({
         <div className="flex-1 relative">
           <div className="relative">
             <input
-              ref={inputRef}
+              ref={(el) => {
+                inputRef.current = el;
+                if (ref) {
+                  if (typeof ref === 'function') {
+                    ref(el);
+                  } else {
+                    ref.current = el;
+                  }
+                }
+              }}
               type="text"
               value={inputValue}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
+              onKeyDown={handleKeyDown}
               placeholder={placeholder}
               className={`w-full px-3 py-2 text-base border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder:text-gray-400 sm:px-4 sm:py-2.5 sm:text-sm ${
                 error 
@@ -175,7 +249,11 @@ const ClientAutocomplete = ({
                     key={client.id || client.nombre || index}
                     type="button"
                     onClick={() => handleClientSelect(client)}
-                    className="w-full px-4 py-3 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none border-b border-gray-100 last:border-b-0"
+                    className={`w-full px-4 py-3 text-left focus:outline-none border-b border-gray-100 last:border-b-0 transition-colors duration-150 ${
+                      index === selectedIndex 
+                        ? 'bg-primary-50 text-primary-900' 
+                        : 'hover:bg-gray-50 focus:bg-gray-50'
+                    }`}
                   >
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -248,6 +326,8 @@ const ClientAutocomplete = ({
       )}
     </div>
   );
-};
+});
+
+ClientAutocomplete.displayName = 'ClientAutocomplete';
 
 export default ClientAutocomplete;
