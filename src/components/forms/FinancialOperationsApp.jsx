@@ -154,10 +154,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
     }
     
-    // Omitir checkbox de pago mixto de la navegación (causa problemas)
-    // if (config && config.includesPagoMixto) {
-    //   conditionalFields.push('pagoMixtoActivo');
-    // }
+    // Agregar checkbox de pago mixto si aplica
+    if (config && config.includesPagoMixto) {
+      conditionalFields.push('pagoMixtoActivo');
+    }
     
     // Agregar campos comunes del final
     const endFields = ['estado', 'por'];
@@ -184,7 +184,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       const fieldRef = fieldRefs.current[fieldName];
       if (fieldRef) {
         setTimeout(() => {
-          if (fieldRef.focus) {
+          // Para checkboxes, enfocar directamente
+          if (fieldRef.type === 'checkbox') {
+            fieldRef.focus();
+          }
+          // Para otros elementos
+          else if (fieldRef.focus) {
             fieldRef.focus();
           } else if (fieldRef.querySelector) {
             const input = fieldRef.querySelector('input, select, textarea');
@@ -198,10 +203,9 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     const openField = (fieldName) => {
       const fieldRef = fieldRefs.current[fieldName];
       if (fieldRef) {
-        // Para checkboxes, alternar el estado
+        // Para checkboxes, enfocar primero (no alternar automáticamente)
         if (fieldRef.type === 'checkbox') {
-          fieldRef.checked = !fieldRef.checked;
-          fieldRef.dispatchEvent(new Event('change', { bubbles: true }));
+          fieldRef.focus();
           return;
         }
         
@@ -681,7 +685,16 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                     className="form-checkbox h-4 w-4 text-blue-600 rounded"
                     checked={formData.pagoMixtoActivo}
                     onChange={(e) => handleInputChange('pagoMixtoActivo', e.target.checked)}
-                    onKeyDown={(e) => handleKeyboardNavigation('pagoMixtoActivo', e)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        // Alternar el checkbox
+                        e.target.checked = !e.target.checked;
+                        e.target.dispatchEvent(new Event('change', { bubbles: true }));
+                      } else {
+                        handleKeyboardNavigation('pagoMixtoActivo', e);
+                      }
+                    }}
                   />
                   <span className="text-sm font-medium text-gray-700">Pago Mixto</span>
                 </label>
