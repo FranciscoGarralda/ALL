@@ -130,7 +130,7 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
     useGrouping: true
-  }).replace(/\./g, thousandSeparator).replace(/,/g, decimalSeparator);
+  });
 
   // Get currency symbol
   const symbol = CURRENCY_SYMBOLS[currency] || '$';

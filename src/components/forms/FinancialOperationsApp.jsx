@@ -106,9 +106,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   useEffect(() => {
     if (initialMovementData) {
       setFormData(initialMovementData);
-    } else {
-      clearForm();
     }
+    // No llamar clearForm() automáticamente
   }, [initialMovementData]);
 
   const handleInputChange = (field, value) => {
