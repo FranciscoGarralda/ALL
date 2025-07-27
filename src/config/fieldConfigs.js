@@ -75,30 +75,30 @@ export const specificFieldsConfig = {
   ARBITRAJE: {
     groups: [
       [
-        { label: 'Monto compra', name: 'monto', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda compra', name: 'moneda', type: 'select', options: monedas, required: true }
+        { label: 'Monto compra', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda compra', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'TC compra', name: 'tc', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda TC compra', name: 'monedaTCCompra', type: 'select', options: monedas, required: true }
+        { label: 'TC compra', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda TC compra', name: 'monedaTCCompra', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Total compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true }
+        { label: 'Total compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda venta', name: 'monedaVenta', type: 'select', options: monedas, required: true }
+        { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda venta', name: 'monedaVenta', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda TC venta', name: 'monedaTCVenta', type: 'select', options: monedas, required: true }
+        { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda TC venta', name: 'monedaTCVenta', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Total venta', name: 'totalVenta', type: 'number', readOnly: true, calculated: true }
+        { label: 'Total venta', name: 'totalVenta', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Comisión / Profit', name: 'comision', type: 'number', placeholder: '0.00', calculated: true },
-        { label: 'Cuenta de comisión', name: 'cuenta', type: 'select', options: cuentas, required: true }
+        { label: 'Comisión / Profit', name: 'comision', type: 'number', placeholder: '0.00', calculated: true, gridCols: 'col-span-1' },
+        { label: 'Cuenta de comisión', name: 'cuenta', type: 'select', options: cuentas, required: true, gridCols: 'col-span-1' }
       ]
     ],
     includesEstadoYPor: true,
