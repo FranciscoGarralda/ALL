@@ -130,21 +130,12 @@ const FormFieldGroup = ({
         );
       
       case 'number':
-        // Check if it's a currency field (monto, total, tc, etc.)
-        if (name && ['monto', 'total', 'tc', 'montoVenta', 'totalCompra', 'totalVenta', 'comision', 'interes'].includes(name)) {
-          return (
-            <CurrencyInput
-              {...commonProps}
-              currency="PESO"
-              placeholder={placeholder || '$0'}
-            />
-          );
-        }
+        // ALL numeric fields get currency formatting
         return (
-          <FormInput
+          <CurrencyInput
             {...commonProps}
-            type="number"
-            placeholder={placeholder || '0.00'}
+            currency="PESO"
+            placeholder={placeholder || '$0'}
           />
         );
 
