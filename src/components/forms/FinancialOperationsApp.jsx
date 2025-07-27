@@ -88,8 +88,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
   // Función para manejar navegación bidimensional
   const handleKeyboardNavigation = useCallback((currentField, event) => {
+    // Si viene del botón +, usar 'crearCliente' como campo actual
+    if (event.target && event.target.name === 'crearCliente') {
+      currentField = 'crearCliente';
+    }
     // Definir el orden de campos dinámicamente
-    const baseFields = ['cliente', 'fecha', 'detalle', 'operacion'];
+    const baseFields = ['cliente', 'crearCliente', 'fecha', 'detalle', 'operacion'];
     const conditionalFields = [];
     
     // Agregar sub-operación si es necesaria
@@ -150,10 +154,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
     }
     
-    // Agregar checkbox de pago mixto si aplica
-    if (config && config.includesPagoMixto) {
-      conditionalFields.push('pagoMixtoActivo');
-    }
+    // Omitir checkbox de pago mixto de la navegación (causa problemas)
+    // if (config && config.includesPagoMixto) {
+    //   conditionalFields.push('pagoMixtoActivo');
+    // }
     
     // Agregar campos comunes del final
     const endFields = ['estado', 'por'];
@@ -203,6 +207,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         
         // Para botones, hacer click
         if (fieldRef.tagName === 'BUTTON') {
+          fieldRef.click();
+          return;
+        }
+        
+        // Para el botón crear cliente (caso especial)
+        if (fieldName === 'crearCliente' && fieldRef) {
           fieldRef.click();
           return;
         }
@@ -755,6 +765,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               value={formData.cliente}
               onChange={(val) => handleInputChange('cliente', val)}
               onKeyDown={(e) => handleKeyboardNavigation('cliente', e)}
+              onRegisterCreateButton={(el) => registerField('crearCliente', el)}
               clients={clients || []}
               required={true}
               placeholder="Buscar o seleccionar cliente"
