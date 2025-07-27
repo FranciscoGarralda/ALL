@@ -25,18 +25,17 @@ function ArbitrajeApp({ movements, onNavigate }) {
   const arbitrageMovements = useMemo(() => {
     return movements.filter(mov => 
       mov.operacion === 'TRANSACCIONES' && 
-      mov.subOperacion === 'ARBITRAJE' && 
-      mov.comision && 
-      parseFloat(mov.comision) > 0
+      mov.subOperacion === 'ARBITRAJE'
     );
   }, [movements]);
 
-  // Calcular ganancias totales de arbitraje por moneda
+  // Calcular ganancias totales de arbitraje por moneda TC (donde va la comisión)
   const totalArbitrageProfits = useMemo(() => {
     const totals = {};
     arbitrageMovements.forEach(mov => {
-      const currency = mov.moneda; // Asumiendo que la ganancia está en la moneda base
-      if (currency) {
+      if (mov.comision && parseFloat(mov.comision) !== 0) {
+        // La comisión se calcula en la moneda del TC de venta (donde se deposita la ganancia)
+        const currency = mov.monedaTCVenta || mov.monedaTC || 'ARS';
         totals[currency] = (totals[currency] || 0) + parseFloat(mov.comision);
       }
     });
@@ -379,7 +378,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                       <div className="text-right flex-shrink-0 mt-2 sm:mt-0">
                         <p className="text-xs text-indigo-600 mb-1">Ganancia</p>
                         <p className="font-bold text-lg sm:text-xl text-indigo-700">
-                          {formatAmountWithCurrency(parseFloat(mov.comision), mov.moneda)}
+                          {formatAmountWithCurrency(parseFloat(mov.comision || 0), mov.monedaTCVenta || mov.monedaTC || 'ARS')}
                         </p>
                       </div>
                     </div>
