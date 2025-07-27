@@ -86,8 +86,8 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar })
     <div className={`
       fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow-large flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out z-30
-      ${isSidebarOpen ? 'w-64' : 'w-20 max-lg:w-0 max-lg:overflow-hidden'}
-      ${!isSidebarOpen ? 'max-lg:-translate-x-full sidebar-collapsed' : ''}
+      ${isSidebarOpen ? 'w-64' : 'w-20 max-lg:w-0 max-lg:overflow-hidden sidebar-collapsed'}
+      ${!isSidebarOpen ? 'max-lg:-translate-x-full' : ''}
     `} style={{ overflowX: isSidebarOpen ? 'hidden' : 'visible' }}>
       {/* Header del Sidebar */}
       <div className={`
