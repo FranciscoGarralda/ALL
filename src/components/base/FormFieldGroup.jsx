@@ -1,4 +1,4 @@
-import React from 'react';
+// React import not needed for JSX-only components in modern React
 import FormInput from './FormInput.jsx';
 import FormSelect from './FormSelect.jsx';
 import ClientSelect from './ClientSelect.jsx';

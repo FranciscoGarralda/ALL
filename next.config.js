@@ -1,3 +1,5 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Performance optimizations
@@ -7,7 +9,7 @@ const nextConfig = {
     // Optimize server components
     serverComponentsExternalPackages: [],
     // Enable optimized images
-    optimizePackageImports: ['lucide-react', 'recharts'],
+    optimizePackageImports: ['lucide-react'],
   },
 
   // Compiler optimizations
@@ -30,11 +32,8 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
-  // Compression and caching
-  compress: true,
-  
   // Bundle optimization
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config, { dev }) => {
     // Production optimizations
     if (!dev) {
       // Enable bundle splitting
@@ -69,7 +68,7 @@ const nextConfig = {
     return config;
   },
 
-  // Headers for performance
+  // Headers for performance and security
   async headers() {
     return [
       {
@@ -96,16 +95,17 @@ const nextConfig = {
     ];
   },
 
-  // Enable static optimization
+  // Optimizations
   trailingSlash: false,
-  
-  // Power optimizations
   poweredByHeader: false,
-  
-  // Enable gzip compression
   compress: true,
+  
+  // Modular imports for better tree shaking
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{member}}',
+    },
+  },
 }
-
-const path = require('path');
 
 module.exports = nextConfig

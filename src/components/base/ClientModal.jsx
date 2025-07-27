@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { X, User, Phone, Mail, MapPin, Save } from 'lucide-react';
 import FormInput from './FormInput';
 import FormSelect from './FormSelect';
