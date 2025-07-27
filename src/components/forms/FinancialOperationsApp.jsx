@@ -291,7 +291,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       montoVenta: '',
       cuentaSalida: '',
       cuentaIngreso: '',
-      // pagoMixtoActivo eliminado - ahora se controla por walletTC === 'pago_mixto'
+
       mixedPayments: [],
       expectedTotalForMixedPayments: '',
     });

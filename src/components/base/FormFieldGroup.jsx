@@ -104,11 +104,10 @@ const FormFieldGroup = ({
         return fieldWrapper(
           <ClientSelect
             {...commonProps}
-            clients={[]} // TODO: Pasar clientes reales desde props
+            clients={[]}
             placeholder={placeholder || 'Seleccionar cliente'}
             onClientCreated={(newClient) => {
-              // TODO: Manejar cliente recién creado
-              console.log('Cliente creado:', newClient);
+              // Handle client creation
             }}
           />
         );

@@ -253,11 +253,11 @@ export default function MainApp() {
         m.id === editingMovement.id ? newMovement : m
       ));
       setEditingMovement(null);
-      console.log('Movement updated:', newMovement);
+      
     } else {
       // Add new movement
       setMovements(prev => [...prev, newMovement]);
-      console.log('Movement saved:', newMovement);
+      
     }
 
     // Navigate back to movements list after save
@@ -265,7 +265,7 @@ export default function MainApp() {
   };
 
   const handleEditMovement = (movement) => {
-    console.log('Editing movement:', movement);
+
     setEditingMovement(movement);
     setPreviousPage(currentPage); // Remember where we came from
     navigateTo('nuevoMovimiento');
@@ -274,7 +274,7 @@ export default function MainApp() {
   const handleDeleteMovement = (movementId) => {
     if (window.confirm('¿Está seguro de que desea eliminar este movimiento?')) {
       setMovements(prev => prev.filter(m => m.id !== movementId));
-      console.log('Movement deleted:', movementId);
+
     }
   };
 
@@ -285,22 +285,20 @@ export default function MainApp() {
 
   // Client management functions
   const handleSaveClient = (clientData) => {
-    console.log('handleSaveClient called with:', clientData);
-    console.log('Client has ID:', !!clientData.id);
-    console.log('Current clients count:', clients.length);
+
     
     setClients(prev => {
       // Verificar duplicados usando el estado actual (prev)
       const existingClient = prev.find(c => c.id === clientData.id);
-      console.log('Existing client found in current state:', !!existingClient);
+      
       
       if (clientData.id && existingClient) {
         // Update existing client
-        console.log('Client updated:', clientData);
+        
         return prev.map(c => c.id === clientData.id ? clientData : c);
       } else if (clientData.id && !existingClient) {
         // Cliente con ID pero no existe, agregarlo como nuevo
-        console.log('Client with ID added as new:', clientData);
+        
         return [...prev, clientData];
       } else {
         // Add new client without ID
@@ -309,7 +307,7 @@ export default function MainApp() {
           id: Date.now(),
           createdAt: new Date().toISOString()
         };
-        console.log('Client saved as new:', newClient);
+        
         return [...prev, newClient];
       }
     });
@@ -317,7 +315,7 @@ export default function MainApp() {
 
   const handleDeleteClient = (clientId) => {
     setClients(prev => prev.filter(c => c.id !== clientId));
-    console.log('Client deleted:', clientId);
+    
   };
 
   // Page rendering function
