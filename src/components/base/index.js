@@ -19,7 +19,8 @@ export {
   tiposPago,
   prioridades,
   periodos,
-  walletTypes
+  walletTypes,
+  walletTypesTC
 } from '../../config/constants';
 export { 
   specificFieldsConfig, 

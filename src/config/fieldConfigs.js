@@ -1,4 +1,4 @@
-import { monedas, cuentas, socios, proveedoresCC, prestamistaClientsDefault, walletTypes } from './constants';
+import { monedas, cuentas, socios, proveedoresCC, prestamistaClientsDefault, walletTypes, walletTypesTC } from './constants';
 
 /**
  * Configuration object for specific operation field layouts
@@ -20,7 +20,7 @@ export const specificFieldsConfig = {
         { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true }
       ],
       [
-        { label: 'Wallet TC', name: 'walletTC', type: 'select', options: walletTypes, required: true, placeholder: 'Seleccionar wallet' }
+        { label: 'Wallet TC', name: 'walletTC', type: 'select', options: walletTypesTC, required: true, placeholder: 'Seleccionar wallet' }
       ],
       [
         { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true }

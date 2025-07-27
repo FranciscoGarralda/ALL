@@ -70,9 +70,19 @@ export const operaciones = {
 };
 
 /**
- * Wallet types for operations
+ * Wallet types for operations (without mixed payment)
  */
 export const walletTypes = [
+  { value: 'socio1_efectivo', label: 'Socio 1 - Efectivo' },
+  { value: 'socio1_digital', label: 'Socio 1 - Digital' },
+  { value: 'socio2_efectivo', label: 'Socio 2 - Efectivo' },
+  { value: 'socio2_digital', label: 'Socio 2 - Digital' },
+];
+
+/**
+ * Wallet types for TC field (includes mixed payment)
+ */
+export const walletTypesTC = [
   { value: 'socio1_efectivo', label: 'Socio 1 - Efectivo' },
   { value: 'socio1_digital', label: 'Socio 1 - Digital' },
   { value: 'socio2_efectivo', label: 'Socio 2 - Efectivo' },
