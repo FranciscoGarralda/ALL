@@ -9,21 +9,21 @@ export const specificFieldsConfig = {
   COMPRA: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Wallet Compra', name: 'walletCompra', type: 'select', options: walletTypes, required: true, placeholder: 'Seleccionar wallet' }
+        { label: 'Wallet Compra', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true }
+        { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Wallet TC', name: 'walletTC', type: 'select', options: walletTypesTC, required: true, placeholder: 'Seleccionar wallet' }
+        { label: 'Wallet TC', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true }
+        { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: true,

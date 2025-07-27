@@ -3,6 +3,7 @@ import FormInput from './FormInput.jsx';
 import FormSelect from './FormSelect.jsx';
 import ClientSelect from './ClientSelect.jsx';
 import CurrencyInput from './CurrencyInput.jsx';
+import { WalletButtonGroup, WalletTCButtonGroup } from './index.js';
 
 /**
  * Form field group component that organizes related fields in responsive layouts
@@ -39,16 +40,11 @@ const FormFieldGroup = ({
 
   const gridCols = getGridColumns();
 
-  // Grid classes for responsive layout
+  // Grid classes for responsive layout - Always use 2 columns for COMPRA layout
   const gridClasses = [
     'grid',
+    'grid-cols-2',
     gap,
-    // Mobile: always single column
-    'grid-cols-1',
-    // Tablet and up: responsive columns based on field count
-    gridCols >= 2 ? 'sm:grid-cols-2' : '',
-    gridCols >= 3 ? 'lg:grid-cols-3' : '',
-    gridCols >= 4 ? 'xl:grid-cols-4' : '',
     className
   ].filter(Boolean).join(' ');
 
@@ -72,6 +68,7 @@ const FormFieldGroup = ({
       showDayName = false,
       calculated = false,
       filterOptions,
+      gridCols = '',
       ref,
       ...fieldProps
     } = field;
@@ -94,10 +91,17 @@ const FormFieldGroup = ({
       ...fieldProps
     };
 
+    // Wrapper div with grid column classes
+    const fieldWrapper = (content) => (
+      <div className={gridCols || ''}>
+        {content}
+      </div>
+    );
+
     // Render based on field type
     switch (type) {
       case 'client-select':
-        return (
+        return fieldWrapper(
           <ClientSelect
             {...commonProps}
             clients={[]} // TODO: Pasar clientes reales desde props
@@ -110,7 +114,7 @@ const FormFieldGroup = ({
         );
 
       case 'select':
-        return (
+        return fieldWrapper(
           <FormSelect
             {...commonProps}
             options={options}
@@ -120,7 +124,7 @@ const FormFieldGroup = ({
         );
       
       case 'date':
-        return (
+        return fieldWrapper(
           <FormInput
             {...commonProps}
             type="date"
@@ -129,10 +133,24 @@ const FormFieldGroup = ({
           />
         );
       
+      case 'wallet-buttons':
+        return fieldWrapper(
+          <WalletButtonGroup
+            {...commonProps}
+          />
+        );
+
+      case 'wallet-tc-buttons':
+        return fieldWrapper(
+          <WalletTCButtonGroup
+            {...commonProps}
+          />
+        );
+
       case 'number':
         // Check if it's a time/quantity/percentage field (not currency)
         if (name && ['lapso', 'interes'].includes(name)) {
-          return (
+          return fieldWrapper(
             <FormInput
               {...commonProps}
               type="number"
@@ -141,7 +159,7 @@ const FormFieldGroup = ({
           );
         }
         // All other numeric fields get currency formatting
-        return (
+        return fieldWrapper(
           <CurrencyInput
             {...commonProps}
             currency="PESO"
@@ -150,7 +168,7 @@ const FormFieldGroup = ({
         );
 
       case 'currency':
-        return (
+        return fieldWrapper(
           <CurrencyInput
             {...commonProps}
             currency={fieldProps.currency || 'PESO'}
@@ -159,7 +177,7 @@ const FormFieldGroup = ({
         );
       
       case 'email':
-        return (
+        return fieldWrapper(
           <FormInput
             {...commonProps}
             type="email"
@@ -168,7 +186,7 @@ const FormFieldGroup = ({
         );
       
       case 'tel':
-        return (
+        return fieldWrapper(
           <FormInput
             {...commonProps}
             type="tel"
@@ -177,7 +195,7 @@ const FormFieldGroup = ({
         );
       
       case 'textarea':
-        return (
+        return fieldWrapper(
           <div key={name || index} className="space-y-1">
             {label && (
               <label 
@@ -223,7 +241,7 @@ const FormFieldGroup = ({
         );
       
       default:
-        return (
+        return fieldWrapper(
           <FormInput
             {...commonProps}
             type={type}
