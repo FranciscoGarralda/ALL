@@ -22,6 +22,7 @@ const FormFieldGroup = ({
   className = '',
   columns = null,
   gap = 'gap-4',
+  onKeyDown,
   ...rest
 }) => {
   // Calculate responsive grid columns based on field count and explicit columns prop
@@ -70,6 +71,7 @@ const FormFieldGroup = ({
       showDayName = false,
       calculated = false,
       filterOptions,
+      ref,
       ...fieldProps
     } = field;
 
@@ -83,9 +85,11 @@ const FormFieldGroup = ({
       label,
       value: fieldValue,
       onChange: (value) => handleFieldChange(name, value),
+      onKeyDown: onKeyDown ? (e) => onKeyDown(name, e) : undefined,
       required,
       error: fieldError,
       readOnly: readOnly || calculated,
+      ref,
       ...fieldProps
     };
 

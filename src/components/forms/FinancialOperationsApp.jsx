@@ -19,11 +19,11 @@ import { specificFieldsConfig } from '../../config/fieldConfigs';
 /**
  * Dynamic Form Field Groups Component
  */
-function DynamicFormFieldGroups({ groups }) {
+function DynamicFormFieldGroups({ groups, onKeyDown }) {
   return (
     <div className="space-y-4">
       {groups.map((group, groupIndex) => (
-        <FormFieldGroup key={groupIndex} fields={group} />
+        <FormFieldGroup key={groupIndex} fields={group} onKeyDown={onKeyDown} />
       ))}
     </div>
   );
@@ -553,6 +553,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       ...field,
       value: formData[field.name],
       onChange: (val) => handleInputChange(field.name, val),
+      ref: (el) => registerField(field.name, el),
       options: field.name === 'cliente' && (configKey === 'PRESTAMISTAS_PRESTAMO' || configKey === 'PRESTAMISTAS_RETIRO')
                  ? prestamistaClientsOptions
                  : field.options,
@@ -571,9 +572,9 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
     return (
       <>
-        <DynamicFormFieldGroups groups={fieldGroups} />
+        <DynamicFormFieldGroups groups={fieldGroups} onKeyDown={handleKeyboardNavigation} />
         {conditionalFields.length > 0 && (
-          <FormFieldGroup fields={conditionalFields} />
+          <FormFieldGroup fields={conditionalFields} onKeyDown={handleKeyboardNavigation} />
         )}
 
         {showPagoMixtoOption && (
