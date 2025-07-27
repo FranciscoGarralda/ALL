@@ -16,6 +16,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import FixedHeader from './FixedHeader';
+import Footer from './Footer';
 
 /** COMPONENTE DE ELEMENTO DEL MENÚ OPTIMIZADO */
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
@@ -210,7 +211,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
   }, [isMobile, isSidebarOpen]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header fijo */}
       <FixedHeader 
         isSidebarOpen={isSidebarOpen}
@@ -227,8 +228,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
         toggleSidebar={toggleSidebar} 
       />
       
-      {/* Contenido principal */}
-      <div className={`main-content pt-16 ${
+      {/* Contenido principal con footer */}
+      <div className={`main-content pt-16 flex flex-col flex-1 ${
         isSidebarOpen 
           ? 'lg:ml-64' 
           : 'lg:ml-20'
@@ -246,9 +247,12 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
         )}
         
         {/* Contenido de la página */}
-        <main className="min-h-[calc(100vh-4rem)] w-full">
+        <main className="flex-1 w-full">
           {children}
         </main>
+        
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

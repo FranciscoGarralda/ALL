@@ -22,18 +22,23 @@
     overflow-x: hidden;
   }
   
-  /* Prevent horizontal scroll on main containers but allow tooltips */
+  /* Prevent horizontal scroll and ensure proper layout */
   html {
     overflow-x: hidden;
+    height: 100%;
   }
   
   body {
     overflow-x: hidden;
     position: relative;
+    min-height: 100%;
   }
   
   #__next {
     overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     /* Prevent layout shifts */
     font-display: swap;
   }
