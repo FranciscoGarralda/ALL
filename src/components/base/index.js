@@ -146,39 +146,70 @@ export const WalletTCButtonGroup = React.forwardRef(({
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="grid grid-cols-3 gap-2">
-        {walletOptions.slice(0, 3).map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            ref={option.value === 'socio1_efectivo' ? ref : null}
-            onClick={() => handleButtonClick(option.value, option.type)}
-            onKeyDown={onKeyDown}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive(option.value, option.type)
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            {option.label}
-          </button>
-        ))}
+        <button
+          type="button"
+          ref={ref}
+          onClick={() => handleButtonClick('socio1_efectivo', 'socio')}
+          onKeyDown={onKeyDown}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('socio1_efectivo', 'socio')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Socio 1
+        </button>
+        <button
+          type="button"
+          onClick={() => handleButtonClick('socio2_efectivo', 'socio')}
+          onKeyDown={onKeyDown}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('socio2_efectivo', 'socio')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Socio 2
+        </button>
+        <button
+          type="button"
+          onClick={() => handleButtonClick('pago_mixto', 'special')}
+          onKeyDown={onKeyDown}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('pago_mixto', 'special')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Pago Mixto
+        </button>
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        {walletOptions.slice(3).map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => handleButtonClick(option.value, option.type)}
-            onKeyDown={onKeyDown}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive(option.value, option.type)
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            {option.label}
-          </button>
-        ))}
+      <div className="grid grid-cols-3 gap-2">
+        <button
+          type="button"
+          onClick={() => handleButtonClick('efectivo', 'type')}
+          onKeyDown={onKeyDown}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('efectivo', 'type')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Efectivo
+        </button>
+        <button
+          type="button"
+          onClick={() => handleButtonClick('digital', 'type')}
+          onKeyDown={onKeyDown}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('digital', 'type')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Digital
+        </button>
+        <div></div>
       </div>
       <input
         type="hidden"
