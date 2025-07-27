@@ -16,6 +16,9 @@ export const useKeyboardNavigation = () => {
 
   // Focus a specific field
   const focusField = useCallback((fieldName, delay = 0) => {
+    // SSR safety check
+    if (typeof window === 'undefined') return;
+    
     const fieldRef = fieldRefs.current[fieldName];
     if (fieldRef) {
       setTimeout(() => {
@@ -36,6 +39,9 @@ export const useKeyboardNavigation = () => {
 
   // Open/activate a field (for dropdowns, date pickers, etc.)
   const openField = useCallback((fieldName) => {
+    // SSR safety check
+    if (typeof window === 'undefined') return;
+    
     const fieldRef = fieldRefs.current[fieldName];
     if (fieldRef) {
       // For checkboxes, focus first (don't toggle automatically)
@@ -162,6 +168,9 @@ export const useKeyboardNavigation = () => {
 
   // Handle keyboard navigation events
   const handleKeyboardNavigation = useCallback((currentField, event, formData, specificFieldsConfig) => {
+    // SSR safety check
+    if (typeof window === 'undefined') return;
+    
     // Only prevent default behavior for arrows (not Enter)
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
       event.preventDefault();
@@ -204,6 +213,9 @@ export const useKeyboardNavigation = () => {
 
   // Handle modal navigation (separate from main form navigation)
   const handleModalNavigation = useCallback((currentField, event) => {
+    // SSR safety check
+    if (typeof window === 'undefined') return;
+    
     const fieldOrder = ['nombre', 'apellido', 'telefono', 'email', 'dni', 'direccion', 'tipo', 'guardar', 'cancelar'];
     const currentIndex = fieldOrder.indexOf(currentField);
 

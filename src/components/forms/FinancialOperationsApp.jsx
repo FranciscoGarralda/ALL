@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { DollarSign, XCircle, PlusCircle } from 'lucide-react';
 import {
   FormInput,
@@ -78,7 +78,6 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [clients]);
 
   // Custom hooks for clean separation of concerns
-  // Temporarily simplified to isolate client-side error
   const {
     isMixedPaymentActive,
     handleMixedPaymentChange,
@@ -87,19 +86,14 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     validateMixedPayments
   } = useMixedPayments(formData, setFormData);
 
-  // Simplified navigation without hooks temporarily
-  const fieldRefs = useRef({});
-  const registerField = useCallback((fieldName, ref) => {
-    if (ref) {
-      fieldRefs.current[fieldName] = ref;
-    }
-  }, []);
-
-  const handleKeyboardNavigation = useCallback((field, event) => {
-    // Simplified version to avoid client-side errors
-    if (typeof window === 'undefined') return;
-    // Basic navigation logic here
-  }, []);
+  const {
+    fieldRefs,
+    registerField,
+    focusField,
+    openField,
+    handleKeyboardNavigation,
+    handleModalNavigation
+  } = useKeyboardNavigation();
 
 
   useEffect(() => {
