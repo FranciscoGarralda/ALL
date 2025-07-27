@@ -129,6 +129,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         newState.subOperacion = '';
       }
 
+      // Auto-selección para transacciones - default a COMPRA
+      if (field === 'operacion' && value === 'TRANSACCIONES') {
+        newState.subOperacion = 'COMPRA';
+      } else if (field === 'operacion' && value !== 'TRANSACCIONES' && prev.operacion === 'TRANSACCIONES') {
+        newState.subOperacion = '';
+      }
+
       // Reset moneda if proveedorCC changes
       if (field === 'proveedorCC' && newState.operacion === 'CUENTAS_CORRIENTES') {
         const selectedProveedor = proveedoresCC.find(p => p.value === value);
