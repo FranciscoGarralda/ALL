@@ -100,12 +100,49 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     }
     
     // Agregar campos específicos según la operación
-    const specificFields = specificFieldsConfig[formData.subOperacion] || specificFieldsConfig[formData.operacion] || [];
-    specificFields.forEach(field => {
-      if (field.name && !conditionalFields.includes(field.name)) {
-        conditionalFields.push(field.name);
+    let configKey = formData.subOperacion;
+
+    if (['INGRESO', 'EGRESO'].includes(formData.subOperacion) && formData.operacion === 'CUENTAS_CORRIENTES') {
+      configKey = 'CUENTAS_CORRIENTES_INGRESO_EGRESO';
+    } else if (['INGRESO', 'SALIDA', 'PRESTAMO', 'DEVOLUCION'].includes(formData.subOperacion) && formData.operacion === 'SOCIOS') {
+      configKey = 'SOCIOS_SHARED';
+    } else if (formData.subOperacion === 'PRESTAMO' && formData.operacion === 'PRESTAMISTAS') {
+      configKey = 'PRESTAMISTAS_PRESTAMO';
+    } else if (formData.subOperacion === 'RETIRO' && formData.operacion === 'PRESTAMISTAS') {
+      configKey = 'PRESTAMISTAS_RETIRO';
+    } else if (formData.subOperacion === 'TRANSFERENCIA' && formData.operacion === 'INTERNAS') {
+      configKey = 'TRANSFERENCIA';
+    }
+
+    const config = specificFieldsConfig[configKey] || specificFieldsConfig[formData.operacion];
+
+    if (config && config.groups) {
+      // Extraer nombres de campos de todos los grupos
+      const fieldGroups = typeof config.groups === 'function'
+        ? config.groups(formData)
+        : config.groups;
+      
+      fieldGroups.forEach(group => {
+        group.forEach(field => {
+          if (field.name && !conditionalFields.includes(field.name)) {
+            conditionalFields.push(field.name);
+          }
+        });
+      });
+
+      // Agregar campos condicionales si existen
+      if (config.conditionalFields) {
+        const conditionalFieldsFromConfig = typeof config.conditionalFields === 'function'
+          ? config.conditionalFields(formData)
+          : config.conditionalFields;
+        
+        conditionalFieldsFromConfig.forEach(field => {
+          if (field.name && !conditionalFields.includes(field.name)) {
+            conditionalFields.push(field.name);
+          }
+        });
       }
-    });
+    }
     
     // Agregar campos comunes del final
     const endFields = ['estado', 'por'];
@@ -115,6 +152,14 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     
     const currentFieldOrder = [...baseFields, ...conditionalFields, ...endFields];
     const currentIndex = currentFieldOrder.indexOf(currentField);
+
+    // Debug temporal - remover después
+    console.log('🔍 Navigation Debug:', {
+      currentField,
+      currentIndex,
+      currentFieldOrder,
+      formData: { operacion: formData.operacion, subOperacion: formData.subOperacion }
+    });
 
     // Función para enfocar un campo
     const focusField = (fieldName, delay = 0) => {

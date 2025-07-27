@@ -79,9 +79,10 @@ const FormSelect = forwardRef(({
 
     // Para flechas de navegación entre campos, delegar al formulario
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-      // Solo si el select no está abierto (no hay opciones visibles)
-      // Esto permite que las flechas funcionen dentro del select cuando está abierto
-      // pero naveguen entre campos cuando está cerrado
+      // Prevenir que el select abra con las flechas
+      e.preventDefault();
+      
+      // Delegar la navegación al formulario
       if (onKeyDown) {
         onKeyDown(e);
       }
