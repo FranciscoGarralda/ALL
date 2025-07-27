@@ -44,18 +44,7 @@ const FormSelect = forwardRef(({
   // Handle change
   const handleChange = (e) => {
     onChange(e.target.value);
-    
-    // Después de seleccionar una opción, navegar al siguiente campo
-    setTimeout(() => {
-      if (onKeyDown) {
-        const arrowDownEvent = new KeyboardEvent('keydown', {
-          key: 'ArrowDown',
-          bubbles: true,
-          cancelable: true
-        });
-        onKeyDown(arrowDownEvent);
-      }
-    }, 100);
+    // Removida la auto-navegación - el usuario debe usar flechas manualmente
   };
 
   // Handle keyboard navigation for select dropdowns

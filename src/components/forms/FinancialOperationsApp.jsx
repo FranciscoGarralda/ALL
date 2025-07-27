@@ -144,6 +144,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
     }
     
+    // Agregar checkbox de pago mixto si aplica
+    if (config && config.includesPagoMixto) {
+      conditionalFields.push('pagoMixtoActivo');
+    }
+    
     // Agregar campos comunes del final
     const endFields = ['estado', 'por'];
     if (formData.por === 'otro') {
@@ -180,6 +185,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     const openField = (fieldName) => {
       const fieldRef = fieldRefs.current[fieldName];
       if (fieldRef) {
+        // Para checkboxes, alternar el estado
+        if (fieldRef.type === 'checkbox') {
+          fieldRef.checked = !fieldRef.checked;
+          fieldRef.dispatchEvent(new Event('change', { bubbles: true }));
+          return;
+        }
+        
         // Para selects nativos
         if (fieldRef.tagName === 'SELECT') {
           fieldRef.focus();
@@ -639,10 +651,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               <div>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
+                    ref={(el) => registerField('pagoMixtoActivo', el)}
                     type="checkbox"
                     className="form-checkbox h-4 w-4 text-blue-600 rounded"
                     checked={formData.pagoMixtoActivo}
                     onChange={(e) => handleInputChange('pagoMixtoActivo', e.target.checked)}
+                    onKeyDown={(e) => handleKeyboardNavigation('pagoMixtoActivo', e)}
                   />
                   <span className="text-sm font-medium text-gray-700">Pago Mixto</span>
                 </label>

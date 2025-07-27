@@ -122,17 +122,7 @@ const ClientAutocomplete = forwardRef(({
         e.preventDefault();
         if (selectedIndex >= 0 && filteredClients[selectedIndex]) {
           handleClientSelect(filteredClients[selectedIndex]);
-          // Después de seleccionar, navegar al siguiente campo
-          setTimeout(() => {
-            if (onKeyDown) {
-              const enterEvent = new KeyboardEvent('keydown', {
-                key: 'ArrowDown', // Simular flecha abajo para ir al siguiente campo
-                bubbles: true,
-                cancelable: true
-              });
-              onKeyDown(enterEvent);
-            }
-          }, 100);
+          // Removida la auto-navegación - el usuario debe usar flechas manualmente
         }
         break;
 
