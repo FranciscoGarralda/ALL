@@ -89,7 +89,17 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   // Función para manejar navegación con Enter
   const handleEnterNavigation = useCallback((currentField, event) => {
     if (event.key === 'Enter') {
-      event.preventDefault();
+      // Para selects, permitir que se abra primero
+      if (event.target.tagName === 'SELECT') {
+        // Si el select no está abierto, déjalo abrirse
+        if (!event.target.matches(':focus')) {
+          return;
+        }
+        // Si ya está abierto y se presiona Enter, navegar al siguiente campo
+        event.preventDefault();
+      } else {
+        event.preventDefault();
+      }
       
       // Definir el orden de campos dinámicamente
       const baseFields = ['cliente', 'fecha', 'detalle', 'operacion'];
@@ -125,15 +135,20 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         const nextFieldRef = fieldRefs.current[nextField];
         
         if (nextFieldRef) {
-          // Si es un select, hacer focus
-          if (nextFieldRef.focus) {
-            nextFieldRef.focus();
-          }
-          // Si es un input dentro de un div, buscar el input
-          else if (nextFieldRef.querySelector) {
-            const input = nextFieldRef.querySelector('input, select, textarea');
-            if (input) input.focus();
-          }
+          // Pequeño delay para selects para permitir que se cierre
+          const focusDelay = event.target.tagName === 'SELECT' ? 150 : 0;
+          
+          setTimeout(() => {
+            // Si es un select, hacer focus
+            if (nextFieldRef.focus) {
+              nextFieldRef.focus();
+            }
+            // Si es un input dentro de un div, buscar el input
+            else if (nextFieldRef.querySelector) {
+              const input = nextFieldRef.querySelector('input, select, textarea');
+              if (input) input.focus();
+            }
+          }, focusDelay);
         }
       }
     }

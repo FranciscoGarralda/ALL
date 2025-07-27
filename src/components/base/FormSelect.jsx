@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 /**
@@ -46,6 +46,29 @@ const FormSelect = forwardRef(({
     onChange(e.target.value);
   };
 
+  // Handle keyboard navigation for select dropdowns
+  const handleKeyDown = useCallback((e) => {
+    // Call parent onKeyDown if provided (for Enter navigation between fields)
+    if (onKeyDown) {
+      onKeyDown(e);
+    }
+
+    // Enhanced select navigation
+    if (e.key === 'Enter') {
+      // If select is closed, open it
+      if (!e.target.matches(':focus')) {
+        e.target.focus();
+      }
+      // If already focused and Enter pressed again, let default behavior handle it
+      // and then trigger navigation to next field
+      setTimeout(() => {
+        if (onKeyDown) {
+          onKeyDown(e);
+        }
+      }, 100);
+    }
+  }, [onKeyDown]);
+
   // Select classes with responsive design and states
   const selectClasses = [
     'w-full px-3 py-2 text-base border rounded-lg transition-all duration-200 appearance-none',
@@ -86,7 +109,7 @@ const FormSelect = forwardRef(({
           name={name}
           value={value || ''}
           onChange={handleChange}
-          onKeyDown={onKeyDown}
+          onKeyDown={handleKeyDown}
           disabled={disabled}
           required={required}
           className={selectClasses}
