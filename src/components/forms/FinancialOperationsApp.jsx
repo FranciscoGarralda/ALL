@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { DollarSign, XCircle, PlusCircle } from 'lucide-react';
 import {
   FormInput,
@@ -74,6 +74,70 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     const filtered = clients?.filter(c => c.tipoCliente === 'prestamistas') || [];
     return [{ value: '', label: 'Seleccionar cliente prestamista' }, ...filtered.map(c => ({ value: c.nombre, label: `${c.nombre} ${c.apellido}` }))];
   }, [clients]);
+
+  // Referencias para navegación con Enter
+  const fieldRefs = useRef({});
+  const [fieldOrder, setFieldOrder] = useState([]);
+
+  // Función para registrar campos en el orden correcto
+  const registerField = useCallback((fieldName, ref) => {
+    if (ref) {
+      fieldRefs.current[fieldName] = ref;
+    }
+  }, []);
+
+  // Función para manejar navegación con Enter
+  const handleEnterNavigation = useCallback((currentField, event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      
+      // Definir el orden de campos dinámicamente
+      const baseFields = ['cliente', 'fecha', 'detalle', 'operacion'];
+      const conditionalFields = [];
+      
+      // Agregar sub-operación si es necesaria
+      if (formData.operacion && 
+          operaciones[formData.operacion]?.subMenu?.length > 0 && 
+          formData.operacion !== 'INTERNAS') {
+        conditionalFields.push('subOperacion');
+      }
+      
+      // Agregar campos específicos según la operación
+      const specificFields = specificFieldsConfig[formData.subOperacion] || specificFieldsConfig[formData.operacion] || [];
+      specificFields.forEach(field => {
+        if (field.name && !conditionalFields.includes(field.name)) {
+          conditionalFields.push(field.name);
+        }
+      });
+      
+      // Agregar campos comunes del final
+      const endFields = ['estado', 'por'];
+      if (formData.por === 'otro') {
+        endFields.push('nombreOtro');
+      }
+      
+      const currentFieldOrder = [...baseFields, ...conditionalFields, ...endFields];
+      
+      // Encontrar el siguiente campo
+      const currentIndex = currentFieldOrder.indexOf(currentField);
+      if (currentIndex !== -1 && currentIndex < currentFieldOrder.length - 1) {
+        const nextField = currentFieldOrder[currentIndex + 1];
+        const nextFieldRef = fieldRefs.current[nextField];
+        
+        if (nextFieldRef) {
+          // Si es un select, hacer focus
+          if (nextFieldRef.focus) {
+            nextFieldRef.focus();
+          }
+          // Si es un input dentro de un div, buscar el input
+          else if (nextFieldRef.querySelector) {
+            const input = nextFieldRef.querySelector('input, select, textarea');
+            if (input) input.focus();
+          }
+        }
+      }
+    }
+  }, [formData.operacion, formData.subOperacion, formData.por]);
 
   useEffect(() => {
     if (initialMovementData) {
@@ -370,15 +434,21 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   const renderEstadoYPor = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
       <FormSelect
+        ref={(el) => registerField('estado', el)}
         label="Estado de retiro"
+        name="estado"
         value={formData.estado}
         onChange={(val) => handleInputChange('estado', val)}
+        onKeyDown={(e) => handleEnterNavigation('estado', e)}
         options={estados}
       />
       <FormSelect
+        ref={(el) => registerField('por', el)}
         label="Por"
+        name="por"
         value={formData.por}
         onChange={(val) => handleInputChange('por', val)}
+        onKeyDown={(e) => handleEnterNavigation('por', e)}
         options={socios}
       />
     </div>
@@ -530,9 +600,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           {/* Campo Cliente - Universal con autocompletado */}
           {formData.operacion !== 'PRESTAMISTAS' && (
             <ClientAutocomplete
+              ref={(el) => registerField('cliente', el)}
               label="CLIENTE"
+              name="cliente"
               value={formData.cliente}
               onChange={(val) => handleInputChange('cliente', val)}
+              onKeyDown={(e) => handleEnterNavigation('cliente', e)}
               clients={clients || []}
               required={true}
               placeholder="Buscar o seleccionar cliente"
@@ -557,11 +630,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
           {/* Campo Fecha */}
           <FormInput
+            ref={(el) => registerField('fecha', el)}
             label="FECHA"
             name="fecha"
             type="date"
             value={formData.fecha}
             onChange={(val) => handleInputChange('fecha', val)}
+            onKeyDown={(e) => handleEnterNavigation('fecha', e)}
             showDayName={true}
             dayName={formData.nombreDia}
             required
@@ -569,19 +644,23 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
           {/* Campo Detalle */}
           <FormInput
+            ref={(el) => registerField('detalle', el)}
             label="DETALLE"
             name="detalle"
             value={formData.detalle}
             onChange={(val) => handleInputChange('detalle', val)}
+            onKeyDown={(e) => handleEnterNavigation('detalle', e)}
             placeholder="Descripción de la operación"
           />
 
           {/* Selector de Operación principal */}
           <FormSelect
+            ref={(el) => registerField('operacion', el)}
             label="OPERACIÓN"
             name="operacion"
             value={formData.operacion}
             onChange={(val) => handleInputChange('operacion', val)}
+            onKeyDown={(e) => handleEnterNavigation('operacion', e)}
             options={[
               { value: '', label: 'Seleccionar operación' },
               ...Object.entries(operaciones).map(([key, op]) => ({
@@ -597,10 +676,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             operaciones[formData.operacion]?.subMenu?.length > 0 &&
             formData.operacion !== 'INTERNAS' && (
               <FormSelect
+                ref={(el) => registerField('subOperacion', el)}
                 label="DETALLE OPERACIÓN"
                 name="subOperacion"
                 value={formData.subOperacion}
                 onChange={(val) => handleInputChange('subOperacion', val)}
+                onKeyDown={(e) => handleEnterNavigation('subOperacion', e)}
                 options={[
                   { value: '', label: 'Seleccionar detalle' },
                   ...operaciones[formData.operacion].subMenu.map((sub) => ({
@@ -618,10 +699,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           {/* Campo para "Otro" si se selecciona en "Por" */}
           {formData.por === 'otro' && (
             <FormInput
+              ref={(el) => registerField('nombreOtro', el)}
               label="NOMBRE"
               name="nombreOtro"
               value={formData.nombreOtro}
               onChange={(val) => handleInputChange('nombreOtro', val)}
+              onKeyDown={(e) => handleEnterNavigation('nombreOtro', e)}
               placeholder="Ingrese el nombre"
               required
             />

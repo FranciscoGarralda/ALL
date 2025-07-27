@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 /**
@@ -17,7 +17,7 @@ import { ChevronDown } from 'lucide-react';
  * @param {Function} props.filterOptions - Function to filter options dynamically
  * @param {Object} props.selectProps - Additional select properties
  */
-const FormSelect = ({
+const FormSelect = forwardRef(({
   label,
   value,
   onChange,
@@ -30,8 +30,9 @@ const FormSelect = ({
   placeholder = '',
   filterOptions = null,
   selectProps = {},
+  onKeyDown,
   ...rest
-}) => {
+}, ref) => {
   // Filter options if filter function is provided
   const filteredOptions = React.useMemo(() => {
     if (filterOptions && typeof filterOptions === 'function') {
@@ -80,10 +81,12 @@ const FormSelect = ({
       {/* Select Container */}
       <div className="relative">
         <select
+          ref={ref}
           id={name}
           name={name}
           value={value || ''}
           onChange={handleChange}
+          onKeyDown={onKeyDown}
           disabled={disabled}
           required={required}
           className={selectClasses}
@@ -150,6 +153,8 @@ const FormSelect = ({
       )}
     </div>
   );
-};
+});
+
+FormSelect.displayName = 'FormSelect';
 
 export default FormSelect;

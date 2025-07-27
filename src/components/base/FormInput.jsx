@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { formatDateWithDay } from '../../utils/formatters.js';
 
 /**
@@ -18,7 +18,7 @@ import { formatDateWithDay } from '../../utils/formatters.js';
  * @param {string} props.className - Additional CSS classes
  * @param {Object} props.inputProps - Additional input properties
  */
-const FormInput = ({
+const FormInput = forwardRef(({
   label,
   value,
   onChange,
@@ -32,8 +32,9 @@ const FormInput = ({
   error = '',
   className = '',
   inputProps = {},
+  onKeyDown,
   ...rest
-}) => {
+}, ref) => {
   // Calculate day name for date inputs
   const calculatedDayName = React.useMemo(() => {
     if (type === 'date' && value && showDayName) {
@@ -100,11 +101,13 @@ const FormInput = ({
       {/* Input Container */}
       <div className="relative">
         <input
+          ref={ref}
           id={name}
           name={name}
           type={type}
           value={value || ''}
           onChange={handleChange}
+          onKeyDown={onKeyDown}
           placeholder={placeholder}
           readOnly={readOnly}
           required={required}
@@ -142,6 +145,8 @@ const FormInput = ({
       )}
     </div>
   );
-};
+});
+
+FormInput.displayName = 'FormInput';
 
 export default FormInput;
