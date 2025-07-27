@@ -58,9 +58,7 @@ export const useMixedPayments = (formData, setFormData) => {
       // specificFieldsConfig imported at top
       const isWalletMode = specificFieldsConfig[configKey]?.pagoMixtoWalletMode;
       
-      const newPayment = isWalletMode 
-        ? { id: Date.now(), wallet: '', monto: '' }
-        : { id: Date.now(), cuenta: '', monto: '' };
+      const newPayment = { id: Date.now(), socio: '', tipo: '', monto: '' };
       
       const newPayments = [...prev.mixedPayments, newPayment];
       let newTotal = prev.total;

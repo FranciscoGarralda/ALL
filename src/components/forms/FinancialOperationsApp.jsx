@@ -158,20 +158,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           
           const isWalletMode = specificFieldsConfig[configKey]?.pagoMixtoWalletMode;
           
-          // Crear pagos iniciales con estructura apropiada
-          if (isWalletMode) {
-                      newState.mixedPayments = [
-            { id: 1, wallet: '', monto: expectedTotal.toFixed(2) },
-            { id: Date.now(), wallet: '', monto: '' }
-          ];
-        } else {
+          // Crear pagos iniciales con nueva estructura (socio + tipo)
           newState.mixedPayments = [
-            { id: 1, cuenta: '', monto: expectedTotal.toFixed(2) },
-            { id: Date.now(), cuenta: '', monto: '' }
-          ];
-          }
+            { id: 1, socio: '', tipo: '', monto: expectedTotal.toFixed(2) },
+            { id: 2, socio: '', tipo: '', monto: '' }
+                    ];
           newState.total = expectedTotal.toFixed(2);
-      }
+        }
       
       // Limpiar pagos mixtos cuando se cambie de "pago_mixto" a otra opción
       if (field === 'walletTC' && prev.walletTC === 'pago_mixto' && value !== 'pago_mixto') {
@@ -309,7 +302,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         name="estado"
         value={formData.estado}
         onChange={(val) => handleInputChange('estado', val)}
-                        onKeyDown={(e) => handleKeyboardNavigation('estado', e)}
+                        onKeyDown={(e) => handleKeyboardNavigation('estado', e, formData, specificFieldsConfig)}
         options={estados}
       />
       <FormSelect
@@ -318,7 +311,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         name="por"
         value={formData.por}
         onChange={(val) => handleInputChange('por', val)}
-                        onKeyDown={(e) => handleKeyboardNavigation('por', e)}
+                        onKeyDown={(e) => handleKeyboardNavigation('por', e, formData, specificFieldsConfig)}
         options={socios}
       />
     </div>
@@ -374,66 +367,16 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         )}
 
         {showPagoMixtoOption && (
-          <div className="mt-4">
-            {config.pagoMixtoWalletMode ? (
-                              <MixedPaymentGroup
-                  payments={formData.mixedPayments}
-                  onPaymentChange={handleMixedPaymentChange}
-                  onAddPayment={addMixedPayment}
-                  onRemovePayment={removeMixedPayment}
-                totalExpected={formData.expectedTotalForMixedPayments || 0}
-                currency={formData.monedaTC || 'PESO'}
-                isActive={true}
-                showToggle={false}
-              />
-            ) : (
-              <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">Detalle de Pago Mixto</h4>
-                <div className="mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
-                    {formData.mixedPayments.map((pago, index) => (
-                      <div key={pago.id} className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2 items-end">
-                        <FormSelect
-                          label="Cuenta"
-                          value={pago.cuenta}
-                                                      onChange={(val) => handleMixedPaymentChange(pago.id, 'cuenta', val)}
-                          options={cuentas}
-                        />
-                        <FormInput
-                          label="Monto"
-                          type="number"
-                          value={pago.monto}
-                                                      onChange={(val) => handleMixedPaymentChange(pago.id, 'monto', val)}
-                          placeholder="Monto a pagar"
-                        />
-                        <button
-                          type="button"
-                                                      onClick={() => removeMixedPayment(pago.id)}
-                          className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors touch-target"
-                          aria-label="Eliminar pago"
-                        >
-                          <XCircle size={20} />
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                                                onClick={addMixedPayment}
-                      className="mt-2 flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors touch-target"
-                    >
-                      <PlusCircle size={16} /> Añadir Pago
-                    </button>
-                    <div className="mt-3 text-sm font-medium text-gray-800">
-                      Total Pagos Mixtos: {formatAmountWithCurrency(formData.mixedPayments.reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0), formData.monedaTC || 'PESO')}
-                    </div>
-                    {formData.expectedTotalForMixedPayments && (
-                      <div className="text-xs text-gray-600 mt-1">
-                        Valor de la Operación: {formatAmountWithCurrency(formData.expectedTotalForMixedPayments, formData.monedaTC || 'PESO')}
-                      </div>
-                    )}
-                </div>
-              </div>
-            )}
-          </div>
+          <MixedPaymentGroup
+            payments={formData.mixedPayments}
+            onPaymentChange={handleMixedPaymentChange}
+            onAddPayment={addMixedPayment}
+            onRemovePayment={removeMixedPayment}
+            totalExpected={formData.expectedTotalForMixedPayments || 0}
+            currency={formData.monedaTC || 'PESO'}
+            onKeyDown={(field, event) => handleKeyboardNavigation(field, event, formData, specificFieldsConfig)}
+            registerField={registerField}
+          />
         )}
 
         {config.includesEstadoYPor && renderEstadoYPor()}
@@ -464,7 +407,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               name="cliente"
               value={formData.cliente}
               onChange={(val) => handleInputChange('cliente', val)}
-              onKeyDown={(e) => handleKeyboardNavigation('cliente', e)}
+              onKeyDown={(e) => handleKeyboardNavigation('cliente', e, formData, specificFieldsConfig)}
               onRegisterCreateButton={(el) => registerField('crearCliente', el)}
               clients={clients || []}
               required={true}
@@ -496,7 +439,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             type="date"
             value={formData.fecha}
             onChange={(val) => handleInputChange('fecha', val)}
-                          onKeyDown={(e) => handleKeyboardNavigation('fecha', e)}
+                          onKeyDown={(e) => handleKeyboardNavigation('fecha', e, formData, specificFieldsConfig)}
             showDayName={true}
             dayName={formData.nombreDia}
             required
@@ -509,7 +452,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             name="detalle"
             value={formData.detalle}
             onChange={(val) => handleInputChange('detalle', val)}
-                          onKeyDown={(e) => handleKeyboardNavigation('detalle', e)}
+                          onKeyDown={(e) => handleKeyboardNavigation('detalle', e, formData, specificFieldsConfig)}
             placeholder="Descripción de la operación"
           />
 
@@ -520,7 +463,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             name="operacion"
             value={formData.operacion}
             onChange={(val) => handleInputChange('operacion', val)}
-                          onKeyDown={(e) => handleKeyboardNavigation('operacion', e)}
+                          onKeyDown={(e) => handleKeyboardNavigation('operacion', e, formData, specificFieldsConfig)}
             options={[
               { value: '', label: 'Seleccionar operación' },
               ...Object.entries(operaciones).map(([key, op]) => ({
@@ -541,7 +484,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                 name="subOperacion"
                 value={formData.subOperacion}
                 onChange={(val) => handleInputChange('subOperacion', val)}
-                onKeyDown={(e) => handleKeyboardNavigation('subOperacion', e)}
+                onKeyDown={(e) => handleKeyboardNavigation('subOperacion', e, formData, specificFieldsConfig)}
                 options={[
                   { value: '', label: 'Seleccionar detalle' },
                   ...operaciones[formData.operacion].subMenu.map((sub) => ({
@@ -564,7 +507,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               name="nombreOtro"
               value={formData.nombreOtro}
               onChange={(val) => handleInputChange('nombreOtro', val)}
-                              onKeyDown={(e) => handleKeyboardNavigation('nombreOtro', e)}
+                              onKeyDown={(e) => handleKeyboardNavigation('nombreOtro', e, formData, specificFieldsConfig)}
               placeholder="Ingrese el nombre"
               required
             />
@@ -603,7 +546,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           <button
             ref={(el) => registerField('guardar', el)}
             onClick={handleGuardar}
-            onKeyDown={(e) => handleKeyboardNavigation('guardar', e)}
+            onKeyDown={(e) => handleKeyboardNavigation('guardar', e, formData, specificFieldsConfig)}
             className="btn-primary flex-1 sm:flex-none touch-target"
             disabled={!formData.operacion || !formData.subOperacion}
           >
@@ -612,7 +555,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           <button
             ref={(el) => registerField('limpiar', el)}
             onClick={clearForm}
-            onKeyDown={(e) => handleKeyboardNavigation('limpiar', e)}
+            onKeyDown={(e) => handleKeyboardNavigation('limpiar', e, formData, specificFieldsConfig)}
             className="btn-secondary flex-1 sm:flex-none touch-target"
           >
             Limpiar Formulario
@@ -621,7 +564,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             <button
               ref={(el) => registerField('cancelar', el)}
               onClick={onCancelEdit}
-              onKeyDown={(e) => handleKeyboardNavigation('cancelar', e)}
+              onKeyDown={(e) => handleKeyboardNavigation('cancelar', e, formData, specificFieldsConfig)}
               className="btn-secondary flex-1 sm:flex-none touch-target"
             >
               Cancelar

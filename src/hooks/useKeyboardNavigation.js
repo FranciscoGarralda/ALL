@@ -154,6 +154,26 @@ export const useKeyboardNavigation = () => {
       }
     }
     
+    // Add mixed payment fields if active
+    const mixedPaymentFields = [];
+    if (formData.walletTC === 'pago_mixto') {
+      // Default 2 payments, max 4
+      const paymentsCount = Math.max(2, (formData.mixedPayments || []).length);
+      for (let i = 0; i < Math.min(paymentsCount, 4); i++) {
+        mixedPaymentFields.push(`mixedPayment_${i}_socio`);
+        mixedPaymentFields.push(`mixedPayment_${i}_tipo`);
+        mixedPaymentFields.push(`mixedPayment_${i}_monto`);
+        // Add remove button for payments beyond the first 2
+        if (i >= 2) {
+          mixedPaymentFields.push(`mixedPayment_${i}_remove`);
+        }
+      }
+      // Add the "add payment" button if less than 4 payments
+      if (paymentsCount < 4) {
+        mixedPaymentFields.push('mixedPayment_add');
+      }
+    }
+    
     // Add common end fields
     const endFields = ['estado', 'por'];
     if (formData.por === 'otro') {
@@ -163,7 +183,7 @@ export const useKeyboardNavigation = () => {
     // Add action buttons at the end
     const buttonFields = ['guardar', 'limpiar', 'cancelar'];
     
-    return [...baseFields, ...conditionalFields, ...endFields, ...buttonFields];
+    return [...baseFields, ...conditionalFields, ...mixedPaymentFields, ...endFields, ...buttonFields];
   }, []);
 
   // Handle keyboard navigation events

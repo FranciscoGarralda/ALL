@@ -1,8 +1,21 @@
-import React from 'react';
-import { Plus, X, Wallet } from 'lucide-react';
-import FormInput from './FormInput';
-import { walletTypes } from '../../config/constants';
-import { formatAmountWithCurrency } from '../../utils/formatters';
+import React, { forwardRef } from 'react';
+import { Plus, X } from 'lucide-react';
+import FormSelect from './FormSelect';
+import CurrencyInput from './CurrencyInput';
+
+// Opciones para socio
+const socioOptions = [
+  { value: '', label: 'Seleccionar socio' },
+  { value: 'socio1', label: 'Socio 1' },
+  { value: 'socio2', label: 'Socio 2' },
+];
+
+// Opciones para tipo de pago
+const tipoOptions = [
+  { value: '', label: 'Seleccionar tipo' },
+  { value: 'efectivo', label: 'Efectivo' },
+  { value: 'digital', label: 'Digital' },
+];
 
 const MixedPaymentGroup = ({
   payments = [],
@@ -11,9 +24,8 @@ const MixedPaymentGroup = ({
   onRemovePayment,
   totalExpected = 0,
   currency = 'PESO',
-  isActive = false,
-  onToggle,
-  className = ''
+  onKeyDown,
+  registerField
 }) => {
   // Validación defensiva
   const safePayments = Array.isArray(payments) ? payments : [];
@@ -27,191 +39,131 @@ const MixedPaymentGroup = ({
   const isBalanced = Math.abs(totalPayments - totalExpected) < 0.01;
   const difference = totalExpected - totalPayments;
 
+  // Mostrar por defecto 2 pagos, máximo 4
+  const paymentsToShow = Math.max(2, safePayments.length);
+  const displayPayments = [];
+  
+  for (let i = 0; i < paymentsToShow && i < 4; i++) {
+    displayPayments.push(safePayments[i] || { id: i + 1, socio: '', tipo: '', monto: '' });
+  }
+
   return (
-    <div className={`space-y-4 ${className}`}>
-      {/* Toggle de Pago Mixto */}
-      <div className="flex items-center space-x-2">
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            className="form-checkbox h-4 w-4 text-primary-600 rounded focus:ring-primary-500"
-            checked={isActive}
-            onChange={(e) => onToggle(e.target.checked)}
-          />
-          <span className="text-sm font-medium text-gray-700 flex items-center space-x-1">
-            <Wallet size={16} className="text-gray-500" />
-            <span>Pago Mixto</span>
-          </span>
-        </label>
+    <div className="space-y-4">
+      {/* Título de sección */}
+      <div className="text-sm font-medium text-gray-700 border-b border-gray-200 pb-2">
+        Configuración de Pago Mixto
       </div>
 
-      {/* Contenido del Pago Mixto */}
-      {isActive && (
-        <div className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-4">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold text-gray-700">
-              Detalle de Pago Mixto
-            </h4>
-            <div className="text-xs text-gray-500">
-              {safePayments.length} {safePayments.length === 1 ? 'pago' : 'pagos'}
-            </div>
+      {/* Pagos individuales - SIN RECUADRE, campos normales */}
+      {displayPayments.map((payment, index) => (
+        <div key={payment.id || index} className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          {/* Selector de Socio */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Socio {index + 1}
+            </label>
+            <FormSelect
+              ref={(el) => registerField && registerField(`mixedPayment_${index}_socio`, el)}
+              name={`mixedPayment_${index}_socio`}
+              value={payment.socio || ''}
+              onChange={(value) => onPaymentChange(payment.id || index + 1, 'socio', value)}
+              onKeyDown={(e) => onKeyDown && onKeyDown(`mixedPayment_${index}_socio`, e)}
+              options={socioOptions}
+              placeholder="Seleccionar socio"
+              required
+            />
           </div>
 
-          {/* Lista de Pagos */}
-          <div className="space-y-3">
-            {safePayments.map((payment, index) => (
-              <WalletPaymentItem
-                key={payment?.id || index}
-                payment={payment}
-                index={index}
-                onPaymentChange={onPaymentChange}
-                onRemove={onRemovePayment}
-                showRemove={safePayments.length > 1}
-              />
-            ))}
+          {/* Selector de Tipo */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Tipo
+            </label>
+            <FormSelect
+              ref={(el) => registerField && registerField(`mixedPayment_${index}_tipo`, el)}
+              name={`mixedPayment_${index}_tipo`}
+              value={payment.tipo || ''}
+              onChange={(value) => onPaymentChange(payment.id || index + 1, 'tipo', value)}
+              onKeyDown={(e) => onKeyDown && onKeyDown(`mixedPayment_${index}_tipo`, e)}
+              options={tipoOptions}
+              placeholder="Seleccionar tipo"
+              required
+            />
           </div>
 
-          {/* Botón Añadir Pago */}
-          <button
-            type="button"
-            onClick={onAddPayment}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-primary-400 hover:text-primary-600 transition-all duration-200 touch-target"
-          >
-            <Plus size={16} />
-            <span className="text-sm font-medium">Añadir Pago</span>
-          </button>
+          {/* Campo de Monto */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Monto
+            </label>
+            <CurrencyInput
+              ref={(el) => registerField && registerField(`mixedPayment_${index}_monto`, el)}
+              name={`mixedPayment_${index}_monto`}
+              value={payment.monto || ''}
+              onChange={(value) => onPaymentChange(payment.id || index + 1, 'monto', value)}
+              onKeyDown={(e) => onKeyDown && onKeyDown(`mixedPayment_${index}_monto`, e)}
+              placeholder="0.00"
+              required
+            />
+          </div>
 
-          {/* Resumen de Totales */}
-          <div className="pt-3 border-t border-gray-200 space-y-2">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-600">Total Pagos:</span>
-              <span className="font-medium text-gray-900">
-                {formatAmountWithCurrency(totalPayments, currency)}
-              </span>
-            </div>
-            
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-600">Valor Operación:</span>
-              <span className="font-medium text-gray-900">
-                {formatAmountWithCurrency(totalExpected, currency)}
-              </span>
-            </div>
-
-            {/* Indicador de Balance */}
-            {totalPayments > 0 && (
-              <div className={`flex justify-between items-center text-sm font-medium rounded-lg px-3 py-2 ${
-                isBalanced 
-                  ? 'bg-success-50 text-success-700 border border-success-200' 
-                  : difference > 0 
-                    ? 'bg-warning-50 text-warning-700 border border-warning-200'
-                    : 'bg-error-50 text-error-700 border border-error-200'
-              }`}>
-                <span>
-                  {isBalanced 
-                    ? '✓ Pagos Balanceados' 
-                    : difference > 0 
-                      ? `Falta: ${formatAmountWithCurrency(difference, currency)}`
-                      : `Exceso: ${formatAmountWithCurrency(Math.abs(difference), currency)}`
-                  }
-                </span>
-                {isBalanced && <span>✓</span>}
-              </div>
+          {/* Botón de eliminar (solo si hay más de 2 pagos) */}
+          <div className="flex items-end">
+            {safePayments.length > 2 && index >= 2 && (
+              <button
+                ref={(el) => registerField && registerField(`mixedPayment_${index}_remove`, el)}
+                type="button"
+                onClick={() => onRemovePayment(payment.id || index + 1)}
+                onKeyDown={(e) => onKeyDown && onKeyDown(`mixedPayment_${index}_remove`, e)}
+                className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
+                title="Eliminar pago"
+              >
+                <X size={16} />
+              </button>
             )}
           </div>
         </div>
-      )}
-    </div>
-  );
-};
+      ))}
 
-// Componente para cada item de pago individual
-const WalletPaymentItem = ({
-  payment = {},
-  index = 0,
-  onPaymentChange,
-  onRemove,
-  showRemove = true
-}) => {
-  const handleWalletChange = (walletValue) => {
-    if (onPaymentChange && payment?.id) {
-      onPaymentChange(payment.id, 'wallet', walletValue);
-    }
-  };
-
-  const handleMontoChange = (monto) => {
-    if (onPaymentChange && payment?.id) {
-      onPaymentChange(payment.id, 'monto', monto);
-    }
-  };
-
-  const handleRemove = () => {
-    if (onRemove && payment?.id) {
-      onRemove(payment.id);
-    }
-  };
-
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3 bg-white rounded-lg border border-gray-200">
-      {/* Número de Pago */}
-      <div className="sm:col-span-1 flex items-center justify-center">
-        <div className="w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-xs font-medium">
-          {index + 1}
-        </div>
-      </div>
-
-      {/* Selector de Wallet */}
-      <div className="sm:col-span-6">
-        <label className="block text-xs font-medium text-gray-700 mb-1">
-          Wallet
-        </label>
-        <div className="grid grid-cols-2 gap-2">
-          {walletTypes.map((wallet) => (
-            <label
-              key={wallet.value}
-              className={`flex items-center justify-center p-2 border rounded-lg cursor-pointer transition-all duration-200 text-xs ${
-                payment?.wallet === wallet.value
-                  ? 'border-primary-500 bg-primary-50 text-primary-700'
-                  : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-              }`}
-            >
-              <input
-                type="radio"
-                name={`wallet-${payment?.id || index}`}
-                value={wallet.value}
-                checked={payment?.wallet === wallet.value}
-                onChange={(e) => handleWalletChange(e.target.value)}
-                className="sr-only"
-              />
-              <span className="font-medium">{wallet.label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Monto */}
-      <div className="sm:col-span-4">
-        <FormInput
-          label="Monto"
-          type="number"
-          value={payment?.monto || ''}
-          onChange={handleMontoChange}
-          placeholder="0.00"
-          className="text-sm"
-        />
-      </div>
-
-      {/* Botón Eliminar */}
-      <div className="sm:col-span-1 flex items-end justify-center">
-        {showRemove && (
+      {/* Botón para añadir pago (solo si hay menos de 4) */}
+      {safePayments.length < 4 && (
+        <div className="flex justify-start">
           <button
+            ref={(el) => registerField && registerField('mixedPayment_add', el)}
             type="button"
-            onClick={handleRemove}
-            className="p-2 text-error-600 hover:bg-error-50 rounded-lg transition-colors duration-200 touch-target"
-            title="Eliminar pago"
-            aria-label="Eliminar pago"
+            onClick={onAddPayment}
+            onKeyDown={(e) => onKeyDown && onKeyDown('mixedPayment_add', e)}
+            className="flex items-center space-x-2 px-3 py-2 text-sm text-primary-600 hover:text-primary-800 hover:bg-primary-50 rounded-lg transition-colors border border-primary-200 hover:border-primary-300"
           >
-            <X size={16} />
+            <Plus size={16} />
+            <span>Añadir Pago</span>
           </button>
+        </div>
+      )}
+
+      {/* Resumen de totales - SIN RECUADRE */}
+      <div className="pt-2 border-t border-gray-200">
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <span className="text-gray-600">Total Pagos:</span>
+            <span className="ml-2 font-medium text-gray-900">
+              ${totalPayments.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-600">Esperado:</span>
+            <span className="ml-2 font-medium text-gray-900">
+              ${totalExpected.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+            </span>
+          </div>
+        </div>
+        
+        {!isBalanced && (
+          <div className="mt-2 text-sm">
+            <span className={`font-medium ${difference > 0 ? 'text-red-600' : 'text-green-600'}`}>
+              {difference > 0 ? 'Falta:' : 'Sobra:'} ${Math.abs(difference).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+            </span>
+          </div>
         )}
       </div>
     </div>
