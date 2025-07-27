@@ -35,6 +35,22 @@ const FormInput = forwardRef(({
   onKeyDown,
   ...rest
 }, ref) => {
+  
+  // Handle keyboard events
+  const handleKeyDown = (e) => {
+    // Para campos de fecha, Enter debería enfocar el input para abrir el selector
+    if (type === 'date' && e.key === 'Enter') {
+      e.preventDefault();
+      e.target.focus();
+      e.target.showPicker?.(); // Abrir el selector de fecha si está disponible
+      return;
+    }
+    
+    // Para otros campos, comportamiento normal
+    if (onKeyDown) {
+      onKeyDown(e);
+    }
+  };
   // Calculate day name for date inputs
   const calculatedDayName = React.useMemo(() => {
     if (type === 'date' && value && showDayName) {
@@ -107,7 +123,7 @@ const FormInput = forwardRef(({
           type={type}
           value={value || ''}
           onChange={handleChange}
-          onKeyDown={onKeyDown}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
           readOnly={readOnly}
           required={required}

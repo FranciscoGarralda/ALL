@@ -44,48 +44,48 @@ const FormSelect = forwardRef(({
   // Handle change
   const handleChange = (e) => {
     onChange(e.target.value);
+    
+    // Después de seleccionar una opción, navegar al siguiente campo
+    setTimeout(() => {
+      if (onKeyDown) {
+        const arrowDownEvent = new KeyboardEvent('keydown', {
+          key: 'ArrowDown',
+          bubbles: true,
+          cancelable: true
+        });
+        onKeyDown(arrowDownEvent);
+      }
+    }, 100);
   };
 
   // Handle keyboard navigation for select dropdowns
   const handleKeyDown = useCallback((e) => {
-    // Para navegación bidimensional: las flechas navegan entre campos
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-      // Si el select no está abierto, permitir navegación entre campos
-      if (!e.target.matches(':focus') || document.activeElement !== e.target) {
-        if (onKeyDown) {
-          onKeyDown(e);
-        }
-        return;
-      }
-      
-      // Si el select está enfocado pero no abierto, abrir con Enter
-      // Las flechas navegan entre campos
-      e.preventDefault();
-      if (onKeyDown) {
-        onKeyDown(e);
-      }
-      return;
-    }
-
-    // Enter abre el select o navega al siguiente campo
+    // Enter abre el select
     if (e.key === 'Enter') {
       e.preventDefault();
       
       // Abrir el select
       e.target.focus();
-      e.target.click();
       
-      // Después de un tiempo, cerrar y navegar al siguiente campo
-      setTimeout(() => {
-        if (onKeyDown) {
-          const arrowDownEvent = new KeyboardEvent('keydown', {
-            key: 'ArrowDown',
-            bubbles: true,
-            cancelable: true
-          });
-          onKeyDown(arrowDownEvent);
-        }
-      }, 150);
+      // Para navegadores que soportan showPicker
+      if (e.target.showPicker) {
+        e.target.showPicker();
+      } else {
+        // Fallback: simular click
+        e.target.click();
+      }
+      return;
+    }
+
+    // Para flechas de navegación entre campos, delegar al formulario
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      // Solo si el select no está abierto (no hay opciones visibles)
+      // Esto permite que las flechas funcionen dentro del select cuando está abierto
+      // pero naveguen entre campos cuando está cerrado
+      if (onKeyDown) {
+        onKeyDown(e);
+      }
+      return;
     }
 
     // Para otras teclas, comportamiento normal del select
