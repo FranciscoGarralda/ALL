@@ -34,11 +34,11 @@ function DynamicFormFieldGroups({ groups, onKeyDown }) {
 const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelEdit, clients, onSaveClient }) => {
   const [formData, setFormData] = useState({
     cliente: '',
-    fecha: '',
-    nombreDia: '',
+    fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
+    nombreDia: new Date().toLocaleDateString('es-ES', { weekday: 'long' }), // Día actual
     detalle: '',
-    operacion: '',
-    subOperacion: '',
+    operacion: 'TRANSACCIONES', // Predeterminado TRANSACCIONES
+    subOperacion: 'COMPRA', // Auto-selección COMPRA
     proveedorCC: '',
     monto: '',
     moneda: '',
@@ -241,11 +241,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   const clearForm = () => {
     setFormData({
       cliente: '',
-      fecha: '',
-      nombreDia: '',
+      fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
+      nombreDia: new Date().toLocaleDateString('es-ES', { weekday: 'long' }), // Día actual
       detalle: '',
-      operacion: '',
-      subOperacion: '',
+      operacion: 'TRANSACCIONES', // Predeterminado TRANSACCIONES
+      subOperacion: 'COMPRA', // Auto-selección COMPRA
       proveedorCC: '',
       monto: '',
       moneda: '',
