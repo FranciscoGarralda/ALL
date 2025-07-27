@@ -125,7 +125,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       fieldGroups.forEach(group => {
         group.forEach(field => {
           if (field.name && !conditionalFields.includes(field.name)) {
-            conditionalFields.push(field.name);
+            // Excluir campos calculados/readOnly de la navegación
+            if (!field.readOnly && !field.calculated) {
+              conditionalFields.push(field.name);
+            }
           }
         });
       });
@@ -138,7 +141,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         
         conditionalFieldsFromConfig.forEach(field => {
           if (field.name && !conditionalFields.includes(field.name)) {
-            conditionalFields.push(field.name);
+            // Excluir campos calculados/readOnly de la navegación
+            if (!field.readOnly && !field.calculated) {
+              conditionalFields.push(field.name);
+            }
           }
         });
       }
@@ -155,7 +161,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       endFields.push('nombreOtro');
     }
     
-    const currentFieldOrder = [...baseFields, ...conditionalFields, ...endFields];
+    // Agregar botones al final
+    const buttonFields = ['guardar', 'limpiar', 'cancelar'];
+    
+    const currentFieldOrder = [...baseFields, ...conditionalFields, ...endFields, ...buttonFields];
     const currentIndex = currentFieldOrder.indexOf(currentField);
 
     // Debug temporal - remover después
@@ -189,6 +198,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         if (fieldRef.type === 'checkbox') {
           fieldRef.checked = !fieldRef.checked;
           fieldRef.dispatchEvent(new Event('change', { bubbles: true }));
+          return;
+        }
+        
+        // Para botones, hacer click
+        if (fieldRef.tagName === 'BUTTON') {
+          fieldRef.click();
           return;
         }
         
@@ -875,21 +890,27 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         {/* Botones de acción */}
         <div className="flex flex-col sm:flex-row justify-between pt-4 border-t border-gray-200 gap-3">
           <button
+            ref={(el) => registerField('guardar', el)}
             onClick={handleGuardar}
+            onKeyDown={(e) => handleKeyboardNavigation('guardar', e)}
             className="btn-primary flex-1 sm:flex-none touch-target"
             disabled={!formData.operacion || !formData.subOperacion}
           >
             {initialMovementData ? 'Actualizar' : 'Guardar'}
           </button>
           <button
+            ref={(el) => registerField('limpiar', el)}
             onClick={clearForm}
+            onKeyDown={(e) => handleKeyboardNavigation('limpiar', e)}
             className="btn-secondary flex-1 sm:flex-none touch-target"
           >
             Limpiar Formulario
           </button>
           {onCancelEdit && (
             <button
+              ref={(el) => registerField('cancelar', el)}
               onClick={onCancelEdit}
+              onKeyDown={(e) => handleKeyboardNavigation('cancelar', e)}
               className="btn-secondary flex-1 sm:flex-none touch-target"
             >
               Cancelar
