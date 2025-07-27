@@ -490,6 +490,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                 label: `${op.icon} ${key.replace('_', ' ')}`,
               })),
             ]}
+            placeholder="Seleccionar operación"
             required
           />
 
@@ -509,6 +510,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                     label: sub,
                   })),
                 ]}
+                placeholder="Seleccionar opción"
                 required
               />
             )}
