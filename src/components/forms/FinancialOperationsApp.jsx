@@ -77,9 +77,23 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     return [{ value: '', label: 'Seleccionar cliente prestamista' }, ...filtered.map(c => ({ value: c.nombre, label: `${c.nombre} ${c.apellido}` }))];
   }, [clients]);
 
-  // Navigation and mixed payments logic moved to custom hooks
+  // Custom hooks for clean separation of concerns
+  const {
+    isMixedPaymentActive,
+    handleMixedPaymentChange,
+    addMixedPayment,
+    removeMixedPayment,
+    validateMixedPayments
+  } = useMixedPayments(formData, setFormData);
 
-  // Keyboard navigation logic moved to useKeyboardNavigation hook
+  const {
+    fieldRefs,
+    registerField,
+    focusField,
+    openField,
+    handleKeyboardNavigation,
+    handleModalNavigation
+  } = useKeyboardNavigation();
 
 
   useEffect(() => {
@@ -146,15 +160,15 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           
           // Crear pagos iniciales con estructura apropiada
           if (isWalletMode) {
-            newState.pagosMixtos = [
-              { id: 1, wallet: '', monto: expectedTotal.toFixed(2) },
-              { id: Date.now(), wallet: '', monto: '' }
-            ];
-          } else {
-            newState.pagosMixtos = [
-              { id: 1, cuenta: '', monto: expectedTotal.toFixed(2) },
-              { id: Date.now(), cuenta: '', monto: '' }
-            ];
+                      newState.mixedPayments = [
+            { id: 1, wallet: '', monto: expectedTotal.toFixed(2) },
+            { id: Date.now(), wallet: '', monto: '' }
+          ];
+        } else {
+          newState.mixedPayments = [
+            { id: 1, cuenta: '', monto: expectedTotal.toFixed(2) },
+            { id: Date.now(), cuenta: '', monto: '' }
+          ];
           }
           newState.total = expectedTotal.toFixed(2);
       }
@@ -170,7 +184,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             newState.total = '';
           }
         }
-        newState.pagosMixtos = [{ id: 1, cuenta: '', monto: '' }];
+        newState.mixedPayments = [{ id: 1, cuenta: '', monto: '' }];
         newState.expectedTotalForMixedPayments = '';
       }
 
@@ -194,10 +208,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           const newExpectedTotal = (currentMonto || 0) * (currentTc || 1);
           newState.expectedTotalForMixedPayments = newExpectedTotal.toFixed(2);
 
-          const sumOfOtherPaymentsExcludingFirst = newState.pagosMixtos.slice(1).reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
-          newState.pagosMixtos[0].monto = (newExpectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
-
-          newState.total = newState.pagosMixtos.reduce((sum, pago) => sum + (parseFloat(pago.monto) || 0), 0).toFixed(2);
+                  const sumOfOtherPaymentsExcludingFirst = newState.mixedPayments.slice(1).reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
+        newState.mixedPayments[0].monto = (newExpectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
+        
+        newState.total = newState.mixedPayments.reduce((sum, payment) => sum + (parseFloat(payment.monto) || 0), 0).toFixed(2);
         }
       }
 
@@ -220,92 +234,9 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     });
   };
 
-  const handleMixedPaymentChange = (id, field, value) => {
-    setFormData(prev => {
-              const updatedPayments = prev.mixedPayments.map(payment =>
-          payment.id === id ? { ...payment, [field]: value } : payment
-        );
+  // Mixed payment functions moved to useMixedPayments hook
 
-      let newTotal = prev.total;
-      const expectedTotal = parseFloat(prev.expectedTotalForMixedPayments) || 0;
-
-      if (prev.walletTC === 'pago_mixto') {
-        if (field === 'monto') {
-          const changedPaymentIndex = updatedPagos.findIndex(p => p.id === id);
-
-          if (changedPaymentIndex !== 0) {
-            const sumOfOtherPaymentsExcludingFirst = updatedPagos.slice(1).reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
-            updatedPagos[0].monto = (expectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
-          }
-        }
-        newTotal = updatedPagos.reduce((sum, pago) => sum + (parseFloat(pago.monto) || 0), 0).toFixed(2);
-      }
-
-      return { ...prev, pagosMixtos: updatedPagos, total: newTotal };
-    });
-  };
-
-  const addMixedPayment = () => {
-    setFormData(prev => {
-      // Determinar si estamos en modo wallet
-      let configKey = prev.subOperacion;
-      if (['INGRESO', 'EGRESO'].includes(prev.subOperacion) && prev.operacion === 'CUENTAS_CORRIENTES') {
-        configKey = 'CUENTAS_CORRIENTES_INGRESO_EGRESO';
-      } else if (['INGRESO', 'SALIDA', 'PRESTAMO', 'DEVOLUCION'].includes(prev.subOperacion) && prev.operacion === 'SOCIOS') {
-        configKey = 'SOCIOS_SHARED';
-      } else if (prev.subOperacion === 'PRESTAMO' && prev.operacion === 'PRESTAMISTAS') {
-        configKey = 'PRESTAMISTAS_PRESTAMO';
-      } else if (prev.subOperacion === 'RETIRO' && prev.operacion === 'PRESTAMISTAS') {
-        configKey = 'PRESTAMISTAS_RETIRO';
-      } else if (prev.subOperacion === 'TRANSFERENCIA' && prev.operacion === 'INTERNAS') {
-        configKey = 'TRANSFERENCIA';
-      }
-      
-      const isWalletMode = specificFieldsConfig[configKey]?.pagoMixtoWalletMode;
-      
-      // Crear nuevo pago con campos apropiados
-      const newPago = isWalletMode 
-        ? { id: Date.now(), wallet: '', monto: '' }
-        : { id: Date.now(), cuenta: '', monto: '' };
-      
-      const newPagos = [...prev.pagosMixtos, newPago];
-      let newTotal = prev.total;
-      if (prev.walletTC === 'pago_mixto') {
-        newTotal = newPagos.reduce((sum, pago) => sum + (parseFloat(pago.monto) || 0), 0).toFixed(2);
-      }
-      return {
-        ...prev,
-        pagosMixtos: newPagos,
-        total: newTotal
-      };
-    });
-  };
-
-  const removeMixedPayment = (id) => {
-    setFormData(prev => {
-      const filteredPagos = prev.pagosMixtos.filter(pago => pago.id !== id);
-      let newTotal = prev.total;
-      const expectedTotal = parseFloat(prev.expectedTotalForMixedPayments) || 0;
-
-      if (prev.walletTC === 'pago_mixto') {
-        if (id === prev.pagosMixtos[0].id && filteredPagos.length > 0) {
-          const sumOfRemainingPayments = filteredPagos.slice(1).reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
-          filteredPagos[0].monto = (expectedTotal - sumOfRemainingPayments).toFixed(2);
-        } else if (filteredPagos.length > 0) {
-          const sumOfOtherPaymentsExcludingFirst = filteredPagos.slice(1).reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
-          filteredPagos[0].monto = (expectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
-        } else {
-          filteredPagos.push({ id: Date.now(), cuenta: '', monto: expectedTotal.toFixed(2) });
-        }
-        newTotal = filteredPagos.reduce((sum, pago) => sum + (parseFloat(pago.monto) || 0), 0).toFixed(2);
-      }
-      return {
-        ...prev,
-        pagosMixtos: filteredPagos,
-        total: newTotal
-      };
-    });
-  };
+  // addMixedPayment and removeMixedPayment functions moved to useMixedPayments hook
 
   const clearForm = () => {
     setFormData({
@@ -342,23 +273,18 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       cuentaSalida: '',
       cuentaIngreso: '',
       // pagoMixtoActivo eliminado - ahora se controla por walletTC === 'pago_mixto'
-      pagosMixtos: [],
+      mixedPayments: [],
       expectedTotalForMixedPayments: '',
     });
   };
 
   const handleGuardar = () => {
     console.log("Attempting to save movement. Current formData:", formData);
-    // Validar Pago Mixto
-    if (formData.walletTC === 'pago_mixto') {
-      const totalPagosMixtos = formData.pagosMixtos.reduce((sum, pago) => sum + (parseFloat(pago.monto) || 0), 0);
-      const expectedTotal = parseFloat(formData.expectedTotalForMixedPayments) || 0;
-
-      if (Math.abs(totalPagosMixtos - expectedTotal) > 0.01) {
-        alert('Error de Pago Mixto: La suma de los montos en Pago Mixto NO coincide con el Valor de la Operación. Por favor, revise.');
-        console.error("Pago Mixto validation failed:", { totalPagosMixtos, expectedTotal });
-        return;
-      }
+    // Validate mixed payments using hook
+    const validation = validateMixedPayments();
+    if (!validation.isValid) {
+      alert(validation.error);
+      return;
     }
     
     onSaveMovement(formData);
@@ -442,19 +368,19 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
     return (
       <>
-        <DynamicFormFieldGroups groups={fieldGroups} onKeyDown={handleKeyboardNavigation} />
+                  <DynamicFormFieldGroups groups={fieldGroups} onKeyDown={(field, event) => handleKeyboardNavigation(field, event, formData, specificFieldsConfig)} />
         {conditionalFields.length > 0 && (
-          <FormFieldGroup fields={conditionalFields} onKeyDown={handleKeyboardNavigation} />
+          <FormFieldGroup fields={conditionalFields} onKeyDown={(field, event) => handleKeyboardNavigation(field, event, formData, specificFieldsConfig)} />
         )}
 
         {showPagoMixtoOption && (
           <div className="mt-4">
             {config.pagoMixtoWalletMode ? (
-              <WalletPaymentGroup
-                payments={formData.pagosMixtos}
-                onPaymentChange={handlePagoMixtoChange}
-                onAddPayment={addPagoMixto}
-                onRemovePayment={removePagoMixto}
+                              <MixedPaymentGroup
+                  payments={formData.mixedPayments}
+                  onPaymentChange={handleMixedPaymentChange}
+                  onAddPayment={addMixedPayment}
+                  onRemovePayment={removeMixedPayment}
                 totalExpected={formData.expectedTotalForMixedPayments || 0}
                 currency={formData.monedaTC || 'PESO'}
                 isActive={true}
@@ -464,24 +390,24 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               <div>
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Detalle de Pago Mixto</h4>
                 <div className="mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
-                    {formData.pagosMixtos.map((pago, index) => (
+                    {formData.mixedPayments.map((pago, index) => (
                       <div key={pago.id} className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2 items-end">
                         <FormSelect
                           label="Cuenta"
                           value={pago.cuenta}
-                          onChange={(val) => handlePagoMixtoChange(pago.id, 'cuenta', val)}
+                                                      onChange={(val) => handleMixedPaymentChange(pago.id, 'cuenta', val)}
                           options={cuentas}
                         />
                         <FormInput
                           label="Monto"
                           type="number"
                           value={pago.monto}
-                          onChange={(val) => handlePagoMixtoChange(pago.id, 'monto', val)}
+                                                      onChange={(val) => handleMixedPaymentChange(pago.id, 'monto', val)}
                           placeholder="Monto a pagar"
                         />
                         <button
                           type="button"
-                          onClick={() => removePagoMixto(pago.id)}
+                                                      onClick={() => removeMixedPayment(pago.id)}
                           className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors touch-target"
                           aria-label="Eliminar pago"
                         >
@@ -491,13 +417,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                     ))}
                     <button
                       type="button"
-                      onClick={addPagoMixto}
+                                                onClick={addMixedPayment}
                       className="mt-2 flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors touch-target"
                     >
                       <PlusCircle size={16} /> Añadir Pago
                     </button>
                     <div className="mt-3 text-sm font-medium text-gray-800">
-                      Total Pagos Mixtos: {formatAmountWithCurrency(formData.pagosMixtos.reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0), formData.monedaTC || 'PESO')}
+                      Total Pagos Mixtos: {formatAmountWithCurrency(formData.mixedPayments.reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0), formData.monedaTC || 'PESO')}
                     </div>
                     {formData.expectedTotalForMixedPayments && (
                       <div className="text-xs text-gray-600 mt-1">
