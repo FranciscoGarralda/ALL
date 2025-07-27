@@ -16,9 +16,14 @@ const nextConfig = {
   compiler: {
     // Remove console logs in production
     removeConsole: process.env.NODE_ENV === 'production',
+    // React JSX transform
+    reactRemoveProperties: process.env.NODE_ENV === 'production',
     // Enable SWC minification
     styledComponents: false,
   },
+
+  // React configuration
+  reactStrictMode: true,
 
   // Build optimizations
   swcMinify: true,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { DollarSign, XCircle, PlusCircle } from 'lucide-react';
 import {
   FormInput,
