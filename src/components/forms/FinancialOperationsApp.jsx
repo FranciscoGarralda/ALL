@@ -229,13 +229,16 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
 
       // Cálculo automático para ARBITRAJE - VERSIÓN SEGURA
-      if (['monto', 'moneda', 'tc', 'montoVenta', 'tcVenta'].includes(field) && newState.subOperacion === 'ARBITRAJE') {
+      if (['monto', 'moneda', 'monedaTCCompra', 'tc', 'montoVenta', 'tcVenta'].includes(field) && newState.subOperacion === 'ARBITRAJE') {
         // Auto-completar monto y moneda de venta cuando cambia compra
         if (field === 'monto') {
           newState.montoVenta = newState.monto;
         }
         if (field === 'moneda') {
           newState.monedaVenta = newState.moneda;
+        }
+        if (field === 'monedaTCCompra') {
+          newState.monedaTCVenta = newState.monedaTCCompra;
         }
 
         const monto = safeParseFloat(newState.monto);

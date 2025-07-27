@@ -91,7 +91,7 @@ export const specificFieldsConfig = {
       ],
       [
         { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda TC venta', name: 'monedaTCVenta', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Moneda TC venta', name: 'monedaTCVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
       [
         { label: 'Total venta', name: 'totalVenta', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
