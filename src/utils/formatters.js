@@ -1,4 +1,70 @@
 /**
+ * Format number input in real-time as user types
+ * @param {string} value - Raw input value
+ * @param {string} currency - Currency code (default: PESO)
+ * @returns {object} { formatted, raw } - Formatted display value and raw numeric value
+ */
+export const formatCurrencyInput = (value, currency = 'PESO') => {
+  // Remove all non-numeric characters except decimal point
+  const cleanValue = value.toString().replace(/[^\d.,]/g, '');
+  
+  // Handle empty or invalid input
+  if (!cleanValue || cleanValue === '') {
+    return { formatted: '', raw: '' };
+  }
+  
+  // Convert to number, handling both . and , as decimal separators
+  let numericValue = cleanValue.replace(/\./g, '').replace(',', '.');
+  
+  // If it's just a decimal point, return empty
+  if (numericValue === '.' || numericValue === ',') {
+    return { formatted: '', raw: '' };
+  }
+  
+  // Parse as float
+  const number = parseFloat(numericValue);
+  
+  // Handle invalid numbers
+  if (isNaN(number)) {
+    return { formatted: '', raw: '' };
+  }
+  
+  // Format with thousands separator
+  const formatted = number.toLocaleString('es-AR', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+    useGrouping: true
+  });
+  
+  // Add currency symbol
+  const symbol = CURRENCY_SYMBOLS[currency] || '$';
+  const displayValue = `${symbol}${formatted}`;
+  
+  return {
+    formatted: displayValue,
+    raw: number.toString()
+  };
+};
+
+/**
+ * Parse formatted currency input back to raw number
+ * @param {string} formattedValue - Formatted currency string like "$1.000,50"
+ * @returns {string} Raw numeric value
+ */
+export const parseCurrencyInput = (formattedValue) => {
+  if (!formattedValue) return '';
+  
+  // Remove currency symbols and spaces
+  const cleaned = formattedValue.replace(/[\$€₮₿ΞR\$US\$\$U\s]/g, '');
+  
+  // Handle Argentine format: 1.000,50 -> 1000.50
+  const withDot = cleaned.replace(/\./g, '').replace(',', '.');
+  
+  const number = parseFloat(withDot);
+  return isNaN(number) ? '' : number.toString();
+};
+
+/**
  * Currency symbols configuration
  */
 export const CURRENCY_SYMBOLS = {

@@ -2,6 +2,7 @@ import React from 'react';
 import FormInput from './FormInput.jsx';
 import FormSelect from './FormSelect.jsx';
 import ClientSelect from './ClientSelect.jsx';
+import CurrencyInput from './CurrencyInput.jsx';
 
 /**
  * Form field group component that organizes related fields in responsive layouts
@@ -129,11 +130,30 @@ const FormFieldGroup = ({
         );
       
       case 'number':
+        // Check if it's a currency field (monto, total, tc, etc.)
+        if (name && ['monto', 'total', 'tc', 'montoVenta', 'totalCompra', 'totalVenta', 'comision', 'interes'].includes(name)) {
+          return (
+            <CurrencyInput
+              {...commonProps}
+              currency="PESO"
+              placeholder={placeholder || '$0'}
+            />
+          );
+        }
         return (
           <FormInput
             {...commonProps}
             type="number"
             placeholder={placeholder || '0.00'}
+          />
+        );
+
+      case 'currency':
+        return (
+          <CurrencyInput
+            {...commonProps}
+            currency={fieldProps.currency || 'PESO'}
+            placeholder={placeholder || '$0'}
           />
         );
       
