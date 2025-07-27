@@ -129,12 +129,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         }
       }
 
-      // Auto-selección para operaciones internas
-      if (field === 'operacion' && value === 'INTERNAS') {
-        newState.subOperacion = 'TRANSFERENCIA';
-      } else if (field === 'operacion' && value !== 'INTERNAS' && prev.operacion === 'INTERNAS') {
-        newState.subOperacion = '';
-      }
+
 
       // Limpiar sub-operación cuando cambia la operación principal
       if (field === 'operacion' && value !== prev.operacion) {
@@ -491,10 +486,9 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             required
           />
 
-          {/* Selector de Detalle de Operación - Oculto para INTERNAS */}
+          {/* Selector de Detalle de Operación */}
           {formData.operacion &&
-            operaciones[formData.operacion]?.subMenu?.length > 0 &&
-            formData.operacion !== 'INTERNAS' && (
+            operaciones[formData.operacion]?.subMenu?.length > 0 && (
               <FormSelect
                 ref={(el) => registerField('subOperacion', el)}
                 label="DETALLE OPERACIÓN"

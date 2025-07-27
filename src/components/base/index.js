@@ -28,30 +28,12 @@ export const WalletButtonGroup = React.forwardRef(({
     { value: 'digital', label: 'Digital', type: 'type' }
   ];
 
-  const handleButtonClick = (buttonValue, buttonType) => {
-    let newValue = value || '';
-    
-    if (buttonType === 'socio') {
-      // Si es socio, mantener el tipo actual o poner efectivo por defecto
-      const currentType = newValue.includes('digital') ? 'digital' : 'efectivo';
-      newValue = buttonValue.replace('_efectivo', `_${currentType}`);
-    } else {
-      // Si es tipo, mantener el socio actual o poner socio1 por defecto
-      const currentSocio = newValue.includes('socio2') ? 'socio2' : 'socio1';
-      newValue = `${currentSocio}_${buttonValue}`;
-    }
-    
-    onChange(newValue);
+  const handleButtonClick = (buttonValue) => {
+    onChange(buttonValue);
   };
 
-  const isActive = (buttonValue, buttonType) => {
-    if (!value) return false;
-    
-    if (buttonType === 'socio') {
-      return value.startsWith(buttonValue.replace('_efectivo', ''));
-    } else {
-      return value.endsWith(buttonValue);
-    }
+  const isActive = (buttonValue) => {
+    return value === buttonValue;
   };
 
   return (
@@ -60,22 +42,55 @@ export const WalletButtonGroup = React.forwardRef(({
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="grid grid-cols-2 gap-2">
-        {walletOptions.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            ref={option.value === 'socio1_efectivo' ? ref : null}
-            onClick={() => handleButtonClick(option.value, option.type)}
-            onKeyDown={onKeyDown}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive(option.value, option.type)
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            {option.label}
-          </button>
-        ))}
+        <button
+          type="button"
+          ref={ref}
+          onClick={() => handleButtonClick('socio1_efectivo')}
+          onKeyDown={onKeyDown}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('socio1_efectivo')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Socio 1 Efectivo
+        </button>
+        <button
+          type="button"
+          onClick={() => handleButtonClick('socio2_efectivo')}
+          onKeyDown={onKeyDown}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('socio2_efectivo')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Socio 2 Efectivo
+        </button>
+        <button
+          type="button"
+          onClick={() => handleButtonClick('socio1_digital')}
+          onKeyDown={onKeyDown}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('socio1_digital')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Socio 1 Digital
+        </button>
+        <button
+          type="button"
+          onClick={() => handleButtonClick('socio2_digital')}
+          onKeyDown={onKeyDown}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('socio2_digital')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Socio 2 Digital
+        </button>
       </div>
       <input
         type="hidden"
@@ -105,39 +120,12 @@ export const WalletTCButtonGroup = React.forwardRef(({
     { value: 'pago_mixto', label: 'Pago Mixto', type: 'special' }
   ];
 
-  const handleButtonClick = (buttonValue, buttonType) => {
-    if (buttonType === 'special') {
-      onChange(buttonValue);
-      return;
-    }
-
-    let newValue = value || '';
-    
-    if (buttonType === 'socio') {
-      // Si es socio, mantener el tipo actual o poner efectivo por defecto
-      const currentType = newValue.includes('digital') ? 'digital' : 'efectivo';
-      newValue = buttonValue.replace('_efectivo', `_${currentType}`);
-    } else {
-      // Si es tipo, mantener el socio actual o poner socio1 por defecto
-      const currentSocio = newValue.includes('socio2') ? 'socio2' : 'socio1';
-      newValue = `${currentSocio}_${buttonValue}`;
-    }
-    
-    onChange(newValue);
+  const handleButtonClick = (buttonValue) => {
+    onChange(buttonValue);
   };
 
-  const isActive = (buttonValue, buttonType) => {
-    if (!value) return false;
-    
-    if (buttonType === 'special') {
-      return value === buttonValue;
-    }
-    
-    if (buttonType === 'socio') {
-      return value.startsWith(buttonValue.replace('_efectivo', ''));
-    } else {
-      return value.endsWith(buttonValue);
-    }
+  const isActive = (buttonValue) => {
+    return value === buttonValue;
   };
 
   return (
@@ -150,59 +138,59 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             ref={ref}
-            onClick={() => handleButtonClick('socio1_efectivo', 'socio')}
+            onClick={() => handleButtonClick('socio1_efectivo')}
             onKeyDown={onKeyDown}
             className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive('socio1_efectivo', 'socio')
+              isActive('socio1_efectivo')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Socio 1
+            Socio 1 Efectivo
           </button>
           <button
             type="button"
-            onClick={() => handleButtonClick('socio2_efectivo', 'socio')}
+            onClick={() => handleButtonClick('socio2_efectivo')}
             onKeyDown={onKeyDown}
             className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive('socio2_efectivo', 'socio')
+              isActive('socio2_efectivo')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Socio 2
+            Socio 2 Efectivo
           </button>
           <button
             type="button"
-            onClick={() => handleButtonClick('efectivo', 'type')}
+            onClick={() => handleButtonClick('socio1_digital')}
             onKeyDown={onKeyDown}
             className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive('efectivo', 'type')
+              isActive('socio1_digital')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Efectivo
+            Socio 1 Digital
           </button>
           <button
             type="button"
-            onClick={() => handleButtonClick('digital', 'type')}
+            onClick={() => handleButtonClick('socio2_digital')}
             onKeyDown={onKeyDown}
             className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive('digital', 'type')
+              isActive('socio2_digital')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Digital
+            Socio 2 Digital
           </button>
         </div>
         <button
           type="button"
-          onClick={() => handleButtonClick('pago_mixto', 'special')}
+          onClick={() => handleButtonClick('pago_mixto')}
           onKeyDown={onKeyDown}
           className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors h-full ${
-            isActive('pago_mixto', 'special')
+            isActive('pago_mixto')
               ? 'bg-primary-500 text-white border-primary-500'
               : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
           }`}
