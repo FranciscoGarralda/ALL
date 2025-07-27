@@ -167,13 +167,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     const currentFieldOrder = [...baseFields, ...conditionalFields, ...endFields, ...buttonFields];
     const currentIndex = currentFieldOrder.indexOf(currentField);
 
-    // Debug temporal - remover después
-    console.log('🔍 Navigation Debug:', {
-      currentField,
-      currentIndex,
-      currentFieldOrder,
-      formData: { operacion: formData.operacion, subOperacion: formData.subOperacion }
-    });
+    // Navegación limpia sin debug
 
     // Función para enfocar un campo
     const focusField = (fieldName, delay = 0) => {

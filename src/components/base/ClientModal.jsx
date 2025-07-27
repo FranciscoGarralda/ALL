@@ -243,40 +243,48 @@ const ClientModal = ({
           {/* Teléfono y Email */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormInput
+              ref={(el) => registerField('telefono', el)}
               label="Teléfono"
               name="telefono"
               type="tel"
               value={formData.telefono}
               onChange={(value) => handleInputChange('telefono', value)}
+              onKeyDown={(e) => handleModalNavigation('telefono', e)}
               placeholder="+54 9 11 1234-5678"
               required
               error={errors.telefono}
             />
             <FormInput
+              ref={(el) => registerField('email', el)}
               label="Email"
               name="email"
               type="email"
               value={formData.email}
               onChange={(value) => handleInputChange('email', value)}
+              onKeyDown={(e) => handleModalNavigation('email', e)}
               placeholder="cliente@email.com"
             />
           </div>
 
           {/* DNI */}
           <FormInput
+            ref={(el) => registerField('dni', el)}
             label="DNI"
             name="dni"
             value={formData.dni}
             onChange={(value) => handleInputChange('dni', value)}
+            onKeyDown={(e) => handleModalNavigation('dni', e)}
             placeholder="12345678"
           />
 
           {/* Tipo de Cliente */}
           <FormSelect
+            ref={(el) => registerField('tipo', el)}
             label="Tipo de Cliente"
             name="tipo"
             value={formData.tipo}
             onChange={(value) => handleInputChange('tipo', value)}
+            onKeyDown={(e) => handleModalNavigation('tipo', e)}
             options={tiposCliente}
             required
             error={errors.tipo}
@@ -284,10 +292,12 @@ const ClientModal = ({
 
           {/* Dirección */}
           <FormInput
+            ref={(el) => registerField('direccion', el)}
             label="Dirección"
             name="direccion"
             value={formData.direccion}
             onChange={(value) => handleInputChange('direccion', value)}
+            onKeyDown={(e) => handleModalNavigation('direccion', e)}
             placeholder="Calle, número, ciudad"
           />
 
