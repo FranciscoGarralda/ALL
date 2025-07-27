@@ -10,17 +10,98 @@ import {
   useNavigation 
 } from '../components/ui/NavigationApp';
 
-// Lazy load heavy components for better performance
-const FinancialOperationsApp = lazy(() => import('../components/forms/FinancialOperationsApp'));
-const ClientesApp = lazy(() => import('../components/modules/ClientesApp'));
-const MovimientosApp = lazy(() => import('../components/modules/MovimientosApp'));
-const PendientesRetiroApp = lazy(() => import('../components/modules/PendientesRetiroApp'));
-const GastosApp = lazy(() => import('../components/modules/GastosApp'));
-const CuentasCorrientesApp = lazy(() => import('../components/modules/CuentasCorrientesApp'));
-const PrestamistasApp = lazy(() => import('../components/modules/PrestamistasApp'));
-const ComisionesApp = lazy(() => import('../components/modules/ComisionesApp'));
-const UtilidadApp = lazy(() => import('../components/modules/UtilidadApp'));
-const ArbitrajeApp = lazy(() => import('../components/modules/ArbitrajeApp'));
+// Intelligent lazy loading with performance tracking
+import { createLazyComponent, useIntelligentPreloading, AdvancedLoadingFallback } from '../utils/lazyLoader';
+
+const FinancialOperationsApp = createLazyComponent(
+  () => import('../components/forms/FinancialOperationsApp'),
+  'FinancialOperationsApp',
+  { 
+    preloadDelay: 1000,
+    fallback: <AdvancedLoadingFallback componentName="Operaciones Financieras" estimatedLoadTime={800} />
+  }
+);
+
+const ClientesApp = createLazyComponent(
+  () => import('../components/modules/ClientesApp'),
+  'ClientesApp',
+  { 
+    preloadDelay: 1200,
+    fallback: <AdvancedLoadingFallback componentName="Clientes" estimatedLoadTime={600} />
+  }
+);
+
+const MovimientosApp = createLazyComponent(
+  () => import('../components/modules/MovimientosApp'),
+  'MovimientosApp',
+  { 
+    preloadDelay: 1500,
+    fallback: <AdvancedLoadingFallback componentName="Movimientos" estimatedLoadTime={600} />
+  }
+);
+
+const PendientesRetiroApp = createLazyComponent(
+  () => import('../components/modules/PendientesRetiroApp'),
+  'PendientesRetiroApp',
+  { 
+    preloadDelay: 2500,
+    fallback: <AdvancedLoadingFallback componentName="Pendientes de Retiro" estimatedLoadTime={400} />
+  }
+);
+
+const GastosApp = createLazyComponent(
+  () => import('../components/modules/GastosApp'),
+  'GastosApp',
+  { 
+    preloadDelay: 3000,
+    fallback: <AdvancedLoadingFallback componentName="Gastos" estimatedLoadTime={500} />
+  }
+);
+
+const CuentasCorrientesApp = createLazyComponent(
+  () => import('../components/modules/CuentasCorrientesApp'),
+  'CuentasCorrientesApp',
+  { 
+    preloadDelay: 3500,
+    fallback: <AdvancedLoadingFallback componentName="Cuentas Corrientes" estimatedLoadTime={600} />
+  }
+);
+
+const PrestamistasApp = createLazyComponent(
+  () => import('../components/modules/PrestamistasApp'),
+  'PrestamistasApp',
+  { 
+    preloadDelay: 4000,
+    fallback: <AdvancedLoadingFallback componentName="Prestamistas" estimatedLoadTime={500} />
+  }
+);
+
+const ComisionesApp = createLazyComponent(
+  () => import('../components/modules/ComisionesApp'),
+  'ComisionesApp',
+  { 
+    preloadDelay: 4500,
+    fallback: <AdvancedLoadingFallback componentName="Comisiones" estimatedLoadTime={400} />
+  }
+);
+
+const UtilidadApp = createLazyComponent(
+  () => import('../components/modules/UtilidadApp'),
+  'UtilidadApp',
+  { 
+    preloadDelay: 2000,
+    fallback: <AdvancedLoadingFallback componentName="Utilidades" estimatedLoadTime={500} />
+  }
+);
+
+const ArbitrajeApp = createLazyComponent(
+  () => import('../components/modules/ArbitrajeApp'),
+  'ArbitrajeApp',
+  { 
+    preloadDelay: 5000,
+    fallback: <AdvancedLoadingFallback componentName="Arbitraje" estimatedLoadTime={700} />
+  }
+);
 
 // Loading component for better UX
 const LoadingSpinner = () => (
@@ -36,6 +117,26 @@ const LoadingSpinner = () => (
  */
 export default function MainApp() {
   const { currentPage, navigateTo } = useNavigation('mainMenu');
+  
+  // Component map for intelligent preloading
+  const componentMap = {
+    'operaciones': FinancialOperationsApp,
+    'clientes': ClientesApp,
+    'movimientos': MovimientosApp,
+    'pendientesRetiro': PendientesRetiroApp,
+    'gastos': GastosApp,
+    'cuentasCorrientes': CuentasCorrientesApp,
+    'prestamistas': PrestamistasApp,
+    'comisiones': ComisionesApp,
+    'utilidad': UtilidadApp,
+    'arbitraje': ArbitrajeApp
+  };
+  
+  // Enable intelligent preloading based on user behavior
+  useIntelligentPreloading(componentMap, {
+    enablePredictive: true,
+    preloadThreshold: 0.2 // Preload if 20% probability
+  });
   
   // Global state management with performance optimizations
   const [movements, setMovements] = useState([]);
