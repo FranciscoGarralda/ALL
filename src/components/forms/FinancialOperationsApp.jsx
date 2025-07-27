@@ -37,8 +37,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
     nombreDia: new Date().toLocaleDateString('es-ES', { weekday: 'long' }), // Día actual
     detalle: '',
-    operacion: 'TRANSACCIONES', // Predeterminado TRANSACCIONES
-    subOperacion: 'COMPRA', // Auto-selección COMPRA
+    operacion: '', // Sin predeterminado
+    subOperacion: '', // Sin auto-selección
     proveedorCC: '',
     monto: '',
     moneda: '',
@@ -244,8 +244,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
       nombreDia: new Date().toLocaleDateString('es-ES', { weekday: 'long' }), // Día actual
       detalle: '',
-      operacion: 'TRANSACCIONES', // Predeterminado TRANSACCIONES
-      subOperacion: 'COMPRA', // Auto-selección COMPRA
+      operacion: '', // Sin predeterminado
+      subOperacion: '', // Sin auto-selección
       proveedorCC: '',
       monto: '',
       moneda: '',
