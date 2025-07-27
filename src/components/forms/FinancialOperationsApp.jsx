@@ -63,7 +63,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     montoVenta: '',
     cuentaSalida: '',
     cuentaIngreso: '',
-    pagoMixtoActivo: false,
+    // pagoMixtoActivo eliminado - ahora se controla por walletTC === 'pago_mixto'
     pagosMixtos: [],
     expectedTotalForMixedPayments: '',
     ...initialMovementData
@@ -85,6 +85,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       fieldRefs.current[fieldName] = ref;
     }
   }, []);
+
+  // Helper para detectar si el pago mixto está activo
+  const isPagoMixtoActive = useCallback(() => {
+    return formData.walletTC === 'pago_mixto';
+  }, [formData.walletTC]);
 
   // Función para manejar navegación bidimensional
   const handleKeyboardNavigation = useCallback((currentField, event) => {
@@ -150,10 +155,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
     }
     
-    // Agregar checkbox de pago mixto si aplica
-    if (config && config.includesPagoMixto) {
-      conditionalFields.push('pagoMixtoActivo');
-    }
+          // Checkbox de pago mixto eliminado - ahora se controla por walletTC === 'pago_mixto'
     
     // Agregar campos comunes del final
     const endFields = ['estado', 'por'];
@@ -318,11 +320,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         }
       }
 
-      // Lógica de pago mixto
-      if (field === 'pagoMixtoActivo') {
-        if (value === true) {
-          const expectedTotal = (parseFloat(prev.monto) || 0) * (parseFloat(prev.tc) || 1);
-          newState.expectedTotalForMixedPayments = expectedTotal.toFixed(2);
+      // Lógica de pago mixto - ahora activado por walletTC === 'pago_mixto'
+      if (field === 'walletTC' && value === 'pago_mixto') {
+        const expectedTotal = (parseFloat(prev.monto) || 0) * (parseFloat(prev.tc) || 1);
+        newState.expectedTotalForMixedPayments = expectedTotal.toFixed(2);
           
           // Determinar si estamos en modo wallet
           let configKey = prev.subOperacion;
@@ -353,19 +354,21 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             ];
           }
           newState.total = expectedTotal.toFixed(2);
-        } else {
-          if (['COMPRA', 'VENTA'].includes(newState.subOperacion)) {
-            const currentMonto = parseFloat(newState.monto);
-            const currentTc = parseFloat(newState.tc);
-            if (currentMonto && currentTc) {
-              newState.total = (currentMonto * currentTc).toFixed(2);
-            } else {
-              newState.total = '';
-            }
+      }
+      
+      // Limpiar pagos mixtos cuando se cambie de "pago_mixto" a otra opción
+      if (field === 'walletTC' && prev.walletTC === 'pago_mixto' && value !== 'pago_mixto') {
+        if (['COMPRA', 'VENTA'].includes(newState.subOperacion)) {
+          const currentMonto = parseFloat(newState.monto);
+          const currentTc = parseFloat(newState.tc);
+          if (currentMonto && currentTc) {
+            newState.total = (currentMonto * currentTc).toFixed(2);
+          } else {
+            newState.total = '';
           }
-          newState.pagosMixtos = [{ id: 1, cuenta: '', monto: '' }];
-          newState.expectedTotalForMixedPayments = '';
         }
+        newState.pagosMixtos = [{ id: 1, cuenta: '', monto: '' }];
+        newState.expectedTotalForMixedPayments = '';
       }
 
       // Cálculo automático de totales para COMPRA/VENTA
@@ -374,7 +377,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         const currentTotal = parseFloat(newState.total);
         const currentTc = parseFloat(newState.tc);
 
-        if (!newState.pagoMixtoActivo) {
+        if (newState.walletTC !== 'pago_mixto') {
           if (field === 'monto' && currentMonto && currentTc) {
             newState.total = (currentMonto * currentTc).toFixed(2);
           } else if (field === 'total' && currentTotal && currentTc) {
@@ -423,7 +426,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       let newTotal = prev.total;
       const expectedTotal = parseFloat(prev.expectedTotalForMixedPayments) || 0;
 
-      if (prev.pagoMixtoActivo) {
+      if (prev.walletTC === 'pago_mixto') {
         if (field === 'monto') {
           const changedPaymentIndex = updatedPagos.findIndex(p => p.id === id);
 
@@ -464,7 +467,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       
       const newPagos = [...prev.pagosMixtos, newPago];
       let newTotal = prev.total;
-      if (prev.pagoMixtoActivo) {
+      if (prev.walletTC === 'pago_mixto') {
         newTotal = newPagos.reduce((sum, pago) => sum + (parseFloat(pago.monto) || 0), 0).toFixed(2);
       }
       return {
@@ -481,7 +484,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       let newTotal = prev.total;
       const expectedTotal = parseFloat(prev.expectedTotalForMixedPayments) || 0;
 
-      if (prev.pagoMixtoActivo) {
+      if (prev.walletTC === 'pago_mixto') {
         if (id === prev.pagosMixtos[0].id && filteredPagos.length > 0) {
           const sumOfRemainingPayments = filteredPagos.slice(1).reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
           filteredPagos[0].monto = (expectedTotal - sumOfRemainingPayments).toFixed(2);
@@ -535,7 +538,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       montoVenta: '',
       cuentaSalida: '',
       cuentaIngreso: '',
-      pagoMixtoActivo: false,
+      // pagoMixtoActivo eliminado - ahora se controla por walletTC === 'pago_mixto'
       pagosMixtos: [],
       expectedTotalForMixedPayments: '',
     });
@@ -544,7 +547,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   const handleGuardar = () => {
     console.log("Attempting to save movement. Current formData:", formData);
     // Validar Pago Mixto
-    if (formData.pagoMixtoActivo) {
+    if (formData.walletTC === 'pago_mixto') {
       const totalPagosMixtos = formData.pagosMixtos.reduce((sum, pago) => sum + (parseFloat(pago.monto) || 0), 0);
       const expectedTotal = parseFloat(formData.expectedTotalForMixedPayments) || 0;
 
@@ -621,7 +624,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       options: field.name === 'cliente' && (configKey === 'PRESTAMISTAS_PRESTAMO' || configKey === 'PRESTAMISTAS_RETIRO')
                  ? prestamistaClientsOptions
                  : field.options,
-      readOnly: field.name === 'total' && formData.pagoMixtoActivo
+                  readOnly: field.name === 'total' && formData.walletTC === 'pago_mixto'
     }));
 
     const fieldGroups = typeof config.groups === 'function'
@@ -632,7 +635,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       ? prepareFields(config.conditionalFields(formData))
       : [];
 
-    const showPagoMixtoOption = config.includesPagoMixto;
+    const showPagoMixtoOption = config.includesPagoMixto && formData.walletTC === 'pago_mixto';
 
     return (
       <>
@@ -651,35 +654,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                 onRemovePayment={removePagoMixto}
                 totalExpected={formData.expectedTotalForMixedPayments || 0}
                 currency={formData.monedaTC || 'PESO'}
-                isActive={formData.pagoMixtoActivo}
-                onToggle={(active) => handleInputChange('pagoMixtoActivo', active)}
+                isActive={true}
+                showToggle={false}
               />
             ) : (
               <div>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    ref={(el) => registerField('pagoMixtoActivo', el)}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-blue-600 rounded"
-                    checked={formData.pagoMixtoActivo}
-                    onChange={(e) => handleInputChange('pagoMixtoActivo', e.target.checked)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        // Alternar el checkbox
-                        e.target.checked = !e.target.checked;
-                        e.target.dispatchEvent(new Event('change', { bubbles: true }));
-                      } else {
-                        handleKeyboardNavigation('pagoMixtoActivo', e);
-                      }
-                    }}
-                  />
-                  <span className="text-sm font-medium text-gray-700">Pago Mixto</span>
-                </label>
-
-                {formData.pagoMixtoActivo && (
-                  <div className="mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Detalle de Pago Mixto</h4>
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">Detalle de Pago Mixto</h4>
+                <div className="mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50">
                     {formData.pagosMixtos.map((pago, index) => (
                       <div key={pago.id} className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2 items-end">
                         <FormSelect
@@ -720,8 +701,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                         Valor de la Operación: {formatAmountWithCurrency(formData.expectedTotalForMixedPayments, formData.monedaTC || 'PESO')}
                       </div>
                     )}
-                  </div>
-                )}
+                </div>
               </div>
             )}
           </div>

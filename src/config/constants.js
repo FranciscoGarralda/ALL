@@ -77,6 +77,7 @@ export const walletTypes = [
   { value: 'socio1_digital', label: 'Socio 1 - Digital' },
   { value: 'socio2_efectivo', label: 'Socio 2 - Efectivo' },
   { value: 'socio2_digital', label: 'Socio 2 - Digital' },
+  { value: 'pago_mixto', label: 'Pago Mixto' },
 ];
 
 /**
