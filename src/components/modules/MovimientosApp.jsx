@@ -541,12 +541,12 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
             </div>
 
             {/* Pago Mixto */}
-            {movement.pagoMixtoActivo && movement.pagosMixtos && movement.pagosMixtos.length > 0 && (
+            {movement.walletTC === 'pago_mixto' && movement.mixedPayments && movement.mixedPayments.length > 0 && (
               <div>
                 <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">Detalle de Pago Mixto</h3>
                 <div className="bg-primary-50 rounded-lg p-3 sm:p-4">
                   <div className="space-y-2 mb-4">
-                    {movement.pagosMixtos.map((pago, index) => (
+                    {movement.mixedPayments.map((pago, index) => (
                       <div key={index} className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-2 px-3 bg-white rounded border gap-1 sm:gap-0">
                         <span className="text-xs sm:text-sm font-medium text-gray-700">
                           Cuenta {index + 1}: {pago.cuenta || 'N/A'}
