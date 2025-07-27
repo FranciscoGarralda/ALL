@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react';
 import { Plus, X } from 'lucide-react';
+import { safeParseFloat, safeArray } from '../../utils/safeOperations';
 import FormSelect from './FormSelect';
 import CurrencyInput from './CurrencyInput';
 
@@ -25,17 +26,18 @@ const MixedPaymentGroup = ({
   onKeyDown,
   registerField
 }) => {
-  // Validación defensiva
-  const safePayments = Array.isArray(payments) ? payments : [];
+  // Validación defensiva - VERSIÓN SEGURA
+  const safePayments = safeArray(payments);
   
-  // Calcular total de pagos
+  // Calcular total de pagos - VERSIÓN SEGURA
   const totalPayments = safePayments.reduce((sum, payment) => {
-    return sum + (parseFloat(payment?.monto) || 0);
+    return sum + safeParseFloat(payment?.monto, 0);
   }, 0);
 
-  // Verificar si el total coincide
-  const isBalanced = Math.abs(totalPayments - totalExpected) < 0.01;
-  const difference = totalExpected - totalPayments;
+  // Verificar si el total coincide - VERSIÓN SEGURA
+  const safeExpectedTotal = safeParseFloat(totalExpected, 0);
+  const isBalanced = Math.abs(totalPayments - safeExpectedTotal) < 0.01;
+  const difference = safeExpectedTotal - totalPayments;
 
   // Mostrar por defecto 2 pagos, máximo 4
   const paymentsToShow = Math.max(2, safePayments.length);

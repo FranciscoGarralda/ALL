@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { DollarSign, XCircle, PlusCircle } from 'lucide-react';
+import { 
+  safeParseFloat, 
+  safeArrayFind, 
+  validateDate, 
+  safeCalculation,
+  safeArray 
+} from '../../utils/safeOperations';
 import {
   FormInput,
   FormSelect,
@@ -108,16 +115,16 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     setFormData((prev) => {
       const newState = { ...prev, [field]: value };
 
-      // Calcular día de la semana para fechas
+      // Calcular día de la semana para fechas - VERSIÓN SEGURA
       if (field === 'fecha') {
-        try {
-          const date = new Date(value + 'T00:00:00');
-          if (!isNaN(date.getTime())) {
-            newState.nombreDia = date.toLocaleDateString('es-ES', { weekday: 'long' });
-          } else {
+        const validDate = validateDate(value);
+        if (validDate) {
+          try {
+            newState.nombreDia = validDate.toLocaleDateString('es-ES', { weekday: 'long' });
+          } catch (error) {
             newState.nombreDia = '';
           }
-        } catch (error) {
+        } else {
           newState.nombreDia = '';
         }
       }
@@ -136,17 +143,22 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         newState.subOperacion = '';
       }
 
-      // Reset moneda if proveedorCC changes
+      // Reset moneda if proveedorCC changes - VERSIÓN SEGURA
       if (field === 'proveedorCC' && newState.operacion === 'CUENTAS_CORRIENTES') {
-        const selectedProveedor = proveedoresCC.find(p => p.value === value);
-        if (selectedProveedor && !selectedProveedor.allowedCurrencies.includes(newState.moneda)) {
+        const selectedProveedor = safeArrayFind(
+          safeArray(proveedoresCC), 
+          p => p && p.value === value
+        );
+        if (selectedProveedor && 
+            safeArray(selectedProveedor.allowedCurrencies).length > 0 && 
+            !selectedProveedor.allowedCurrencies.includes(newState.moneda)) {
           newState.moneda = '';
         }
       }
 
-      // Lógica de pago mixto - ahora activado por walletTC === 'pago_mixto'
+      // Lógica de pago mixto - VERSIÓN SEGURA
       if (field === 'walletTC' && value === 'pago_mixto') {
-        const expectedTotal = (parseFloat(prev.monto) || 0) * (parseFloat(prev.tc) || 1);
+        const expectedTotal = safeCalculation.multiply(prev.monto || 0, prev.tc || 1);
         newState.expectedTotalForMixedPayments = expectedTotal.toFixed(2);
           
           // Determinar si estamos en modo wallet
@@ -173,13 +185,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           newState.total = expectedTotal.toFixed(2);
         }
       
-      // Limpiar pagos mixtos cuando se cambie de "pago_mixto" a otra opción
+      // Limpiar pagos mixtos cuando se cambie de "pago_mixto" a otra opción - VERSIÓN SEGURA
       if (field === 'walletTC' && prev.walletTC === 'pago_mixto' && value !== 'pago_mixto') {
         if (['COMPRA', 'VENTA'].includes(newState.subOperacion)) {
-          const currentMonto = parseFloat(newState.monto);
-          const currentTc = parseFloat(newState.tc);
-          if (currentMonto && currentTc) {
-            newState.total = (currentMonto * currentTc).toFixed(2);
+          const currentMonto = safeParseFloat(newState.monto);
+          const currentTc = safeParseFloat(newState.tc);
+          if (currentMonto > 0 && currentTc > 0) {
+            newState.total = safeCalculation.multiply(currentMonto, currentTc).toFixed(2);
           } else {
             newState.total = '';
           }
@@ -188,45 +200,54 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         newState.expectedTotalForMixedPayments = '';
       }
 
-      // Cálculo automático de totales para COMPRA/VENTA
+      // Cálculo automático de totales para COMPRA/VENTA - VERSIÓN SEGURA
       if (['monto', 'total', 'tc'].includes(field) && ['COMPRA', 'VENTA'].includes(newState.subOperacion)) {
-        const currentMonto = parseFloat(newState.monto);
-        const currentTotal = parseFloat(newState.total);
-        const currentTc = parseFloat(newState.tc);
+        const currentMonto = safeParseFloat(newState.monto);
+        const currentTotal = safeParseFloat(newState.total);
+        const currentTc = safeParseFloat(newState.tc);
 
         if (newState.walletTC !== 'pago_mixto') {
-          if (field === 'monto' && currentMonto && currentTc) {
-            newState.total = (currentMonto * currentTc).toFixed(2);
-          } else if (field === 'total' && currentTotal && currentTc) {
-            newState.monto = (currentTotal / currentTc).toFixed(2);
-          } else if (field === 'tc' && currentMonto && currentTc) {
-            newState.total = (currentMonto * currentTc).toFixed(2);
-          } else if (field === 'tc' && currentTotal && currentTc) {
-            newState.monto = (currentTotal / currentTc).toFixed(2);
+          if (field === 'monto' && currentMonto > 0 && currentTc > 0) {
+            newState.total = safeCalculation.multiply(currentMonto, currentTc).toFixed(2);
+          } else if (field === 'total' && currentTotal > 0 && currentTc > 0) {
+            newState.monto = safeCalculation.divide(currentTotal, currentTc).toFixed(2);
+          } else if (field === 'tc' && currentMonto > 0 && currentTc > 0) {
+            newState.total = safeCalculation.multiply(currentMonto, currentTc).toFixed(2);
+          } else if (field === 'tc' && currentTotal > 0 && currentTc > 0) {
+            newState.monto = safeCalculation.divide(currentTotal, currentTc).toFixed(2);
           }
         } else {
-          const newExpectedTotal = (currentMonto || 0) * (currentTc || 1);
+          const newExpectedTotal = safeCalculation.multiply(currentMonto, currentTc || 1);
           newState.expectedTotalForMixedPayments = newExpectedTotal.toFixed(2);
 
-                  const sumOfOtherPaymentsExcludingFirst = newState.mixedPayments.slice(1).reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
-        newState.mixedPayments[0].monto = (newExpectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
-        
-        newState.total = newState.mixedPayments.reduce((sum, payment) => sum + (parseFloat(payment.monto) || 0), 0).toFixed(2);
+          // Verificar que mixedPayments existe y es array
+          const mixedPayments = safeArray(newState.mixedPayments);
+          if (mixedPayments.length > 0) {
+            const sumOfOtherPaymentsExcludingFirst = mixedPayments.slice(1).reduce((sum, p) => {
+              return sum + safeParseFloat(p?.monto, 0);
+            }, 0);
+            
+            mixedPayments[0].monto = (newExpectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
+            
+            newState.total = mixedPayments.reduce((sum, payment) => {
+              return sum + safeParseFloat(payment?.monto, 0);
+            }, 0).toFixed(2);
+          }
         }
       }
 
-      // Cálculo automático para ARBITRAJE
+      // Cálculo automático para ARBITRAJE - VERSIÓN SEGURA
       if (['monto', 'tc', 'montoVenta', 'tcVenta'].includes(field) && newState.subOperacion === 'ARBITRAJE') {
-        const monto = parseFloat(newState.monto) || 0;
-        const tc = parseFloat(newState.tc) || 0;
-        const montoVenta = parseFloat(newState.montoVenta) || 0;
-        const tcVenta = parseFloat(newState.tcVenta) || 0;
+        const monto = safeParseFloat(newState.monto);
+        const tc = safeParseFloat(newState.tc);
+        const montoVenta = safeParseFloat(newState.montoVenta);
+        const tcVenta = safeParseFloat(newState.tcVenta);
 
-        newState.totalCompra = (monto * tc).toFixed(2);
-        newState.totalVenta = (montoVenta * tcVenta).toFixed(2);
+        newState.totalCompra = safeCalculation.multiply(monto, tc).toFixed(2);
+        newState.totalVenta = safeCalculation.multiply(montoVenta, tcVenta).toFixed(2);
         
-        const totalCompraNum = parseFloat(newState.totalCompra) || 0;
-        const totalVentaNum = parseFloat(newState.totalVenta) || 0;
+        const totalCompraNum = safeParseFloat(newState.totalCompra);
+        const totalVentaNum = safeParseFloat(newState.totalVenta);
         newState.comision = (totalVentaNum - totalCompraNum).toFixed(2);
       }
 

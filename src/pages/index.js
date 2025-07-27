@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Head from 'next/head';
+import { safeLocalStorage } from '../utils/safeOperations';
 
 // Import navigation components
 import { 
@@ -204,38 +205,36 @@ export default function MainApp() {
   // Navigation state to track where user came from
   const [previousPage, setPreviousPage] = useState('movimientos');
 
-  // Load data from localStorage on mount
+  // Load data from localStorage on mount - VERSIÓN SEGURA
   useEffect(() => {
-    try {
-      const savedMovements = localStorage.getItem('financial-movements');
-      const savedClients = localStorage.getItem('financial-clients');
-      
-      if (savedMovements) {
-        setMovements(JSON.parse(savedMovements));
-      }
-      
-      if (savedClients) {
-        setClients(JSON.parse(savedClients));
-      }
-    } catch (error) {
-      console.error('Error loading data from localStorage:', error);
+    const savedMovements = safeLocalStorage.getItem('financial-movements', []);
+    const savedClients = safeLocalStorage.getItem('financial-clients', []);
+    
+    if (Array.isArray(savedMovements) && savedMovements.length > 0) {
+      setMovements(savedMovements);
+    }
+    
+    if (Array.isArray(savedClients) && savedClients.length > 0) {
+      setClients(savedClients);
     }
   }, []);
 
-  // Save data to localStorage when state changes
+  // Save data to localStorage when state changes - VERSIÓN SEGURA
   useEffect(() => {
-    try {
-      localStorage.setItem('financial-movements', JSON.stringify(movements));
-    } catch (error) {
-      console.error('Error saving movements to localStorage:', error);
+    if (movements.length > 0) {
+      const result = safeLocalStorage.setItem('financial-movements', movements);
+      if (!result.success) {
+        console.warn('Failed to save movements:', result.error);
+      }
     }
   }, [movements]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('financial-clients', JSON.stringify(clients));
-    } catch (error) {
-      console.error('Error saving clients to localStorage:', error);
+    if (clients.length > 0) {
+      const result = safeLocalStorage.setItem('financial-clients', clients);
+      if (!result.success) {
+        console.warn('Failed to save clients:', result.error);
+      }
     }
   }, [clients]);
 
