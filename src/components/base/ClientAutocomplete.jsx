@@ -79,41 +79,60 @@ const ClientAutocomplete = forwardRef(({
 
   // Handle keyboard navigation
   const handleKeyDown = (e) => {
-    // Call parent onKeyDown for field navigation
-    if (onKeyDown && !isOpen) {
-      onKeyDown(e);
+    // Si el dropdown está cerrado, permitir navegación de campos del formulario
+    if (!isOpen) {
+      // Para Enter, abrir el dropdown
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        setIsOpen(true);
+        setSelectedIndex(0);
+        return;
+      }
+      
+      // Para flechas y otras teclas, delegar al formulario
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        if (onKeyDown) {
+          onKeyDown(e);
+        }
+        return;
+      }
+      
+      // Para teclas de escritura, abrir dropdown
+      if (e.key.length === 1) {
+        setIsOpen(true);
+      }
       return;
     }
 
+    // Si el dropdown está abierto, manejar navegación interna
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        if (!isOpen) {
-          setIsOpen(true);
-          setSelectedIndex(0);
-        } else {
-          setSelectedIndex(prev => 
-            prev < filteredClients.length - 1 ? prev + 1 : prev
-          );
-        }
+        setSelectedIndex(prev => 
+          prev < filteredClients.length - 1 ? prev + 1 : prev
+        );
         break;
 
       case 'ArrowUp':
         e.preventDefault();
-        if (isOpen) {
-          setSelectedIndex(prev => prev > 0 ? prev - 1 : prev);
-        }
+        setSelectedIndex(prev => prev > 0 ? prev - 1 : prev);
         break;
 
       case 'Enter':
         e.preventDefault();
-        if (isOpen && selectedIndex >= 0 && filteredClients[selectedIndex]) {
+        if (selectedIndex >= 0 && filteredClients[selectedIndex]) {
           handleClientSelect(filteredClients[selectedIndex]);
-        } else if (!isOpen) {
-          // If dropdown is closed and Enter is pressed, navigate to next field
-          if (onKeyDown) {
-            onKeyDown(e);
-          }
+          // Después de seleccionar, navegar al siguiente campo
+          setTimeout(() => {
+            if (onKeyDown) {
+              const enterEvent = new KeyboardEvent('keydown', {
+                key: 'ArrowDown', // Simular flecha abajo para ir al siguiente campo
+                bubbles: true,
+                cancelable: true
+              });
+              onKeyDown(enterEvent);
+            }
+          }, 100);
         }
         break;
 
@@ -130,10 +149,7 @@ const ClientAutocomplete = forwardRef(({
         break;
 
       default:
-        // For other keys, open dropdown if not already open
-        if (!isOpen && e.key.length === 1) {
-          setIsOpen(true);
-        }
+        // Para otras teclas de escritura, mantener el dropdown abierto
         break;
     }
   };

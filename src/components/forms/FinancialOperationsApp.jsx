@@ -86,71 +86,130 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     }
   }, []);
 
-  // Función para manejar navegación con Enter
-  const handleEnterNavigation = useCallback((currentField, event) => {
-    if (event.key === 'Enter') {
-      // Para selects, permitir que se abra primero
-      if (event.target.tagName === 'SELECT') {
-        // Si el select no está abierto, déjalo abrirse
-        if (!event.target.matches(':focus')) {
-          return;
+  // Función para manejar navegación bidimensional
+  const handleKeyboardNavigation = useCallback((currentField, event) => {
+    // Definir el orden de campos dinámicamente
+    const baseFields = ['cliente', 'fecha', 'detalle', 'operacion'];
+    const conditionalFields = [];
+    
+    // Agregar sub-operación si es necesaria
+    if (formData.operacion && 
+        operaciones[formData.operacion]?.subMenu?.length > 0 && 
+        formData.operacion !== 'INTERNAS') {
+      conditionalFields.push('subOperacion');
+    }
+    
+    // Agregar campos específicos según la operación
+    const specificFields = specificFieldsConfig[formData.subOperacion] || specificFieldsConfig[formData.operacion] || [];
+    specificFields.forEach(field => {
+      if (field.name && !conditionalFields.includes(field.name)) {
+        conditionalFields.push(field.name);
+      }
+    });
+    
+    // Agregar campos comunes del final
+    const endFields = ['estado', 'por'];
+    if (formData.por === 'otro') {
+      endFields.push('nombreOtro');
+    }
+    
+    const currentFieldOrder = [...baseFields, ...conditionalFields, ...endFields];
+    const currentIndex = currentFieldOrder.indexOf(currentField);
+
+    // Función para enfocar un campo
+    const focusField = (fieldName, delay = 0) => {
+      const fieldRef = fieldRefs.current[fieldName];
+      if (fieldRef) {
+        setTimeout(() => {
+          if (fieldRef.focus) {
+            fieldRef.focus();
+          } else if (fieldRef.querySelector) {
+            const input = fieldRef.querySelector('input, select, textarea');
+            if (input) input.focus();
+          }
+        }, delay);
+      }
+    };
+
+    // Función para abrir dropdown/select
+    const openField = (fieldName) => {
+      const fieldRef = fieldRefs.current[fieldName];
+      if (fieldRef) {
+        // Para selects nativos
+        if (fieldRef.tagName === 'SELECT') {
+          fieldRef.focus();
+          // Simular click para abrir
+          fieldRef.click();
         }
-        // Si ya está abierto y se presiona Enter, navegar al siguiente campo
-        event.preventDefault();
-      } else {
-        event.preventDefault();
-      }
-      
-      // Definir el orden de campos dinámicamente
-      const baseFields = ['cliente', 'fecha', 'detalle', 'operacion'];
-      const conditionalFields = [];
-      
-      // Agregar sub-operación si es necesaria
-      if (formData.operacion && 
-          operaciones[formData.operacion]?.subMenu?.length > 0 && 
-          formData.operacion !== 'INTERNAS') {
-        conditionalFields.push('subOperacion');
-      }
-      
-      // Agregar campos específicos según la operación
-      const specificFields = specificFieldsConfig[formData.subOperacion] || specificFieldsConfig[formData.operacion] || [];
-      specificFields.forEach(field => {
-        if (field.name && !conditionalFields.includes(field.name)) {
-          conditionalFields.push(field.name);
-        }
-      });
-      
-      // Agregar campos comunes del final
-      const endFields = ['estado', 'por'];
-      if (formData.por === 'otro') {
-        endFields.push('nombreOtro');
-      }
-      
-      const currentFieldOrder = [...baseFields, ...conditionalFields, ...endFields];
-      
-      // Encontrar el siguiente campo
-      const currentIndex = currentFieldOrder.indexOf(currentField);
-      if (currentIndex !== -1 && currentIndex < currentFieldOrder.length - 1) {
-        const nextField = currentFieldOrder[currentIndex + 1];
-        const nextFieldRef = fieldRefs.current[nextField];
-        
-        if (nextFieldRef) {
-          // Pequeño delay para selects para permitir que se cierre
-          const focusDelay = event.target.tagName === 'SELECT' ? 150 : 0;
-          
-          setTimeout(() => {
-            // Si es un select, hacer focus
-            if (nextFieldRef.focus) {
-              nextFieldRef.focus();
+        // Para ClientAutocomplete y otros componentes personalizados
+        else if (fieldRef.querySelector) {
+          const input = fieldRef.querySelector('input, select');
+          if (input) {
+            input.focus();
+            // Si es un select, hacer click
+            if (input.tagName === 'SELECT') {
+              input.click();
             }
-            // Si es un input dentro de un div, buscar el input
-            else if (nextFieldRef.querySelector) {
-              const input = nextFieldRef.querySelector('input, select, textarea');
-              if (input) input.focus();
+            // Si es un input (ClientAutocomplete), simular ArrowDown para abrir
+            else if (input.tagName === 'INPUT') {
+              const arrowDownEvent = new KeyboardEvent('keydown', {
+                key: 'ArrowDown',
+                bubbles: true,
+                cancelable: true
+              });
+              input.dispatchEvent(arrowDownEvent);
             }
-          }, focusDelay);
+          }
         }
       }
+    };
+
+    switch (event.key) {
+      case 'Enter':
+        event.preventDefault();
+        // Enter abre el dropdown/menú del campo actual
+        openField(currentField);
+        break;
+
+      case 'ArrowDown':
+        event.preventDefault();
+        // Flecha abajo va al siguiente campo
+        if (currentIndex < currentFieldOrder.length - 1) {
+          const nextField = currentFieldOrder[currentIndex + 1];
+          focusField(nextField);
+        }
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        // Flecha arriba va al campo anterior
+        if (currentIndex > 0) {
+          const prevField = currentFieldOrder[currentIndex - 1];
+          focusField(prevField);
+        }
+        break;
+
+      case 'ArrowRight':
+        event.preventDefault();
+        // Flecha derecha va al siguiente campo (igual que abajo)
+        if (currentIndex < currentFieldOrder.length - 1) {
+          const nextField = currentFieldOrder[currentIndex + 1];
+          focusField(nextField);
+        }
+        break;
+
+      case 'ArrowLeft':
+        event.preventDefault();
+        // Flecha izquierda va al campo anterior (igual que arriba)
+        if (currentIndex > 0) {
+          const prevField = currentFieldOrder[currentIndex - 1];
+          focusField(prevField);
+        }
+        break;
+
+      default:
+        // Para otras teclas, comportamiento normal
+        break;
     }
   }, [formData.operacion, formData.subOperacion, formData.por]);
 
@@ -454,7 +513,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         name="estado"
         value={formData.estado}
         onChange={(val) => handleInputChange('estado', val)}
-        onKeyDown={(e) => handleEnterNavigation('estado', e)}
+                        onKeyDown={(e) => handleKeyboardNavigation('estado', e)}
         options={estados}
       />
       <FormSelect
@@ -463,7 +522,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         name="por"
         value={formData.por}
         onChange={(val) => handleInputChange('por', val)}
-        onKeyDown={(e) => handleEnterNavigation('por', e)}
+                        onKeyDown={(e) => handleKeyboardNavigation('por', e)}
         options={socios}
       />
     </div>
@@ -620,7 +679,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               name="cliente"
               value={formData.cliente}
               onChange={(val) => handleInputChange('cliente', val)}
-              onKeyDown={(e) => handleEnterNavigation('cliente', e)}
+              onKeyDown={(e) => handleKeyboardNavigation('cliente', e)}
               clients={clients || []}
               required={true}
               placeholder="Buscar o seleccionar cliente"
@@ -651,7 +710,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             type="date"
             value={formData.fecha}
             onChange={(val) => handleInputChange('fecha', val)}
-            onKeyDown={(e) => handleEnterNavigation('fecha', e)}
+                          onKeyDown={(e) => handleKeyboardNavigation('fecha', e)}
             showDayName={true}
             dayName={formData.nombreDia}
             required
@@ -664,7 +723,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             name="detalle"
             value={formData.detalle}
             onChange={(val) => handleInputChange('detalle', val)}
-            onKeyDown={(e) => handleEnterNavigation('detalle', e)}
+                          onKeyDown={(e) => handleKeyboardNavigation('detalle', e)}
             placeholder="Descripción de la operación"
           />
 
@@ -675,7 +734,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             name="operacion"
             value={formData.operacion}
             onChange={(val) => handleInputChange('operacion', val)}
-            onKeyDown={(e) => handleEnterNavigation('operacion', e)}
+                          onKeyDown={(e) => handleKeyboardNavigation('operacion', e)}
             options={[
               { value: '', label: 'Seleccionar operación' },
               ...Object.entries(operaciones).map(([key, op]) => ({
@@ -696,7 +755,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                 name="subOperacion"
                 value={formData.subOperacion}
                 onChange={(val) => handleInputChange('subOperacion', val)}
-                onKeyDown={(e) => handleEnterNavigation('subOperacion', e)}
+                onKeyDown={(e) => handleKeyboardNavigation('subOperacion', e)}
                 options={[
                   { value: '', label: 'Seleccionar detalle' },
                   ...operaciones[formData.operacion].subMenu.map((sub) => ({
@@ -719,7 +778,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               name="nombreOtro"
               value={formData.nombreOtro}
               onChange={(val) => handleInputChange('nombreOtro', val)}
-              onKeyDown={(e) => handleEnterNavigation('nombreOtro', e)}
+                              onKeyDown={(e) => handleKeyboardNavigation('nombreOtro', e)}
               placeholder="Ingrese el nombre"
               required
             />

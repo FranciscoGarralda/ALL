@@ -48,25 +48,47 @@ const FormSelect = forwardRef(({
 
   // Handle keyboard navigation for select dropdowns
   const handleKeyDown = useCallback((e) => {
-    // Call parent onKeyDown if provided (for Enter navigation between fields)
-    if (onKeyDown) {
-      onKeyDown(e);
-    }
-
-    // Enhanced select navigation
-    if (e.key === 'Enter') {
-      // If select is closed, open it
-      if (!e.target.matches(':focus')) {
-        e.target.focus();
-      }
-      // If already focused and Enter pressed again, let default behavior handle it
-      // and then trigger navigation to next field
-      setTimeout(() => {
+    // Para navegación bidimensional: las flechas navegan entre campos
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      // Si el select no está abierto, permitir navegación entre campos
+      if (!e.target.matches(':focus') || document.activeElement !== e.target) {
         if (onKeyDown) {
           onKeyDown(e);
         }
-      }, 100);
+        return;
+      }
+      
+      // Si el select está enfocado pero no abierto, abrir con Enter
+      // Las flechas navegan entre campos
+      e.preventDefault();
+      if (onKeyDown) {
+        onKeyDown(e);
+      }
+      return;
     }
+
+    // Enter abre el select o navega al siguiente campo
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      
+      // Abrir el select
+      e.target.focus();
+      e.target.click();
+      
+      // Después de un tiempo, cerrar y navegar al siguiente campo
+      setTimeout(() => {
+        if (onKeyDown) {
+          const arrowDownEvent = new KeyboardEvent('keydown', {
+            key: 'ArrowDown',
+            bubbles: true,
+            cancelable: true
+          });
+          onKeyDown(arrowDownEvent);
+        }
+      }, 150);
+    }
+
+    // Para otras teclas, comportamiento normal del select
   }, [onKeyDown]);
 
   // Select classes with responsive design and states
