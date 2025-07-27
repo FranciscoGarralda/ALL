@@ -439,7 +439,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         {config.includesEstadoYPor && renderEstadoYPor()}
       </>
     );
-  }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handlePagoMixtoChange, addPagoMixto, removePagoMixto]);
+  }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8 lg:pt-8 pt-20">
