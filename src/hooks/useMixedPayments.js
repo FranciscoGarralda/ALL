@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { specificFieldsConfig } from '../config/fieldConfigs';
 
 /**
  * Custom hook for managing mixed payments functionality
@@ -54,7 +55,7 @@ export const useMixedPayments = (formData, setFormData) => {
         configKey = 'TRANSFERENCIA';
       }
 
-      const { specificFieldsConfig } = require('../config/fieldConfigs');
+      // specificFieldsConfig imported at top
       const isWalletMode = specificFieldsConfig[configKey]?.pagoMixtoWalletMode;
       
       const newPayment = isWalletMode 
