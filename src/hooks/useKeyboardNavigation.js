@@ -72,7 +72,7 @@ export const useKeyboardNavigation = () => {
             input.click();
           }
           // If it's an input (ClientAutocomplete), simulate ArrowDown to open
-          else if (input.tagName === 'INPUT') {
+          else if (input.tagName === 'INPUT' && typeof window !== 'undefined') {
             const arrowDownEvent = new KeyboardEvent('keydown', {
               key: 'ArrowDown',
               bubbles: true,
