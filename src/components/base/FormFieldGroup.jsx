@@ -156,7 +156,7 @@ const FormFieldGroup = ({
 
       case 'number':
         // Check if it's a time/quantity/percentage field (not currency)
-        if (name && ['lapso', 'interes'].includes(name)) {
+        if (name && ['lapso', 'interes', 'comisionPorcentaje'].includes(name)) {
           return fieldWrapper(
             <FormInput
               {...commonProps}

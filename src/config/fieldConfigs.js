@@ -144,8 +144,11 @@ export const specificFieldsConfig = {
           { label: 'Cuenta', name: 'cuenta', type: 'cuenta-buttons', required: true, gridCols: 'col-span-2' }
         ],
         [
-          { label: 'Comisión', name: 'comision', type: 'number', placeholder: '0.00', gridCols: 'col-span-1' },
-          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-1' }
+          { label: 'Comisión (%)', name: 'comisionPorcentaje', type: 'number', placeholder: '0.00', gridCols: 'col-span-1' },
+          { label: 'Monto Comisión', name: 'montoComision', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-1' }
+        ],
+        [
+          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-2' }
         ],
         [
           { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'cuenta-buttons', gridCols: 'col-span-2', readOnly: true, calculated: true }

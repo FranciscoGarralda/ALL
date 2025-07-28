@@ -265,6 +265,18 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         if (field === 'cuenta') {
           newState.cuentaComision = newState.cuenta;
         }
+
+        // Calcular monto de comisión cuando cambia el monto o el porcentaje
+        if (['monto', 'comisionPorcentaje'].includes(field)) {
+          const monto = safeParseFloat(newState.monto);
+          const porcentaje = safeParseFloat(newState.comisionPorcentaje);
+          
+          if (monto > 0 && porcentaje > 0) {
+            newState.montoComision = safeCalculation.multiply(monto, safeCalculation.divide(porcentaje, 100)).toFixed(2);
+          } else {
+            newState.montoComision = '';
+          }
+        }
       }
 
       return newState;
@@ -298,6 +310,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       monedaVenta: '',
       tcVenta: '',
       comision: '',
+      comisionPorcentaje: '',
+      montoComision: '',
       monedaComision: '',
       cuentaComision: '',
       interes: '',
