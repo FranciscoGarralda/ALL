@@ -445,8 +445,11 @@ export default function MainApp() {
           </Suspense>
         );
       
+      case 'inicio':
+        return <WelcomePage onNavigate={navigateTo} />;
+      
       default:
-        return <NotFoundPage onNavigate={navigateTo} />;
+        return <WelcomePage onNavigate={navigateTo} />;
     }
   };
 

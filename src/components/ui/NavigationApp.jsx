@@ -13,7 +13,8 @@ import {
   UserCheck,
   ArrowUpDown,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Home
 } from 'lucide-react';
 import FixedHeader from './FixedHeader';
 import Footer from './Footer';
@@ -65,6 +66,7 @@ MenuItem.displayName = 'MenuItem';
 /** COMPONENTE DEL MENÚ PRINCIPAL OPTIMIZADO */
 const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) => {
   const menuItems = useMemo(() => [
+    { id: 'inicio', icon: Home, title: 'Inicio' },
     { id: 'nuevoMovimiento', icon: Plus, title: 'Nuevo Movimiento' },
     { id: 'saldos', icon: Wallet, title: 'Saldos' },
     { id: 'movimientos', icon: List, title: 'Movimientos' },
@@ -95,14 +97,17 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar })
         ${isSidebarOpen ? 'justify-between' : 'justify-center'}
       `}>
         {isSidebarOpen && (
-          <div className="flex items-center space-x-2 sidebar-enter">
+          <button 
+            onClick={() => onNavigate('inicio')}
+            className="flex items-center space-x-2 sidebar-enter hover:bg-gray-50 rounded-lg px-2 py-1 transition-colors duration-200"
+          >
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
               <DollarSign size={20} className="text-white" />
             </div>
             <h1 className="text-xl font-bold text-gray-900 truncate">
               Alliance F&R
             </h1>
-          </div>
+          </button>
         )}
         
         <button
@@ -271,9 +276,9 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
 });
 
 /** PÁGINA DE BIENVENIDA */
-const WelcomePage = () => (
+const WelcomePage = ({ onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4 lg:p-8">
-    <div className="text-center max-w-md mx-auto">
+    <div className="text-center max-w-4xl mx-auto">
       <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
         <DollarSign size={32} className="text-primary-600" />
       </div>
@@ -281,25 +286,78 @@ const WelcomePage = () => (
         Bienvenido a Alliance F&R
       </h2>
       <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-8 animate-slideUp">
-        Sistema integral de gestión financiera. Selecciona una opción del menú lateral para comenzar a operar.
+        Sistema integral de gestión financiera. Accede rápidamente a las funciones principales:
       </p>
-      <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
-        <div className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn">
-          <Users size={20} className="mx-auto mb-2 text-primary-500" />
-          <span className="block font-medium">Gestión de Clientes</span>
-        </div>
-        <div className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn" style={{animationDelay: '0.1s'}}>
-          <TrendingUp size={20} className="mx-auto mb-2 text-success-500" />
-          <span className="block font-medium">Análisis de Utilidad</span>
-        </div>
-        <div className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn" style={{animationDelay: '0.2s'}}>
-          <Building2 size={20} className="mx-auto mb-2 text-warning-500" />
-          <span className="block font-medium">Cuentas Corrientes</span>
-        </div>
-        <div className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn" style={{animationDelay: '0.3s'}}>
-          <CreditCard size={20} className="mx-auto mb-2 text-error-500" />
-          <span className="block font-medium">Prestamistas</span>
-        </div>
+      
+      {/* Accesos Rápidos Principales */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <button
+          onClick={() => onNavigate('nuevoMovimiento')}
+          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-primary-200 group"
+        >
+          <Plus size={32} className="mx-auto mb-3 text-primary-500 group-hover:scale-110 transition-transform" />
+          <span className="block font-semibold text-gray-800 mb-1">Nuevo Movimiento</span>
+          <span className="text-sm text-gray-500">Crear operación financiera</span>
+        </button>
+        
+        <button
+          onClick={() => onNavigate('saldos')}
+          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-success-200 group"
+          style={{animationDelay: '0.1s'}}
+        >
+          <Wallet size={32} className="mx-auto mb-3 text-success-500 group-hover:scale-110 transition-transform" />
+          <span className="block font-semibold text-gray-800 mb-1">Saldos</span>
+          <span className="text-sm text-gray-500">Ver estado de cuentas</span>
+        </button>
+        
+        <button
+          onClick={() => onNavigate('movimientos')}
+          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-blue-200 group"
+          style={{animationDelay: '0.2s'}}
+        >
+          <List size={32} className="mx-auto mb-3 text-blue-500 group-hover:scale-110 transition-transform" />
+          <span className="block font-semibold text-gray-800 mb-1">Movimientos</span>
+          <span className="text-sm text-gray-500">Historial de transacciones</span>
+        </button>
+      </div>
+      
+      {/* Accesos Rápidos Secundarios */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+        <button
+          onClick={() => onNavigate('utilidad')}
+          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-gray-100 hover:border-gray-200"
+          style={{animationDelay: '0.3s'}}
+        >
+          <TrendingUp size={20} className="mx-auto mb-2 text-emerald-500" />
+          <span className="block font-medium text-gray-700">Utilidad</span>
+        </button>
+        
+        <button
+          onClick={() => onNavigate('arbitraje')}
+          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-gray-100 hover:border-gray-200"
+          style={{animationDelay: '0.4s'}}
+        >
+          <ArrowUpDown size={20} className="mx-auto mb-2 text-indigo-500" />
+          <span className="block font-medium text-gray-700">Arbitraje</span>
+        </button>
+        
+        <button
+          onClick={() => onNavigate('cuentas')}
+          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-gray-100 hover:border-gray-200"
+          style={{animationDelay: '0.5s'}}
+        >
+          <Building2 size={20} className="mx-auto mb-2 text-orange-500" />
+          <span className="block font-medium text-gray-700">Cuentas Corrientes</span>
+        </button>
+        
+        <button
+          onClick={() => onNavigate('clientes')}
+          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-gray-100 hover:border-gray-200"
+          style={{animationDelay: '0.6s'}}
+        >
+          <UserCheck size={20} className="mx-auto mb-2 text-purple-500" />
+          <span className="block font-medium text-gray-700">Clientes</span>
+        </button>
       </div>
     </div>
   </div>
