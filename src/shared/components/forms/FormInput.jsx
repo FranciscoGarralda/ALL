@@ -55,9 +55,19 @@ const FormInput = forwardRef(({
   const calculatedDayName = React.useMemo(() => {
     if (type === 'date' && value && showDayName) {
       try {
-        const date = new Date(value);
+        // Handle date string in YYYY-MM-DD format to avoid timezone issues
+        let date;
+        if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+          const [year, month, day] = value.split('-').map(Number);
+          date = new Date(year, month - 1, day); // month is 0-indexed
+        } else {
+          date = new Date(value);
+        }
+        
         if (!isNaN(date.getTime())) {
-          return formatDateWithDay(date, { showDay: true, format: '' }).split(',')[0];
+          // Get day name directly without using formatDateWithDay to avoid formatting issues
+          const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+          return dayNames[date.getDay()];
         }
       } catch (e) {
         console.warn('Invalid date for day name calculation:', value);
@@ -95,7 +105,7 @@ const FormInput = forwardRef(({
       : '',
     // Day name padding adjustment
     showDayName && calculatedDayName 
-      ? 'pr-20 sm:pr-24' 
+      ? 'pr-16 sm:pr-20' 
       : '',
     // Additional classes
     className
@@ -135,8 +145,8 @@ const FormInput = forwardRef(({
         
         {/* Day Name Display */}
         {showDayName && calculatedDayName && (
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
-            <span className="text-xs text-gray-500 bg-white px-1.5 py-0.5 rounded-md border border-gray-200 font-medium">
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none select-none z-10">
+            <span className="text-xs text-gray-400 bg-transparent px-1 py-0.5 font-normal cursor-default">
               {calculatedDayName}
             </span>
           </div>
