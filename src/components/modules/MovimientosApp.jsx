@@ -207,7 +207,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
               <div className="hidden sm:block bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-600">
                 <div className="flex items-center gap-3">
                   <div className="flex-shrink-0 w-12 text-center">Fecha</div>
-                  <div className="flex-shrink-0 w-40">Cliente</div>
+                  <div className="flex-shrink-0 w-36">Cliente</div>
                   <div className="flex-shrink-0 w-24">Operación</div>
                   <div className="flex-1 min-w-0">Monto</div>
                   <div className="flex-shrink-0 w-20">Estado</div>
@@ -277,22 +277,22 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
   };
 
   return (
-    <div className="bg-white border border-gray-200 hover:border-primary-300 hover:shadow-sm transition-all duration-150 rounded-lg">
-      <div className="px-3 py-2 flex items-center gap-3">
+    <div className="bg-white border border-gray-200 hover:border-primary-300 hover:shadow-sm transition-all duration-150 rounded-lg overflow-hidden">
+      <div className="px-3 py-2 flex items-center gap-3 min-w-0">
         {/* Fecha */}
         <div className="flex-shrink-0 w-12 text-center">
           <div className="text-xs text-gray-500 font-medium">{formattedDate}</div>
         </div>
 
         {/* Cliente */}
-        <div className="flex-shrink-0 w-28 sm:w-40">
+        <div className="flex-shrink-0 w-32 sm:w-36">
           <div className="text-sm font-medium text-gray-900 truncate">
             {getClientName(movement.cliente, clients)}
           </div>
         </div>
 
         {/* Operación */}
-        <div className="flex-shrink-0 w-16 sm:w-24">
+        <div className="flex-shrink-0 w-20 sm:w-24">
           <span className="px-1.5 py-0.5 bg-primary-100 text-primary-700 rounded text-xs font-medium truncate block">
             {movement.subOperacion || movement.operacion?.replace('_', ' ') || 'N/A'}
           </span>
@@ -321,27 +321,27 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
         </div>
 
         {/* Acciones */}
-        <div className="flex-shrink-0 flex gap-1 justify-center">
+        <div className="flex-shrink-0 w-20 flex gap-1 justify-center">
           <button 
             onClick={() => onViewDetail(movement)} 
-            className="p-1.5 text-primary-600 hover:bg-primary-50 rounded transition-colors"
+            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
             title="Ver detalles"
           >
-            <Eye size={12} />
+            <Eye size={14} />
           </button>
           <button 
             onClick={() => onEdit(movement)} 
-            className="p-1.5 text-gray-600 hover:bg-gray-50 rounded transition-colors"
+            className="p-1 text-gray-600 hover:bg-gray-50 rounded transition-colors"
             title="Editar"
           >
-            <Edit3 size={12} />
+            <Edit3 size={14} />
           </button>
           <button 
             onClick={handleDelete} 
-            className="p-1.5 text-error-600 hover:bg-error-50 rounded transition-colors"
+            className="p-1 text-error-600 hover:bg-error-50 rounded transition-colors"
             title="Eliminar"
           >
-            <Trash2 size={12} />
+            <Trash2 size={14} />
           </button>
         </div>
       </div>
