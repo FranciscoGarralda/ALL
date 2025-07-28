@@ -9,8 +9,14 @@ import {
   AlertCircle,
   Eye
 } from 'lucide-react';
-import { formatAmountWithCurrency, proveedoresCC } from '../base';
-import { safeParseFloat } from '../../utils/safeOperations';
+import { formatAmountWithCurrency, proveedoresCC } from '../../shared/components/forms';
+
+// Helper function to format numbers without toLocaleString issues
+const formatNumber = (num) => {
+  if (isNaN(num)) return '0';
+  return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
+import { safeParseFloat } from '../../shared/services/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE CUENTAS CORRIENTES */
 function CuentasCorrientesApp({ movements, onNavigate }) {
@@ -227,10 +233,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                             <TrendingUp size={14} className="text-success-500 mx-auto mb-1" />
                             <p className="text-xs text-gray-500">Ingresos</p>
                             <p className="font-semibold text-success-600 text-xs sm:text-sm">
-                              {providerSummary.ingresos.toLocaleString('es-AR', { 
-                                minimumFractionDigits: 0, 
-                                maximumFractionDigits: 0 
-                              })}
+                              {formatNumber(providerSummary.ingresos)}
                             </p>
                           </div>
                           <div className="bg-white rounded-lg p-2 sm:p-3 text-center">

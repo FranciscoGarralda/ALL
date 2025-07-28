@@ -1,6 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Head from 'next/head';
-import { safeLocalStorage } from '../utils/safeOperations';
+import { safeLocalStorage } from '../shared/services/safeOperations';
 
 // Import navigation components
 import { 
@@ -9,13 +9,13 @@ import {
   NotFoundPage, 
   ModuleInDevelopmentPage, 
   useNavigation 
-} from '../components/ui/NavigationApp';
+} from '../shared/components/ui/NavigationApp';
 
 // Intelligent lazy loading with performance tracking
-import { createLazyComponent, useIntelligentPreloading, AdvancedLoadingFallback } from '../utils/lazyLoader';
+import { createLazyComponent, useIntelligentPreloading, AdvancedLoadingFallback } from '../shared/services/lazyLoader';
 
 const FinancialOperationsApp = createLazyComponent(
-  () => import('../components/forms/FinancialOperationsApp'),
+  () => import('../features/financial-operations/FinancialOperationsApp'),
   'FinancialOperationsApp',
   { 
     preloadDelay: 1000,
@@ -24,7 +24,7 @@ const FinancialOperationsApp = createLazyComponent(
 );
 
 const ClientesApp = createLazyComponent(
-  () => import('../components/modules/ClientesApp'),
+  () => import('../features/clients/ClientesApp'),
   'ClientesApp',
   { 
     preloadDelay: 1200,
@@ -33,7 +33,7 @@ const ClientesApp = createLazyComponent(
 );
 
 const MovimientosApp = createLazyComponent(
-  () => import('../components/modules/MovimientosApp'),
+  () => import('../features/movements/MovimientosApp'),
   'MovimientosApp',
   { 
     preloadDelay: 1500,
@@ -42,7 +42,7 @@ const MovimientosApp = createLazyComponent(
 );
 
 const PendientesRetiroApp = createLazyComponent(
-  () => import('../components/modules/PendientesRetiroApp'),
+  () => import('../features/pending-withdrawals/PendientesRetiroApp'),
   'PendientesRetiroApp',
   { 
     preloadDelay: 2500,
@@ -51,7 +51,7 @@ const PendientesRetiroApp = createLazyComponent(
 );
 
 const GastosApp = createLazyComponent(
-  () => import('../components/modules/GastosApp'),
+  () => import('../features/expenses/GastosApp'),
   'GastosApp',
   { 
     preloadDelay: 3000,
@@ -60,7 +60,7 @@ const GastosApp = createLazyComponent(
 );
 
 const CuentasCorrientesApp = createLazyComponent(
-  () => import('../components/modules/CuentasCorrientesApp'),
+  () => import('../features/current-accounts/CuentasCorrientesApp'),
   'CuentasCorrientesApp',
   { 
     preloadDelay: 3500,
@@ -69,7 +69,7 @@ const CuentasCorrientesApp = createLazyComponent(
 );
 
 const PrestamistasApp = createLazyComponent(
-  () => import('../components/modules/PrestamistasApp'),
+  () => import('../features/lenders/PrestamistasApp'),
   'PrestamistasApp',
   { 
     preloadDelay: 4000,
@@ -78,7 +78,7 @@ const PrestamistasApp = createLazyComponent(
 );
 
 const ComisionesApp = createLazyComponent(
-  () => import('../components/modules/ComisionesApp'),
+  () => import('../features/commissions/ComisionesApp'),
   'ComisionesApp',
   { 
     preloadDelay: 4500,
@@ -87,7 +87,7 @@ const ComisionesApp = createLazyComponent(
 );
 
 const UtilidadApp = createLazyComponent(
-  () => import('../components/modules/UtilidadApp'),
+  () => import('../features/utility/UtilidadApp'),
   'UtilidadApp',
   { 
     preloadDelay: 2000,
@@ -96,7 +96,7 @@ const UtilidadApp = createLazyComponent(
 );
 
 const ArbitrajeApp = createLazyComponent(
-  () => import('../components/modules/ArbitrajeApp'),
+  () => import('../features/arbitrage/ArbitrajeApp'),
   'ArbitrajeApp',
   { 
     preloadDelay: 5000,

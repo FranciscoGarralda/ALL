@@ -6,24 +6,26 @@ import {
   validateDate, 
   safeCalculation,
   safeArray 
-} from '../../utils/safeOperations';
+} from '../../shared/services/safeOperations';
 import {
   FormInput,
   FormSelect,
   FormFieldGroup,
   MixedPaymentGroup,
   ClientAutocomplete,
-  formatAmountWithCurrency,
+  formatAmountWithCurrency
+} from '../../shared/components/forms';
+import {
   monedas,
   cuentas,
   socios,
   estados,
   operaciones,
-  proveedoresCC
-} from '../base';
-import { specificFieldsConfig } from '../../config/fieldConfigs';
-import { useMixedPayments } from '../../hooks/useMixedPayments';
-import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
+  proveedoresCC,
+  specificFieldsConfig
+} from '../../shared/constants';
+import { useMixedPayments } from '../../shared/hooks/useMixedPayments';
+import { useKeyboardNavigation } from '../../shared/hooks/useKeyboardNavigation';
 
 /**
  * Dynamic Form Field Groups Component

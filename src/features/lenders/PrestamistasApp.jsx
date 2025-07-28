@@ -13,8 +13,8 @@ import {
   MapPin,
   Hash
 } from 'lucide-react';
-import { formatAmountWithCurrency } from '../base';
-import { safeParseFloat } from '../../utils/safeOperations';
+import { formatAmountWithCurrency } from '../../shared/components/forms';
+import { safeParseFloat } from '../../shared/services/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE PRESTAMISTAS */
 function PrestamistasApp({ clients, movements, onNavigate }) {

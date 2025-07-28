@@ -11,9 +11,9 @@ import {
   Filter,
   Eye
 } from 'lucide-react';
-import { FormSelect, formatAmountWithCurrency, estados } from '../base';
-import { getClientName } from '../../utils/formatters';
-import { safeParseFloat } from '../../utils/safeOperations';
+import { FormSelect, formatAmountWithCurrency, estados } from '../../shared/components/forms';
+import { getClientName } from '../../shared/services/formatters';
+import { safeParseFloat } from '../../shared/services/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE MOVIMIENTOS */
 function MovimientosApp({ movements = [], clients = [], onEditMovement, onDeleteMovement, onNavigate }) {

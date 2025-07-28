@@ -12,7 +12,7 @@ import {
   CreditCard,
   Bell
 } from 'lucide-react';
-import { FormInput, FormSelect } from '../base';
+import { FormInput, FormSelect } from '../../shared/components/forms';
 
 /** COMPONENTE PRINCIPAL DE CLIENTES */
 function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
@@ -573,7 +573,7 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
 
               <div className="bg-success-50 rounded-lg p-3 sm:p-4">
                 <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-success-600 truncate">
-                  ${(cliente.volumenTotal || 0).toLocaleString()}
+                  ${((cliente.volumenTotal || 0).toFixed(0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
                 </div>
                 <div className="text-xs sm:text-sm text-success-600 font-medium">Volumen Total</div>
               </div>

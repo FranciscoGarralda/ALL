@@ -10,8 +10,8 @@ import {
   TrendingDown,
   Eye
 } from 'lucide-react';
-import { formatAmountWithCurrency } from '../base';
-import { safeParseFloat } from '../../utils/safeOperations';
+import { formatAmountWithCurrency } from '../../shared/components/forms';
+import { safeParseFloat } from '../../shared/services/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE GASTOS */
 function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovementDetail, onNavigate }) {

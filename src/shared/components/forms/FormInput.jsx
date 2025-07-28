@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { formatDateWithDay } from '../../utils/formatters.js';
+import { formatDateWithDay } from '../../../shared/services/formatters.js';
 
 /**
  * Reusable form input component with responsive design and date support

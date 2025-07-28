@@ -11,7 +11,7 @@ import {
   Edit,
   Trash2
 } from 'lucide-react';
-import { getClientName } from '../../utils/formatters';
+import { getClientName } from '../../shared/services/formatters';
 
 /**
  * Módulo para gestionar operaciones pendientes de retiro
@@ -65,10 +65,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
 
   const formatAmount = (amount, currency) => {
     if (!amount) return '0';
-    const formatted = parseFloat(amount).toLocaleString('es-ES', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
+          const formatted = parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     return `${formatted} ${currency || ''}`;
   };
 

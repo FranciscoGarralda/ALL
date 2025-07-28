@@ -15,8 +15,8 @@ import {
   Clock
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { formatAmountWithCurrency } from '../base';
-import { safeParseFloat } from '../../utils/safeOperations';
+import { formatAmountWithCurrency } from '../../shared/components/forms';
+import { safeParseFloat } from '../../shared/services/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE ARBITRAJE */
 function ArbitrajeApp({ movements, onNavigate }) {

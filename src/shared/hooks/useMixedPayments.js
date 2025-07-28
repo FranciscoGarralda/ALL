@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { specificFieldsConfig } from '../config/fieldConfigs';
+import { specificFieldsConfig } from '../constants/fieldConfigs';
 
 /**
  * Custom hook for managing mixed payments functionality

@@ -49,12 +49,27 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
     return { formatted: '', raw: '' };
   }
   
-  // Format with thousands separator
-  const formatted = number.toLocaleString('es-AR', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-    useGrouping: true
-  });
+  // Manual formatting to avoid toLocaleString issues
+  const absNumber = Math.abs(number);
+  const isNegative = number < 0;
+  
+  // Split into integer and decimal parts
+  const fixedNumber = absNumber.toFixed(2);
+  const [integerPart, decimalPart] = fixedNumber.split('.');
+  
+  // Add thousand separators manually
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  
+  // Build the number part
+  let formatted = formattedInteger;
+  if (decimalPart && parseInt(decimalPart) > 0) {
+    formatted += ',' + decimalPart;
+  }
+  
+  // Add negative sign if needed
+  if (isNegative) {
+    formatted = '-' + formatted;
+  }
   
   // Add currency symbol
   const symbol = CURRENCY_SYMBOLS[currency] || '$';
@@ -142,15 +157,30 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
   
   // Handle invalid amounts
   if (isNaN(numAmount)) {
-    return showSymbol ? `${CURRENCY_SYMBOLS[currency] || '$'} 0${decimalSeparator}00` : '0.00';
+    return showSymbol ? `${CURRENCY_SYMBOLS[currency] || '$'}0` : '0';
   }
 
-  // Format number with proper separators
-  const formattedNumber = numAmount.toLocaleString('es-AR', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-    useGrouping: true
-  });
+  // Manual formatting to avoid toLocaleString issues
+  const absAmount = Math.abs(numAmount);
+  const isNegative = numAmount < 0;
+  
+  // Split into integer and decimal parts
+  const fixedNumber = absAmount.toFixed(decimals);
+  const [integerPart, decimalPart] = fixedNumber.split('.');
+  
+  // Add thousand separators manually
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
+  
+  // Build the number part
+  let formattedNumber = formattedInteger;
+  if (decimals > 0 && decimalPart && parseInt(decimalPart) > 0) {
+    formattedNumber += decimalSeparator + decimalPart;
+  }
+  
+  // Add negative sign if needed
+  if (isNegative) {
+    formattedNumber = '-' + formattedNumber;
+  }
 
   // Get currency symbol
   const symbol = CURRENCY_SYMBOLS[currency] || '$';

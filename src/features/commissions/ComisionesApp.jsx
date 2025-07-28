@@ -14,8 +14,8 @@ import {
   ArrowUpDown
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { FormInput, formatAmountWithCurrency } from '../base';
-import { safeParseFloat } from '../../utils/safeOperations';
+import { FormInput, formatAmountWithCurrency } from '../../shared/components/forms';
+import { safeParseFloat } from '../../shared/services/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE COMISIONES */
 function ComisionesApp({ movements, onNavigate }) {
