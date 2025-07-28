@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { FormSelect, formatAmountWithCurrency, estados } from '../base';
 import { getClientName } from '../../utils/formatters';
+import { safeParseFloat } from '../../utils/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE MOVIMIENTOS */
 function MovimientosApp({ movements = [], clients = [], onEditMovement, onDeleteMovement, onNavigate }) {
@@ -243,13 +244,13 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
 
   // Determinar el monto principal a mostrar
   const getDisplayAmount = () => {
-    if (movement.comision && parseFloat(movement.comision) > 0) {
+    if (movement.comision && safeParseFloat(movement.comision) > 0) {
       return {
         amount: movement.comision,
         currency: movement.monedaComision || movement.moneda
       };
     }
-    if (movement.total && parseFloat(movement.total) > 0) {
+    if (movement.total && safeParseFloat(movement.total) > 0) {
       return {
         amount: movement.total,
         currency: movement.monedaTC || movement.moneda

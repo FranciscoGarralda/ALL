@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { formatAmountWithCurrency } from '../base';
+import { safeParseFloat } from '../../utils/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE ARBITRAJE */
 function ArbitrajeApp({ movements, onNavigate }) {
@@ -33,10 +34,10 @@ function ArbitrajeApp({ movements, onNavigate }) {
   const totalArbitrageProfits = useMemo(() => {
     const totals = {};
     arbitrageMovements.forEach(mov => {
-      if (mov.comision && parseFloat(mov.comision) !== 0) {
+      if (mov.comision && safeParseFloat(mov.comision) !== 0) {
         // La comisión se calcula en la moneda del TC de venta (donde se deposita la ganancia)
         const currency = mov.monedaTCVenta || mov.monedaTC || 'ARS';
-        totals[currency] = (totals[currency] || 0) + parseFloat(mov.comision);
+        totals[currency] = (totals[currency] || 0) + safeParseFloat(mov.comision);
       }
     });
     return totals;
@@ -56,7 +57,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
           monthly[yearMonth] = {};
         }
         if (currency) {
-          monthly[yearMonth][currency] = (monthly[yearMonth][currency] || 0) + parseFloat(mov.comision);
+          monthly[yearMonth][currency] = (monthly[yearMonth][currency] || 0) + safeParseFloat(mov.comision);
         }
       }
     });
@@ -81,7 +82,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
       if (mov.fecha && mov.fecha.substring(0, 7) === currentYearMonth) {
         const currency = mov.moneda;
         if (currency) {
-          monthly[currency] = (monthly[currency] || 0) + parseFloat(mov.comision);
+          monthly[currency] = (monthly[currency] || 0) + safeParseFloat(mov.comision);
         }
       }
     });
@@ -97,7 +98,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
       if (mov.fecha === today) {
         const currency = mov.moneda;
         if (currency) {
-          daily[currency] = (daily[currency] || 0) + parseFloat(mov.comision);
+          daily[currency] = (daily[currency] || 0) + safeParseFloat(mov.comision);
         }
       }
     });
@@ -378,7 +379,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                       <div className="text-right flex-shrink-0 mt-2 sm:mt-0">
                         <p className="text-xs text-indigo-600 mb-1">Ganancia</p>
                         <p className="font-bold text-lg sm:text-xl text-indigo-700">
-                          {formatAmountWithCurrency(parseFloat(mov.comision || 0), mov.monedaTCVenta || mov.monedaTC || 'ARS')}
+                          {formatAmountWithCurrency(safeParseFloat(mov.comision), mov.monedaTCVenta || mov.monedaTC || 'ARS')}
                         </p>
                       </div>
                     </div>

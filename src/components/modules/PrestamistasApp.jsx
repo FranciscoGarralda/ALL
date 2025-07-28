@@ -14,6 +14,7 @@ import {
   Hash
 } from 'lucide-react';
 import { formatAmountWithCurrency } from '../base';
+import { safeParseFloat } from '../../utils/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE PRESTAMISTAS */
 function PrestamistasApp({ clients, movements, onNavigate }) {
@@ -551,7 +552,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                               </span>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                              {formatAmountWithCurrency(parseFloat(mov.monto), mov.moneda)}
+                              {formatAmountWithCurrency(safeParseFloat(mov.monto), mov.moneda)}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
                               {mov.moneda}
@@ -598,7 +599,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                             <div>
                               <p className="text-gray-500 text-xs">Monto</p>
                               <p className="font-medium">
-                                {formatAmountWithCurrency(parseFloat(mov.monto), mov.moneda)}
+                                {formatAmountWithCurrency(safeParseFloat(mov.monto), mov.moneda)}
                               </p>
                             </div>
                             <div>

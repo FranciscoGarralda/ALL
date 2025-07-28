@@ -23,11 +23,21 @@ export const safeParseFloat = (value, defaultValue = 0) => {
   if (stringValue.includes(',')) {
     // Spanish format: 1.290,50 -> 1290.50
     cleanValue = stringValue.replace(/\./g, '').replace(',', '.');
-  } else if (/^\d+\.00?$/.test(stringValue)) {
-    // Ends with .00 or .0 -> remove decimal part (1290.00 -> 1290)
-    cleanValue = stringValue.replace(/\.00?$/, '');
+  } else if (stringValue.includes('.')) {
+    // Handle dots - could be thousands separators or decimals
+    const parts = stringValue.split('.');
+    if (parts.length === 2 && parts[1].length <= 2 && parts[1].match(/^0+$/)) {
+      // Ends with .00 or .0 -> remove decimal part (1290.00 -> 1290)
+      cleanValue = stringValue.replace(/\.0+$/, '');
+    } else if (parts.length === 2 && parts[1].length <= 2 && !parts[1].match(/^0+$/)) {
+      // Has genuine decimal digits (like .45, .25), keep as decimal
+      cleanValue = stringValue;
+    } else {
+      // Multiple dots or patterns like "129.000" -> remove all dots (thousands separators)
+      cleanValue = stringValue.replace(/\./g, '');
+    }
   } else {
-    // Keep as is for genuine decimals (123.45) or integers (1290)
+    // No separators - keep as is
     cleanValue = stringValue;
   }
   

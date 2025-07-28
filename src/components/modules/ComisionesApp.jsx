@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { FormInput, formatAmountWithCurrency } from '../base';
+import { safeParseFloat } from '../../utils/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE COMISIONES */
 function ComisionesApp({ movements, onNavigate }) {
@@ -21,7 +22,7 @@ function ComisionesApp({ movements, onNavigate }) {
 
   // Filtrar movimientos que tienen comisión
   const commissionMovements = useMemo(() => {
-    return movements.filter(mov => mov.comision && parseFloat(mov.comision) > 0);
+    return movements.filter(mov => mov.comision && safeParseFloat(mov.comision) > 0);
   }, [movements]);
 
   // Calcular comisiones totales por moneda
@@ -30,7 +31,7 @@ function ComisionesApp({ movements, onNavigate }) {
     commissionMovements.forEach(mov => {
       const currency = mov.monedaComision || mov.moneda;
       if (currency) {
-        totals[currency] = (totals[currency] || 0) + parseFloat(mov.comision);
+        totals[currency] = (totals[currency] || 0) + safeParseFloat(mov.comision);
       }
     });
     return totals;
@@ -49,7 +50,7 @@ function ComisionesApp({ movements, onNavigate }) {
           monthly[yearMonth] = {};
         }
         if (currency) {
-          monthly[yearMonth][currency] = (monthly[yearMonth][currency] || 0) + parseFloat(mov.comision);
+          monthly[yearMonth][currency] = (monthly[yearMonth][currency] || 0) + safeParseFloat(mov.comision);
         }
       }
     });
@@ -74,7 +75,7 @@ function ComisionesApp({ movements, onNavigate }) {
       if (mov.fecha === selectedDate) {
         const currency = mov.monedaComision || mov.moneda;
         if (currency) {
-          daily[currency] = (daily[currency] || 0) + parseFloat(mov.comision);
+          daily[currency] = (daily[currency] || 0) + safeParseFloat(mov.comision);
         }
       }
     });
@@ -89,7 +90,7 @@ function ComisionesApp({ movements, onNavigate }) {
       if (mov.fecha === today) {
         const currency = mov.monedaComision || mov.moneda;
         if (currency) {
-          daily[currency] = (daily[currency] || 0) + parseFloat(mov.comision);
+          daily[currency] = (daily[currency] || 0) + safeParseFloat(mov.comision);
         }
       }
     });
@@ -104,7 +105,7 @@ function ComisionesApp({ movements, onNavigate }) {
       if (mov.fecha && mov.fecha.substring(0, 7) === currentYearMonth) {
         const currency = mov.monedaComision || mov.moneda;
         if (currency) {
-          monthly[currency] = (monthly[currency] || 0) + parseFloat(mov.comision);
+          monthly[currency] = (monthly[currency] || 0) + safeParseFloat(mov.comision);
         }
       }
     });
@@ -122,7 +123,7 @@ function ComisionesApp({ movements, onNavigate }) {
         providerTotals[provider] = {};
       }
       if (currency) {
-        providerTotals[provider][currency] = (providerTotals[provider][currency] || 0) + parseFloat(mov.comision);
+                  providerTotals[provider][currency] = (providerTotals[provider][currency] || 0) + safeParseFloat(mov.comision);
       }
     });
     return providerTotals;
