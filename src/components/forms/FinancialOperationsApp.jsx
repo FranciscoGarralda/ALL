@@ -254,6 +254,19 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         newState.comision = (totalVentaNum - totalCompraNum).toFixed(2);
       }
 
+      // Auto-completado para CUENTAS CORRIENTES
+      if (newState.operacion === 'CUENTAS_CORRIENTES' && ['INGRESO', 'EGRESO'].includes(newState.subOperacion)) {
+        // Auto-completar moneda de comisión cuando cambia la moneda principal
+        if (field === 'moneda') {
+          newState.monedaComision = newState.moneda;
+        }
+        
+        // Auto-completar cuenta de comisión cuando cambia la cuenta principal
+        if (field === 'cuenta') {
+          newState.cuentaComision = newState.cuenta;
+        }
+      }
+
       return newState;
     });
   };

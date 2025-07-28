@@ -237,6 +237,105 @@ export const WalletTCButtonGroup = React.forwardRef(({
   );
 });
 
+/**
+ * Cuenta Button Group Component for Cuentas Corrientes
+ * Layout: Socio 1, Socio 2, ALL (top row) + Digital, Efectivo (bottom row)
+ */
+export const CuentaButtonGroup = React.forwardRef(({ 
+  value, 
+  onChange, 
+  onKeyDown, 
+  label, 
+  required = false,
+  allowEfectivo = true,
+  readOnly = false
+}, ref) => {
+  const handleButtonClick = (buttonValue) => {
+    if (onChange && !readOnly) {
+      onChange(buttonValue);
+    }
+  };
+
+  const isActive = (buttonValue) => {
+    return value === buttonValue;
+  };
+
+  const getButtonClasses = (buttonValue) => {
+    return `px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+      isActive(buttonValue)
+        ? 'bg-primary-500 text-white border-primary-500'
+        : readOnly 
+          ? 'bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed'
+          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+    }`;
+  };
+
+  return (
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <div className="space-y-2">
+        {/* Primera fila: Socio 1, Socio 2, ALL */}
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            ref={ref}
+            onClick={() => handleButtonClick('socio1')}
+            onKeyDown={onKeyDown}
+            className={getButtonClasses('socio1')}
+            disabled={readOnly}
+          >
+            Socio 1
+          </button>
+          <button
+            type="button"
+            onClick={() => handleButtonClick('socio2')}
+            onKeyDown={onKeyDown}
+            className={getButtonClasses('socio2')}
+            disabled={readOnly}
+          >
+            Socio 2
+          </button>
+          <button
+            type="button"
+            onClick={() => handleButtonClick('ALL')}
+            onKeyDown={onKeyDown}
+            className={getButtonClasses('ALL')}
+            disabled={readOnly}
+          >
+            ALL
+          </button>
+        </div>
+        
+        {/* Segunda fila: Digital, Efectivo */}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => handleButtonClick('digital')}
+            onKeyDown={onKeyDown}
+            className={getButtonClasses('digital')}
+            disabled={readOnly}
+          >
+            Digital
+          </button>
+          {allowEfectivo && (
+            <button
+              type="button"
+              onClick={() => handleButtonClick('efectivo')}
+              onKeyDown={onKeyDown}
+              className={getButtonClasses('efectivo')}
+              disabled={readOnly}
+            >
+              Efectivo
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
+
 // Re-export utility functions from other modules for convenience
 export { formatAmountWithCurrency } from '../../utils/formatters';
 export { 

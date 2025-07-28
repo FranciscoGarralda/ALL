@@ -132,23 +132,8 @@ export const specificFieldsConfig = {
         ? monedas.filter(m => selectedProveedor.allowedCurrencies.includes(m.value) || m.value === '') 
         : monedas;
 
-      // Opciones de cuenta según el proveedor seleccionado
-      const getCuentaOptions = () => {
-        const baseOptions = [
-          { value: 'socio1', label: 'Socio 1' },
-          { value: 'socio2', label: 'Socio 2' },
-          { value: 'ALL', label: 'ALL' },
-          { value: 'digital', label: 'Digital' },
-          { value: 'efectivo', label: 'Efectivo' }
-        ];
-
-        // Si es ALL, no permitir efectivo
-        if (formData.proveedorCC === 'ALL') {
-          return baseOptions.filter(option => option.value !== 'efectivo');
-        }
-
-        return baseOptions;
-      };
+      // Determinar si ALL está seleccionado para deshabilitar efectivo
+      const isAllSelected = formData.proveedorCC === 'ALL';
 
       return [
         [
@@ -159,14 +144,14 @@ export const specificFieldsConfig = {
           { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
         ],
         [
-          { label: 'Cuenta', name: 'cuenta', type: 'select', options: getCuentaOptions(), required: true, gridCols: 'col-span-2' }
+          { label: 'Cuenta', name: 'cuenta', type: 'cuenta-buttons', required: true, gridCols: 'col-span-2', allowEfectivo: !isAllSelected }
         ],
         [
           { label: 'Comisión', name: 'comision', type: 'number', placeholder: '0.00', gridCols: 'col-span-1' },
-          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, gridCols: 'col-span-1' }
+          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-1' }
         ],
         [
-          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'select', options: getCuentaOptions(), gridCols: 'col-span-2' }
+          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'cuenta-buttons', gridCols: 'col-span-2', allowEfectivo: !isAllSelected, readOnly: true, calculated: true }
         ]
       ];
     },

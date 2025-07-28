@@ -3,7 +3,7 @@ import FormInput from './FormInput.jsx';
 import FormSelect from './FormSelect.jsx';
 import ClientSelect from './ClientSelect.jsx';
 import CurrencyInput from './CurrencyInput.jsx';
-import { WalletButtonGroup, WalletTCButtonGroup } from './index.js';
+import { WalletButtonGroup, WalletTCButtonGroup, CuentaButtonGroup } from './index.js';
 
 /**
  * Form field group component that organizes related fields in responsive layouts
@@ -143,6 +143,14 @@ const FormFieldGroup = ({
         return fieldWrapper(
           <WalletTCButtonGroup
             {...commonProps}
+          />
+        );
+
+      case 'cuenta-buttons':
+        return fieldWrapper(
+          <CuentaButtonGroup
+            {...commonProps}
+            allowEfectivo={fieldProps.allowEfectivo !== false}
           />
         );
 
