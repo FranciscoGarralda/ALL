@@ -77,10 +77,7 @@ function UtilidadApp({ movements, onNavigate }) {
             tempStockData[currency].totalCostoEnMonedaTC = 0;
             tempStockData[currency].costoPromedio = 0;
           }
-        } else if (mov.subOperacion === 'ARBITRAJE' && mov.comision) {
-          // Arbitraje: la utilidad es directamente la comisión
-          gananciaCalculada = parseFloat(mov.comision);
-        }
+        // ARBITRAJE no se incluye en utilidad histórica - solo compra/venta de divisas
 
         return { ...mov, gananciaCalculada };
       });
@@ -101,7 +98,6 @@ function UtilidadApp({ movements, onNavigate }) {
             totalCostoEnMonedaTC: 0, 
             costoPromedio: 0, 
             utilidadPorVenta: 0,
-            utilidadPorArbitraje: 0,
             monedaTCAsociada: currencyTC 
           };
         }
@@ -119,7 +115,15 @@ function UtilidadApp({ movements, onNavigate }) {
               stockData[currency].totalCostoEnMonedaTC / stockData[currency].cantidad;
           }
         } else if (mov.subOperacion === 'VENTA') {
-          stockData[currency].utilidadPorVenta += mov.gananciaCalculada;
+          // Convertir utilidad a PESOS si está en otra moneda
+          let utilidadEnPesos = mov.gananciaCalculada;
+          if (currencyTC !== 'PESO') {
+            // Si la utilidad está en otra moneda, la convertimos usando el TC de la transacción
+            const tc = parseFloat(mov.tc) || 1;
+            utilidadEnPesos = mov.gananciaCalculada * tc;
+          }
+          
+          stockData[currency].utilidadPorVenta += utilidadEnPesos;
 
           const costoUnitarioEnMonedaTC = stockData[currency].costoPromedio;
           const costoTotalVenta = amount * costoUnitarioEnMonedaTC;
@@ -132,70 +136,50 @@ function UtilidadApp({ movements, onNavigate }) {
             stockData[currency].totalCostoEnMonedaTC = 0;
             stockData[currency].costoPromedio = 0;
           }
-        } else if (mov.subOperacion === 'ARBITRAJE') {
-          stockData[currency].utilidadPorArbitraje += mov.gananciaCalculada;
         }
+        // ARBITRAJE no se procesa para utilidad histórica
       }
     });
     
     return stockData;
   }, [processedMovements]);
 
-  // Calcular utilidad total de arbitraje
-  const arbitrageProfitData = useMemo(() => {
-    const data = {};
-    processedMovements.forEach(mov => {
-      if (mov.operacion === 'TRANSACCIONES' && mov.subOperacion === 'ARBITRAJE' && mov.gananciaCalculada !== 0) {
-        const currency = mov.moneda;
-        data[currency] = (data[currency] || 0) + mov.gananciaCalculada;
-      }
-    });
-    return data;
-  }, [processedMovements]);
+  // ARBITRAJE eliminado - solo utilidad de compra/venta de divisas
 
-  // Utilidad total combinada
+  // Utilidad total combinada - solo ventas, todo en PESOS
   const totalUtilityCombined = useMemo(() => {
-    const totals = {};
+    let totalEnPesos = 0;
     
-    // Agregar utilidades por venta
+    // Sumar todas las utilidades por venta (ya convertidas a pesos)
     for (const currency in finalStockData) {
-      const associatedMonedaTC = finalStockData[currency].monedaTCAsociada || currency;
       if (finalStockData[currency].utilidadPorVenta !== 0) {
-        totals[associatedMonedaTC] = (totals[associatedMonedaTC] || 0) + finalStockData[currency].utilidadPorVenta;
+        totalEnPesos += finalStockData[currency].utilidadPorVenta;
       }
     }
     
-    // Agregar utilidades por arbitraje
-    for (const currency in arbitrageProfitData) {
-      totals[currency] = (totals[currency] || 0) + arbitrageProfitData[currency];
-    }
-    
-    return totals;
-  }, [finalStockData, arbitrageProfitData]);
+    return totalEnPesos > 0 ? { PESO: totalEnPesos } : {};
+  }, [finalStockData]);
 
-  // Calcular utilidad mensual para gráficos
+  // Calcular utilidad mensual para gráficos - solo VENTA en PESOS
   const monthlyUtilityCombined = useMemo(() => {
     const monthly = {};
 
     processedMovements.forEach(mov => {
-      if (mov.gananciaCalculada !== 0) {
+      if (mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA') {
         const date = new Date(mov.fecha);
         const yearMonth = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-        const currencyForUtility = mov.subOperacion === 'VENTA' ? (mov.monedaTC || mov.moneda) : mov.moneda;
         
-        let key = '';
-        if (mov.subOperacion === 'VENTA') {
-          key = `${currencyForUtility}_VENTA`;
-        } else if (mov.subOperacion === 'ARBITRAJE') {
-          key = `${currencyForUtility}_ARBITRAJE`;
+        // Convertir utilidad a PESOS si está en otra moneda
+        let utilidadEnPesos = mov.gananciaCalculada;
+        if (mov.monedaTC !== 'PESO') {
+          const tc = parseFloat(mov.tc) || 1;
+          utilidadEnPesos = mov.gananciaCalculada * tc;
         }
 
-        if (key) {
-          if (!monthly[yearMonth]) {
-            monthly[yearMonth] = {};
-          }
-          monthly[yearMonth][key] = (monthly[yearMonth][key] || 0) + mov.gananciaCalculada;
+        if (!monthly[yearMonth]) {
+          monthly[yearMonth] = {};
         }
+        monthly[yearMonth]['PESO_VENTA'] = (monthly[yearMonth]['PESO_VENTA'] || 0) + utilidadEnPesos;
       }
     });
 
@@ -210,76 +194,68 @@ function UtilidadApp({ movements, onNavigate }) {
     return chartData;
   }, [processedMovements]);
 
-  // Utilidad para fecha seleccionada
+  // Utilidad para fecha seleccionada - solo VENTA en PESOS
   const dailyUtilityForSelectedDate = useMemo(() => {
-    if (!selectedDate) return { venta: {}, arbitraje: {} };
-    const dailyVenta = {};
-    const dailyArbitraje = {};
+    if (!selectedDate) return { venta: {} };
+    let totalVentaEnPesos = 0;
 
     processedMovements
-      .filter(mov => mov.fecha === selectedDate && mov.gananciaCalculada !== 0)
+      .filter(mov => mov.fecha === selectedDate && mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA')
       .forEach(mov => {
-        const currencyForUtility = mov.subOperacion === 'VENTA' ? (mov.monedaTC || mov.moneda) : mov.moneda;
-        if (mov.subOperacion === 'VENTA') {
-          dailyVenta[currencyForUtility] = (dailyVenta[currencyForUtility] || 0) + mov.gananciaCalculada;
-        } else if (mov.subOperacion === 'ARBITRAJE') {
-          dailyArbitraje[currencyForUtility] = (dailyArbitraje[currencyForUtility] || 0) + mov.gananciaCalculada;
+        // Convertir utilidad a PESOS si está en otra moneda
+        let utilidadEnPesos = mov.gananciaCalculada;
+        if (mov.monedaTC !== 'PESO') {
+          const tc = parseFloat(mov.tc) || 1;
+          utilidadEnPesos = mov.gananciaCalculada * tc;
         }
+        totalVentaEnPesos += utilidadEnPesos;
       });
     
-    return { venta: dailyVenta, arbitraje: dailyArbitraje };
+    return { venta: totalVentaEnPesos > 0 ? { PESO: totalVentaEnPesos } : {} };
   }, [processedMovements, selectedDate]);
 
-  // Utilidad del mes actual
+  // Utilidad del mes actual - solo VENTA en PESOS
   const currentMonthUtility = useMemo(() => {
     const currentYearMonth = new Date().toISOString().substring(0, 7);
-    const monthlyVenta = {};
-    const monthlyArbitraje = {};
+    let totalVentaEnPesos = 0;
 
     processedMovements
-      .filter(mov => mov.fecha && mov.fecha.substring(0, 7) === currentYearMonth && mov.gananciaCalculada !== 0)
+      .filter(mov => mov.fecha && mov.fecha.substring(0, 7) === currentYearMonth && mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA')
       .forEach(mov => {
-        const currencyForUtility = mov.subOperacion === 'VENTA' ? (mov.monedaTC || mov.moneda) : mov.moneda;
-        if (mov.subOperacion === 'VENTA') {
-          monthlyVenta[currencyForUtility] = (monthlyVenta[currencyForUtility] || 0) + mov.gananciaCalculada;
-        } else if (mov.subOperacion === 'ARBITRAJE') {
-          monthlyArbitraje[currencyForUtility] = (monthlyArbitraje[currencyForUtility] || 0) + mov.gananciaCalculada;
+        // Convertir utilidad a PESOS si está en otra moneda
+        let utilidadEnPesos = mov.gananciaCalculada;
+        if (mov.monedaTC !== 'PESO') {
+          const tc = parseFloat(mov.tc) || 1;
+          utilidadEnPesos = mov.gananciaCalculada * tc;
         }
+        totalVentaEnPesos += utilidadEnPesos;
       });
     
-    return { venta: monthlyVenta, arbitraje: monthlyArbitraje };
+    return { venta: totalVentaEnPesos > 0 ? { PESO: totalVentaEnPesos } : {} };
   }, [processedMovements]);
 
-  // Utilidad de hoy
+  // Utilidad de hoy - solo VENTA en PESOS
   const todayUtility = useMemo(() => {
     const today = new Date().toISOString().split('T')[0];
-    const dailyVenta = {};
-    const dailyArbitraje = {};
+    let totalVentaEnPesos = 0;
 
     processedMovements
-      .filter(mov => mov.fecha === today && mov.gananciaCalculada !== 0)
+      .filter(mov => mov.fecha === today && mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA')
       .forEach(mov => {
-        const currencyForUtility = mov.subOperacion === 'VENTA' ? (mov.monedaTC || mov.moneda) : mov.moneda;
-        if (mov.subOperacion === 'VENTA') {
-          dailyVenta[currencyForUtility] = (dailyVenta[currencyForUtility] || 0) + mov.gananciaCalculada;
-        } else if (mov.subOperacion === 'ARBITRAJE') {
-          dailyArbitraje[currencyForUtility] = (dailyArbitraje[currencyForUtility] || 0) + mov.gananciaCalculada;
+        // Convertir utilidad a PESOS si está en otra moneda
+        let utilidadEnPesos = mov.gananciaCalculada;
+        if (mov.monedaTC !== 'PESO') {
+          const tc = parseFloat(mov.tc) || 1;
+          utilidadEnPesos = mov.gananciaCalculada * tc;
         }
+        totalVentaEnPesos += utilidadEnPesos;
       });
     
-    return { venta: dailyVenta, arbitraje: dailyArbitraje };
+    return { venta: totalVentaEnPesos > 0 ? { PESO: totalVentaEnPesos } : {} };
   }, [processedMovements]);
 
-  // Obtener todas las monedas en utilidad
-  const allCurrenciesInUtility = useMemo(() => {
-    const currencies = new Set();
-    processedMovements.forEach(mov => {
-      if (mov.gananciaCalculada !== 0) {
-        currencies.add(mov.subOperacion === 'VENTA' ? (mov.monedaTC || mov.moneda) : mov.moneda);
-      }
-    });
-    return Array.from(currencies).sort();
-  }, [processedMovements]);
+  // Solo PESO para utilidad (ya que todo se convierte)
+  const allCurrenciesInUtility = ['PESO'];
 
   // Función para obtener colores para cada moneda/tipo
   const getUtilityColor = (currencyType, index) => {
@@ -369,31 +345,27 @@ function UtilidadApp({ movements, onNavigate }) {
                 'text-emerald-700',
                 'border-emerald-500',
                 Target,
-                'Ventas + Arbitraje acumulado'
+                'Solo ventas de divisas en PESOS'
               )}
               
               {renderMetricCard(
                 'Utilidad del Mes Actual',
-                Object.keys(currentMonthUtility.venta).length > 0 || Object.keys(currentMonthUtility.arbitraje).length > 0 
-                  ? { ...currentMonthUtility.venta, ...currentMonthUtility.arbitraje }
-                  : {},
+                currentMonthUtility.venta,
                 'bg-primary-50',
                 'text-primary-700',
                 'border-primary-500',
                 Calendar,
-                'Mes en curso'
+                'Solo ventas de divisas'
               )}
 
               {renderMetricCard(
                 'Utilidad de Hoy',
-                Object.keys(todayUtility.venta).length > 0 || Object.keys(todayUtility.arbitraje).length > 0 
-                  ? { ...todayUtility.venta, ...todayUtility.arbitraje }
-                  : {},
+                todayUtility.venta,
                 'bg-indigo-50',
                 'text-indigo-700',
                 'border-indigo-500',
                 Clock,
-                'Día actual'
+                'Solo ventas de divisas'
               )}
             </div>
           </div>
@@ -419,7 +391,7 @@ function UtilidadApp({ movements, onNavigate }) {
               </div>
               
               <div className="flex items-end">
-                {selectedDate && (Object.entries(dailyUtilityForSelectedDate.venta).length > 0 || Object.entries(dailyUtilityForSelectedDate.arbitraje).length > 0) ? (
+                {selectedDate && Object.entries(dailyUtilityForSelectedDate.venta).length > 0 ? (
                   <div className="bg-purple-50 p-3 sm:p-4 rounded-lg w-full">
                     <p className="text-xs sm:text-sm font-medium text-purple-700 mb-2">
                       Utilidad para {new Date(selectedDate + 'T12:00:00').toLocaleDateString('es-ES', { 
@@ -432,12 +404,7 @@ function UtilidadApp({ movements, onNavigate }) {
                     <div className="space-y-1">
                       {Object.entries(dailyUtilityForSelectedDate.venta).map(([currency, amount]) => (
                         <p key={`${currency}-venta`} className={`text-xs sm:text-sm font-bold ${amount >= 0 ? 'text-emerald-800' : 'text-error-800'}`}>
-                          {currency} (Venta): {formatAmountWithCurrency(amount, currency)}
-                        </p>
-                      ))}
-                      {Object.entries(dailyUtilityForSelectedDate.arbitraje).map(([currency, amount]) => (
-                        <p key={`${currency}-arbitraje`} className={`text-xs sm:text-sm font-bold ${amount >= 0 ? 'text-emerald-800' : 'text-error-800'}`}>
-                          {currency} (Arbitraje): {formatAmountWithCurrency(amount, currency)}
+                          Venta de divisas: {formatAmountWithCurrency(amount, currency)}
                         </p>
                       ))}
                     </div>
@@ -484,7 +451,7 @@ function UtilidadApp({ movements, onNavigate }) {
                           Valuación Total
                         </th>
                         <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Utilidad Realizada
+                          Utilidad Venta (PESOS)
                         </th>
                       </tr>
                     </thead>
@@ -509,18 +476,13 @@ function UtilidadApp({ movements, onNavigate }) {
                             {data.cantidad > 0 ? formatAmountWithCurrency(data.cantidad * data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="space-y-1">
-                              {data.utilidadPorVenta !== 0 && (
-                                <div className="text-emerald-600">
-                                  V: {formatAmountWithCurrency(data.utilidadPorVenta, data.monedaTCAsociada || currency)}
-                                </div>
-                              )}
-                              {data.utilidadPorArbitraje !== 0 && (
-                                <div className="text-primary-600">
-                                  A: {formatAmountWithCurrency(data.utilidadPorArbitraje, currency)}
-                                </div>
-                              )}
-                            </div>
+                            {data.utilidadPorVenta !== 0 ? (
+                              <div className="text-emerald-600">
+                                {formatAmountWithCurrency(data.utilidadPorVenta, 'PESO')}
+                              </div>
+                            ) : (
+                              <span className="text-gray-400">-</span>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -552,34 +514,24 @@ function UtilidadApp({ movements, onNavigate }) {
                         </div>
                       </div>
                       
-                      <div className="pt-2 border-t border-gray-200 mt-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs text-gray-500">Valuación</span>
-                          <span className="font-medium text-primary-600 text-sm">
-                            {data.cantidad > 0 ? formatAmountWithCurrency(data.cantidad * data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
-                          </span>
-                        </div>
-                        {(data.utilidadPorVenta !== 0 || data.utilidadPorArbitraje !== 0) && (
-                          <div className="mt-1 space-y-1">
-                            {data.utilidadPorVenta !== 0 && (
+                                              <div className="pt-2 border-t border-gray-200 mt-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-gray-500">Valuación</span>
+                            <span className="font-medium text-primary-600 text-sm">
+                              {data.cantidad > 0 ? formatAmountWithCurrency(data.cantidad * data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
+                            </span>
+                          </div>
+                          {data.utilidadPorVenta !== 0 && (
+                            <div className="mt-1">
                               <div className="flex justify-between text-xs">
                                 <span className="text-gray-500">Util. Venta</span>
                                 <span className="text-emerald-600 font-medium">
-                                  {formatAmountWithCurrency(data.utilidadPorVenta, data.monedaTCAsociada || currency)}
+                                  {formatAmountWithCurrency(data.utilidadPorVenta, 'PESO')}
                                 </span>
                               </div>
-                            )}
-                            {data.utilidadPorArbitraje !== 0 && (
-                              <div className="flex justify-between text-xs">
-                                <span className="text-gray-500">Util. Arbitraje</span>
-                                <span className="text-primary-600 font-medium">
-                                  {formatAmountWithCurrency(data.utilidadPorArbitraje, currency)}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                            </div>
+                          )}
+                        </div>
                     </div>
                   ))}
                 </div>
@@ -639,22 +591,11 @@ function UtilidadApp({ movements, onNavigate }) {
                       }}
                     />
                     <Legend />
-                    {allCurrenciesInUtility.map((currency, index) => (
-                      <React.Fragment key={currency}>
-                        <Bar 
-                          dataKey={`${currency}_VENTA`} 
-                          stackId="a" 
-                          fill={getUtilityColor(`${currency}_VENTA`, index * 2)}
-                          name={`${currency} (Venta)`}
-                        />
-                        <Bar 
-                          dataKey={`${currency}_ARBITRAJE`} 
-                          stackId="a" 
-                          fill={getUtilityColor(`${currency}_ARBITRAJE`, index * 2 + 1)}
-                          name={`${currency} (Arbitraje)`}
-                        />
-                      </React.Fragment>
-                    ))}
+                    <Bar 
+                      dataKey="PESO_VENTA" 
+                      fill="#10B981"
+                      name="Utilidad Venta (PESOS)"
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -678,7 +619,8 @@ function UtilidadApp({ movements, onNavigate }) {
               <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">
                 <p>• <strong>Costo Promedio Ponderado:</strong> Se actualiza con cada compra</p>
                 <p>• <strong>Ganancia en Ventas:</strong> Precio venta - Costo promedio actual</p>
-                <p>• <strong>Arbitraje:</strong> Utilidad directa de comisiones</p>
+                <p>• <strong>Solo Ventas:</strong> Arbitraje no se incluye en utilidad histórica</p>
+                <p>• <strong>Conversión:</strong> Todas las utilidades se muestran en PESOS</p>
                 <p>• <strong>Stock Actual:</strong> Valuado a costo promedio histórico</p>
                 <p>• <strong>Procesamiento:</strong> Cronológico para precisión contable</p>
               </div>
