@@ -141,21 +141,20 @@ function UtilidadApp({ movements, onNavigate }) {
 
   // ARBITRAJE eliminado - solo utilidad de compra/venta de divisas
 
-  // Utilidad total combinada - solo ventas, por divisa original
+  // Utilidad total combinada - solo ventas, por divisa de la ganancia
   const totalUtilityCombined = useMemo(() => {
     const totals = {};
     
-    // Agrupar utilidades por moneda TC (donde se deposita la ganancia)
-    for (const currency in finalStockData) {
-      const data = finalStockData[currency];
-      if (data.utilidadPorVenta !== 0) {
-        const monedaUtilidad = data.monedaTCAsociada || 'PESO';
-        totals[monedaUtilidad] = (totals[monedaUtilidad] || 0) + data.utilidadPorVenta;
+    // Procesar directamente los movimientos de venta para obtener divisa correcta
+    processedMovements.forEach(mov => {
+      if (mov.subOperacion === 'VENTA' && mov.gananciaCalculada !== 0) {
+        const monedaUtilidad = mov.monedaTC || 'PESO'; // Divisa de la ganancia
+        totals[monedaUtilidad] = (totals[monedaUtilidad] || 0) + mov.gananciaCalculada;
       }
-    }
+    });
     
     return totals;
-  }, [finalStockData]);
+  }, [processedMovements]);
 
   // Calcular utilidad mensual para gráficos - solo VENTA por divisa
   const monthlyUtilityCombined = useMemo(() => {
@@ -333,7 +332,7 @@ function UtilidadApp({ movements, onNavigate }) {
                 'text-emerald-700',
                 'border-emerald-500',
                 Target,
-                'Solo ventas de divisas por moneda'
+                'Cuánto ganaste y en qué divisa'
               )}
               
               {renderMetricCard(
@@ -343,7 +342,7 @@ function UtilidadApp({ movements, onNavigate }) {
                 'text-primary-700',
                 'border-primary-500',
                 Calendar,
-                'Solo ventas por divisa'
+                'Cuánto ganaste y en qué divisa'
               )}
 
               {renderMetricCard(
@@ -353,7 +352,7 @@ function UtilidadApp({ movements, onNavigate }) {
                 'text-indigo-700',
                 'border-indigo-500',
                 Clock,
-                'Solo ventas por divisa'
+                'Cuánto ganaste y en qué divisa'
               )}
             </div>
           </div>
@@ -611,7 +610,7 @@ function UtilidadApp({ movements, onNavigate }) {
                 <p>• <strong>Costo Promedio Ponderado:</strong> Se actualiza con cada compra</p>
                 <p>• <strong>Ganancia en Ventas:</strong> Precio venta - Costo promedio actual</p>
                 <p>• <strong>Solo Ventas:</strong> Arbitraje no se incluye en utilidad histórica</p>
-                <p>• <strong>Por Divisa:</strong> Utilidades mostradas en moneda de destino original</p>
+                <p>• <strong>Por Divisa:</strong> Cuánto ganaste y en qué moneda</p>
                 <p>• <strong>Stock Actual:</strong> Valuado a costo promedio histórico</p>
                 <p>• <strong>Procesamiento:</strong> Cronológico para precisión contable</p>
               </div>

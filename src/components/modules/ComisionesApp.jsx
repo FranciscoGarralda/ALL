@@ -21,18 +21,14 @@ import { safeParseFloat } from '../../utils/safeOperations';
 function ComisionesApp({ movements, onNavigate }) {
   const [selectedDate, setSelectedDate] = useState('');
 
-  // Filtrar movimientos que tienen comisión - DIVIDIDO POR TIPO
+  // Filtrar movimientos que tienen comisión - SOLO COMISIONES (SIN ARBITRAJES)
   const commissionMovements = useMemo(() => {
-    return movements.filter(mov => mov.comision && safeParseFloat(mov.comision) > 0);
-  }, [movements]);
-
-  // Comisiones de ARBITRAJE
-  const arbitrageCommissions = useMemo(() => {
-    return commissionMovements.filter(mov => 
-      mov.operacion === 'TRANSACCIONES' && 
-      mov.subOperacion === 'ARBITRAJE'
+    return movements.filter(mov => 
+      mov.comision && 
+      safeParseFloat(mov.comision) > 0 &&
+      !(mov.operacion === 'TRANSACCIONES' && mov.subOperacion === 'ARBITRAJE') // EXCLUIR arbitrajes
     );
-  }, [commissionMovements]);
+  }, [movements]);
 
   // Comisiones de PROVEEDORES CC
   const providerCommissions = useMemo(() => {
@@ -41,19 +37,7 @@ function ComisionesApp({ movements, onNavigate }) {
     );
   }, [commissionMovements]);
 
-  // Calcular comisiones totales por moneda - ARBITRAJE
-  const totalArbitrageCommissions = useMemo(() => {
-    const totals = {};
-    arbitrageCommissions.forEach(mov => {
-      const currency = mov.monedaComision || mov.moneda;
-      if (currency) {
-        totals[currency] = (totals[currency] || 0) + safeParseFloat(mov.comision);
-      }
-    });
-    return totals;
-  }, [arbitrageCommissions]);
-
-  // Calcular comisiones totales por moneda - PROVEEDORES CC
+  // Calcular comisiones totales por moneda - SOLO PROVEEDORES CC
   const totalProviderCommissions = useMemo(() => {
     const totals = {};
     providerCommissions.forEach(mov => {
@@ -65,19 +49,17 @@ function ComisionesApp({ movements, onNavigate }) {
     return totals;
   }, [providerCommissions]);
 
-  // Calcular comisiones totales COMBINADAS
+  // Calcular comisiones totales - SOLO COMISIONES REALES
   const totalCommissions = useMemo(() => {
     const totals = {};
-    // Sumar arbitraje
-    Object.entries(totalArbitrageCommissions).forEach(([currency, amount]) => {
-      totals[currency] = (totals[currency] || 0) + amount;
-    });
-    // Sumar proveedores
-    Object.entries(totalProviderCommissions).forEach(([currency, amount]) => {
-      totals[currency] = (totals[currency] || 0) + amount;
+    commissionMovements.forEach(mov => {
+      const currency = mov.monedaComision || mov.moneda;
+      if (currency) {
+        totals[currency] = (totals[currency] || 0) + safeParseFloat(mov.comision);
+      }
     });
     return totals;
-  }, [totalArbitrageCommissions, totalProviderCommissions]);
+  }, [commissionMovements]);
 
   // Calcular comisiones mensuales para gráficos
   const monthlyCommissions = useMemo(() => {
@@ -293,16 +275,7 @@ function ComisionesApp({ movements, onNavigate }) {
 
             {/* Métricas por tipo */}
             <h3 className="text-sm font-semibold text-gray-600 mb-4">Comisiones por Tipo</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-              {renderMetricCard(
-                'Arbitrajes',
-                totalArbitrageCommissions,
-                'bg-indigo-50',
-                'text-indigo-700',
-                'border-indigo-500',
-                ArrowUpDown
-              )}
-              
+            <div className="grid grid-cols-1 gap-4 sm:gap-6">
               {renderMetricCard(
                 'Proveedores CC',
                 totalProviderCommissions,
