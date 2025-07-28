@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { Plus, X } from 'lucide-react';
-import { safeParseFloat, safeArray } from '../../../shared/services/safeOperations';
+import { safeParseFloat, safeArray } from '../../services/safeOperations';
 import FormSelect from './FormSelect';
 import CurrencyInput from './CurrencyInput';
 

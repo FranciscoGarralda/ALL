@@ -1,5 +1,5 @@
 import React, { useState, useEffect, forwardRef } from 'react';
-import { formatCurrencyInput, parseCurrencyInput } from '../../../shared/services/formatters.js';
+import { formatCurrencyInput, parseCurrencyInput } from '../../services/formatters.js';
 
 /**
  * Currency input component with real-time formatting

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
-import { useMixedPayments } from '../hooks/useMixedPayments';
-import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
+import { useMixedPayments } from '../shared/hooks/useMixedPayments';
+import { useKeyboardNavigation } from '../shared/hooks/useKeyboardNavigation';
 
 // Action types for form reducer
 const FORM_ACTIONS = {
