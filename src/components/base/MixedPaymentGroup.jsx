@@ -60,7 +60,7 @@ const MixedPaymentGroup = ({
           {/* Selector de Socio */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Pago {index + 1}
+              Cuenta
             </label>
             <FormSelect
               ref={(el) => registerField && registerField(`mixedPayment_${index}_socio`, el)}
@@ -77,7 +77,7 @@ const MixedPaymentGroup = ({
           {/* Selector de Tipo */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tipo
+              Modo
             </label>
             <FormSelect
               ref={(el) => registerField && registerField(`mixedPayment_${index}_tipo`, el)}
