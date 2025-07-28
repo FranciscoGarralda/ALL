@@ -240,10 +240,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                             <TrendingDown size={14} className="text-error-500 mx-auto mb-1" />
                             <p className="text-xs text-gray-500">Egresos</p>
                             <p className="font-semibold text-error-600 text-xs sm:text-sm">
-                              {providerSummary.egresos.toLocaleString('es-AR', { 
-                                minimumFractionDigits: 0, 
-                                maximumFractionDigits: 0 
-                              })}
+                              {formatAmountWithCurrency(providerSummary.egresos, 'PESO', { showSymbol: false, decimals: 0 })}
                             </p>
                           </div>
                         </div>
@@ -254,10 +251,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                           <p className={`font-bold text-center text-sm sm:text-base ${
                             providerSummary.saldo < 0 ? 'text-error-600' : 'text-success-600'
                           }`}>
-                            {providerSummary.saldo.toLocaleString('es-AR', { 
-                              minimumFractionDigits: 0, 
-                              maximumFractionDigits: 0 
-                            })}
+                            {formatAmountWithCurrency(providerSummary.saldo, 'PESO', { showSymbol: false, decimals: 0 })}
                           </p>
                         </div>
 
@@ -266,10 +260,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                           <div className="bg-error-100 rounded-lg p-2 sm:p-3 text-center">
                             <AlertCircle size={14} className="text-error-600 mx-auto mb-1" />
                             <p className="text-xs text-error-700 font-medium">
-                              Nosotros debemos: {providerSummary.debeUsuario.toLocaleString('es-AR', { 
-                                minimumFractionDigits: 0, 
-                                maximumFractionDigits: 0 
-                              })}
+                              Nosotros debemos: {formatAmountWithCurrency(providerSummary.debeUsuario, 'PESO', { showSymbol: false, decimals: 0 })}
                             </p>
                           </div>
                         )}
@@ -278,10 +269,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                           <div className="bg-success-100 rounded-lg p-2 sm:p-3 text-center">
                             <DollarSign size={14} className="text-success-600 mx-auto mb-1" />
                             <p className="text-xs text-success-700 font-medium">
-                              Nos deben: {providerSummary.debeProveedor.toLocaleString('es-AR', { 
-                                minimumFractionDigits: 0, 
-                                maximumFractionDigits: 0 
-                              })}
+                              Nos deben: {formatAmountWithCurrency(providerSummary.debeProveedor, 'PESO', { showSymbol: false, decimals: 0 })}
                             </p>
                           </div>
                         )}
@@ -431,39 +419,24 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                             TOTAL {getProviderLabel(selectedProviderForDetail)}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-primary-800">
-                            {detailedViewTotals.ingresos.toLocaleString('es-AR', { 
-                              minimumFractionDigits: 2, 
-                              maximumFractionDigits: 2 
-                            })}
+                            {formatAmountWithCurrency(detailedViewTotals.ingresos, 'PESO', { showSymbol: false })}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-primary-800">
-                            {detailedViewTotals.egresos.toLocaleString('es-AR', { 
-                              minimumFractionDigits: 2, 
-                              maximumFractionDigits: 2 
-                            })}
+                            {formatAmountWithCurrency(detailedViewTotals.egresos, 'PESO', { showSymbol: false })}
                           </td>
                           <td className={`px-4 py-4 whitespace-nowrap text-right text-sm font-bold ${
                             detailedViewTotals.saldo < 0 ? 'text-error-600' : 'text-success-600'
                           }`}>
-                            {detailedViewTotals.saldo.toLocaleString('es-AR', { 
-                              minimumFractionDigits: 2, 
-                              maximumFractionDigits: 2 
-                            })}
+                            {formatAmountWithCurrency(detailedViewTotals.saldo, 'PESO', { showSymbol: false })}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm">
                             {detailedViewTotals.debeUsuario > 0 ? (
                               <span className="text-error-800 text-xs font-medium">
-                                Nosotros: {detailedViewTotals.debeUsuario.toLocaleString('es-AR', { 
-                                  minimumFractionDigits: 2, 
-                                  maximumFractionDigits: 2 
-                                })}
+                                Nosotros: {formatAmountWithCurrency(detailedViewTotals.debeUsuario, 'PESO', { showSymbol: false })}
                               </span>
                             ) : detailedViewTotals.debeProveedor > 0 ? (
                               <span className="text-success-800 text-xs font-medium">
-                                Nos deben: {detailedViewTotals.debeProveedor.toLocaleString('es-AR', { 
-                                  minimumFractionDigits: 2, 
-                                  maximumFractionDigits: 2 
-                                })}
+                                Nos deben: {formatAmountWithCurrency(detailedViewTotals.debeProveedor, 'PESO', { showSymbol: false })}
                               </span>
                             ) : (
                               <span className="text-gray-600 text-xs">Balanceado</span>
@@ -528,19 +501,13 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                           <div>
                             <p className="text-primary-600 text-xs">Total Ingresos</p>
                             <p className="font-medium text-primary-800">
-                              {detailedViewTotals.ingresos.toLocaleString('es-AR', { 
-                                minimumFractionDigits: 2, 
-                                maximumFractionDigits: 2 
-                              })}
+                              {formatAmountWithCurrency(detailedViewTotals.ingresos, 'PESO', { showSymbol: false })}
                             </p>
                           </div>
                           <div>
                             <p className="text-primary-600 text-xs">Total Egresos</p>
                             <p className="font-medium text-primary-800">
-                              {detailedViewTotals.egresos.toLocaleString('es-AR', { 
-                                minimumFractionDigits: 2, 
-                                maximumFractionDigits: 2 
-                              })}
+                              {formatAmountWithCurrency(detailedViewTotals.egresos, 'PESO', { showSymbol: false })}
                             </p>
                           </div>
                         </div>
@@ -551,10 +518,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                             <span className={`font-bold ${
                               detailedViewTotals.saldo < 0 ? 'text-error-600' : 'text-success-600'
                             }`}>
-                              {detailedViewTotals.saldo.toLocaleString('es-AR', { 
-                                minimumFractionDigits: 2, 
-                                maximumFractionDigits: 2 
-                              })}
+                              {formatAmountWithCurrency(detailedViewTotals.saldo, 'PESO', { showSymbol: false })}
                             </span>
                           </div>
                         </div>

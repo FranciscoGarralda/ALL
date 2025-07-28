@@ -154,7 +154,7 @@ export const validateDate = (dateString) => {
     
     // If it's in YYYY-MM-DD format, add time to avoid timezone issues
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-      dateToValidate = dateString + 'T00:00:00';
+      dateToValidate = dateString + 'T12:00:00';
     }
     
     const date = new Date(dateToValidate);
