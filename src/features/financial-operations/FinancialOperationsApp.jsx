@@ -46,7 +46,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
     nombreDia: (() => {
       const today = new Date();
-      const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+      const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
       return dayNames[today.getDay()];
     })(), // Día actual
     detalle: '',
@@ -128,10 +128,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             const [year, month, day] = value.split('-').map(Number);
             const date = new Date(year, month - 1, day); // month is 0-indexed
             
-            if (!isNaN(date.getTime())) {
-              const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-              newState.nombreDia = dayNames[date.getDay()];
-            } else {
+                         if (!isNaN(date.getTime())) {
+               const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+               newState.nombreDia = dayNames[date.getDay()];
+             } else {
               newState.nombreDia = '';
             }
           } catch (error) {
@@ -325,7 +325,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
       nombreDia: (() => {
         const today = new Date();
-        const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+        const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
         return dayNames[today.getDay()];
       })(), // Día actual
       detalle: '',
