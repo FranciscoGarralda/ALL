@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { FormInput, formatAmountWithCurrency } from '../base';
+import { safeParseFloat } from '../../utils/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE UTILIDAD */
 function UtilidadApp({ movements, onNavigate }) {
@@ -43,8 +44,8 @@ function UtilidadApp({ movements, onNavigate }) {
           };
         }
 
-        const amount = parseFloat(mov.monto) || 0;
-        const total = parseFloat(mov.total) || 0;
+        const amount = safeParseFloat(mov.monto);
+        const total = safeParseFloat(mov.total);
 
         if (mov.subOperacion === 'COMPRA') {
           // Acumular costo total y cantidad
@@ -77,6 +78,7 @@ function UtilidadApp({ movements, onNavigate }) {
             tempStockData[currency].totalCostoEnMonedaTC = 0;
             tempStockData[currency].costoPromedio = 0;
           }
+        }
         // ARBITRAJE no se incluye en utilidad histórica - solo compra/venta de divisas
 
         return { ...mov, gananciaCalculada };
@@ -102,8 +104,8 @@ function UtilidadApp({ movements, onNavigate }) {
           };
         }
 
-        const amount = parseFloat(mov.monto) || 0;
-        const total = parseFloat(mov.total) || 0;
+        const amount = safeParseFloat(mov.monto);
+        const total = safeParseFloat(mov.total);
 
         if (mov.subOperacion === 'COMPRA') {
           stockData[currency].totalCostoEnMonedaTC += total;
@@ -119,7 +121,7 @@ function UtilidadApp({ movements, onNavigate }) {
           let utilidadEnPesos = mov.gananciaCalculada;
           if (currencyTC !== 'PESO') {
             // Si la utilidad está en otra moneda, la convertimos usando el TC de la transacción
-            const tc = parseFloat(mov.tc) || 1;
+            const tc = safeParseFloat(mov.tc, 1);
             utilidadEnPesos = mov.gananciaCalculada * tc;
           }
           
@@ -172,7 +174,7 @@ function UtilidadApp({ movements, onNavigate }) {
         // Convertir utilidad a PESOS si está en otra moneda
         let utilidadEnPesos = mov.gananciaCalculada;
         if (mov.monedaTC !== 'PESO') {
-          const tc = parseFloat(mov.tc) || 1;
+          const tc = safeParseFloat(mov.tc, 1);
           utilidadEnPesos = mov.gananciaCalculada * tc;
         }
 
@@ -205,7 +207,7 @@ function UtilidadApp({ movements, onNavigate }) {
         // Convertir utilidad a PESOS si está en otra moneda
         let utilidadEnPesos = mov.gananciaCalculada;
         if (mov.monedaTC !== 'PESO') {
-          const tc = parseFloat(mov.tc) || 1;
+          const tc = safeParseFloat(mov.tc, 1);
           utilidadEnPesos = mov.gananciaCalculada * tc;
         }
         totalVentaEnPesos += utilidadEnPesos;
@@ -225,7 +227,7 @@ function UtilidadApp({ movements, onNavigate }) {
         // Convertir utilidad a PESOS si está en otra moneda
         let utilidadEnPesos = mov.gananciaCalculada;
         if (mov.monedaTC !== 'PESO') {
-          const tc = parseFloat(mov.tc) || 1;
+          const tc = safeParseFloat(mov.tc, 1);
           utilidadEnPesos = mov.gananciaCalculada * tc;
         }
         totalVentaEnPesos += utilidadEnPesos;
@@ -245,7 +247,7 @@ function UtilidadApp({ movements, onNavigate }) {
         // Convertir utilidad a PESOS si está en otra moneda
         let utilidadEnPesos = mov.gananciaCalculada;
         if (mov.monedaTC !== 'PESO') {
-          const tc = parseFloat(mov.tc) || 1;
+          const tc = safeParseFloat(mov.tc, 1);
           utilidadEnPesos = mov.gananciaCalculada * tc;
         }
         totalVentaEnPesos += utilidadEnPesos;
