@@ -73,7 +73,7 @@ const FormFieldGroup = ({
       ...fieldProps
     } = field;
 
-    const fieldValue = formData[name] || '';
+    const fieldValue = field.value !== undefined ? field.value : (formData[name] || '');
     const fieldError = errors[name] || '';
 
     // Common props for all field types
@@ -82,7 +82,7 @@ const FormFieldGroup = ({
       name,
       label,
       value: fieldValue,
-      onChange: (value) => handleFieldChange(name, value),
+      onChange: field.onChange || ((value) => handleFieldChange(name, value)),
       onKeyDown: onKeyDown ? (e) => onKeyDown(name, e) : undefined,
       required,
       error: fieldError,
