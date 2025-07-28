@@ -11,7 +11,27 @@ export const safeParseFloat = (value, defaultValue = 0) => {
     return defaultValue;
   }
   
-  const parsed = parseFloat(value);
+  // Convert to string and remove any currency formatting
+  const stringValue = value.toString().replace(/[$\s]/g, ''); // Remove $ and spaces
+  
+  // Simple and reliable approach: 
+  // If it contains comma, treat as Spanish format (1.290,50)
+  // If it ends with .00, and has more than 3 digits before, treat as thousands (1290.00 -> 1290)
+  // Otherwise, treat dots as decimals
+  let cleanValue;
+  
+  if (stringValue.includes(',')) {
+    // Spanish format: 1.290,50 -> 1290.50
+    cleanValue = stringValue.replace(/\./g, '').replace(',', '.');
+  } else if (/^\d+\.00?$/.test(stringValue)) {
+    // Ends with .00 or .0 -> remove decimal part (1290.00 -> 1290)
+    cleanValue = stringValue.replace(/\.00?$/, '');
+  } else {
+    // Keep as is for genuine decimals (123.45) or integers (1290)
+    cleanValue = stringValue;
+  }
+  
+  const parsed = parseFloat(cleanValue);
   return isNaN(parsed) ? defaultValue : parsed;
 };
 
