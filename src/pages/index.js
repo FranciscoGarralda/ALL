@@ -1,6 +1,7 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Head from 'next/head';
 import { safeLocalStorage } from '../shared/services/safeOperations';
+import { handleStorageError } from '../shared/services/errorHandler';
 
 // Import navigation components
 import { 
@@ -219,12 +220,16 @@ export default function MainApp() {
     }
   }, []);
 
-  // Save data to localStorage when state changes - VERSIÓN SEGURA
+  // Save data to localStorage when state changes - VERSIÓN MEJORADA
   useEffect(() => {
     if (movements.length > 0) {
       const result = safeLocalStorage.setItem('financial-movements', movements);
       if (!result.success) {
-        console.warn('Failed to save movements:', result.error);
+        handleStorageError(new Error(result.error), {
+          component: 'MainApp',
+          context: 'Saving movements to localStorage',
+          dataSize: movements.length
+        });
       }
     }
   }, [movements]);
@@ -233,7 +238,11 @@ export default function MainApp() {
     if (clients.length > 0) {
       const result = safeLocalStorage.setItem('financial-clients', clients);
       if (!result.success) {
-        console.warn('Failed to save clients:', result.error);
+        handleStorageError(new Error(result.error), {
+          component: 'MainApp',
+          context: 'Saving clients to localStorage',
+          dataSize: clients.length
+        });
       }
     }
   }, [clients]);

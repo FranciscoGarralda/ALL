@@ -17,6 +17,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { FormInput, formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
+import { handleBusinessLogicError } from '../../shared/services/errorHandler';
 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE UTILIDAD */
 function UtilidadApp({ movements, onNavigate }) {
@@ -60,7 +61,15 @@ function UtilidadApp({ movements, onNavigate }) {
           }
         } else if (mov.subOperacion === 'VENTA') {
           if (amount > tempStockData[currency].cantidad) {
-            console.warn(`Stock insuficiente para vender ${amount} de ${currency} en ${mov.fecha}`);
+            handleBusinessLogicError(new Error(`Stock insuficiente para vender ${amount} de ${currency}`), {
+              component: 'UtilidadApp',
+              context: `Validating stock for ${currency} on ${mov.fecha}`,
+              currency,
+              amount,
+              availableStock: tempStockData[currency].cantidad,
+              fecha: mov.fecha
+            });
+            // Continue processing but flag as problematic
           }
 
           const costoUnitarioEnMonedaTC = tempStockData[currency].costoPromedio;

@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { X, User, Phone, Mail, MapPin, Save } from 'lucide-react';
 import FormInput from './FormInput';
 import FormSelect from './FormSelect';
+import { handleValidationError, ERROR_SEVERITY } from '../../services/errorHandler';
 
 const ClientModal = ({
   isOpen,
@@ -171,8 +172,12 @@ const ClientModal = ({
       setErrors({});
 
     } catch (error) {
-      console.error('Error creating client:', error);
-      setErrors({ general: 'Error al crear el cliente. Intenta nuevamente.' });
+      handleValidationError(error, {
+        component: 'ClientModal',
+        context: 'Creating new client',
+        severity: ERROR_SEVERITY.HIGH
+      });
+      setErrors({ general: 'Error al crear el cliente. Verifica los datos ingresados.' });
     } finally {
       setIsLoading(false);
     }

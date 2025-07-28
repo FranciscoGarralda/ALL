@@ -1,49 +1,82 @@
 /**
- * Production code optimizer
- * Removes console statements and optimizes code for production
+ * Production optimization utilities
+ * Removes console statements and optimizes performance for production
  */
 
-// Remove console statements in production
-const removeConsoleStatements = () => {
-  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
-    // Override console methods in production
-    console.log = () => {};
-    console.warn = () => {};
-    console.error = () => {};
-    console.info = () => {};
-    console.debug = () => {};
-  }
-};
-
-// Initialize production optimizations
-if (typeof window !== 'undefined') {
-  removeConsoleStatements();
+// Only disable console in production
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
+  // Store original console methods for critical errors
+  const originalError = console.error;
+  const originalWarn = console.warn;
+  
+  // Disable non-critical console methods
+  console.log = () => {};
+  console.info = () => {};
+  console.debug = () => {};
+  
+  // Keep warnings and errors but filter them
+  console.warn = (...args) => {
+    // Only show critical warnings
+    const message = args[0];
+    if (typeof message === 'string' && (
+      message.includes('memory leak') ||
+      message.includes('High memory usage') ||
+      message.includes('Stock insuficiente')
+    )) {
+      originalWarn(...args);
+    }
+  };
+  
+  console.error = (...args) => {
+    // Always show errors in production
+    originalError(...args);
+  };
 }
 
-/**
- * Performance optimized logger for development
- */
-export const devLogger = {
-  log: (...args) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(...args);
+// Development mode - enhanced logging
+export const devLog = (...args) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(...args);
+  }
+};
+
+export const devWarn = (...args) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn(...args);
+  }
+};
+
+export const devError = (...args) => {
+  // Always log errors regardless of environment
+  console.error(...args);
+};
+
+// Performance optimization for production
+export const optimizeForProduction = () => {
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
+    // Disable React DevTools
+    if (window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+      window.__REACT_DEVTOOLS_GLOBAL_HOOK__.onCommitFiberRoot = null;
+      window.__REACT_DEVTOOLS_GLOBAL_HOOK__.onCommitFiberUnmount = null;
     }
-  },
-  warn: (...args) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn(...args);
-    }
-  },
-  error: (...args) => {
-    // Always log errors, but format them better in production
-    if (process.env.NODE_ENV === 'development') {
-      console.error(...args);
-    } else {
-      // In production, log to error reporting service
-      // For now, silent handling
+    
+    // Optimize garbage collection
+    if (window.gc) {
+      setInterval(() => {
+        try {
+          window.gc();
+        } catch (e) {
+          // Ignore if gc is not available
+        }
+      }, 30000); // Every 30 seconds
     }
   }
 };
+
+// Initialize optimization
+if (typeof window !== 'undefined') {
+  optimizeForProduction();
+}
 
 /**
  * Clean up unused code patterns
@@ -70,7 +103,9 @@ export const cleanupPatterns = {
 };
 
 export default {
-  devLogger,
+  devLog,
+  devWarn,
+  devError,
   cleanupPatterns,
-  removeConsoleStatements
+  optimizeForProduction
 };
