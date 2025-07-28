@@ -56,8 +56,8 @@ const CurrencyInput = forwardRef(({
   // Handle focus
   const handleFocus = (e) => {
     setIsFocused(true);
-    // When focused, show raw value for easier editing
-    if (value) {
+    // When focused, show raw value for easier editing (only if not readOnly)
+    if (value && !readOnly) {
       setDisplayValue(value);
     }
   };
@@ -65,8 +65,8 @@ const CurrencyInput = forwardRef(({
   // Handle blur
   const handleBlur = (e) => {
     setIsFocused(false);
-    // When blurred, show formatted value
-    if (value && value !== '') {
+    // When blurred, show formatted value (only if not readOnly)
+    if (value && value !== '' && !readOnly) {
       const { formatted } = formatCurrencyInput(value, currency);
       setDisplayValue(formatted);
     }
