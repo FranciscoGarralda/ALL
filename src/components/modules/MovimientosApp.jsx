@@ -107,13 +107,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
                 </p>
               </div>
             </div>
-            <button 
-              onClick={() => onNavigate('nuevoMovimiento')} 
-              className="btn-primary flex items-center justify-center gap-2 touch-target w-full sm:w-auto"
-            >
-              <DollarSign size={18} />
-              <span>Nuevo Movimiento</span>
-            </button>
+
           </div>
         </div>
 
@@ -202,18 +196,25 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
                 </div>
               ) : (
                 <div className="px-4">
-                  <p className="text-sm sm:text-base text-gray-500 mb-4">No hay movimientos registrados</p>
-                  <button
-                    onClick={() => onNavigate('nuevoMovimiento')}
-                    className="btn-primary touch-target"
-                  >
-                    Crear primer movimiento
-                  </button>
+                  <p className="text-sm sm:text-base text-gray-500">No hay movimientos registrados</p>
                 </div>
               )}
             </div>
           ) : (
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-1">
+              {/* Header de columnas - solo visible en desktop */}
+              <div className="hidden sm:block bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-600">
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0 w-12 text-center">Fecha</div>
+                  <div className="flex-shrink-0 w-40">Cliente</div>
+                  <div className="flex-shrink-0 w-24">Operación</div>
+                  <div className="flex-1 min-w-0">Monto</div>
+                  <div className="flex-shrink-0 w-20">Estado</div>
+                  <div className="flex-shrink-0 w-20 text-center">Acciones</div>
+                </div>
+              </div>
+              
+              {/* Lista de movimientos */}
               {filteredAndSortedMovements.map((movement) => (
                 <MovimientoCard
                   key={movement.id}
@@ -232,14 +233,12 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
   );
 }
 
-/** COMPONENTE TARJETA DE MOVIMIENTO */
+/** COMPONENTE LÍNEA DE MOVIMIENTO - FORMATO COMPACTO */
 function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = [] }) {
   const formattedDate = movement.fecha ? 
     new Date(movement.fecha).toLocaleDateString('es-ES', { 
       day: '2-digit', 
-      month: 'short', 
-      year: 'numeric',
-      weekday: 'short'
+      month: 'short'
     }) : 'Sin fecha';
 
   // Determinar el monto principal a mostrar
@@ -247,22 +246,19 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
     if (movement.comision && parseFloat(movement.comision) > 0) {
       return {
         amount: movement.comision,
-        currency: movement.monedaComision || movement.moneda,
-        label: 'Comisión'
+        currency: movement.monedaComision || movement.moneda
       };
     }
     if (movement.total && parseFloat(movement.total) > 0) {
       return {
         amount: movement.total,
-        currency: movement.monedaTC || movement.moneda,
-        label: 'Total'
+        currency: movement.monedaTC || movement.moneda
       };
     }
     if (movement.monto) {
       return {
         amount: movement.monto,
-        currency: movement.moneda,
-        label: 'Monto'
+        currency: movement.moneda
       };
     }
     return null;
@@ -280,111 +276,71 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
   };
 
   return (
-    <div className="card hover:shadow-medium transition-all duration-200 hover:scale-102 hover:border-primary-300">
-      <div className="p-3 sm:p-4 space-y-3">
-        {/* Header con fecha y tipo */}
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
-              <Calendar size={12} className="flex-shrink-0" />
-              <span className="truncate">{formattedDate}</span>
-              {movement.nombreDia && (
-                <span className="hidden sm:inline">• {movement.nombreDia}</span>
-              )}
-            </div>
-            
-            <h3 className="font-semibold text-gray-900 text-sm sm:text-base flex items-center gap-2 mb-2">
-              <User size={14} className="text-gray-400 flex-shrink-0" />
-              <span className="truncate">{getClientName(movement.cliente, clients)}</span>
-            </h3>
-            
-            {/* Información de la operación */}
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full text-xs font-medium">
-                {movement.operacion?.replace('_', ' ') || 'N/A'}
-              </span>
-              {movement.subOperacion && (
-                <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full text-xs">
-                  {movement.subOperacion}
-                </span>
-              )}
-              {movement.proveedorCC && (
-                <span className="px-2 py-0.5 bg-warning-100 text-warning-700 rounded-full text-xs">
-                  {movement.proveedorCC}
-                </span>
-              )}
-            </div>
-          </div>
-          
-          {/* Monto y estado */}
-          <div className="text-left sm:text-right w-full sm:w-auto flex-shrink-0">
-            {displayAmount && (
-              <div className="mb-2">
-                <p className="text-xs text-gray-500">{displayAmount.label}</p>
-                <p className="font-bold text-base sm:text-lg text-primary-600 truncate">
-                  {formatAmountWithCurrency(displayAmount.amount, displayAmount.currency)}
-                </p>
-              </div>
-            )}
-            
-            <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-              movement.estado === 'realizado' 
-                ? 'bg-success-100 text-success-700' 
-                : movement.estado === 'pendiente'
-                ? 'bg-warning-100 text-warning-700'
-                : 'bg-gray-100 text-gray-700'
-            }`}>
-              {movement.estado || 'Sin estado'}
-            </span>
+    <div className="bg-white border border-gray-200 hover:border-primary-300 hover:shadow-sm transition-all duration-150 rounded-lg">
+      <div className="px-3 py-2 flex items-center gap-3">
+        {/* Fecha */}
+        <div className="flex-shrink-0 w-12 text-center">
+          <div className="text-xs text-gray-500 font-medium">{formattedDate}</div>
+        </div>
+
+        {/* Cliente */}
+        <div className="flex-shrink-0 w-28 sm:w-40">
+          <div className="text-sm font-medium text-gray-900 truncate">
+            {getClientName(movement.cliente, clients)}
           </div>
         </div>
 
-        {/* Detalle del movimiento */}
-        {movement.detalle && (
-          <div className="bg-gray-50 rounded-lg p-3">
-            <p className="text-xs sm:text-sm text-gray-700 line-clamp-2">
-              <span className="font-medium">Detalle:</span> {movement.detalle}
-            </p>
-          </div>
-        )}
+        {/* Operación */}
+        <div className="flex-shrink-0 w-16 sm:w-24">
+          <span className="px-1.5 py-0.5 bg-primary-100 text-primary-700 rounded text-xs font-medium truncate block">
+            {movement.subOperacion || movement.operacion?.replace('_', ' ') || 'N/A'}
+          </span>
+        </div>
 
-        {/* Información adicional específica */}
-        {(movement.tc || movement.interes || movement.socioSeleccionado) && (
-          <div className="flex flex-wrap gap-3 text-xs text-gray-600">
-            {movement.tc && (
-              <span className="truncate">TC: {movement.tc} {movement.monedaTC && `(${movement.monedaTC})`}</span>
-            )}
-            {movement.interes && (
-              <span>Interés: {movement.interes}%</span>
-            )}
-            {movement.socioSeleccionado && (
-              <span className="truncate">Socio: {movement.socioSeleccionado}</span>
-            )}
-          </div>
-        )}
+        {/* Monto */}
+        <div className="flex-1 min-w-0">
+          {displayAmount && (
+            <div className="text-sm font-semibold text-primary-600 truncate">
+              {formatAmountWithCurrency(displayAmount.amount, displayAmount.currency)}
+            </div>
+          )}
+        </div>
 
-        {/* Botones de acción */}
-        <div className="flex justify-end gap-1 border-t pt-3 mt-3">
+        {/* Estado */}
+        <div className="flex-shrink-0 w-20">
+          <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+            movement.estado === 'realizado' 
+              ? 'bg-success-100 text-success-700' 
+              : movement.estado === 'pendiente'
+              ? 'bg-warning-100 text-warning-700'
+              : 'bg-gray-100 text-gray-700'
+          }`}>
+            {movement.estado === 'realizado' ? 'OK' : movement.estado === 'pendiente' ? 'PEND' : 'N/A'}
+          </span>
+        </div>
+
+        {/* Acciones */}
+        <div className="flex-shrink-0 flex gap-1 justify-center">
           <button 
             onClick={() => onViewDetail(movement)} 
-            className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors touch-target"
+            className="p-1.5 text-primary-600 hover:bg-primary-50 rounded transition-colors"
             title="Ver detalles"
           >
-            <Eye size={14} />
+            <Eye size={12} />
           </button>
           <button 
             onClick={() => onEdit(movement)} 
-            className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors touch-target"
-            title="Editar movimiento"
+            className="p-1.5 text-gray-600 hover:bg-gray-50 rounded transition-colors"
+            title="Editar"
           >
-            <Edit3 size={14} />
+            <Edit3 size={12} />
           </button>
           <button 
             onClick={handleDelete} 
-            className="p-2 text-error-600 hover:bg-error-50 rounded-lg transition-colors touch-target"
-            title="Eliminar movimiento"
+            className="p-1.5 text-error-600 hover:bg-error-50 rounded transition-colors"
+            title="Eliminar"
           >
-            <Trash2 size={14} />
+            <Trash2 size={12} />
           </button>
         </div>
       </div>
@@ -403,7 +359,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
           <p className="text-sm sm:text-base mb-4 text-gray-500">El movimiento que buscas no existe o ha sido eliminado.</p>
           <button 
             onClick={onBack} 
-            className="btn-primary touch-target"
+            className="btn-secondary touch-target"
           >
             Volver a movimientos
           </button>
