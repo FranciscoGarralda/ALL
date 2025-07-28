@@ -274,7 +274,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           const porcentaje = safeParseFloat(newState.comisionPorcentaje);
           
           if (monto > 0 && porcentaje > 0) {
-            newState.montoComision = safeCalculation.multiply(monto, safeCalculation.divide(porcentaje, 100)).toFixed(2);
+            newState.montoComision = safeCalculation.percentage(monto, porcentaje).toFixed(2);
           } else {
             newState.montoComision = '';
           }
