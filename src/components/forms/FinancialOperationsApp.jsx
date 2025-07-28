@@ -239,6 +239,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         }
         if (field === 'monedaTCCompra') {
           newState.monedaTCVenta = newState.monedaTCCompra;
+          // La moneda de comisión es igual a la moneda TC (tanto de compra como de venta)
+          newState.monedaComision = newState.monedaTCCompra;
         }
 
         const monto = safeParseFloat(newState.monto);

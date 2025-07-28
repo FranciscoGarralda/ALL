@@ -13,14 +13,14 @@ export const specificFieldsConfig = {
         { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Wallet Compra', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        { label: 'Cuenta Ingreso', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
         { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Wallet TC', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+        { label: 'Cuenta Egreso', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
@@ -46,14 +46,14 @@ export const specificFieldsConfig = {
         { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Wallet Venta', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        { label: 'Cuenta Egreso', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
         { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Wallet TC', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+        { label: 'Cuenta Ingreso', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
@@ -97,10 +97,11 @@ export const specificFieldsConfig = {
         { label: 'Total venta', name: 'totalVenta', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Comisión / Profit', name: 'comision', type: 'number', placeholder: '0.00', calculated: true, gridCols: 'col-span-2' }
+        { label: 'Comisión / Profit', name: 'comision', type: 'number', placeholder: '0.00', calculated: true, gridCols: 'col-span-1' },
+        { label: 'Moneda', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Wallet Comisión', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        { label: 'Cuenta Ingreso', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: true,
