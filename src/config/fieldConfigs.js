@@ -132,19 +132,41 @@ export const specificFieldsConfig = {
         ? monedas.filter(m => selectedProveedor.allowedCurrencies.includes(m.value) || m.value === '') 
         : monedas;
 
+      // Opciones de cuenta según el proveedor seleccionado
+      const getCuentaOptions = () => {
+        const baseOptions = [
+          { value: 'socio1', label: 'Socio 1' },
+          { value: 'socio2', label: 'Socio 2' },
+          { value: 'ALL', label: 'ALL' },
+          { value: 'digital', label: 'Digital' },
+          { value: 'efectivo', label: 'Efectivo' }
+        ];
+
+        // Si es ALL, no permitir efectivo
+        if (formData.proveedorCC === 'ALL') {
+          return baseOptions.filter(option => option.value !== 'efectivo');
+        }
+
+        return baseOptions;
+      };
+
       return [
         [
-          { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true }
+          { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true, gridCols: 'col-span-2' }
         ],
         [
-          { label: `Monto ${formData.subOperacion}`, name: 'monto', type: 'number', placeholder: '0.00', required: true },
-          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true },
-          { label: 'Cuenta', name: 'cuenta', type: 'select', options: cuentas, required: true }
+          { label: `Monto ${formData.subOperacion || 'Ingreso/Egreso'}`, name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
         ],
         [
-          { label: 'Comisión (opcional)', name: 'comision', type: 'number', placeholder: '0.00' },
-          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas },
-          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'select', options: cuentas }
+          { label: 'Cuenta', name: 'cuenta', type: 'select', options: getCuentaOptions(), required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Comisión', name: 'comision', type: 'number', placeholder: '0.00', gridCols: 'col-span-1' },
+          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, gridCols: 'col-span-1' }
+        ],
+        [
+          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'select', options: getCuentaOptions(), gridCols: 'col-span-2' }
         ]
       ];
     },
