@@ -14,7 +14,27 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
   }
   
   // Convert to number, handling both . and , as decimal separators
-  let numericValue = cleanValue.replace(/\./g, '').replace(',', '.');
+  // If there's a comma, it's likely the decimal separator (Spanish format)
+  // If there's only one dot at the end (like "20.00"), it's likely decimal
+  // If there are multiple dots, they're thousands separators
+  let numericValue;
+  if (cleanValue.includes(',')) {
+    // Spanish format: 1.290,50 -> remove dots (thousands), replace comma with dot (decimal)
+    numericValue = cleanValue.replace(/\./g, '').replace(',', '.');
+  } else if (cleanValue.includes('.')) {
+    // Check if it's likely a decimal (like "20.00") or thousands separator
+    const parts = cleanValue.split('.');
+    if (parts.length === 2 && parts[1].length <= 2 && parts[0].length <= 3) {
+      // Likely decimal: "20.00" or "123.45"
+      numericValue = cleanValue;
+    } else {
+      // Likely thousands: "1.290.000" -> remove all dots
+      numericValue = cleanValue.replace(/\./g, '');
+    }
+  } else {
+    // No separators
+    numericValue = cleanValue;
+  }
   
   // If it's just a decimal point, return empty
   if (numericValue === '.' || numericValue === ',') {
