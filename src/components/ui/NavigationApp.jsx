@@ -24,12 +24,12 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
   const buttonRef = useRef(null);
   
   const buttonClasses = useMemo(() => `
-    w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 relative
+    w-full flex items-center ${isSidebarOpen ? 'gap-3 p-3' : 'gap-0 p-2 justify-center'} rounded-lg transition-all duration-200 relative
     ${isActive
       ? 'menu-item-active'
       : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'
     }
-    ${isSidebarOpen ? '' : 'justify-center menu-tooltip'}
+    ${isSidebarOpen ? '' : 'menu-tooltip'}
     touch-manipulation select-none
   `, [isActive, isSidebarOpen]);
 
@@ -51,7 +51,7 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
       data-tooltip={!isSidebarOpen ? title : undefined}
       aria-label={!isSidebarOpen ? title : undefined}
     >
-      <Icon size={24} className="flex-shrink-0" />
+      <Icon size={isSidebarOpen ? 20 : 18} className="flex-shrink-0" />
       {isSidebarOpen && (
         <span className="text-sm font-medium truncate transition-all duration-200">
           {title}
@@ -87,16 +87,15 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
   return (
     <div className={`
       ${isMobile 
-        ? `fixed top-0 left-0 h-screen z-40 ${!isSidebarOpen ? '-translate-x-full' : ''}`
-        : 'relative h-[calc(100vh-4rem)]'
+        ? `fixed top-0 left-0 h-screen z-40 w-64 ${!isSidebarOpen ? '-translate-x-full' : ''}`
+        : `fixed top-16 left-0 h-[calc(100vh-4rem)] z-30 ${isSidebarOpen ? 'w-64' : 'w-16'}`
       }
       bg-white shadow-lg flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out
-      ${isSidebarOpen ? 'w-64' : isMobile ? 'w-64' : 'w-20'}
     `}>
       {/* Header del Sidebar */}
       <div className={`
-        p-4 border-b border-gray-200 flex items-center
+        ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} border-b border-gray-200 flex items-center
         ${isMobile ? 'pt-20' : 'pt-4'}
         ${(isSidebarOpen || isMobile) ? 'justify-between' : 'justify-center'}
       `}>
@@ -116,19 +115,19 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
         
         <button
           onClick={toggleSidebar}
-          className="p-2 rounded-full hover:bg-gray-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 touch-target"
+          className={`${isSidebarOpen || isMobile ? 'p-2' : 'p-1'} rounded-full hover:bg-gray-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 touch-target`}
           aria-label={isSidebarOpen ? "Colapsar menú" : "Expandir menú"}
         >
           {isSidebarOpen ? (
-            <ChevronLeft size={20} className="text-gray-600" />
+            <ChevronLeft size={isMobile ? 20 : 16} className="text-gray-600" />
           ) : (
-            <ChevronRight size={20} className="text-gray-600" />
+            <ChevronRight size={isMobile ? 20 : 16} className="text-gray-600" />
           )}
         </button>
       </div>
 
       {/* Menú de navegación */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto`}>
         {menuItems.map((item) => (
           <MenuItem
             key={item.id}
@@ -241,20 +240,33 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
         showMenuButton={true}
       />
 
-      {/* Layout principal */}
-      <div className="flex pt-16">
-        {/* Sidebar */}
-        <MainMenu 
-          onNavigate={handleNavigate} 
-          activeItem={currentPage} 
-          isSidebarOpen={isSidebarOpen} 
-          toggleSidebar={toggleSidebar}
-          isMobile={isMobile}
-        />
+      {/* Layout principal - Desktop con sidebar fija, móvil sin sidebar */}
+      <div className="flex">
+        {/* Sidebar - Solo desktop (lg+), siempre fija */}
+        <div className="hidden lg:block">
+          <MainMenu 
+            onNavigate={handleNavigate} 
+            activeItem={currentPage} 
+            isSidebarOpen={isSidebarOpen} 
+            toggleSidebar={toggleSidebar}
+            isMobile={false}
+          />
+        </div>
         
-        {/* Contenido principal */}
-        <div className={`flex-1 flex flex-col transition-all duration-300 ${
-          isMobile ? '' : isSidebarOpen ? 'ml-0' : 'ml-0'
+        {/* Sidebar móvil - Solo cuando está abierto */}
+        {isMobile && isSidebarOpen && (
+          <MainMenu 
+            onNavigate={handleNavigate} 
+            activeItem={currentPage} 
+            isSidebarOpen={isSidebarOpen} 
+            toggleSidebar={toggleSidebar}
+            isMobile={true}
+          />
+        )}
+        
+        {/* Contenido principal con margin fijo */}
+        <div className={`flex-1 flex flex-col pt-16 transition-all duration-300 ${
+          isMobile ? 'ml-0' : isSidebarOpen ? 'lg:ml-64' : 'lg:ml-16'
         }`}>
           {/* Overlay para móvil cuando el sidebar está abierto */}
           {isSidebarOpen && isMobile && (
