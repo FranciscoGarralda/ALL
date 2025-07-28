@@ -24,8 +24,8 @@ import {
   proveedoresCC,
   specificFieldsConfig
 } from '../../shared/constants';
-import { useMixedPayments } from '../../shared/hooks/useMixedPayments';
-import { useKeyboardNavigation } from '../../shared/hooks/useKeyboardNavigation';
+import { useMixedPayments } from '../../shared/hooks';
+import { useKeyboardNavigation } from '../../shared/hooks';
 
 /**
  * Dynamic Form Field Groups Component
