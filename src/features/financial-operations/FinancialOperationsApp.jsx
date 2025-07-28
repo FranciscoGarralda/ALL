@@ -44,7 +44,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   const [formData, setFormData] = useState({
     cliente: '',
     fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
-    nombreDia: new Date().toLocaleDateString('es-ES', { weekday: 'long' }), // Día actual
+    nombreDia: (() => {
+      const today = new Date();
+      const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+      return dayNames[today.getDay()];
+    })(), // Día actual
     detalle: '',
     operacion: '', // Sin predeterminado
     subOperacion: '', // Sin auto-selección
@@ -118,10 +122,18 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
       // Calcular día de la semana para fechas - VERSIÓN SEGURA
       if (field === 'fecha') {
-        const validDate = validateDate(value);
-        if (validDate) {
+        if (value && typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
           try {
-            newState.nombreDia = validDate.toLocaleDateString('es-ES', { weekday: 'long' });
+            // Parse date as local time to avoid timezone issues
+            const [year, month, day] = value.split('-').map(Number);
+            const date = new Date(year, month - 1, day); // month is 0-indexed
+            
+            if (!isNaN(date.getTime())) {
+              const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+              newState.nombreDia = dayNames[date.getDay()];
+            } else {
+              newState.nombreDia = '';
+            }
           } catch (error) {
             newState.nombreDia = '';
           }
@@ -311,7 +323,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     setFormData({
       cliente: '',
       fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
-      nombreDia: new Date().toLocaleDateString('es-ES', { weekday: 'long' }), // Día actual
+      nombreDia: (() => {
+        const today = new Date();
+        const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+        return dayNames[today.getDay()];
+      })(), // Día actual
       detalle: '',
       operacion: '', // Sin predeterminado
       subOperacion: '', // Sin auto-selección

@@ -66,7 +66,7 @@ const FormInput = forwardRef(({
         
         if (!isNaN(date.getTime())) {
           // Get day name directly without using formatDateWithDay to avoid formatting issues
-          const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+          const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
           return dayNames[date.getDay()];
         }
       } catch (e) {
