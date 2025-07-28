@@ -276,6 +276,22 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           } else {
             newState.montoComision = '';
           }
+
+          // Calcular monto real (monto - comisión)
+          const montoComision = safeParseFloat(newState.montoComision);
+          if (monto > 0) {
+            if (newState.subOperacion === 'INGRESO') {
+              // Para ingreso: monto real = monto - comisión (lo que realmente ingresa)
+              newState.montoReal = safeCalculation.subtract(monto, montoComision).toFixed(2);
+            } else if (newState.subOperacion === 'EGRESO') {
+              // Para egreso: monto real = monto - comisión (lo que realmente sale)
+              newState.montoReal = safeCalculation.subtract(monto, montoComision).toFixed(2);
+            } else {
+              newState.montoReal = safeCalculation.subtract(monto, montoComision).toFixed(2);
+            }
+          } else {
+            newState.montoReal = '';
+          }
         }
       }
 
@@ -312,6 +328,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       comision: '',
       comisionPorcentaje: '',
       montoComision: '',
+      montoReal: '',
       monedaComision: '',
       cuentaComision: '',
       interes: '',

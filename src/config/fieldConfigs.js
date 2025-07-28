@@ -152,6 +152,9 @@ export const specificFieldsConfig = {
         ],
         [
           { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'cuenta-buttons', gridCols: 'col-span-2', readOnly: true, calculated: true }
+        ],
+        [
+          { label: `${formData.subOperacion || 'Ingreso/Egreso'} Real`, name: 'montoReal', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
         ]
       ];
     },
