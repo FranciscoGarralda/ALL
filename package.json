@@ -5,10 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "export": "next export",
     "start": "next start",
-    "lint": "next lint",
-    "netlify": "next build"
+    "lint": "next lint"
   },
   "dependencies": {
     "lucide-react": "0.292.0",
