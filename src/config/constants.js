@@ -46,7 +46,6 @@ export const estados = [
  * Current account providers with allowed currencies
  */
 export const proveedoresCC = [
-  { value: '', label: 'Seleccionar proveedor', allowedCurrencies: [] },
   { value: 'ALL', label: 'ALL', allowedCurrencies: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP'] },
   { value: 'ME', label: 'ME', allowedCurrencies: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP'] },
   { value: 'SS', label: 'SS', allowedCurrencies: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP'] },
