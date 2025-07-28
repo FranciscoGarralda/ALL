@@ -48,9 +48,9 @@ export const estados = [
 export const proveedoresCC = [
   { value: '', label: 'Seleccionar proveedor', allowedCurrencies: [] },
   { value: 'ALL', label: 'ALL', allowedCurrencies: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP'] },
-  { value: 'ME', label: 'ME', allowedCurrencies: ['USD'] },
-  { value: 'SS', label: 'SS', allowedCurrencies: ['USD', 'EURO', 'PESO'] },
-  { value: 'AL', label: 'AL', allowedCurrencies: ['PESO', 'USDT', 'USD'] },
+  { value: 'ME', label: 'ME', allowedCurrencies: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP'] },
+  { value: 'SS', label: 'SS', allowedCurrencies: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP'] },
+  { value: 'AL', label: 'AL', allowedCurrencies: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP'] },
 ];
 
 /**
