@@ -10,7 +10,8 @@ import {
   Target,
   TrendingDown,
   Calculator,
-  Clock
+  Clock,
+  ArrowUpDown
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { FormInput, formatAmountWithCurrency } from '../base';
@@ -20,22 +21,63 @@ import { safeParseFloat } from '../../utils/safeOperations';
 function ComisionesApp({ movements, onNavigate }) {
   const [selectedDate, setSelectedDate] = useState('');
 
-  // Filtrar movimientos que tienen comisión
+  // Filtrar movimientos que tienen comisión - DIVIDIDO POR TIPO
   const commissionMovements = useMemo(() => {
     return movements.filter(mov => mov.comision && safeParseFloat(mov.comision) > 0);
   }, [movements]);
 
-  // Calcular comisiones totales por moneda
-  const totalCommissions = useMemo(() => {
+  // Comisiones de ARBITRAJE
+  const arbitrageCommissions = useMemo(() => {
+    return commissionMovements.filter(mov => 
+      mov.operacion === 'TRANSACCIONES' && 
+      mov.subOperacion === 'ARBITRAJE'
+    );
+  }, [commissionMovements]);
+
+  // Comisiones de PROVEEDORES CC
+  const providerCommissions = useMemo(() => {
+    return commissionMovements.filter(mov => 
+      mov.operacion === 'CUENTAS_CORRIENTES'
+    );
+  }, [commissionMovements]);
+
+  // Calcular comisiones totales por moneda - ARBITRAJE
+  const totalArbitrageCommissions = useMemo(() => {
     const totals = {};
-    commissionMovements.forEach(mov => {
+    arbitrageCommissions.forEach(mov => {
       const currency = mov.monedaComision || mov.moneda;
       if (currency) {
         totals[currency] = (totals[currency] || 0) + safeParseFloat(mov.comision);
       }
     });
     return totals;
-  }, [commissionMovements]);
+  }, [arbitrageCommissions]);
+
+  // Calcular comisiones totales por moneda - PROVEEDORES CC
+  const totalProviderCommissions = useMemo(() => {
+    const totals = {};
+    providerCommissions.forEach(mov => {
+      const currency = mov.monedaComision || mov.moneda;
+      if (currency) {
+        totals[currency] = (totals[currency] || 0) + safeParseFloat(mov.comision);
+      }
+    });
+    return totals;
+  }, [providerCommissions]);
+
+  // Calcular comisiones totales COMBINADAS
+  const totalCommissions = useMemo(() => {
+    const totals = {};
+    // Sumar arbitraje
+    Object.entries(totalArbitrageCommissions).forEach(([currency, amount]) => {
+      totals[currency] = (totals[currency] || 0) + amount;
+    });
+    // Sumar proveedores
+    Object.entries(totalProviderCommissions).forEach(([currency, amount]) => {
+      totals[currency] = (totals[currency] || 0) + amount;
+    });
+    return totals;
+  }, [totalArbitrageCommissions, totalProviderCommissions]);
 
   // Calcular comisiones mensuales para gráficos
   const monthlyCommissions = useMemo(() => {
@@ -220,7 +262,7 @@ function ComisionesApp({ movements, onNavigate }) {
               Métricas Principales
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
               {renderMetricCard(
                 'Comisión Total Histórica',
                 totalCommissions,
@@ -246,6 +288,28 @@ function ComisionesApp({ movements, onNavigate }) {
                 'text-warning-700',
                 'border-warning-500',
                 Clock
+              )}
+            </div>
+
+            {/* Métricas por tipo */}
+            <h3 className="text-sm font-semibold text-gray-600 mb-4">Comisiones por Tipo</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              {renderMetricCard(
+                'Arbitrajes',
+                totalArbitrageCommissions,
+                'bg-indigo-50',
+                'text-indigo-700',
+                'border-indigo-500',
+                ArrowUpDown
+              )}
+              
+              {renderMetricCard(
+                'Proveedores CC',
+                totalProviderCommissions,
+                'bg-purple-50',
+                'text-purple-700',
+                'border-purple-500',
+                Building2
               )}
             </div>
           </div>

@@ -117,15 +117,8 @@ function UtilidadApp({ movements, onNavigate }) {
               stockData[currency].totalCostoEnMonedaTC / stockData[currency].cantidad;
           }
         } else if (mov.subOperacion === 'VENTA') {
-          // Convertir utilidad a PESOS si está en otra moneda
-          let utilidadEnPesos = mov.gananciaCalculada;
-          if (currencyTC !== 'PESO') {
-            // Si la utilidad está en otra moneda, la convertimos usando el TC de la transacción
-            const tc = safeParseFloat(mov.tc, 1);
-            utilidadEnPesos = mov.gananciaCalculada * tc;
-          }
-          
-          stockData[currency].utilidadPorVenta += utilidadEnPesos;
+          // Mantener utilidad en moneda TC original (donde se deposita la ganancia)
+          stockData[currency].utilidadPorVenta += mov.gananciaCalculada;
 
           const costoUnitarioEnMonedaTC = stockData[currency].costoPromedio;
           const costoTotalVenta = amount * costoUnitarioEnMonedaTC;
@@ -148,21 +141,23 @@ function UtilidadApp({ movements, onNavigate }) {
 
   // ARBITRAJE eliminado - solo utilidad de compra/venta de divisas
 
-  // Utilidad total combinada - solo ventas, todo en PESOS
+  // Utilidad total combinada - solo ventas, por divisa original
   const totalUtilityCombined = useMemo(() => {
-    let totalEnPesos = 0;
+    const totals = {};
     
-    // Sumar todas las utilidades por venta (ya convertidas a pesos)
+    // Agrupar utilidades por moneda TC (donde se deposita la ganancia)
     for (const currency in finalStockData) {
-      if (finalStockData[currency].utilidadPorVenta !== 0) {
-        totalEnPesos += finalStockData[currency].utilidadPorVenta;
+      const data = finalStockData[currency];
+      if (data.utilidadPorVenta !== 0) {
+        const monedaUtilidad = data.monedaTCAsociada || 'PESO';
+        totals[monedaUtilidad] = (totals[monedaUtilidad] || 0) + data.utilidadPorVenta;
       }
     }
     
-    return totalEnPesos > 0 ? { PESO: totalEnPesos } : {};
+    return totals;
   }, [finalStockData]);
 
-  // Calcular utilidad mensual para gráficos - solo VENTA en PESOS
+  // Calcular utilidad mensual para gráficos - solo VENTA por divisa
   const monthlyUtilityCombined = useMemo(() => {
     const monthly = {};
 
@@ -171,17 +166,14 @@ function UtilidadApp({ movements, onNavigate }) {
         const date = new Date(mov.fecha);
         const yearMonth = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
         
-        // Convertir utilidad a PESOS si está en otra moneda
-        let utilidadEnPesos = mov.gananciaCalculada;
-        if (mov.monedaTC !== 'PESO') {
-          const tc = safeParseFloat(mov.tc, 1);
-          utilidadEnPesos = mov.gananciaCalculada * tc;
-        }
+        // Usar moneda TC original (donde se deposita la ganancia)
+        const monedaUtilidad = mov.monedaTC || 'PESO';
+        const key = `${monedaUtilidad}_VENTA`;
 
         if (!monthly[yearMonth]) {
           monthly[yearMonth] = {};
         }
-        monthly[yearMonth]['PESO_VENTA'] = (monthly[yearMonth]['PESO_VENTA'] || 0) + utilidadEnPesos;
+        monthly[yearMonth][key] = (monthly[yearMonth][key] || 0) + mov.gananciaCalculada;
       }
     });
 
@@ -196,68 +188,62 @@ function UtilidadApp({ movements, onNavigate }) {
     return chartData;
   }, [processedMovements]);
 
-  // Utilidad para fecha seleccionada - solo VENTA en PESOS
+  // Utilidad para fecha seleccionada - solo VENTA por divisa
   const dailyUtilityForSelectedDate = useMemo(() => {
     if (!selectedDate) return { venta: {} };
-    let totalVentaEnPesos = 0;
+    const dailyVenta = {};
 
     processedMovements
       .filter(mov => mov.fecha === selectedDate && mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA')
       .forEach(mov => {
-        // Convertir utilidad a PESOS si está en otra moneda
-        let utilidadEnPesos = mov.gananciaCalculada;
-        if (mov.monedaTC !== 'PESO') {
-          const tc = safeParseFloat(mov.tc, 1);
-          utilidadEnPesos = mov.gananciaCalculada * tc;
-        }
-        totalVentaEnPesos += utilidadEnPesos;
+        // Usar moneda TC original (donde se deposita la ganancia)
+        const monedaUtilidad = mov.monedaTC || 'PESO';
+        dailyVenta[monedaUtilidad] = (dailyVenta[monedaUtilidad] || 0) + mov.gananciaCalculada;
       });
     
-    return { venta: totalVentaEnPesos > 0 ? { PESO: totalVentaEnPesos } : {} };
+    return { venta: dailyVenta };
   }, [processedMovements, selectedDate]);
 
-  // Utilidad del mes actual - solo VENTA en PESOS
+  // Utilidad del mes actual - solo VENTA por divisa
   const currentMonthUtility = useMemo(() => {
     const currentYearMonth = new Date().toISOString().substring(0, 7);
-    let totalVentaEnPesos = 0;
+    const monthlyVenta = {};
 
     processedMovements
       .filter(mov => mov.fecha && mov.fecha.substring(0, 7) === currentYearMonth && mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA')
       .forEach(mov => {
-        // Convertir utilidad a PESOS si está en otra moneda
-        let utilidadEnPesos = mov.gananciaCalculada;
-        if (mov.monedaTC !== 'PESO') {
-          const tc = safeParseFloat(mov.tc, 1);
-          utilidadEnPesos = mov.gananciaCalculada * tc;
-        }
-        totalVentaEnPesos += utilidadEnPesos;
+        // Usar moneda TC original (donde se deposita la ganancia)
+        const monedaUtilidad = mov.monedaTC || 'PESO';
+        monthlyVenta[monedaUtilidad] = (monthlyVenta[monedaUtilidad] || 0) + mov.gananciaCalculada;
       });
     
-    return { venta: totalVentaEnPesos > 0 ? { PESO: totalVentaEnPesos } : {} };
+    return { venta: monthlyVenta };
   }, [processedMovements]);
 
-  // Utilidad de hoy - solo VENTA en PESOS
+  // Utilidad de hoy - solo VENTA por divisa
   const todayUtility = useMemo(() => {
     const today = new Date().toISOString().split('T')[0];
-    let totalVentaEnPesos = 0;
+    const dailyVenta = {};
 
     processedMovements
       .filter(mov => mov.fecha === today && mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA')
       .forEach(mov => {
-        // Convertir utilidad a PESOS si está en otra moneda
-        let utilidadEnPesos = mov.gananciaCalculada;
-        if (mov.monedaTC !== 'PESO') {
-          const tc = safeParseFloat(mov.tc, 1);
-          utilidadEnPesos = mov.gananciaCalculada * tc;
-        }
-        totalVentaEnPesos += utilidadEnPesos;
+        // Usar moneda TC original (donde se deposita la ganancia)
+        const monedaUtilidad = mov.monedaTC || 'PESO';
+        dailyVenta[monedaUtilidad] = (dailyVenta[monedaUtilidad] || 0) + mov.gananciaCalculada;
       });
     
-    return { venta: totalVentaEnPesos > 0 ? { PESO: totalVentaEnPesos } : {} };
+    return { venta: dailyVenta };
   }, [processedMovements]);
 
-  // Solo PESO para utilidad (ya que todo se convierte)
-  const allCurrenciesInUtility = ['PESO'];
+  // Obtener todas las divisas de utilidad
+  const allCurrenciesInUtility = useMemo(() => {
+    const currencies = new Set();
+    Object.keys(totalUtilityCombined).forEach(currency => {
+      currencies.add(currency);
+    });
+    return Array.from(currencies).sort();
+  }, [totalUtilityCombined]);
 
   // Función para obtener colores para cada moneda/tipo
   const getUtilityColor = (currencyType, index) => {
@@ -347,7 +333,7 @@ function UtilidadApp({ movements, onNavigate }) {
                 'text-emerald-700',
                 'border-emerald-500',
                 Target,
-                'Solo ventas de divisas en PESOS'
+                'Solo ventas de divisas por moneda'
               )}
               
               {renderMetricCard(
@@ -357,7 +343,7 @@ function UtilidadApp({ movements, onNavigate }) {
                 'text-primary-700',
                 'border-primary-500',
                 Calendar,
-                'Solo ventas de divisas'
+                'Solo ventas por divisa'
               )}
 
               {renderMetricCard(
@@ -367,7 +353,7 @@ function UtilidadApp({ movements, onNavigate }) {
                 'text-indigo-700',
                 'border-indigo-500',
                 Clock,
-                'Solo ventas de divisas'
+                'Solo ventas por divisa'
               )}
             </div>
           </div>
@@ -406,7 +392,7 @@ function UtilidadApp({ movements, onNavigate }) {
                     <div className="space-y-1">
                       {Object.entries(dailyUtilityForSelectedDate.venta).map(([currency, amount]) => (
                         <p key={`${currency}-venta`} className={`text-xs sm:text-sm font-bold ${amount >= 0 ? 'text-emerald-800' : 'text-error-800'}`}>
-                          Venta de divisas: {formatAmountWithCurrency(amount, currency)}
+                          {currency}: {formatAmountWithCurrency(amount, currency)}
                         </p>
                       ))}
                     </div>
@@ -453,7 +439,7 @@ function UtilidadApp({ movements, onNavigate }) {
                           Valuación Total
                         </th>
                         <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Utilidad Venta (PESOS)
+                          Utilidad Venta
                         </th>
                       </tr>
                     </thead>
@@ -480,7 +466,7 @@ function UtilidadApp({ movements, onNavigate }) {
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                             {data.utilidadPorVenta !== 0 ? (
                               <div className="text-emerald-600">
-                                {formatAmountWithCurrency(data.utilidadPorVenta, 'PESO')}
+                                {formatAmountWithCurrency(data.utilidadPorVenta, data.monedaTCAsociada || 'PESO')}
                               </div>
                             ) : (
                               <span className="text-gray-400">-</span>
@@ -528,7 +514,7 @@ function UtilidadApp({ movements, onNavigate }) {
                               <div className="flex justify-between text-xs">
                                 <span className="text-gray-500">Util. Venta</span>
                                 <span className="text-emerald-600 font-medium">
-                                  {formatAmountWithCurrency(data.utilidadPorVenta, 'PESO')}
+                                  {formatAmountWithCurrency(data.utilidadPorVenta, data.monedaTCAsociada || 'PESO')}
                                 </span>
                               </div>
                             </div>
@@ -593,11 +579,14 @@ function UtilidadApp({ movements, onNavigate }) {
                       }}
                     />
                     <Legend />
-                    <Bar 
-                      dataKey="PESO_VENTA" 
-                      fill="#10B981"
-                      name="Utilidad Venta (PESOS)"
-                    />
+                    {allCurrenciesInUtility.map((currency, index) => (
+                      <Bar 
+                        key={currency}
+                        dataKey={`${currency}_VENTA`} 
+                        fill={getUtilityColor(`${currency}_VENTA`, index)}
+                        name={`Utilidad Venta (${currency})`}
+                      />
+                    ))}
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -622,7 +611,7 @@ function UtilidadApp({ movements, onNavigate }) {
                 <p>• <strong>Costo Promedio Ponderado:</strong> Se actualiza con cada compra</p>
                 <p>• <strong>Ganancia en Ventas:</strong> Precio venta - Costo promedio actual</p>
                 <p>• <strong>Solo Ventas:</strong> Arbitraje no se incluye en utilidad histórica</p>
-                <p>• <strong>Conversión:</strong> Todas las utilidades se muestran en PESOS</p>
+                <p>• <strong>Por Divisa:</strong> Utilidades mostradas en moneda de destino original</p>
                 <p>• <strong>Stock Actual:</strong> Valuado a costo promedio histórico</p>
                 <p>• <strong>Procesamiento:</strong> Cronológico para precisión contable</p>
               </div>
