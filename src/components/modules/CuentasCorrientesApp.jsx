@@ -10,6 +10,7 @@ import {
   Eye
 } from 'lucide-react';
 import { formatAmountWithCurrency, proveedoresCC } from '../base';
+import { safeParseFloat } from '../../utils/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE CUENTAS CORRIENTES */
 function CuentasCorrientesApp({ movements, onNavigate }) {
@@ -47,7 +48,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
         const account = accountsMap.get(key);
 
         if (account) {
-          const amount = parseFloat(mov.monto);
+          const amount = safeParseFloat(mov.monto);
           account.movimientosCount++;
           
           if (mov.subOperacion === 'INGRESO') {

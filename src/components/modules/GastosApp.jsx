@@ -11,6 +11,7 @@ import {
   Eye
 } from 'lucide-react';
 import { formatAmountWithCurrency } from '../base';
+import { safeParseFloat } from '../../utils/safeOperations';
 
 /** COMPONENTE PRINCIPAL DE GASTOS */
 function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovementDetail, onNavigate }) {
@@ -29,7 +30,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
     allExpenses.forEach(mov => {
       const currency = mov.moneda;
       if (currency) {
-        totals[currency] = (totals[currency] || 0) + (parseFloat(mov.monto) || 0);
+        totals[currency] = (totals[currency] || 0) + safeParseFloat(mov.monto);
       }
     });
     return totals;
@@ -47,7 +48,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
         if (moveDate.getMonth() === currentMonth && moveDate.getFullYear() === currentYear) {
           const currency = mov.moneda;
           if (currency) {
-            monthly[currency] = (monthly[currency] || 0) + (parseFloat(mov.monto) || 0);
+            monthly[currency] = (monthly[currency] || 0) + safeParseFloat(mov.monto);
           }
         }
       }
@@ -64,7 +65,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
       if (mov.fecha === today) {
         const currency = mov.moneda;
         if (currency) {
-          daily[currency] = (daily[currency] || 0) + (parseFloat(mov.monto) || 0);
+          daily[currency] = (daily[currency] || 0) + safeParseFloat(mov.monto);
         }
       }
     });
