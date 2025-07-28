@@ -132,9 +132,6 @@ export const specificFieldsConfig = {
         ? monedas.filter(m => selectedProveedor.allowedCurrencies.includes(m.value) || m.value === '') 
         : monedas;
 
-      // Determinar si ALL está seleccionado para deshabilitar efectivo
-      const isAllSelected = formData.proveedorCC === 'ALL';
-
       return [
         [
           { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true, gridCols: 'col-span-2' }
@@ -144,14 +141,14 @@ export const specificFieldsConfig = {
           { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
         ],
         [
-          { label: 'Cuenta', name: 'cuenta', type: 'cuenta-buttons', required: true, gridCols: 'col-span-2', allowEfectivo: !isAllSelected }
+          { label: 'Cuenta', name: 'cuenta', type: 'cuenta-buttons', required: true, gridCols: 'col-span-2' }
         ],
         [
           { label: 'Comisión', name: 'comision', type: 'number', placeholder: '0.00', gridCols: 'col-span-1' },
           { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-1' }
         ],
         [
-          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'cuenta-buttons', gridCols: 'col-span-2', allowEfectivo: !isAllSelected, readOnly: true, calculated: true }
+          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'cuenta-buttons', gridCols: 'col-span-2', readOnly: true, calculated: true }
         ]
       ];
     },

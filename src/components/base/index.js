@@ -250,19 +250,44 @@ export const CuentaButtonGroup = React.forwardRef(({
   allowEfectivo = true,
   readOnly = false
 }, ref) => {
-  const handleButtonClick = (buttonValue) => {
+  // Parseamos el valor para obtener socio y tipo
+  const [socio, tipo] = (value || '').split('_');
+  
+  const handleSocioClick = (socioValue) => {
     if (onChange && !readOnly) {
-      onChange(buttonValue);
+      const newValue = tipo ? `${socioValue}_${tipo}` : socioValue;
+      onChange(newValue);
     }
   };
 
-  const isActive = (buttonValue) => {
-    return value === buttonValue;
+  const handleTipoClick = (tipoValue) => {
+    if (onChange && !readOnly) {
+      const newValue = socio ? `${socio}_${tipoValue}` : tipoValue;
+      onChange(newValue);
+    }
   };
 
-  const getButtonClasses = (buttonValue) => {
+  const isSocioActive = (socioValue) => {
+    return socio === socioValue;
+  };
+
+  const isTipoActive = (tipoValue) => {
+    return tipo === tipoValue;
+  };
+
+  const getSocioButtonClasses = (socioValue) => {
     return `px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-      isActive(buttonValue)
+      isSocioActive(socioValue)
+        ? 'bg-primary-500 text-white border-primary-500'
+        : readOnly 
+          ? 'bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed'
+          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+    }`;
+  };
+
+  const getTipoButtonClasses = (tipoValue) => {
+    return `px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+      isTipoActive(tipoValue)
         ? 'bg-primary-500 text-white border-primary-500'
         : readOnly 
           ? 'bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed'
@@ -281,27 +306,27 @@ export const CuentaButtonGroup = React.forwardRef(({
           <button
             type="button"
             ref={ref}
-            onClick={() => handleButtonClick('socio1')}
+            onClick={() => handleSocioClick('socio1')}
             onKeyDown={onKeyDown}
-            className={getButtonClasses('socio1')}
+            className={getSocioButtonClasses('socio1')}
             disabled={readOnly}
           >
             Socio 1
           </button>
           <button
             type="button"
-            onClick={() => handleButtonClick('socio2')}
+            onClick={() => handleSocioClick('socio2')}
             onKeyDown={onKeyDown}
-            className={getButtonClasses('socio2')}
+            className={getSocioButtonClasses('socio2')}
             disabled={readOnly}
           >
             Socio 2
           </button>
           <button
             type="button"
-            onClick={() => handleButtonClick('ALL')}
+            onClick={() => handleSocioClick('all')}
             onKeyDown={onKeyDown}
-            className={getButtonClasses('ALL')}
+            className={getSocioButtonClasses('all')}
             disabled={readOnly}
           >
             ALL
@@ -312,9 +337,9 @@ export const CuentaButtonGroup = React.forwardRef(({
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
-            onClick={() => handleButtonClick('digital')}
+            onClick={() => handleTipoClick('digital')}
             onKeyDown={onKeyDown}
-            className={getButtonClasses('digital')}
+            className={getTipoButtonClasses('digital')}
             disabled={readOnly}
           >
             Digital
@@ -322,9 +347,9 @@ export const CuentaButtonGroup = React.forwardRef(({
           {allowEfectivo && (
             <button
               type="button"
-              onClick={() => handleButtonClick('efectivo')}
+              onClick={() => handleTipoClick('efectivo')}
               onKeyDown={onKeyDown}
-              className={getButtonClasses('efectivo')}
+              className={getTipoButtonClasses('efectivo')}
               disabled={readOnly}
             >
               Efectivo
