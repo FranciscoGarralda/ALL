@@ -64,7 +64,7 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
 MenuItem.displayName = 'MenuItem';
 
 /** COMPONENTE DEL MENÚ PRINCIPAL OPTIMIZADO */
-const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar }) => {
+const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, isMobile = false }) => {
   const menuItems = useMemo(() => [
     { id: 'inicio', icon: Home, title: 'Inicio' },
     { id: 'nuevoMovimiento', icon: Plus, title: 'Nuevo Movimiento' },
@@ -86,17 +86,21 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar })
 
   return (
     <div className={`
-      fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow-large flex flex-col border-r border-gray-200
-      transition-all duration-300 ease-in-out z-30
-      ${isSidebarOpen ? 'w-64' : 'w-20 max-lg:w-0 max-lg:overflow-hidden sidebar-collapsed'}
-      ${!isSidebarOpen ? 'max-lg:-translate-x-full' : ''}
+      ${isMobile 
+        ? `fixed top-0 left-0 h-screen z-40 ${!isSidebarOpen ? '-translate-x-full' : ''}`
+        : 'relative h-[calc(100vh-4rem)]'
+      }
+      bg-white shadow-lg flex flex-col border-r border-gray-200
+      transition-all duration-300 ease-in-out
+      ${isSidebarOpen ? 'w-64' : isMobile ? 'w-64' : 'w-20'}
     `}>
       {/* Header del Sidebar */}
       <div className={`
         p-4 border-b border-gray-200 flex items-center
-        ${isSidebarOpen ? 'justify-between' : 'justify-center'}
+        ${isMobile ? 'pt-20' : 'pt-4'}
+        ${(isSidebarOpen || isMobile) ? 'justify-between' : 'justify-center'}
       `}>
-        {isSidebarOpen && (
+        {(isSidebarOpen || isMobile) && (
           <button 
             onClick={() => onNavigate('inicio')}
             className="flex items-center space-x-2 sidebar-enter hover:bg-gray-50 rounded-lg px-2 py-1 transition-colors duration-200"
@@ -138,7 +142,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar })
       </nav>
 
       {/* Footer del Sidebar */}
-      {isSidebarOpen && (
+      {(isSidebarOpen || isMobile) && (
         <div className="p-4 border-t border-gray-200 bg-gray-50 sidebar-enter">
           <div className="text-center">
             <p className="text-xs text-gray-500 mb-1">© 2024 Alliance F&R</p>
@@ -228,7 +232,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
   }, [isMobile, isSidebarOpen]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50">
       {/* Header fijo */}
       <FixedHeader 
         isSidebarOpen={isSidebarOpen}
@@ -237,39 +241,41 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
         showMenuButton={true}
       />
 
-      {/* Sidebar */}
-      <MainMenu 
-        onNavigate={handleNavigate} 
-        activeItem={currentPage} 
-        isSidebarOpen={isSidebarOpen} 
-        toggleSidebar={toggleSidebar} 
-      />
-      
-      {/* Contenido principal con footer */}
-      <div className={`main-content pt-16 flex flex-col flex-1 ${
-        isSidebarOpen 
-          ? 'lg:ml-64' 
-          : 'lg:ml-20'
-      }`}>
-        {/* Overlay para móvil cuando el sidebar está abierto */}
-        {isSidebarOpen && isMobile && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
-            onClick={toggleSidebar}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && toggleSidebar()}
-            aria-label="Cerrar menú"
-          />
-        )}
+      {/* Layout principal */}
+      <div className="flex pt-16">
+        {/* Sidebar */}
+        <MainMenu 
+          onNavigate={handleNavigate} 
+          activeItem={currentPage} 
+          isSidebarOpen={isSidebarOpen} 
+          toggleSidebar={toggleSidebar}
+          isMobile={isMobile}
+        />
         
-        {/* Contenido de la página */}
-        <main className="flex-1 w-full">
-          {children}
-        </main>
-        
-        {/* Footer */}
-        <Footer />
+        {/* Contenido principal */}
+        <div className={`flex-1 flex flex-col transition-all duration-300 ${
+          isMobile ? '' : isSidebarOpen ? 'ml-0' : 'ml-0'
+        }`}>
+          {/* Overlay para móvil cuando el sidebar está abierto */}
+          {isSidebarOpen && isMobile && (
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+              onClick={toggleSidebar}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && toggleSidebar()}
+              aria-label="Cerrar menú"
+            />
+          )}
+          
+          {/* Contenido de la página */}
+          <main className="flex-1 w-full">
+            {children}
+          </main>
+          
+          {/* Footer */}
+          <Footer />
+        </div>
       </div>
     </div>
   );
