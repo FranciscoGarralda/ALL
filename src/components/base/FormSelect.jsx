@@ -26,6 +26,7 @@ const FormSelect = forwardRef(({
   required = false,
   error = '',
   disabled = false,
+  readOnly = false,
   className = '',
   placeholder = '',
   filterOptions = null,
@@ -89,7 +90,7 @@ const FormSelect = forwardRef(({
     // Responsive padding and font size (16px on mobile to prevent zoom)
     'sm:px-4 sm:py-2.5 sm:text-sm',
     // State-based styling
-    disabled 
+    disabled || readOnly
       ? 'bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200' 
       : 'border-gray-300 hover:border-gray-400 cursor-pointer',
     // Error state
@@ -122,7 +123,7 @@ const FormSelect = forwardRef(({
           value={value || ''}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          disabled={disabled}
+          disabled={disabled || readOnly}
           required={required}
           className={selectClasses}
           {...selectProps}
