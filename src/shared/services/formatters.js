@@ -336,36 +336,8 @@ export const getProviderCurrencies = (provider) => {
  * Utility functions for formatting data in the application
  */
 
-/**
- * Format currency amount with proper locale and currency symbol
- * @param {number|string} amount - The amount to format
- * @param {string} currency - Currency code (PESO, USD, EUR, etc.)
- * @param {string} locale - Locale for formatting (default: 'es-ES')
- * @returns {string} Formatted currency string
- */
-export const formatCurrency = (amount, currency = 'PESO', locale = 'es-ES') => {
-  if (!amount && amount !== 0) return '0';
-  
-  const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-  if (isNaN(numericAmount)) return '0';
-  
-  const formatted = numericAmount.toLocaleString(locale, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-  
-  // Currency symbols mapping
-  const currencySymbols = {
-    'PESO': '$',
-    'USD': 'US$',
-    'EUR': '€',
-    'BRL': 'R$',
-    'UYU': '$U'
-  };
-  
-  const symbol = currencySymbols[currency] || currency;
-  return `${symbol} ${formatted}`;
-};
+// REMOVED: formatCurrency function that used toLocaleString (caused inconsistencies)
+// Use formatAmountWithCurrency instead for consistent formatting
 
 /**
  * Format date to localized string
