@@ -23,10 +23,31 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
     return { formatted: '', raw: '' };
   }
   
-  // Simple formatting
-  const formatted = number.toString();
+  // Format with Spanish style: 1.290.500,75
+  const absNumber = Math.abs(number);
+  const isNegative = number < 0;
+  
+  // Split into integer and decimal parts
+  const fixedNumber = absNumber.toFixed(2);
+  const [integerPart, decimalPart] = fixedNumber.split('.');
+  
+  // Add thousand separators with dots
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  
+  // Build the number with comma for decimals
+  let formattedNumber = formattedInteger;
+  if (decimalPart && parseInt(decimalPart) > 0) {
+    formattedNumber += ',' + decimalPart;
+  }
+  
+  // Add negative sign if needed
+  if (isNegative) {
+    formattedNumber = '-' + formattedNumber;
+  }
+  
+  // Add currency symbol
   const symbol = CURRENCY_SYMBOLS[currency] || '$';
-  const displayValue = `${symbol} ${formatted}`;
+  const displayValue = `${symbol} ${formattedNumber}`;
   
   return {
     formatted: displayValue,
@@ -42,13 +63,28 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
 export const parseCurrencyInput = (formattedValue) => {
   if (!formattedValue) return '';
   
-  // Remove currency symbols and spaces
-  const cleaned = formattedValue.replace(/[$€£¥₿\s]/g, '');
+  // Remove currency symbols and spaces (including US$, €, etc.)
+  const cleaned = formattedValue.replace(/[US$€£¥₿\s]/g, '');
   
-  // Simple conversion: replace comma with dot
-  const withDot = cleaned.replace(',', '.');
+  // Handle Spanish format: 1.290.500,75 -> 1290500.75
+  let numericValue = cleaned;
   
-  const number = safeParseFloat(withDot, 0);
+  // If there's a comma, it's the decimal separator
+  if (cleaned.includes(',')) {
+    // Split by comma to separate integer and decimal parts
+    const parts = cleaned.split(',');
+    if (parts.length === 2) {
+      // Remove dots from integer part (thousands separators)
+      const integerPart = parts[0].replace(/\./g, '');
+      const decimalPart = parts[1];
+      numericValue = integerPart + '.' + decimalPart;
+    }
+  } else {
+    // No comma, so dots are thousands separators - remove them
+    numericValue = cleaned.replace(/\./g, '');
+  }
+  
+  const number = safeParseFloat(numericValue, 0);
   return isNaN(number) ? '' : number.toString();
 };
 
