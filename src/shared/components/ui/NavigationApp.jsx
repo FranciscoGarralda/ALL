@@ -88,7 +88,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
     <div className={`
       ${isMobile 
         ? `fixed top-0 left-0 h-screen z-40 w-64 ${!isSidebarOpen ? '-translate-x-full' : ''}`
-        : `fixed top-16 left-0 h-[calc(100vh-4rem)] z-30 ${isSidebarOpen ? 'w-64' : 'w-16'}`
+        : `h-full z-30 ${isSidebarOpen ? 'w-64' : 'w-16'}`
       }
       bg-white shadow-lg flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out
@@ -231,7 +231,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
   }, [isMobile, isSidebarOpen]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="layout-fixed flex flex-col bg-gray-50">
       {/* Header fijo */}
       <FixedHeader 
         isSidebarOpen={isSidebarOpen}
@@ -240,8 +240,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
         showMenuButton={true}
       />
 
-      {/* Layout principal - Desktop con sidebar fija, móvil sin sidebar */}
-      <div className="flex">
+      {/* Layout principal con altura fija */}
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - Solo desktop (lg+), siempre fija */}
         <div className="hidden lg:block">
           <MainMenu 
@@ -264,10 +264,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
           />
         )}
         
-        {/* Contenido principal con margin fijo */}
-        <div className={`flex-1 flex flex-col pt-16 transition-all duration-300 ${
-          isMobile ? 'ml-0' : isSidebarOpen ? 'lg:ml-64' : 'lg:ml-16'
-        }`}>
+        {/* Contenido principal con flex-1 y scroll */}
+        <div className="flex-1 flex flex-col overflow-hidden">
           {/* Overlay para móvil cuando el sidebar está abierto */}
           {isSidebarOpen && isMobile && (
             <div 
@@ -280,12 +278,14 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
             />
           )}
           
-          {/* Contenido de la página */}
-          <main className="flex-1 w-full">
-            {children}
+          {/* Contenido de la página - Solo esta área hace scroll */}
+          <main className="flex-1 content-scrollable main-content-scroll">
+            <div className="p-4 lg:p-6">
+              {children}
+            </div>
           </main>
           
-          {/* Footer */}
+          {/* Footer fijo */}
           <Footer />
         </div>
       </div>
