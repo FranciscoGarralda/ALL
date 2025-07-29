@@ -93,41 +93,8 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       bg-white shadow-lg flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out
     `}>
-      {/* Header del Sidebar */}
-      <div className={`
-        ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} border-b border-gray-200 flex items-center
-        ${isMobile ? 'pt-20' : 'pt-4'}
-        ${(isSidebarOpen || isMobile) ? 'justify-between' : 'justify-center'}
-      `}>
-        {(isSidebarOpen || isMobile) && (
-          <button 
-            onClick={() => onNavigate('inicio')}
-            className="flex items-center space-x-2 sidebar-enter hover:bg-gray-50 rounded-lg px-2 py-1 transition-colors duration-200"
-          >
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <DollarSign size={20} className="text-white" />
-            </div>
-            <h1 className="text-xl font-bold text-gray-900 truncate">
-              Alliance F&R
-            </h1>
-          </button>
-        )}
-        
-        <button
-          onClick={toggleSidebar}
-          className={`${isSidebarOpen || isMobile ? 'p-2' : 'p-1'} rounded-full hover:bg-gray-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 touch-target`}
-          aria-label={isSidebarOpen ? "Colapsar menú" : "Expandir menú"}
-        >
-          {isSidebarOpen ? (
-            <ChevronLeft size={isMobile ? 20 : 16} className="text-gray-600" />
-          ) : (
-            <ChevronRight size={isMobile ? 20 : 16} className="text-gray-600" />
-          )}
-        </button>
-      </div>
-
-      {/* Menú de navegación */}
-      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto`}>
+      {/* Menú de navegación - ocupa todo el espacio */}
+      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto ${isMobile ? 'pt-20' : 'pt-4'}`}>
         {menuItems.map((item) => (
           <MenuItem
             key={item.id}
@@ -139,16 +106,6 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
           />
         ))}
       </nav>
-
-      {/* Footer del Sidebar */}
-      {(isSidebarOpen || isMobile) && (
-        <div className="p-4 border-t border-gray-200 bg-gray-50 sidebar-enter">
-          <div className="text-center">
-            <p className="text-xs text-gray-500 mb-1">© 2024 Alliance F&R</p>
-            <p className="text-xs text-gray-400">Sistema Financiero</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 });
