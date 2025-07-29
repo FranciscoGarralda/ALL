@@ -7,75 +7,26 @@
 
 import { safeParseFloat } from './safeOperations.js';
 export const formatCurrencyInput = (value, currency = 'PESO') => {
-  // Remove all non-numeric characters except decimal point
+  // Remove all non-numeric characters except decimal point and comma
   const cleanValue = value.toString().replace(/[^\d.,]/g, '');
   
   // Handle empty or invalid input
-  if (!cleanValue || cleanValue === '') {
+  if (!cleanValue || cleanValue === '.' || cleanValue === ',') {
     return { formatted: '', raw: '' };
   }
   
-  // Convert to number, handling both . and , as decimal separators
-  // If there's a comma, it's likely the decimal separator (Spanish format)
-  // If there's only one dot at the end (like "20.00"), it's likely decimal
-  // If there are multiple dots, they're thousands separators
-  let numericValue;
-  if (cleanValue.includes(',')) {
-    // Spanish format: 1.290,50 -> remove dots (thousands), replace comma with dot (decimal)
-    numericValue = cleanValue.replace(/\./g, '').replace(',', '.');
-  } else if (cleanValue.includes('.')) {
-    // Check if it's likely a decimal (like "20.00") or thousands separator
-    const parts = cleanValue.split('.');
-    if (parts.length === 2 && parts[1].length <= 2 && parts[0].length <= 3) {
-      // Likely decimal: "20.00" or "123.45"
-      numericValue = cleanValue;
-    } else {
-      // Likely thousands: "1.290.000" -> remove all dots
-      numericValue = cleanValue.replace(/\./g, '');
-    }
-  } else {
-    // No separators
-    numericValue = cleanValue;
-  }
-  
-  // If it's just a decimal point, return empty
-  if (numericValue === '.' || numericValue === ',') {
-    return { formatted: '', raw: '' };
-  }
-  
-  // Parse as float
-  const number = safeParseFloat(numericValue, 0);
+  // Simple parsing
+  const number = safeParseFloat(cleanValue, 0);
   
   // Handle invalid numbers
   if (isNaN(number)) {
     return { formatted: '', raw: '' };
   }
   
-  // Manual formatting to avoid toLocaleString issues
-  const absNumber = Math.abs(number);
-  const isNegative = number < 0;
-  
-  // Split into integer and decimal parts
-  const fixedNumber = absNumber.toFixed(2);
-  const [integerPart, decimalPart] = fixedNumber.split('.');
-  
-  // Add thousand separators manually
-  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  
-  // Build the number part
-  let formatted = formattedInteger;
-  if (decimalPart && parseInt(decimalPart) > 0) {
-    formatted += ',' + decimalPart;
-  }
-  
-  // Add negative sign if needed
-  if (isNegative) {
-    formatted = '-' + formatted;
-  }
-  
-  // Add currency symbol
+  // Simple formatting
+  const formatted = number.toString();
   const symbol = CURRENCY_SYMBOLS[currency] || '$';
-  const displayValue = `${symbol}${formatted}`;
+  const displayValue = `${symbol} ${formatted}`;
   
   return {
     formatted: displayValue,
@@ -92,10 +43,10 @@ export const parseCurrencyInput = (formattedValue) => {
   if (!formattedValue) return '';
   
   // Remove currency symbols and spaces
-  const cleaned = formattedValue.replace(/[\$€₮₿ΞR\$US\$\$U\s]/g, '');
+  const cleaned = formattedValue.replace(/[$€£¥₿\s]/g, '');
   
-  // Handle Argentine format: 1.000,50 -> 1000.50
-  const withDot = cleaned.replace(/\./g, '').replace(',', '.');
+  // Simple conversion: replace comma with dot
+  const withDot = cleaned.replace(',', '.');
   
   const number = safeParseFloat(withDot, 0);
   return isNaN(number) ? '' : number.toString();
@@ -147,11 +98,8 @@ export const CURRENCY_NAMES = {
 export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}) => {
   const {
     showSymbol = true,
-    showCode = false,
     decimals = 2,
-    thousandSeparator = '.',
-    decimalSeparator = ',',
-    position = 'before' // 'before' or 'after'
+    position = 'before'
   } = options;
 
   // Convert to number if string
@@ -162,45 +110,18 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
     return showSymbol ? `${CURRENCY_SYMBOLS[currency] || '$'}0` : '0';
   }
 
-  // Manual formatting to avoid toLocaleString issues
-  const absAmount = Math.abs(numAmount);
-  const isNegative = numAmount < 0;
-  
-  // Split into integer and decimal parts
-  const fixedNumber = absAmount.toFixed(decimals);
-  const [integerPart, decimalPart] = fixedNumber.split('.');
-  
-  // Add thousand separators manually
-  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
-  
-  // Build the number part
-  let formattedNumber = formattedInteger;
-  if (decimals > 0 && decimalPart && parseInt(decimalPart) > 0) {
-    formattedNumber += decimalSeparator + decimalPart;
-  }
-  
-  // Add negative sign if needed
-  if (isNegative) {
-    formattedNumber = '-' + formattedNumber;
-  }
+  // Simple formatting without thousand separators
+  const formattedNumber = numAmount.toFixed(decimals);
 
   // Get currency symbol
   const symbol = CURRENCY_SYMBOLS[currency] || '$';
   
   // Build formatted string
-  let result = formattedNumber;
-  
-  if (showSymbol) {
-    result = position === 'before' 
-      ? `${symbol} ${formattedNumber}`
-      : `${formattedNumber} ${symbol}`;
+  if (!showSymbol) {
+    return formattedNumber;
   }
   
-  if (showCode) {
-    result += ` ${currency}`;
-  }
-  
-  return result;
+  return position === 'before' ? `${symbol} ${formattedNumber}` : `${formattedNumber} ${symbol}`;
 };
 
 /**
@@ -211,19 +132,13 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
 export const parseCurrencyAmount = (formattedAmount) => {
   if (!formattedAmount) return 0;
   
-  // Remove currency symbols and codes
-  let cleanAmount = formattedAmount.toString();
-  Object.values(CURRENCY_SYMBOLS).forEach(symbol => {
-    cleanAmount = cleanAmount.replace(new RegExp(symbol.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
-  });
+  // Remove everything except numbers, dots and commas
+  let cleanAmount = formattedAmount.toString().replace(/[^\d.,]/g, '');
   
-  // Remove currency codes
-  Object.keys(CURRENCY_SYMBOLS).forEach(code => {
-    cleanAmount = cleanAmount.replace(new RegExp(`\\b${code}\\b`, 'g'), '');
-  });
+  if (!cleanAmount) return 0;
   
-  // Clean up and convert
-  cleanAmount = cleanAmount.replace(/\./g, '').replace(/,/g, '.').trim();
+  // Simple conversion: replace comma with dot
+  cleanAmount = cleanAmount.replace(',', '.');
   
   return safeParseFloat(cleanAmount, 0);
 };

@@ -4,52 +4,18 @@
  */
 
 /**
- * Safe number parsing with validation
+ * Safe number parsing
  */
 export const safeParseFloat = (value, defaultValue = 0) => {
   if (value === null || value === undefined || value === '') {
     return defaultValue;
   }
   
-  // Convert to string and remove any currency formatting
-  const stringValue = value.toString().replace(/[$\s]/g, ''); // Remove $ and spaces
+  // Convert to string and clean
+  const stringValue = value.toString().replace(/[$\s]/g, '');
   
-  // Simple and reliable approach: 
-  // If it contains comma, treat as Spanish format (1.290,50)
-  // If it ends with .00, and has more than 3 digits before, treat as thousands (1290.00 -> 1290)
-  // Otherwise, treat dots as decimals
-  let cleanValue;
-  
-  if (stringValue.includes(',')) {
-    // Spanish format: 1.290,50 -> 1290.50
-    // Split by comma first to preserve decimal part
-    const commaParts = stringValue.split(',');
-    if (commaParts.length === 2) {
-      // Remove dots from integer part only, keep decimal part
-      const integerPart = commaParts[0].replace(/\./g, '');
-      const decimalPart = commaParts[1];
-      cleanValue = integerPart + '.' + decimalPart;
-    } else {
-      // Just remove dots if no proper decimal part
-      cleanValue = stringValue.replace(/\./g, '').replace(',', '.');
-    }
-  } else if (stringValue.includes('.')) {
-    // Handle dots - could be thousands separators or decimals
-    const parts = stringValue.split('.');
-    if (parts.length === 2 && parts[1].length <= 2 && parts[1].match(/^0+$/)) {
-      // Ends with .00 or .0 -> remove decimal part (1290.00 -> 1290)
-      cleanValue = stringValue.replace(/\.0+$/, '');
-    } else if (parts.length === 2 && parts[1].length <= 2 && !parts[1].match(/^0+$/)) {
-      // Has genuine decimal digits (like .45, .25), keep as decimal
-      cleanValue = stringValue;
-    } else {
-      // Multiple dots or patterns like "129.000" -> remove all dots (thousands separators)
-      cleanValue = stringValue.replace(/\./g, '');
-    }
-  } else {
-    // No separators - keep as is
-    cleanValue = stringValue;
-  }
+  // Simple conversion: replace comma with dot for decimal
+  const cleanValue = stringValue.replace(',', '.');
   
   const parsed = parseFloat(cleanValue);
   return isNaN(parsed) ? defaultValue : parsed;
