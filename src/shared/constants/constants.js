@@ -1,6 +1,8 @@
 /**
  * Currency options with flags and symbols
  */
+
+import { safeParseFloat } from '../services/safeOperations.js';
 export const monedas = [
   { value: 'PESO', label: '🇦🇷 PESO' },
   { value: 'USD', label: '💵 USD' },
@@ -154,8 +156,8 @@ export const breakpoints = {
  */
 export const validationRules = {
   required: (value) => value !== '' && value !== null && value !== undefined,
-  minAmount: (value, min = 0) => parseFloat(value) >= min,
-  maxAmount: (value, max = 999999999) => parseFloat(value) <= max,
+  minAmount: (value, min = 0) => safeParseFloat(value, 0) >= min,
+  maxAmount: (value, max = 999999999) => safeParseFloat(value, 0) <= max,
   email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
   phone: (value) => /^[\d\s\-\+\(\)]+$/.test(value),
 };

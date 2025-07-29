@@ -329,7 +329,7 @@ export const safeTrim = (value, defaultValue = '') => {
  * Validation helpers
  */
 export const isValidNumber = (value) => {
-  const num = parseFloat(value);
+  const num = safeParseFloat(value, 0);
   return !isNaN(num) && isFinite(num);
 };
 

@@ -4,6 +4,8 @@
  * @param {string} currency - Currency code (default: PESO)
  * @returns {object} { formatted, raw } - Formatted display value and raw numeric value
  */
+
+import { safeParseFloat } from './safeOperations.js';
 export const formatCurrencyInput = (value, currency = 'PESO') => {
   // Remove all non-numeric characters except decimal point
   const cleanValue = value.toString().replace(/[^\d.,]/g, '');
@@ -42,7 +44,7 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
   }
   
   // Parse as float
-  const number = parseFloat(numericValue);
+  const number = safeParseFloat(numericValue, 0);
   
   // Handle invalid numbers
   if (isNaN(number)) {
@@ -95,7 +97,7 @@ export const parseCurrencyInput = (formattedValue) => {
   // Handle Argentine format: 1.000,50 -> 1000.50
   const withDot = cleaned.replace(/\./g, '').replace(',', '.');
   
-  const number = parseFloat(withDot);
+  const number = safeParseFloat(withDot, 0);
   return isNaN(number) ? '' : number.toString();
 };
 
@@ -153,7 +155,7 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
   } = options;
 
   // Convert to number if string
-  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+  const numAmount = typeof amount === 'string' ? safeParseFloat(amount, 0) : amount;
   
   // Handle invalid amounts
   if (isNaN(numAmount)) {
@@ -223,7 +225,7 @@ export const parseCurrencyAmount = (formattedAmount) => {
   // Clean up and convert
   cleanAmount = cleanAmount.replace(/\./g, '').replace(/,/g, '.').trim();
   
-  return parseFloat(cleanAmount) || 0;
+  return safeParseFloat(cleanAmount, 0);
 };
 
 
@@ -424,7 +426,7 @@ export const getClientInfo = (clientId, clients = []) => {
 export const formatPercentage = (value, decimals = 2) => {
   if (!value && value !== 0) return '0%';
   
-  const numericValue = typeof value === 'string' ? parseFloat(value) : value;
+  const numericValue = typeof value === 'string' ? safeParseFloat(value, 0) : value;
   if (isNaN(numericValue)) return '0%';
   
   return `${numericValue.toFixed(decimals)}%`;
