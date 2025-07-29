@@ -237,7 +237,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
           
           {/* Contenido de la página - Solo esta área hace scroll */}
           <main className="flex-1 content-scrollable main-content-scroll">
-            <div className="p-4 lg:p-6">
+            <div className="p-4 lg:p-6 pt-20">
               {children}
             </div>
           </main>
