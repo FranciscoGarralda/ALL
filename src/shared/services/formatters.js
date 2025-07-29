@@ -110,8 +110,8 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
     return showSymbol ? `${CURRENCY_SYMBOLS[currency] || '$'}0` : '0';
   }
 
-  // Simple formatting without thousand separators
-  const formattedNumber = numAmount.toFixed(decimals);
+  // Format with comma as decimal separator
+  const formattedNumber = numAmount.toFixed(decimals).replace('.', ',');
 
   // Get currency symbol
   const symbol = CURRENCY_SYMBOLS[currency] || '$';
