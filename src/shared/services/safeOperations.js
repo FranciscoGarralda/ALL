@@ -22,7 +22,17 @@ export const safeParseFloat = (value, defaultValue = 0) => {
   
   if (stringValue.includes(',')) {
     // Spanish format: 1.290,50 -> 1290.50
-    cleanValue = stringValue.replace(/\./g, '').replace(',', '.');
+    // Split by comma first to preserve decimal part
+    const commaParts = stringValue.split(',');
+    if (commaParts.length === 2) {
+      // Remove dots from integer part only, keep decimal part
+      const integerPart = commaParts[0].replace(/\./g, '');
+      const decimalPart = commaParts[1];
+      cleanValue = integerPart + '.' + decimalPart;
+    } else {
+      // Just remove dots if no proper decimal part
+      cleanValue = stringValue.replace(/\./g, '').replace(',', '.');
+    }
   } else if (stringValue.includes('.')) {
     // Handle dots - could be thousands separators or decimals
     const parts = stringValue.split('.');

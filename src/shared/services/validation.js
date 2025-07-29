@@ -3,6 +3,8 @@
  * Provides flexible, extensible validation rules with detailed error reporting
  */
 
+import { safeParseFloat } from './safeOperations';
+
 // Validation rule types
 export const VALIDATION_TYPES = {
   REQUIRED: 'required',
@@ -148,7 +150,7 @@ export const FIELD_VALIDATION_SCHEMA = {
     ValidationRule.numeric('Debe ser un número válido'),
     ValidationRule.positive('El monto debe ser positivo'),
     ValidationRule.custom(
-      (value) => parseFloat(value) > 0,
+      (value) => safeParseFloat(value, 0) > 0,
       'El monto debe ser mayor a 0'
     )
   ],
@@ -207,14 +209,14 @@ export const FIELD_VALIDATION_SCHEMA = {
             return false;
           }
           
-          if (parseFloat(payment.monto) <= 0) {
+          if (safeParseFloat(payment.monto, 0) <= 0) {
             return false;
           }
         }
         
         // Validate total matches expected
-        const totalPayments = payments.reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
-        const expectedTotal = parseFloat(formData.expectedTotalForMixedPayments) || 0;
+        const totalPayments = payments.reduce((sum, p) => sum + (safeParseFloat(p.monto, 0)), 0);
+        const expectedTotal = safeParseFloat(formData.expectedTotalForMixedPayments, 0);
         
         return Math.abs(totalPayments - expectedTotal) < 0.01;
       },
@@ -258,7 +260,7 @@ export const validateField = (fieldName, value, formData = {}, rules = FIELD_VAL
         break;
         
       case VALIDATION_TYPES.POSITIVE:
-        isValid = !value || (parseFloat(value) > 0);
+        isValid = !value || (safeParseFloat(value, 0) > 0);
         break;
         
       case VALIDATION_TYPES.CURRENCY:
@@ -361,8 +363,8 @@ export const removeFieldRules = (fieldName) => {
 export const businessValidation = {
   // Validate mixed payment totals
   validateMixedPaymentBalance: (payments, expectedTotal) => {
-    const totalPayments = payments.reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
-    const expected = parseFloat(expectedTotal) || 0;
+      const totalPayments = payments.reduce((sum, p) => sum + (safeParseFloat(p.monto, 0)), 0);
+  const expected = safeParseFloat(expectedTotal, 0);
     const difference = Math.abs(totalPayments - expected);
     
     return {
@@ -383,11 +385,11 @@ export const businessValidation = {
     
     const errors = [];
     
-    if (!monto || parseFloat(monto) <= 0) {
+    if (!monto || safeParseFloat(monto, 0) <= 0) {
       errors.push('Monto debe ser mayor a 0');
     }
     
-    if (!tc || parseFloat(tc) <= 0) {
+    if (!tc || safeParseFloat(tc, 0) <= 0) {
       errors.push('Tipo de cambio debe ser mayor a 0');
     }
     

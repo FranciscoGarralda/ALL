@@ -71,11 +71,11 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
 
       // Aplicar el movimiento
       if (mov.subOperacion === 'PRESTAMO') {
-        const amount = parseFloat(mov.monto) || 0;
+        const amount = safeParseFloat(mov.monto, 0);
         currentBalance.principal += amount;
-        currentBalance.effectiveRate = parseFloat(mov.interes) || currentBalance.effectiveRate;
+        currentBalance.effectiveRate = safeParseFloat(mov.interes, currentBalance.effectiveRate);
       } else if (mov.subOperacion === 'RETIRO') {
-        const amount = parseFloat(mov.monto) || 0;
+        const amount = safeParseFloat(mov.monto, 0);
         // Aplicar retiro: primero a intereses, luego a principal
         if (currentBalance.interestAccrued >= amount) {
           currentBalance.interestAccrued -= amount;
@@ -116,7 +116,7 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
     // Calcular totales de préstamos y retiros por separado
     relevantMovements.forEach(mov => {
       const currency = mov.moneda;
-      const amount = parseFloat(mov.monto) || 0;
+      const amount = safeParseFloat(mov.monto, 0);
       if (mov.subOperacion === 'PRESTAMO') {
         finalSummary.totalPrincipalLent[currency] = 
           (finalSummary.totalPrincipalLent[currency] || 0) + amount;
@@ -349,11 +349,11 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
 
       // Aplicar el movimiento
       if (mov.subOperacion === 'PRESTAMO') {
-        const amount = parseFloat(mov.monto) || 0;
+        const amount = safeParseFloat(mov.monto, 0);
         currentBalance.principal += amount;
-        currentBalance.effectiveRate = parseFloat(mov.interes) || currentBalance.effectiveRate;
+        currentBalance.effectiveRate = safeParseFloat(mov.interes, currentBalance.effectiveRate);
       } else if (mov.subOperacion === 'RETIRO') {
-        const amount = parseFloat(mov.monto) || 0;
+        const amount = safeParseFloat(mov.monto, 0);
         if (currentBalance.interestAccrued >= amount) {
           currentBalance.interestAccrued -= amount;
         } else {

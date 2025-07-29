@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { specificFieldsConfig } from '../constants/fieldConfigs';
+import { safeParseFloat } from '../services/safeOperations';
 
 /**
  * Custom hook for managing mixed payments functionality
@@ -20,18 +21,18 @@ export const useMixedPayments = (formData, setFormData) => {
       );
 
       let newTotal = prev.total;
-      const expectedTotal = parseFloat(prev.expectedTotalForMixedPayments) || 0;
+      const expectedTotal = safeParseFloat(prev.expectedTotalForMixedPayments, 0);
 
       if (prev.walletTC === 'pago_mixto') {
         if (field === 'monto') {
           const changedPaymentIndex = updatedPayments.findIndex(p => p.id === id);
 
           if (changedPaymentIndex !== 0) {
-            const sumOfOtherPaymentsExcludingFirst = updatedPayments.slice(1).reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
+            const sumOfOtherPaymentsExcludingFirst = updatedPayments.slice(1).reduce((sum, p) => sum + safeParseFloat(p.monto, 0), 0);
             updatedPayments[0].monto = (expectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
           }
         }
-        newTotal = updatedPayments.reduce((sum, payment) => sum + (parseFloat(payment.monto) || 0), 0).toFixed(2);
+        newTotal = updatedPayments.reduce((sum, payment) => sum + safeParseFloat(payment.monto, 0), 0).toFixed(2);
       }
 
       return { ...prev, mixedPayments: updatedPayments, total: newTotal };
@@ -63,7 +64,7 @@ export const useMixedPayments = (formData, setFormData) => {
       const newPayments = [...prev.mixedPayments, newPayment];
       let newTotal = prev.total;
       if (prev.walletTC === 'pago_mixto') {
-        newTotal = newPayments.reduce((sum, payment) => sum + (parseFloat(payment.monto) || 0), 0).toFixed(2);
+        newTotal = newPayments.reduce((sum, payment) => sum + safeParseFloat(payment.monto, 0), 0).toFixed(2);
       }
       
       return {
@@ -79,19 +80,19 @@ export const useMixedPayments = (formData, setFormData) => {
     setFormData(prev => {
       const filteredPayments = prev.mixedPayments.filter(payment => payment.id !== id);
       let newTotal = prev.total;
-      const expectedTotal = parseFloat(prev.expectedTotalForMixedPayments) || 0;
+      const expectedTotal = safeParseFloat(prev.expectedTotalForMixedPayments, 0);
 
       if (prev.walletTC === 'pago_mixto') {
         if (id === prev.mixedPayments[0].id && filteredPayments.length > 0) {
-          const sumOfRemainingPayments = filteredPayments.slice(1).reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
+          const sumOfRemainingPayments = filteredPayments.slice(1).reduce((sum, p) => sum + safeParseFloat(p.monto, 0), 0);
           filteredPayments[0].monto = (expectedTotal - sumOfRemainingPayments).toFixed(2);
         } else if (filteredPayments.length > 0) {
-          const sumOfOtherPaymentsExcludingFirst = filteredPayments.slice(1).reduce((sum, p) => sum + (parseFloat(p.monto) || 0), 0);
+          const sumOfOtherPaymentsExcludingFirst = filteredPayments.slice(1).reduce((sum, p) => sum + safeParseFloat(p.monto, 0), 0);
           filteredPayments[0].monto = (expectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
         } else {
           filteredPayments.push({ id: Date.now(), cuenta: '', monto: '' });
         }
-        newTotal = filteredPayments.reduce((sum, payment) => sum + (parseFloat(payment.monto) || 0), 0).toFixed(2);
+        newTotal = filteredPayments.reduce((sum, payment) => sum + safeParseFloat(payment.monto, 0), 0).toFixed(2);
       }
 
       return {
@@ -105,8 +106,8 @@ export const useMixedPayments = (formData, setFormData) => {
   // Validate mixed payments
   const validateMixedPayments = useCallback(() => {
     if (formData.walletTC === 'pago_mixto') {
-      const totalMixedPayments = formData.mixedPayments.reduce((sum, payment) => sum + (parseFloat(payment.monto) || 0), 0);
-      const expectedTotal = parseFloat(formData.expectedTotalForMixedPayments) || 0;
+      const totalMixedPayments = formData.mixedPayments.reduce((sum, payment) => sum + safeParseFloat(payment.monto, 0), 0);
+      const expectedTotal = safeParseFloat(formData.expectedTotalForMixedPayments, 0);
 
       if (Math.abs(totalMixedPayments - expectedTotal) > 0.01) {
         return {

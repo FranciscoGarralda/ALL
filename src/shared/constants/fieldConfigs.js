@@ -1,4 +1,5 @@
 import { monedas, cuentas, socios, proveedoresCC, prestamistaClientsDefault, walletTypes, walletTypesTC } from './constants';
+import { safeParseFloat } from '../services/safeOperations';
 
 /**
  * Configuration object for specific operation field layouts
@@ -31,8 +32,8 @@ export const specificFieldsConfig = {
     pagoMixtoWalletMode: true, // Nueva flag para usar wallets en pago mixto
     calculations: {
       total: (formData) => {
-        const monto = parseFloat(formData.monto) || 0;
-        const tc = parseFloat(formData.tc) || 0;
+        const monto = safeParseFloat(formData.monto, 0);
+        const tc = safeParseFloat(formData.tc, 0);
         return monto * tc;
       }
     }
@@ -64,8 +65,8 @@ export const specificFieldsConfig = {
     pagoMixtoWalletMode: true, // Nueva flag para usar wallets en pago mixto
     calculations: {
       total: (formData) => {
-        const monto = parseFloat(formData.monto) || 0;
-        const tc = parseFloat(formData.tc) || 0;
+        const monto = safeParseFloat(formData.monto, 0);
+        const tc = safeParseFloat(formData.tc, 0);
         return monto * tc;
       }
     }
@@ -108,18 +109,18 @@ export const specificFieldsConfig = {
     includesPagoMixto: false,
     calculations: {
       totalCompra: (formData) => {
-        const monto = parseFloat(formData.monto) || 0;
-        const tc = parseFloat(formData.tc) || 0;
+        const monto = safeParseFloat(formData.monto, 0);
+        const tc = safeParseFloat(formData.tc, 0);
         return monto * tc;
       },
       totalVenta: (formData) => {
-        const montoVenta = parseFloat(formData.montoVenta) || 0;
-        const tcVenta = parseFloat(formData.tcVenta) || 0;
+        const montoVenta = safeParseFloat(formData.montoVenta, 0);
+        const tcVenta = safeParseFloat(formData.tcVenta, 0);
         return montoVenta * tcVenta;
       },
       comision: (formData) => {
-        const totalVenta = parseFloat(formData.totalVenta) || 0;
-        const totalCompra = parseFloat(formData.totalCompra) || 0;
+        const totalVenta = safeParseFloat(formData.totalVenta, 0);
+        const totalCompra = safeParseFloat(formData.totalCompra, 0);
         return totalVenta - totalCompra;
       }
     }
@@ -247,13 +248,13 @@ export const specificFieldsConfig = {
     includesPagoMixto: false,
     calculations: {
       interesTotal: (formData) => {
-        const monto = parseFloat(formData.monto) || 0;
-        const interes = parseFloat(formData.interes) || 0;
-        const lapso = parseFloat(formData.lapso) || 0;
+        const monto = safeParseFloat(formData.monto, 0);
+        const interes = safeParseFloat(formData.interes, 0);
+        const lapso = safeParseFloat(formData.lapso, 0);
         return (monto * interes * lapso) / (365 * 100);
       },
       montoTotal: (formData) => {
-        const monto = parseFloat(formData.monto) || 0;
+        const monto = safeParseFloat(formData.monto, 0);
         const interesTotal = formData.interesTotal || 0;
         return monto + interesTotal;
       }
