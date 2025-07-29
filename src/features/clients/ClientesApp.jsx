@@ -124,7 +124,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
 
   // Vista principal - Lista de clientes
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom lg:pt-6 pt-16">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-20">
       {/* Header */}
       <div className="card mb-4 sm:mb-6">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -393,7 +393,7 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom lg:pt-6 pt-16">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-20">
       <div className="max-w-2xl mx-auto">
         <div className="card">
           {/* Header */}
@@ -537,7 +537,7 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
   const recomendacion = getRecomendacion();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom lg:pt-6 pt-16">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-20">
       <div className="max-w-6xl mx-auto">
         <div className="card">
           {/* Header */}

@@ -111,7 +111,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom lg:pt-6 pt-16">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-20">
       {/* Header */}
       <div className="card mb-4 sm:mb-6">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
