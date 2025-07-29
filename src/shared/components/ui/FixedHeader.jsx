@@ -70,7 +70,7 @@ const FixedHeader = ({
       <div className="h-full flex items-center justify-between px-4">
         {/* Lado izquierdo: Menú hamburguesa + Título */}
         <div className="flex items-center space-x-3">
-          {/* Botón hamburguesa - solo visible en móvil */}
+          {/* Botón hamburguesa - visible en móvil */}
           {showMenuButton && (
             <button
               onClick={toggleSidebar}
@@ -85,7 +85,18 @@ const FixedHeader = ({
             </button>
           )}
 
-          {/* Logo y título - oculto en móvil cuando hay menú */}
+          {/* Botón toggle sidebar - visible en desktop */}
+          {showMenuButton && (
+            <button
+              onClick={toggleSidebar}
+              className="hidden lg:block p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 touch-target"
+              aria-label={isSidebarOpen ? "Colapsar sidebar" : "Expandir sidebar"}
+            >
+              <Menu size={20} className="text-gray-700" />
+            </button>
+          )}
+
+          {/* Logo y título */}
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
               <DollarSign size={18} className="text-white" />
