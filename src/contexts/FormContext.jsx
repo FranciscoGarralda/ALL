@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import { useMixedPayments } from '../shared/hooks/useMixedPayments';
 import { useKeyboardNavigation } from '../shared/hooks/useKeyboardNavigation';
+import { safeParseFloat } from '../shared/services/safeOperations';
 
 // Action types for form reducer
 const FORM_ACTIONS = {
@@ -107,7 +108,7 @@ const formReducer = (state, action) => {
       
     case FORM_ACTIONS.CALCULATE_TOTAL:
       const { monto, tc } = state;
-      const calculatedTotal = (parseFloat(monto) || 0) * (parseFloat(tc) || 1);
+      const calculatedTotal = (safeParseFloat(monto) || 0) * (safeParseFloat(tc) || 1);
       return {
         ...state,
         total: calculatedTotal.toFixed(2)

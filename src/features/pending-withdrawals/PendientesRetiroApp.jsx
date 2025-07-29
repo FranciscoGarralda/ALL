@@ -11,7 +11,7 @@ import {
   Edit,
   Trash2
 } from 'lucide-react';
-import { getClientName } from '../../shared/services/formatters';
+import { getClientName, formatAmountWithCurrency } from '../../shared/services/formatters';
 
 /**
  * Módulo para gestionar operaciones pendientes de retiro
@@ -63,11 +63,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
     });
   };
 
-  const formatAmount = (amount, currency) => {
-    if (!amount) return '0';
-          const formatted = parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    return `${formatted} ${currency || ''}`;
-  };
+    // Removed duplicate formatAmount function - using formatAmountWithCurrency instead
 
   const getEstadoBadge = (estado) => {
     const badges = {
@@ -195,7 +191,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
                   <div>
                     <div className="text-xs text-gray-500">Monto</div>
                     <div className="font-medium text-green-600">
-                      {formatAmount(movement.monto, movement.moneda)}
+                      {formatAmountWithCurrency(movement.monto, movement.moneda, { showSymbol: false })}
                     </div>
                   </div>
                 </div>
