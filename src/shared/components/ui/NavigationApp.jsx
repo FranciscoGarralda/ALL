@@ -51,7 +51,7 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
       data-tooltip={!isSidebarOpen ? title : undefined}
       aria-label={!isSidebarOpen ? title : undefined}
     >
-      <Icon size={isSidebarOpen ? 20 : 18} className="flex-shrink-0" />
+      <Icon size={20} className="flex-shrink-0" />
       {isSidebarOpen && (
         <span className="text-sm font-medium truncate transition-all duration-200">
           {title}
