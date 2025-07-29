@@ -110,8 +110,29 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
     return showSymbol ? `${CURRENCY_SYMBOLS[currency] || '$'}0` : '0';
   }
 
-  // Format with comma as decimal separator
-  const formattedNumber = numAmount.toFixed(decimals).replace('.', ',');
+  // Format with Spanish style: 1.290.500,75
+  const absAmount = Math.abs(numAmount);
+  const isNegative = numAmount < 0;
+  
+  // Split into integer and decimal parts
+  const fixedNumber = absAmount.toFixed(decimals);
+  const [integerPart, decimalPart] = fixedNumber.split('.');
+  
+  // Add thousand separators with dots
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  
+  // Build the number with comma for decimals
+  let formattedNumber = formattedInteger;
+  if (decimals > 0 && decimalPart && parseInt(decimalPart) > 0) {
+    formattedNumber += ',' + decimalPart;
+  } else if (decimals > 0) {
+    formattedNumber += ',00';
+  }
+  
+  // Add negative sign if needed
+  if (isNegative) {
+    formattedNumber = '-' + formattedNumber;
+  }
 
   // Get currency symbol
   const symbol = CURRENCY_SYMBOLS[currency] || '$';
