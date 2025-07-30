@@ -42,9 +42,10 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
           </span>
         )}
         
-        {/* Tooltip nuevo y simple */}
+        {/* Tooltip que flota por encima de todo */}
         {!isSidebarOpen && (
-          <span className="absolute left-full ml-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity">
+          <span className="fixed left-20 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity"
+                style={{top: '50%', transform: 'translateY(-50%)'}}>
             {title}
           </span>
         )}
@@ -86,7 +87,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       transition-all duration-300 ease-in-out
     `}>
       {/* Menú de navegación - ocupa todo el espacio */}
-      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto pt-24`}>
+      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto pt-28`}>
         {menuItems.map((item) => (
           <MenuItem
             key={item.id}
@@ -228,7 +229,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
           
           {/* Contenido de la página - Solo esta área hace scroll */}
           <main className="flex-1 content-scrollable main-content-scroll">
-            <div className="p-4 lg:p-6 pt-24">
+            <div className="p-4 lg:p-6 pt-28">
               {children}
             </div>
           </main>
