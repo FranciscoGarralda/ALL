@@ -21,63 +21,27 @@ import Footer from './Footer';
 
 
 
-/** COMPONENTE DE ELEMENTO DEL MENÚ CON TOOLTIP SIMPLE */
+/** COMPONENTE DE ELEMENTO DEL MENÚ SIMPLE */
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [buttonRect, setButtonRect] = useState(null);
-  const buttonRef = useRef(null);
-
-  const handleMouseEnter = () => {
-    if (!isSidebarOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setButtonRect(rect);
-      setShowTooltip(true);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setShowTooltip(false);
-  };
 
   return (
-    <>
-      <div className="relative">
-        <button
-          ref={buttonRef}
-        className={`
-          w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 relative
-          ${!isSidebarOpen ? 'justify-center' : ''}
-          ${isActive ? 'menu-item-active' : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'}
-          touch-manipulation select-none
-        `}
-                  onClick={onClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          aria-label={!isSidebarOpen ? title : undefined}
-        >
-          <Icon size={20} className="flex-shrink-0" />
-          {isSidebarOpen && (
-            <span className="text-sm font-medium truncate transition-all duration-200">
-              {title}
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* Tooltip flotante por encima de todo */}
-      {showTooltip && !isSidebarOpen && buttonRect && (
-        <div
-          className="fixed bg-gray-900 text-white text-xs px-3 py-1.5 rounded-lg pointer-events-none whitespace-nowrap z-[99999]"
-          style={{
-            left: buttonRect.right + 8,
-            top: buttonRect.top + (buttonRect.height / 2),
-            transform: 'translateY(-50%)'
-          }}
-        >
+    <button
+      className={`
+        w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
+        ${!isSidebarOpen ? 'justify-center' : ''}
+        ${isActive ? 'menu-item-active' : 'text-gray-700 hover:menu-item-hover'}
+        touch-manipulation select-none
+      `}
+      onClick={onClick}
+      title={!isSidebarOpen ? title : undefined}
+    >
+      <Icon size={20} className="flex-shrink-0" />
+      {isSidebarOpen && (
+        <span className="text-sm font-medium truncate">
           {title}
-        </div>
+        </span>
       )}
-    </>
+    </button>
   );
 
 MenuItem.displayName = 'MenuItem';
