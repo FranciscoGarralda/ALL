@@ -19,8 +19,33 @@ import {
 import FixedHeader from './FixedHeader';
 import Footer from './Footer';
 
+/** COMPONENTE DE TOOLTIP PERSONALIZADO */
+const Tooltip = memo(({ children, text, isVisible, position }) => {
+  if (!isVisible || !text) return children;
+  
+  return (
+    <div className="relative group">
+      {children}
+      <div className="fixed z-50 px-4 py-2.5 text-sm text-white sidebar-tooltip rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none whitespace-nowrap transform scale-95 group-hover:scale-100"
+           style={{
+             left: '80px',
+             top: position?.y ? `${position.y}px` : '50%',
+             transform: 'translateY(-50%)'
+           }}>
+        {text}
+        <div className="absolute left-0 top-1/2 transform -translate-x-1 -translate-y-1/2 sidebar-tooltip-arrow">
+          <div className="w-0 h-0 border-t-[6px] border-b-[6px] border-r-[8px] border-transparent border-r-gray-700"></div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+Tooltip.displayName = 'Tooltip';
+
 /** COMPONENTE DE ELEMENTO DEL MENÚ OPTIMIZADO */
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
+  const [tooltipPosition, setTooltipPosition] = useState(null);
   const buttonRef = useRef(null);
   
   const buttonClasses = useMemo(() => `
@@ -29,26 +54,27 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
       ? 'menu-item-active'
       : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'
     }
-    ${isSidebarOpen ? '' : 'menu-tooltip'}
     touch-manipulation select-none
   `, [isActive, isSidebarOpen]);
 
-  // Calculate tooltip Y position for fixed positioning
   const handleMouseEnter = useCallback(() => {
     if (!isSidebarOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const tooltipY = rect.top + (rect.height / 2);
-      document.documentElement.style.setProperty('--tooltip-y', `${tooltipY}px`);
+      setTooltipPosition({ y: rect.top + (rect.height / 2) });
     }
   }, [isSidebarOpen]);
 
-  return (
+  const handleMouseLeave = useCallback(() => {
+    setTooltipPosition(null);
+  }, []);
+
+  const buttonElement = (
     <button
       ref={buttonRef}
       className={buttonClasses}
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
-      data-tooltip={!isSidebarOpen ? title : undefined}
+      onMouseLeave={handleMouseLeave}
       aria-label={!isSidebarOpen ? title : undefined}
     >
       <Icon size={20} className="flex-shrink-0" />
@@ -58,6 +84,16 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
         </span>
       )}
     </button>
+  );
+
+  return (
+    <Tooltip 
+      text={title} 
+      isVisible={!isSidebarOpen} 
+      position={tooltipPosition}
+    >
+      {buttonElement}
+    </Tooltip>
   );
 });
 
@@ -90,7 +126,6 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
         ? `fixed top-0 left-0 h-screen z-40 w-64 ${!isSidebarOpen ? '-translate-x-full' : ''}`
         : `h-full z-30 ${isSidebarOpen ? 'w-64' : 'w-16'}`
       }
-      ${!isSidebarOpen ? 'sidebar-collapsed' : ''}
       bg-white shadow-lg flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out
     `}>
