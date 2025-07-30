@@ -34,7 +34,6 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
           touch-manipulation select-none
         `}
         onClick={onClick}
-        title={!isSidebarOpen ? title : undefined}
       >
         <Icon size={20} className="flex-shrink-0" />
         {isSidebarOpen && (
