@@ -21,22 +21,17 @@ import Footer from './Footer';
 
 
 
-/** COMPONENTE DE ELEMENTO DEL MENÚ CON TOOLTIP SIMPLE */
+/** COMPONENTE DE ELEMENTO DEL MENÚ LIMPIO */
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
-  const buttonClasses = useMemo(() => `
-    w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 relative ${!isSidebarOpen ? 'justify-center' : ''}
-    ${isActive
-      ? 'menu-item-active'
-      : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'
-    }
-    ${!isSidebarOpen ? 'group' : ''}
-    touch-manipulation select-none
-  `, [isActive, isSidebarOpen]);
-
   return (
     <div className="relative">
       <button
-        className={buttonClasses}
+        className={`
+          w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 relative
+          ${!isSidebarOpen ? 'justify-center' : ''}
+          ${isActive ? 'menu-item-active' : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'}
+          touch-manipulation select-none group
+        `}
         onClick={onClick}
         aria-label={!isSidebarOpen ? title : undefined}
       >
@@ -47,12 +42,11 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
           </span>
         )}
         
-        {/* Tooltip simple - solo aparece cuando sidebar cerrado */}
+        {/* Tooltip nuevo y simple */}
         {!isSidebarOpen && (
-          <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-4 py-2.5 bg-gray-800 text-white text-sm rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">
+          <span className="absolute left-full ml-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity">
             {title}
-            <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-800"></div>
-          </div>
+          </span>
         )}
       </button>
     </div>
