@@ -25,23 +25,33 @@ import Footer from './Footer';
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
 
   return (
-    <button
-      className={`
-        w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
-        ${!isSidebarOpen ? 'justify-center' : ''}
-        ${isActive ? 'menu-item-active' : 'text-gray-700 hover:menu-item-hover'}
-        touch-manipulation select-none
-      `}
-      onClick={onClick}
-      title={!isSidebarOpen ? title : undefined}
-    >
-      <Icon size={20} className="flex-shrink-0" />
-      {isSidebarOpen && (
-        <span className="text-sm font-medium truncate">
+    <div className="relative group">
+      <button
+        className={`
+          w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
+          ${!isSidebarOpen ? 'justify-center' : ''}
+          ${isActive ? 'menu-item-active' : 'text-gray-700 hover:menu-item-hover'}
+          touch-manipulation select-none
+        `}
+        onClick={onClick}
+        title={!isSidebarOpen ? title : undefined}
+      >
+        <Icon size={20} className="flex-shrink-0" />
+        {isSidebarOpen && (
+          <span className="text-sm font-medium truncate">
+            {title}
+          </span>
+        )}
+      </button>
+      
+      {/* Tooltip mejorado para cuando está cerrada */}
+      {!isSidebarOpen && (
+        <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 top-1/2 transform -translate-y-1/2">
           {title}
-        </span>
+          <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
+        </div>
       )}
-    </button>
+    </div>
   );
 });
 
@@ -78,7 +88,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       transition-all duration-300 ease-in-out
     `}>
       {/* Menú de navegación - ocupa todo el espacio */}
-      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto pt-28`}>
+      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto pt-20`}>
         {menuItems.map((item) => (
           <MenuItem
             key={item.id}
