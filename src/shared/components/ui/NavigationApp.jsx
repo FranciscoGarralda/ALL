@@ -90,6 +90,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
         ? `fixed top-0 left-0 h-screen z-40 w-64 ${!isSidebarOpen ? '-translate-x-full' : ''}`
         : `h-full z-30 ${isSidebarOpen ? 'w-64' : 'w-16'}`
       }
+      ${!isSidebarOpen ? 'sidebar-collapsed' : ''}
       bg-white shadow-lg flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out
     `}>
