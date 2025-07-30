@@ -7,7 +7,6 @@ export { default as ClientAutocomplete } from './ClientAutocomplete';
 export { default as ClientModal } from './ClientModal';
 export { default as ClientSelect } from './ClientSelect';
 export { default as MixedPaymentGroup } from './MixedPaymentGroup';
-export { default as SimpleTooltip } from '../SimpleTooltip';
 
 // Button Group Components
 export { default as WalletButtonGroup } from './WalletButtonGroup';

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import FixedHeader from './FixedHeader';
 import Footer from './Footer';
+import SidebarTooltip from './SidebarTooltip';
 
 
 
@@ -25,23 +26,24 @@ import Footer from './Footer';
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
 
   return (
-    <button
-      className={`
-        w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
-        ${!isSidebarOpen ? 'justify-center' : ''}
-        ${isActive ? 'menu-item-active' : 'text-gray-700 hover:menu-item-hover'}
-        touch-manipulation select-none
-      `}
-      onClick={onClick}
-      title={!isSidebarOpen ? title : undefined}
-    >
-      <Icon size={20} className="flex-shrink-0" />
-      {isSidebarOpen && (
-        <span className="text-sm font-medium truncate">
-          {title}
-        </span>
-      )}
-    </button>
+    <SidebarTooltip content={title} disabled={isSidebarOpen}>
+      <button
+        className={`
+          w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
+          ${!isSidebarOpen ? 'justify-center' : ''}
+          ${isActive ? 'menu-item-active' : 'text-gray-700 hover:menu-item-hover'}
+          touch-manipulation select-none
+        `}
+        onClick={onClick}
+      >
+        <Icon size={20} className="flex-shrink-0" />
+        {isSidebarOpen && (
+          <span className="text-sm font-medium truncate">
+            {title}
+          </span>
+        )}
+      </button>
+    </SidebarTooltip>
   );
 });
 
