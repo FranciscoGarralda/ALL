@@ -13,7 +13,8 @@ import {
   FormFieldGroup,
   MixedPaymentGroup,
   ClientAutocomplete,
-  formatAmountWithCurrency
+  formatAmountWithCurrency,
+  SimpleTooltip
 } from '../../shared/components/forms';
 import {
   monedas,
@@ -629,32 +630,38 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
         {/* Botones de acción */}
         <div className="flex flex-col sm:flex-row justify-between pt-4 border-t border-gray-200 gap-3">
-          <button
-            ref={(el) => registerField('guardar', el)}
-            onClick={handleGuardar}
-            onKeyDown={(e) => handleKeyboardNavigation('guardar', e, formData, specificFieldsConfig)}
-            className="btn-primary flex-1 sm:flex-none touch-target"
-            disabled={!formData.operacion || !formData.subOperacion}
-          >
-            {initialMovementData ? 'Actualizar' : 'Guardar'}
-          </button>
-          <button
-            ref={(el) => registerField('limpiar', el)}
-            onClick={clearForm}
-            onKeyDown={(e) => handleKeyboardNavigation('limpiar', e, formData, specificFieldsConfig)}
-            className="btn-secondary flex-1 sm:flex-none touch-target"
-          >
-            Limpiar Formulario
-          </button>
-          {onCancelEdit && (
+          <SimpleTooltip content={initialMovementData ? "Actualizar el movimiento existente" : "Guardar el nuevo movimiento financiero"}>
             <button
-              ref={(el) => registerField('cancelar', el)}
-              onClick={onCancelEdit}
-              onKeyDown={(e) => handleKeyboardNavigation('cancelar', e, formData, specificFieldsConfig)}
+              ref={(el) => registerField('guardar', el)}
+              onClick={handleGuardar}
+              onKeyDown={(e) => handleKeyboardNavigation('guardar', e, formData, specificFieldsConfig)}
+              className="btn-primary flex-1 sm:flex-none touch-target"
+              disabled={!formData.operacion || !formData.subOperacion}
+            >
+              {initialMovementData ? 'Actualizar' : 'Guardar'}
+            </button>
+          </SimpleTooltip>
+          <SimpleTooltip content="Limpiar todos los campos del formulario">
+            <button
+              ref={(el) => registerField('limpiar', el)}
+              onClick={clearForm}
+              onKeyDown={(e) => handleKeyboardNavigation('limpiar', e, formData, specificFieldsConfig)}
               className="btn-secondary flex-1 sm:flex-none touch-target"
             >
-              Cancelar
+              Limpiar Formulario
             </button>
+          </SimpleTooltip>
+          {onCancelEdit && (
+            <SimpleTooltip content="Cancelar la edición y volver sin guardar">
+              <button
+                ref={(el) => registerField('cancelar', el)}
+                onClick={onCancelEdit}
+                onKeyDown={(e) => handleKeyboardNavigation('cancelar', e, formData, specificFieldsConfig)}
+                className="btn-secondary flex-1 sm:flex-none touch-target"
+              >
+                Cancelar
+              </button>
+            </SimpleTooltip>
           )}
         </div>
       </div>
