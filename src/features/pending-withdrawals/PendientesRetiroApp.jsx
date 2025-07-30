@@ -111,7 +111,6 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
               {filteredMovements.length}
             </div>
           </div>
-          </div>
 
           {/* Filtros y búsqueda */}
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
