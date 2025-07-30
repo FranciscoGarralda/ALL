@@ -43,6 +43,7 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
       )}
     </button>
   );
+});
 
 MenuItem.displayName = 'MenuItem';
 
@@ -319,6 +320,9 @@ const WelcomePage = ({ onNavigate }) => (
     </div>
   </div>
 );
+});
+
+NavigationApp.displayName = 'NavigationApp';
 
 /** PÁGINA NO ENCONTRADA */
 const NotFoundPage = ({ onNavigate }) => (
