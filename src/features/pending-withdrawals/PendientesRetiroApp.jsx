@@ -111,6 +111,8 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
               {filteredMovements.length}
             </div>
           </div>
+        </div>
+          </div>
 
           {/* Filtros y búsqueda */}
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -138,6 +140,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
               <option value="pendiente_entrega">Pendiente de entrega</option>
             </select>
             </div>
+          </div>
           </div>
 
           {/* Lista de operaciones pendientes */}
