@@ -26,7 +26,7 @@ const SidebarTooltip = memo(({ children, text, isVisible, position }) => {
   return (
     <div className="relative group">
       {children}
-      <div className="fixed z-50 px-4 py-2.5 text-sm text-white sidebar-tooltip rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
+      <div className="fixed z-50 px-4 py-2.5 text-sm text-white sidebar-tooltip rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap"
            style={{
              left: '80px',
              top: position?.y ? `${position.y}px` : '50%',
