@@ -24,7 +24,7 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
   const buttonRef = useRef(null);
   
   const buttonClasses = useMemo(() => `
-    w-full flex items-center ${isSidebarOpen ? 'gap-3 p-3' : 'gap-0 p-2 justify-center'} rounded-lg transition-all duration-200 relative
+    w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 relative ${!isSidebarOpen ? 'justify-center' : ''}
     ${isActive
       ? 'menu-item-active'
       : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'
