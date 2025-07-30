@@ -320,7 +320,6 @@ const WelcomePage = ({ onNavigate }) => (
     </div>
   </div>
 );
-});
 
 NavigationApp.displayName = 'NavigationApp';
 
