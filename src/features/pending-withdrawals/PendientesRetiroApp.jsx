@@ -240,6 +240,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
           ))}
         </div>
       )}
+          </div>
         </div>
       </div>
     </div>
