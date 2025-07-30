@@ -92,7 +92,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       transition-all duration-300 ease-in-out
     `}>
       {/* Menú de navegación - ocupa todo el espacio */}
-      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto pt-20`}>
+      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto pt-24`}>
         {menuItems.map((item) => (
           <MenuItem
             key={item.id}
@@ -234,7 +234,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
           
           {/* Contenido de la página - Solo esta área hace scroll */}
           <main className="flex-1 content-scrollable main-content-scroll">
-            <div className="p-4 lg:p-6 pt-20">
+            <div className="p-4 lg:p-6 pt-24">
               {children}
             </div>
           </main>
