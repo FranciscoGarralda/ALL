@@ -19,81 +19,43 @@ import {
 import FixedHeader from './FixedHeader';
 import Footer from './Footer';
 
-/** COMPONENTE DE TOOLTIP PERSONALIZADO PARA SIDEBAR */
-const SidebarTooltip = memo(({ children, text, isVisible, position }) => {
-  if (!isVisible || !text) return children;
-  
-  return (
-    <div className="relative group">
-      {children}
-      <div className="fixed z-50 px-4 py-2.5 text-sm text-white sidebar-tooltip rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-           style={{
-             left: '80px',
-             top: position?.y ? `${position.y}px` : '50%',
-             transform: 'translateY(-50%)'
-           }}>
-        {text}
-        <div className="absolute left-0 top-1/2 transform -translate-x-1 -translate-y-1/2 sidebar-tooltip-arrow">
-          <div className="w-0 h-0 border-t-[6px] border-b-[6px] border-r-[8px] border-transparent border-r-gray-700"></div>
-        </div>
-      </div>
-    </div>
-  );
-});
 
-SidebarTooltip.displayName = 'SidebarTooltip';
 
-/** COMPONENTE DE ELEMENTO DEL MENÚ OPTIMIZADO */
+/** COMPONENTE DE ELEMENTO DEL MENÚ CON TOOLTIP SIMPLE */
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
-  const [tooltipPosition, setTooltipPosition] = useState(null);
-  const buttonRef = useRef(null);
-  
   const buttonClasses = useMemo(() => `
     w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 relative ${!isSidebarOpen ? 'justify-center' : ''}
     ${isActive
       ? 'menu-item-active'
       : 'text-gray-700 hover:menu-item-hover active:bg-blue-100'
     }
+    ${!isSidebarOpen ? 'group' : ''}
     touch-manipulation select-none
   `, [isActive, isSidebarOpen]);
 
-  const handleMouseEnter = useCallback(() => {
-    if (!isSidebarOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setTooltipPosition({ y: rect.top + (rect.height / 2) });
-    }
-  }, [isSidebarOpen]);
-
-  const handleMouseLeave = useCallback(() => {
-    setTooltipPosition(null);
-  }, []);
-
-  const buttonElement = (
-    <button
-      ref={buttonRef}
-      className={buttonClasses}
-      onClick={onClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      aria-label={!isSidebarOpen ? title : undefined}
-    >
-      <Icon size={20} className="flex-shrink-0" />
-      {isSidebarOpen && (
-        <span className="text-sm font-medium truncate transition-all duration-200">
-          {title}
-        </span>
-      )}
-    </button>
-  );
-
   return (
-    <SidebarTooltip 
-      text={title} 
-      isVisible={!isSidebarOpen} 
-      position={tooltipPosition}
-    >
-      {buttonElement}
-    </SidebarTooltip>
+    <div className="relative">
+      <button
+        className={buttonClasses}
+        onClick={onClick}
+        aria-label={!isSidebarOpen ? title : undefined}
+      >
+        <Icon size={20} className="flex-shrink-0" />
+        {isSidebarOpen && (
+          <span className="text-sm font-medium truncate transition-all duration-200">
+            {title}
+          </span>
+        )}
+        
+        {/* Tooltip simple - solo aparece cuando sidebar cerrado */}
+        {!isSidebarOpen && (
+          <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-4 py-2.5 bg-gray-800 text-white text-sm rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">
+            {title}
+            <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-800"></div>
+          </div>
+        )}
+      </button>
+    </div>
   );
 });
 
