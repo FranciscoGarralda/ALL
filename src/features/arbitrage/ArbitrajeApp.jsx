@@ -14,7 +14,7 @@ import {
   Calculator,
   Clock
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
 
@@ -270,26 +270,6 @@ function ArbitrajeApp({ movements, onNavigate }) {
                       }}
                     />
                     <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip 
-                      formatter={(value, name) => [
-                        formatAmountWithCurrency(value, name), 
-                        `Arbitraje ${name}`
-                      ]}
-                      labelFormatter={(label) => {
-                        const [year, month] = label.split('-');
-                        const date = new Date(year, month - 1);
-                        return date.toLocaleDateString('es-ES', { 
-                          year: 'numeric', 
-                          month: 'long' 
-                        });
-                      }}
-                      contentStyle={{
-                        backgroundColor: '#fff',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '8px',
-                        fontSize: '12px'
-                      }}
-                    />
                     <Legend />
                     {allCurrenciesInArbitrage.map((currency, index) => (
                       <Bar 

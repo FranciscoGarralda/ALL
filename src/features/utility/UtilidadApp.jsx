@@ -14,7 +14,7 @@ import {
   Activity,
   Clock
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
 import { FormInput, formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
 // import { handleBusinessLogicError } from '../../shared/services/errorHandler';
@@ -559,26 +559,6 @@ function UtilidadApp({ movements, onNavigate }) {
                       }}
                     />
                     <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip 
-                      formatter={(value, name) => [
-                        formatAmountWithCurrency(value, name.split('_')[0]), 
-                        name.split('_')[1]
-                      ]}
-                      labelFormatter={(label) => {
-                        const [year, month] = label.split('-');
-                        const date = new Date(year, month - 1);
-                        return date.toLocaleDateString('es-ES', { 
-                          year: 'numeric', 
-                          month: 'long' 
-                        });
-                      }}
-                      contentStyle={{
-                        backgroundColor: '#fff',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '8px',
-                        fontSize: '12px'
-                      }}
-                    />
                     <Legend />
                     {allCurrenciesInUtility.map((currency, index) => (
                       <Bar 
