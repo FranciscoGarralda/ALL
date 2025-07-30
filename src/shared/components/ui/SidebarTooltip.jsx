@@ -7,8 +7,8 @@ const SidebarTooltip = ({ children, content, disabled = false }) => {
     if (disabled) return;
     
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = rect.right + 12; // 12px a la derecha del elemento
-    const y = rect.top + (rect.height / 2) - 20; // Centrado verticalmente
+    const x = rect.right + 8; // 8px a la derecha del contenedor
+    const y = rect.top + (rect.height / 2) - 18; // Centrado verticalmente (ajustado)
     
     setTooltip({ visible: true, x, y });
   }, [disabled]);
@@ -22,7 +22,7 @@ const SidebarTooltip = ({ children, content, disabled = false }) => {
       <div
         onMouseEnter={showTooltip}
         onMouseLeave={hideTooltip}
-        style={{ display: 'contents' }}
+        className="w-full"
       >
         {children}
       </div>
@@ -51,14 +51,14 @@ const SidebarTooltip = ({ children, content, disabled = false }) => {
           <div
             style={{
               position: 'absolute',
-              left: '-6px',
+              left: '-5px',
               top: '50%',
               transform: 'translateY(-50%)',
               width: 0,
               height: 0,
-              borderTop: '6px solid transparent',
-              borderBottom: '6px solid transparent',
-              borderRight: '6px solid #667eea',
+              borderTop: '5px solid transparent',
+              borderBottom: '5px solid transparent',
+              borderRight: '5px solid #667eea',
               filter: 'drop-shadow(-1px 0 1px rgba(0, 0, 0, 0.1))'
             }}
           />
