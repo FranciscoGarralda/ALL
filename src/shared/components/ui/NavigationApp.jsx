@@ -19,8 +19,8 @@ import {
 import FixedHeader from './FixedHeader';
 import Footer from './Footer';
 
-/** COMPONENTE DE TOOLTIP PERSONALIZADO */
-const Tooltip = memo(({ children, text, isVisible, position }) => {
+/** COMPONENTE DE TOOLTIP PERSONALIZADO PARA SIDEBAR */
+const SidebarTooltip = memo(({ children, text, isVisible, position }) => {
   if (!isVisible || !text) return children;
   
   return (
@@ -41,7 +41,7 @@ const Tooltip = memo(({ children, text, isVisible, position }) => {
   );
 });
 
-Tooltip.displayName = 'Tooltip';
+SidebarTooltip.displayName = 'SidebarTooltip';
 
 /** COMPONENTE DE ELEMENTO DEL MENÚ OPTIMIZADO */
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
@@ -87,13 +87,13 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
   );
 
   return (
-    <Tooltip 
+    <SidebarTooltip 
       text={title} 
       isVisible={!isSidebarOpen} 
       position={tooltipPosition}
     >
       {buttonElement}
-    </Tooltip>
+    </SidebarTooltip>
   );
 });
 
@@ -207,7 +207,6 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
   }, [isSidebarOpen]);
 
   // Prevent body scroll when mobile sidebar is open
-  // Also prevent horizontal scroll when tooltips appear on collapsed menu
   useEffect(() => {
     if (isMobile && isSidebarOpen) {
       document.body.style.overflow = 'hidden';
@@ -215,7 +214,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
         document.body.style.overflow = 'unset';
       };
     } else if (!isSidebarOpen && !isMobile) {
-      // Prevent horizontal scroll when tooltips appear
+      // Prevent horizontal scroll
       document.body.style.overflowX = 'hidden';
       return () => {
         document.body.style.overflowX = 'unset';
