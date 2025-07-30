@@ -92,8 +92,9 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
   return (
     <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
       <div className="max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="mb-6">
+        <div className="card">
+          {/* Header */}
+          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center">
@@ -110,10 +111,11 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
               {filteredMovements.length}
             </div>
           </div>
-        </div>
+          </div>
 
-        {/* Filtros y búsqueda */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          {/* Filtros y búsqueda */}
+          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+            <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -136,11 +138,11 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
               <option value="pendiente_retiro">Pendiente de retiro</option>
               <option value="pendiente_entrega">Pendiente de entrega</option>
             </select>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Lista de operaciones pendientes */}
+          {/* Lista de operaciones pendientes */}
+          <div className="p-3 sm:p-4 lg:p-6">
       {filteredMovements.length === 0 ? (
         <div className="text-center py-12">
           <Clock className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -239,6 +241,8 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
           ))}
         </div>
       )}
+          </div>
+        </div>
       </div>
     </div>
   );
