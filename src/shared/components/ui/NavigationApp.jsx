@@ -233,6 +233,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
   );
 });
 
+NavigationApp.displayName = 'NavigationApp';
+
 /** PÁGINA DE BIENVENIDA */
 const WelcomePage = ({ onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4 lg:p-8">
@@ -320,9 +322,6 @@ const WelcomePage = ({ onNavigate }) => (
     </div>
   </div>
 );
-});
-
-NavigationApp.displayName = 'NavigationApp';
 
 /** PÁGINA NO ENCONTRADA */
 const NotFoundPage = ({ onNavigate }) => (
