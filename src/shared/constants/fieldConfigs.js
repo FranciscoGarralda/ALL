@@ -143,7 +143,7 @@ export const specificFieldsConfig = {
           { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
         ],
         [
-          { label: 'Cuenta', name: 'cuenta', type: 'cuenta-buttons', required: true, gridCols: 'col-span-2' }
+          { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
         ],
         [
           { label: 'Comisión (%)', name: 'comisionPorcentaje', type: 'number', placeholder: '0.00', gridCols: 'col-span-1' },
@@ -153,7 +153,7 @@ export const specificFieldsConfig = {
           { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-2' }
         ],
         [
-          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'cuenta-buttons', gridCols: 'col-span-2', readOnly: true, calculated: true }
+          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'wallet-buttons', gridCols: 'col-span-2', readOnly: true, calculated: true }
         ],
         [
           { label: `${formData.subOperacion || 'Ingreso/Egreso'} Real`, name: 'montoReal', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
@@ -168,9 +168,11 @@ export const specificFieldsConfig = {
   SOCIOS_SHARED: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true },
-        { label: 'Cuenta', name: 'cuenta', type: 'select', options: cuentas, required: true }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+      ],
+      [
+        { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
         { 
@@ -182,7 +184,8 @@ export const specificFieldsConfig = {
             { value: 'socio1', label: 'Socio 1' }, 
             { value: 'socio2', label: 'Socio 2' }
           ],
-          required: true
+          required: true,
+          gridCols: 'col-span-2'
         }
       ]
     ],
@@ -194,15 +197,17 @@ export const specificFieldsConfig = {
   AJUSTE: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true },
-        { label: 'Cuenta', name: 'cuenta', type: 'select', options: cuentas, required: true }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Motivo (obligatorio)', name: 'detalle', type: 'text', placeholder: 'Descripción del ajuste...', required: true }
+        { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Autorizado por', name: 'por', type: 'select', options: socios, required: true }
+        { label: 'Motivo (obligatorio)', name: 'detalle', type: 'text', placeholder: 'Descripción del ajuste...', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Autorizado por', name: 'por', type: 'select', options: socios, required: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: false,
@@ -213,15 +218,17 @@ export const specificFieldsConfig = {
   GASTO: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true },
-        { label: 'Cuenta', name: 'cuenta', type: 'select', options: cuentas, required: true }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Motivo (obligatorio)', name: 'detalle', type: 'text', placeholder: 'Descripción del gasto...', required: true }
+        { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Autorizado por', name: 'por', type: 'select', options: socios, required: true }
+        { label: 'Motivo (obligatorio)', name: 'detalle', type: 'text', placeholder: 'Descripción del gasto...', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Autorizado por', name: 'por', type: 'select', options: socios, required: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: false,
@@ -232,16 +239,18 @@ export const specificFieldsConfig = {
   PRESTAMISTAS_PRESTAMO: {
     groups: (prestamistaClients = prestamistaClientsDefault) => [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: '% Interés Anual', name: 'interes', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Lapso (días)', name: 'lapso', type: 'number', placeholder: '30', required: true }
+        { label: '% Interés Anual', name: 'interes', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Lapso (días)', name: 'lapso', type: 'number', placeholder: '30', required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Cuenta', name: 'cuenta', type: 'select', options: cuentas, required: true },
-        { label: 'Cliente', name: 'cliente', type: 'select', options: prestamistaClients, required: true }
+        { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Cliente', name: 'cliente', type: 'select', options: prestamistaClients, required: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: false,
@@ -265,12 +274,14 @@ export const specificFieldsConfig = {
   PRESTAMISTAS_RETIRO: {
     groups: (prestamistaClients = prestamistaClientsDefault) => [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true },
-        { label: 'Cuenta', name: 'cuenta', type: 'select', options: cuentas, required: true }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Cliente', name: 'cliente', type: 'select', options: prestamistaClients, required: true }
+        { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Cliente', name: 'cliente', type: 'select', options: prestamistaClients, required: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: false,
@@ -281,21 +292,21 @@ export const specificFieldsConfig = {
   TRANSFERENCIA: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Cuenta de Salida', name: 'cuentaSalida', type: 'select', options: cuentas, required: true }
+        { label: 'Cuenta de Salida', name: 'cuentaSalida', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Cuenta de Ingreso', name: 'cuentaIngreso', type: 'select', options: cuentas, required: true }
+        { label: 'Cuenta de Ingreso', name: 'cuentaIngreso', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Comisión (opcional)', name: 'comision', type: 'number', placeholder: '0.00' },
-        { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas }
+        { label: 'Comisión (opcional)', name: 'comision', type: 'number', placeholder: '0.00', gridCols: 'col-span-1' },
+        { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'select', options: cuentas }
+        { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'wallet-buttons', gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: false,

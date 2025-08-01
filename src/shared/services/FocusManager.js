@@ -84,8 +84,7 @@ class FocusManager {
       );
 
       // Solo activar si NO estamos en un elemento interactivo y NO está activo
-      // Y si se presiona Ctrl+flecha (combinación específica para activar navegación)
-      if (!this.isActive && !isInteractiveElement && this.elements.length > 0 && event.ctrlKey) {
+      if (!this.isActive && !isInteractiveElement && this.elements.length > 0) {
         event.preventDefault();
         event.stopPropagation();
         this.activate();
