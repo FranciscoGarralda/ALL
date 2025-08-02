@@ -153,7 +153,7 @@ export const specificFieldsConfig = {
           { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-2' }
         ],
         [
-          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'wallet-buttons', gridCols: 'col-span-2', readOnly: true, calculated: true }
+          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'wallet-buttons', gridCols: 'col-span-2', required: true }
         ],
         [
           { label: `${formData.subOperacion || 'Ingreso/Egreso'} Real`, name: 'montoReal', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }

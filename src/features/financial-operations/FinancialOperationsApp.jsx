@@ -277,10 +277,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           newState.monedaComision = newState.moneda;
         }
         
-        // Auto-completar cuenta de comisión cuando cambia la cuenta principal
-        if (field === 'cuenta') {
-          newState.cuentaComision = newState.cuenta;
-        }
+        // NO auto-completar cuenta de comisión - debe ser seleccionada manualmente
+        // if (field === 'cuenta') {
+        //   newState.cuentaComision = newState.cuenta;
+        // }
 
         // Calcular monto de comisión cuando cambia el monto o el porcentaje
         if (['monto', 'comisionPorcentaje'].includes(field)) {
