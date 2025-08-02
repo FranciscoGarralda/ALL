@@ -43,14 +43,25 @@ const CurrencyInput = forwardRef(({
       return;
     }
 
-    // Format the input
-    const { formatted, raw } = formatCurrencyInput(inputValue, currency);
-    
-    // Update display
-    setDisplayValue(formatted);
-    
-    // Send raw numeric value to parent
-    onChange(raw);
+    // While focused, allow more flexible input without immediate formatting
+    if (isFocused) {
+      // Just clean the input but don't format yet
+      const cleanValue = inputValue.replace(/[^\d.,]/g, '');
+      setDisplayValue(cleanValue);
+      
+      // Try to parse and send the raw value
+      const rawValue = parseCurrencyInput(cleanValue);
+      onChange(rawValue);
+    } else {
+      // Format the input when not focused
+      const { formatted, raw } = formatCurrencyInput(inputValue, currency);
+      
+      // Update display
+      setDisplayValue(formatted);
+      
+      // Send raw numeric value to parent
+      onChange(raw);
+    }
   };
 
   // Handle focus
@@ -58,7 +69,9 @@ const CurrencyInput = forwardRef(({
     setIsFocused(true);
     // When focused, show raw value for easier editing (only if not readOnly)
     if (value && !readOnly) {
-      setDisplayValue(value);
+      // Convert formatted value back to editable format
+      const rawValue = parseCurrencyInput(displayValue || value);
+      setDisplayValue(rawValue);
     }
   };
 
@@ -69,6 +82,11 @@ const CurrencyInput = forwardRef(({
     if (value && value !== '' && !readOnly) {
       const { formatted } = formatCurrencyInput(value, currency);
       setDisplayValue(formatted);
+    } else if (displayValue && !readOnly) {
+      // Format whatever is currently in the display
+      const { formatted, raw } = formatCurrencyInput(displayValue, currency);
+      setDisplayValue(formatted);
+      onChange(raw);
     }
   };
 
@@ -110,7 +128,6 @@ const CurrencyInput = forwardRef(({
         onFocus={handleFocus}
         onBlur={handleBlur}
         inputMode="decimal"
-        pattern="[0-9]*"
         placeholder={placeholder}
         readOnly={readOnly}
         required={required}
