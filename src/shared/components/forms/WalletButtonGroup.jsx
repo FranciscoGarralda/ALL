@@ -16,14 +16,9 @@ export const WalletButtonGroup = React.forwardRef(({
     let newValue = value || '';
     
     if (buttonType === 'socio') {
-      // Si es socio, mantener el tipo actual SOLO si ya hay uno seleccionado
-      if (newValue) {
-        const currentType = newValue.includes('digital') ? 'digital' : 'efectivo';
-        newValue = buttonValue.replace('_efectivo', `_${currentType}`);
-      } else {
-        // Si no hay valor, solo seleccionar el socio sin tipo automático
-        newValue = buttonValue;
-      }
+      // NO auto-seleccionar tipo - solo seleccionar el socio
+      const socioName = buttonValue.replace('_efectivo', '');
+      newValue = socioName;
     } else {
       // Si es tipo, mantener el socio actual SOLO si ya hay uno seleccionado
       if (newValue) {
