@@ -255,7 +255,7 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
                         )}
 
                         {/* Información de contacto */}
-                        <div className="mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-warning-200">
+                        <div className="pt-2 sm:pt-3 border-t border-warning-200">
                           <div className="flex items-center gap-1 text-xs text-warning-700 mb-1">
                             <Phone size={12} />
                             <span className="truncate">{summaryData.client.telefono}</span>

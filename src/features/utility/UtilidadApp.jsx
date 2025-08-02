@@ -503,7 +503,7 @@ function UtilidadApp({ movements, onNavigate }) {
                         </div>
                       </div>
                       
-                                              <div className="pt-2 border-t border-gray-200 mt-2">
+                                              <div className="pt-2 border-t border-gray-200">
                           <div className="flex justify-between items-center">
                             <span className="text-xs text-gray-500">Valuación</span>
                             <span className="font-medium text-primary-600 text-sm">
@@ -511,7 +511,7 @@ function UtilidadApp({ movements, onNavigate }) {
                             </span>
                           </div>
                           {data.utilidadPorVenta !== 0 && (
-                            <div className="mt-1">
+                            <div>
                               <div className="flex justify-between text-xs">
                                 <span className="text-gray-500">Util. Venta</span>
                                 <span className="text-emerald-600 font-medium">

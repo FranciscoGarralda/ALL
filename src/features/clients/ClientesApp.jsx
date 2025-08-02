@@ -573,7 +573,7 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
 
               <div className="bg-success-50 rounded-lg p-3 sm:p-4">
                 <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-success-600 truncate">
-                  ${((cliente.volumenTotal || 0).toFixed(0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+                  {formatAmountWithCurrency(cliente.volumenTotal || 0, 'PESO', { showSymbol: false, decimals: 0 })}
                 </div>
                 <div className="text-xs sm:text-sm text-success-600 font-medium">Volumen Total</div>
               </div>

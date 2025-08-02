@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Plus, X } from 'lucide-react';
 import { safeParseFloat, safeArray } from '../../services/safeOperations';
+import { formatAmountWithCurrency } from '../../services/formatters';
 import FormSelect from './FormSelect';
 import CurrencyInput from './CurrencyInput';
 
@@ -146,13 +147,13 @@ const MixedPaymentGroup = ({
           <div>
             <span className="text-gray-600">Total Pagos:</span>
             <span className="ml-2 font-medium text-gray-900">
-              ${totalPayments.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+              {formatAmountWithCurrency(totalPayments, currency, { showSymbol: false })}
             </span>
           </div>
           <div>
             <span className="text-gray-600">Esperado:</span>
             <span className="ml-2 font-medium text-gray-900">
-              ${totalExpected.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+              {formatAmountWithCurrency(totalExpected, currency, { showSymbol: false })}
             </span>
           </div>
         </div>
@@ -160,7 +161,7 @@ const MixedPaymentGroup = ({
         {!isBalanced && (
           <div className="text-sm">
             <span className={`font-medium ${difference > 0 ? 'text-red-600' : 'text-green-600'}`}>
-              {difference > 0 ? 'Falta:' : 'Sobra:'} ${Math.abs(difference).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+              {difference > 0 ? 'Falta:' : 'Sobra:'} {formatAmountWithCurrency(Math.abs(difference), currency, { showSymbol: false })}
             </span>
           </div>
         )}

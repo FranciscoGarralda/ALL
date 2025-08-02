@@ -401,7 +401,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
 
                       {/* Información adicional de arbitraje */}
                       {(mov.tc || mov.tcVenta) && (
-                        <div className="border-t pt-2 mt-2">
+                        <div className="border-t pt-2">
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs">
                             {mov.tc && (
                               <div>
@@ -421,7 +421,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                     </div>
 
                     {/* Estado de la operación */}
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-3 pt-3 border-t border-indigo-200 gap-2">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-3 border-t border-indigo-200 gap-2">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                         mov.estado === 'realizado' 
                           ? 'bg-success-100 text-success-700' 
