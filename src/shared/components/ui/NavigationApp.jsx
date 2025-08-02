@@ -22,7 +22,7 @@ import SidebarTooltip from './SidebarTooltip';
 
 
 
-/** COMPONENTE DE ELEMENTO DEL MENÚ SIMPLE */
+/** COMPONENTE DE ELEMENTO DEL MENÚ MEJORADO */
 const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
 
   return (
@@ -30,17 +30,35 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
       <button
         className={`
           w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
+          transform origin-left group relative overflow-hidden
           ${!isSidebarOpen ? 'justify-center' : ''}
-          ${isActive ? 'menu-item-active' : 'text-gray-700 hover:menu-item-hover'}
+          ${isActive 
+            ? 'bg-primary-600 text-white shadow-lg scale-105' 
+            : 'text-gray-700 hover:bg-primary-50 hover:text-primary-700 hover:scale-102'
+          }
+          ${!isActive && 'hover:translate-x-1'}
           touch-manipulation select-none
+          focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
         `}
         onClick={onClick}
+        aria-current={isActive ? 'page' : undefined}
       >
-        <Icon size={20} className="flex-shrink-0" />
+        {/* Efecto de onda */}
+        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+        
+        <Icon size={20} className={`
+          flex-shrink-0 transition-all duration-200 relative z-10
+          ${!isActive && 'group-hover:rotate-12'}
+        `} />
         {isSidebarOpen && (
-          <span className="text-sm font-medium truncate">
+          <span className="text-sm font-medium truncate relative z-10">
             {title}
           </span>
+        )}
+        
+        {/* Indicador activo */}
+        {isActive && isSidebarOpen && (
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-l-full animate-pulse"></div>
         )}
       </button>
     </SidebarTooltip>

@@ -2,6 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Modern Design System Variables */
+:root {
+  /* Modern color palette */
+  --color-primary: 59 130 246;
+  --color-success: 34 197 94;
+  --color-warning: 251 146 60;
+  --color-error: 239 68 68;
+  --color-info: 59 130 246;
+  
+  /* Spacing scale */
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  
+  /* Transitions */
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+}
+
 /* Notification animations removed */
 
 /* Keyboard Navigation Styles */
@@ -212,15 +248,24 @@
   }
 }
 
-
-
-/* Custom component styles */
+/* Modern Component Improvements */
 @layer components {
-  /* Button styles */
+  /* Enhanced Button styles with better hover states */
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 px-5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    transform: translateY(0);
   }
   
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  .btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+    @apply shadow-sm;
+  }
+  
+  /* Button styles */
   .btn-secondary {
     @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
   }
@@ -237,11 +282,26 @@
     @apply bg-error-600 hover:bg-error-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-error-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   
-  /* Card styles */
+  /* Enhanced Card styles with better shadows and borders */
   .card {
-    @apply bg-white rounded-xl shadow-soft border border-gray-100;
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 transition-shadow duration-200;
   }
   
+  .card:hover {
+    @apply shadow-md;
+  }
+  
+  .card-interactive {
+    @apply cursor-pointer hover:shadow-lg hover:border-gray-200;
+    transform: translateY(0);
+    transition: all 0.2s ease;
+  }
+  
+  .card-interactive:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Card styles */
   .card-body {
     @apply p-4 sm:p-6;
   }
@@ -254,17 +314,19 @@
     @apply px-4 py-3 sm:px-6 sm:py-4 border-t border-gray-100 bg-gray-50 rounded-b-xl;
   }
   
-  /* Form styles */
-  .form-section {
-    @apply space-y-4;
-  }
-  
-  .form-group {
-    @apply space-y-2;
-  }
-  
+  /* Modern Form Inputs with better focus states */
   .form-input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 placeholder-gray-400;
+    @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-gray-900;
+    background-color: #fafafa;
+  }
+  
+  .form-input:focus {
+    @apply bg-white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .form-input:hover:not(:focus):not(:disabled) {
+    @apply border-gray-400;
   }
   
   .form-input:disabled {
@@ -319,6 +381,27 @@
   
   .text-responsive-xl {
     @apply text-xl sm:text-2xl;
+  }
+  
+  /* Modern Status Badges */
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200;
+  }
+  
+  .status-success {
+    @apply status-badge bg-success-50 text-success-700 border border-success-200;
+  }
+  
+  .status-warning {
+    @apply status-badge bg-warning-50 text-warning-700 border border-warning-200;
+  }
+  
+  .status-error {
+    @apply status-badge bg-error-50 text-error-700 border border-error-200;
+  }
+  
+  .status-info {
+    @apply status-badge bg-primary-50 text-primary-700 border border-primary-200;
   }
   
   /* Status indicators */
@@ -471,6 +554,59 @@
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
   }
+
+  /* Smooth transitions for interactive elements */
+  .transition-smooth {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .transition-bounce {
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  /* Modern hover effects */
+  .hover-lift {
+    @apply transition-transform duration-200 hover:-translate-y-0.5;
+  }
+  
+  .hover-grow {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+  
+  .hover-glow {
+    @apply transition-shadow duration-200 hover:shadow-lg hover:shadow-primary-500/25;
+  }
+  
+  /* Glassmorphism effects */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+  
+  .glass-dark {
+    @apply bg-gray-900/80 backdrop-blur-md border border-gray-700/20;
+  }
+  
+  /* Modern gradients */
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600;
+  }
+  
+  .gradient-success {
+    @apply bg-gradient-to-r from-success-500 to-success-600;
+  }
+  
+  .gradient-warm {
+    @apply bg-gradient-to-r from-orange-400 to-pink-500;
+  }
+  
+  /* Improved focus states */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  
+  .focus-within-ring {
+    @apply focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2;
+  }
 }
 
 /* Animations */
@@ -620,6 +756,48 @@
     max-width: 100%;
     box-sizing: border-box;
   }
+
+  /* Better touch feedback */
+  .btn-primary,
+  .btn-secondary,
+  .btn-success,
+  .btn-warning,
+  .btn-error {
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Ripple effect on touch */
+  .btn-primary::after,
+  .btn-secondary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  .btn-primary:active::after,
+  .btn-secondary:active::after {
+    width: 300px;
+    height: 300px;
+  }
+  
+  /* Improved mobile navigation */
+  .mobile-nav-item {
+    @apply relative overflow-hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .mobile-nav-item:active {
+    @apply bg-gray-100;
+  }
 }
 
 /* iOS Safari specific fixes */
@@ -706,4 +884,12 @@
 .content-scrollable {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+}
+
+/* Dark mode support preparation */
+@media (prefers-color-scheme: dark) {
+  /* Ready for dark mode implementation */
+  :root {
+    --color-scheme: dark;
+  }
 }
