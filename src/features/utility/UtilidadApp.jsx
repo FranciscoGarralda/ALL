@@ -17,6 +17,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
 import { FormInput, formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
+import { getTodayLocalDate, getCurrentYearMonth, isCurrentMonth, isToday } from '../../shared/utils/dateUtils';
 // import { handleBusinessLogicError } from '../../shared/services/errorHandler';
 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE UTILIDAD */
@@ -207,11 +208,11 @@ function UtilidadApp({ movements, onNavigate }) {
 
   // Utilidad del mes actual - solo VENTA por divisa
   const currentMonthUtility = useMemo(() => {
-    const currentYearMonth = new Date().toISOString().substring(0, 7);
+    const currentYearMonth = getCurrentYearMonth();
     const monthlyVenta = {};
 
     processedMovements
-      .filter(mov => mov.fecha && mov.fecha.substring(0, 7) === currentYearMonth && mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA')
+      .filter(mov => mov.fecha && isCurrentMonth(mov.fecha) && mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA')
       .forEach(mov => {
         // Usar moneda TC original (donde se deposita la ganancia)
         const monedaUtilidad = mov.monedaTC || 'PESO';
@@ -223,11 +224,11 @@ function UtilidadApp({ movements, onNavigate }) {
 
   // Utilidad de hoy - solo VENTA por divisa
   const todayUtility = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayLocalDate();
     const dailyVenta = {};
 
     processedMovements
-      .filter(mov => mov.fecha === today && mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA')
+      .filter(mov => isToday(mov.fecha) && mov.gananciaCalculada !== 0 && mov.subOperacion === 'VENTA')
       .forEach(mov => {
         // Usar moneda TC original (donde se deposita la ganancia)
         const monedaUtilidad = mov.monedaTC || 'PESO';

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
+import { getTodayLocalDate, isToday } from '../../shared/utils/dateUtils';
 
 /** COMPONENTE PRINCIPAL DE GASTOS */
 function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovementDetail, onNavigate }) {
@@ -58,11 +59,11 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
 
   // Calcular gastos del día actual
   const todayExpensesByCurrency = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayLocalDate();
     const daily = {};
 
     allExpenses.forEach(mov => {
-      if (mov.fecha === today) {
+      if (isToday(mov.fecha)) {
         const currency = mov.moneda;
         if (currency) {
           daily[currency] = (daily[currency] || 0) + safeParseFloat(mov.monto);
