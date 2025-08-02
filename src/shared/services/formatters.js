@@ -8,12 +8,15 @@
 import { safeParseFloat } from './safeOperations.js';
 export const formatCurrencyInput = (value, currency = 'PESO') => {
   // Remove all non-numeric characters except decimal point and comma
-  const cleanValue = value.toString().replace(/[^\d.,]/g, '');
+  let cleanValue = value.toString().replace(/[^\d.,]/g, '');
   
   // Handle empty or invalid input
   if (!cleanValue || cleanValue === '.' || cleanValue === ',') {
     return { formatted: '', raw: '' };
   }
+  
+  // Convert comma to dot for consistent parsing (user can input either)
+  cleanValue = cleanValue.replace(',', '.');
   
   // Simple parsing
   const number = safeParseFloat(cleanValue, 0);
@@ -23,7 +26,7 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
     return { formatted: '', raw: '' };
   }
   
-  // Format with Spanish style: 1.290.500,75
+  // Format with thousands separators as spaces and decimal separator as dot: 1 290 500.75
   const absNumber = Math.abs(number);
   const isNegative = number < 0;
   
@@ -31,13 +34,13 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
   const fixedNumber = absNumber.toFixed(2);
   const [integerPart, decimalPart] = fixedNumber.split('.');
   
-  // Add thousand separators with dots
-  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  // Add thousand separators with spaces
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   
-  // Build the number with comma for decimals
+  // Build the number with dot for decimals
   let formattedNumber = formattedInteger;
   if (decimalPart && parseInt(decimalPart) > 0) {
-    formattedNumber += ',' + decimalPart;
+    formattedNumber += '.' + decimalPart;
   }
   
   // Add negative sign if needed
@@ -63,26 +66,14 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
 export const parseCurrencyInput = (formattedValue) => {
   if (!formattedValue) return '';
   
-  // Remove currency symbols and spaces (including US$, €, etc.)
-  const cleaned = formattedValue.replace(/[US$€£¥₿\s]/g, '');
+  // Remove currency symbols (but keep spaces and dots for parsing)
+  const cleaned = formattedValue.replace(/[US$€£¥₿]/g, '');
   
-  // Handle Spanish format: 1.290.500,75 -> 1290500.75
+  // Handle new format: 1 290 500.75 -> 1290500.75
   let numericValue = cleaned;
   
-  // If there's a comma, it's the decimal separator
-  if (cleaned.includes(',')) {
-    // Split by comma to separate integer and decimal parts
-    const parts = cleaned.split(',');
-    if (parts.length === 2) {
-      // Remove dots from integer part (thousands separators)
-      const integerPart = parts[0].replace(/\./g, '');
-      const decimalPart = parts[1];
-      numericValue = integerPart + '.' + decimalPart;
-    }
-  } else {
-    // No comma, so dots are thousands separators - remove them
-    numericValue = cleaned.replace(/\./g, '');
-  }
+  // Remove spaces (thousands separators) but keep dots
+  numericValue = numericValue.replace(/\s/g, '');
   
   const number = safeParseFloat(numericValue, 0);
   return isNaN(number) ? '' : number.toString();
@@ -146,7 +137,7 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
     return showSymbol ? `${CURRENCY_SYMBOLS[currency] || '$'}0` : '0';
   }
 
-  // Format with Spanish style: 1.290.500,75
+  // Format with thousands separators as spaces and decimal separator as dot: 1 290 500.75
   const absAmount = Math.abs(numAmount);
   const isNegative = numAmount < 0;
   
@@ -154,15 +145,15 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
   const fixedNumber = absAmount.toFixed(decimals);
   const [integerPart, decimalPart] = fixedNumber.split('.');
   
-  // Add thousand separators with dots
-  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  // Add thousand separators with spaces
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   
-  // Build the number with comma for decimals
+  // Build the number with dot for decimals
   let formattedNumber = formattedInteger;
   if (decimals > 0 && decimalPart && parseInt(decimalPart) > 0) {
-    formattedNumber += ',' + decimalPart;
+    formattedNumber += '.' + decimalPart;
   } else if (decimals > 0) {
-    formattedNumber += ',00';
+    formattedNumber += '.00';
   }
   
   // Add negative sign if needed
@@ -189,13 +180,13 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
 export const parseCurrencyAmount = (formattedAmount) => {
   if (!formattedAmount) return 0;
   
-  // Remove everything except numbers, dots and commas
-  let cleanAmount = formattedAmount.toString().replace(/[^\d.,]/g, '');
+  // Remove everything except numbers, dots and spaces
+  let cleanAmount = formattedAmount.toString().replace(/[^\d.\s]/g, '');
   
   if (!cleanAmount) return 0;
   
-  // Simple conversion: replace comma with dot
-  cleanAmount = cleanAmount.replace(',', '.');
+  // Remove spaces (thousands separators)
+  cleanAmount = cleanAmount.replace(/\s/g, '');
   
   return safeParseFloat(cleanAmount, 0);
 };
