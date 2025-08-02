@@ -61,7 +61,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
       <label className="block text-sm font-medium text-gray-700">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 w-full">
         <div className="grid grid-cols-2 gap-2 sm:col-span-2">
           <button
             type="button"

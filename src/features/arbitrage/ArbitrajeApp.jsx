@@ -177,8 +177,8 @@ function ArbitrajeApp({ movements, onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6 safe-top safe-bottom pt-28 overflow-x-hidden">
+      <div className="w-full max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="card">
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">

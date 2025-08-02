@@ -163,8 +163,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28 overflow-x-hidden">
+        <div className="w-full max-w-7xl mx-auto">
           {/* Header */}
           <div className="card mb-4 sm:mb-6">
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -303,8 +303,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
   // Vista de detalle
   if (currentView === 'detail' && selectedProviderForDetail) {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28 overflow-x-hidden">
+        <div className="w-full max-w-7xl mx-auto">
           {/* Header con navegación */}
           <div className="card mb-4 sm:mb-6">
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -349,8 +349,9 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
               {detailedAccounts.length > 0 ? (
                 <>
                   {/* Tabla de detalles por moneda - Desktop */}
-                  <div className="overflow-x-auto -mx-3 sm:mx-0">
-                    <table className="min-w-full divide-y divide-gray-200 text-sm">
+                  {/* Tabla para desktop */}
+              <div className="hidden md:block">
+                <table className="min-w-full divide-y divide-gray-200 text-sm">
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[80px]">
@@ -441,8 +442,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                     </table>
                   </div>
 
-                  {/* Cards de detalles por moneda - Mobile */}
-                  <div className="sm:hidden space-y-3">
+                  {/* Cards de detalles por moneda - Mobile y Tablet */}
+                  <div className="md:hidden space-y-3">
                     {detailedAccounts.map((account, index) => (
                       <div key={`${account.proveedor}-${account.moneda}-${index}`} className="card">
                         <div className="p-3 space-y-2">

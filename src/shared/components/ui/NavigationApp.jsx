@@ -173,7 +173,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
   }, [isMobile, isSidebarOpen]);
 
   return (
-    <div className="layout-fixed flex flex-col bg-gray-50">
+    <div className="layout-fixed flex flex-col bg-gray-50 overflow-x-hidden">
       {/* Header fijo */}
       <FixedHeader 
         isSidebarOpen={isSidebarOpen}
@@ -182,8 +182,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
         showMenuButton={true}
       />
 
-      {/* Layout principal con altura fija */}
-      <div className="flex flex-1 overflow-hidden">
+              {/* Layout principal con altura fija */}
+        <div className="flex flex-1 overflow-hidden w-full max-w-full">
         {/* Sidebar - Solo desktop (lg+), siempre fija */}
         <div className="hidden lg:block">
           <MainMenu 
@@ -207,7 +207,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
         )}
         
         {/* Contenido principal con flex-1 y scroll */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden w-full max-w-full">
           {/* Overlay para móvil cuando el sidebar está abierto */}
           {isSidebarOpen && isMobile && (
             <div 

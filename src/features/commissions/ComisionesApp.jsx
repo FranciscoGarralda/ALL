@@ -210,8 +210,8 @@ function ComisionesApp({ movements, onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28 overflow-x-hidden">
+      <div className="w-full max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="card">
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -352,8 +352,9 @@ function ComisionesApp({ movements, onNavigate }) {
             {Object.entries(commissionsByProvider).length > 0 ? (
               <>
                 {/* Tabla para desktop */}
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
+                                  {/* Tabla para desktop */}
+                  <div className="hidden md:block">
+                    <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -406,8 +407,8 @@ function ComisionesApp({ movements, onNavigate }) {
                   </table>
                 </div>
 
-                {/* Cards para mobile */}
-                <div className="sm:hidden space-y-3">
+                                  {/* Cards para mobile y tablet */}
+                  <div className="md:hidden space-y-3">
                   {Object.entries(commissionsByProvider).map(([provider, currencies]) => {
                     const operationsCount = commissionMovements.filter(mov => 
                       (mov.proveedorCC || 'Operaciones Directas') === provider

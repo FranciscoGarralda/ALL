@@ -160,8 +160,8 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28 overflow-x-hidden">
+        <div className="w-full max-w-7xl mx-auto">
           {/* Header */}
           <div className="card mb-4 sm:mb-6">
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -405,8 +405,8 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
   const finalBalances = processedMovements.finalBalances;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28 overflow-x-hidden">
+      <div className="w-full max-w-7xl mx-auto">
         {/* Header con navegación */}
         <div className="card mb-4 sm:mb-6">
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -509,7 +509,8 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
               {processedMovements.movements.length > 0 ? (
                 <>
                   {/* Tabla para desktop */}
-                  <div className="overflow-x-auto">
+                  {/* Tabla para desktop */}
+                  <div className="hidden md:block">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
@@ -574,8 +575,8 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                     </table>
                   </div>
 
-                  {/* Cards para mobile */}
-                  <div className="sm:hidden space-y-3">
+                                      {/* Cards para mobile y tablet */}
+                    <div className="md:hidden space-y-3">
                     {processedMovements.movements.map((mov, index) => (
                       <div key={index} className="card">
                         <div className="p-3 space-y-2">
