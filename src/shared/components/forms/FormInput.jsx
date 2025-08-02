@@ -17,9 +17,12 @@ import { formatDateWithDay } from '../../services/formatters.js';
  * @param {string} props.error - Error message to display
  * @param {string} props.className - Additional CSS classes
  * @param {Object} props.inputProps - Additional input properties
+ * @param {string} props.keyboardType - Force specific keyboard: 'integer', 'decimal', or 'auto' (default)
  * 
- * Note: For type="number", automatically sets inputMode="numeric" and pattern="[0-9]*"
- * to show numeric keyboard on mobile devices
+ * Note: For type="number", automatically detects if field needs integers or decimals:
+ * - Integer fields (lapso, dias, cantidad, meses, años): inputMode="numeric", pattern="[0-9]*"
+ * - Decimal fields (others): inputMode="decimal", pattern="[0-9]*[.,]?[0-9]*"
+ * - Override with keyboardType prop if needed
  */
 const FormInput = forwardRef(({
   label,
@@ -35,6 +38,7 @@ const FormInput = forwardRef(({
   error = '',
   className = '',
   inputProps = {},
+  keyboardType = 'auto',
   onKeyDown,
   ...rest
 }, ref) => {
@@ -132,9 +136,21 @@ const FormInput = forwardRef(({
           placeholder={placeholder}
           readOnly={readOnly}
           required={required}
-          step={type === 'number' ? '0.01' : undefined}
-          inputMode={type === 'number' ? 'numeric' : undefined}
-          pattern={type === 'number' ? '[0-9]*' : undefined}
+          step={type === 'number' ? (() => {
+            if (keyboardType === 'integer') return '1';
+            if (keyboardType === 'decimal') return '0.01';
+            return name && ['lapso', 'dias', 'cantidad', 'meses', 'años'].includes(name) ? '1' : '0.01';
+          })() : undefined}
+          inputMode={type === 'number' ? (() => {
+            if (keyboardType === 'integer') return 'numeric';
+            if (keyboardType === 'decimal') return 'decimal';
+            return name && ['lapso', 'dias', 'cantidad', 'meses', 'años'].includes(name) ? 'numeric' : 'decimal';
+          })() : undefined}
+          pattern={type === 'number' ? (() => {
+            if (keyboardType === 'integer') return '[0-9]*';
+            if (keyboardType === 'decimal') return '[0-9]*[.,]?[0-9]*';
+            return name && ['lapso', 'dias', 'cantidad', 'meses', 'años'].includes(name) ? '[0-9]*' : '[0-9]*[.,]?[0-9]*';
+          })() : undefined}
           className={inputClasses}
           {...inputProps}
           {...rest}
