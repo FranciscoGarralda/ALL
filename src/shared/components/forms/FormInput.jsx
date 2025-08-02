@@ -17,6 +17,9 @@ import { formatDateWithDay } from '../../services/formatters.js';
  * @param {string} props.error - Error message to display
  * @param {string} props.className - Additional CSS classes
  * @param {Object} props.inputProps - Additional input properties
+ * 
+ * Note: For type="number", automatically sets inputMode="numeric" and pattern="[0-9]*"
+ * to show numeric keyboard on mobile devices
  */
 const FormInput = forwardRef(({
   label,
@@ -130,6 +133,8 @@ const FormInput = forwardRef(({
           readOnly={readOnly}
           required={required}
           step={type === 'number' ? '0.01' : undefined}
+          inputMode={type === 'number' ? 'numeric' : undefined}
+          pattern={type === 'number' ? '[0-9]*' : undefined}
           className={inputClasses}
           {...inputProps}
           {...rest}

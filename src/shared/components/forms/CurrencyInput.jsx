@@ -4,6 +4,7 @@ import { formatCurrencyInput, parseCurrencyInput } from '../../services/formatte
 /**
  * Currency input component with real-time formatting
  * Formats numbers as user types: 1000000 -> $1.000.000
+ * Automatically shows numeric keyboard on mobile devices
  */
 const CurrencyInput = forwardRef(({
   label,
@@ -109,7 +110,8 @@ const CurrencyInput = forwardRef(({
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        
+        inputMode="numeric"
+        pattern="[0-9]*"
         placeholder={placeholder}
         readOnly={readOnly}
         required={required}
