@@ -29,10 +29,12 @@ export const useMixedPayments = (formData, setFormData) => {
 
           if (changedPaymentIndex !== 0) {
             const sumOfOtherPaymentsExcludingFirst = updatedPayments.slice(1).reduce((sum, p) => sum + safeParseFloat(p.monto, 0), 0);
-            updatedPayments[0].monto = (expectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
+            const newFirstPaymentAmount = safeParseFloat(expectedTotal - sumOfOtherPaymentsExcludingFirst, 0);
+            updatedPayments[0].monto = newFirstPaymentAmount.toFixed(2);
           }
         }
-        newTotal = updatedPayments.reduce((sum, payment) => sum + safeParseFloat(payment.monto, 0), 0).toFixed(2);
+        const totalSum = updatedPayments.reduce((sum, payment) => sum + safeParseFloat(payment.monto, 0), 0);
+        newTotal = safeParseFloat(totalSum, 0).toFixed(2);
       }
 
       return { ...prev, mixedPayments: updatedPayments, total: newTotal };
@@ -64,7 +66,8 @@ export const useMixedPayments = (formData, setFormData) => {
       const newPayments = [...prev.mixedPayments, newPayment];
       let newTotal = prev.total;
       if (prev.walletTC === 'pago_mixto') {
-        newTotal = newPayments.reduce((sum, payment) => sum + safeParseFloat(payment.monto, 0), 0).toFixed(2);
+        const totalSum = newPayments.reduce((sum, payment) => sum + safeParseFloat(payment.monto, 0), 0);
+        newTotal = safeParseFloat(totalSum, 0).toFixed(2);
       }
       
       return {
@@ -85,14 +88,17 @@ export const useMixedPayments = (formData, setFormData) => {
       if (prev.walletTC === 'pago_mixto') {
         if (id === prev.mixedPayments[0].id && filteredPayments.length > 0) {
           const sumOfRemainingPayments = filteredPayments.slice(1).reduce((sum, p) => sum + safeParseFloat(p.monto, 0), 0);
-          filteredPayments[0].monto = (expectedTotal - sumOfRemainingPayments).toFixed(2);
+          const newFirstPaymentAmount = safeParseFloat(expectedTotal - sumOfRemainingPayments, 0);
+          filteredPayments[0].monto = newFirstPaymentAmount.toFixed(2);
         } else if (filteredPayments.length > 0) {
           const sumOfOtherPaymentsExcludingFirst = filteredPayments.slice(1).reduce((sum, p) => sum + safeParseFloat(p.monto, 0), 0);
-          filteredPayments[0].monto = (expectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
+          const newFirstPaymentAmount = safeParseFloat(expectedTotal - sumOfOtherPaymentsExcludingFirst, 0);
+          filteredPayments[0].monto = newFirstPaymentAmount.toFixed(2);
         } else {
           filteredPayments.push({ id: Date.now(), cuenta: '', monto: '' });
         }
-        newTotal = filteredPayments.reduce((sum, payment) => sum + safeParseFloat(payment.monto, 0), 0).toFixed(2);
+        const totalSum = filteredPayments.reduce((sum, payment) => sum + safeParseFloat(payment.monto, 0), 0);
+        newTotal = safeParseFloat(totalSum, 0).toFixed(2);
       }
 
       return {
@@ -110,9 +116,11 @@ export const useMixedPayments = (formData, setFormData) => {
       const expectedTotal = safeParseFloat(formData.expectedTotalForMixedPayments, 0);
 
       if (Math.abs(totalMixedPayments - expectedTotal) > 0.01) {
+        const safeTotalMixedPayments = safeParseFloat(totalMixedPayments, 0);
+        const safeExpectedTotal = safeParseFloat(expectedTotal, 0);
         return {
           isValid: false,
-          error: `El total de pagos mixtos (${totalMixedPayments.toFixed(2)}) no coincide con el valor esperado (${expectedTotal.toFixed(2)})`
+          error: `El total de pagos mixtos (${safeTotalMixedPayments.toFixed(2)}) no coincide con el valor esperado (${safeExpectedTotal.toFixed(2)})`
         };
       }
     }

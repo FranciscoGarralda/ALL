@@ -35,8 +35,9 @@ const MixedPaymentGroup = ({
 
   // Verificar si el total coincide - VERSIÓN SEGURA
   const safeExpectedTotal = safeParseFloat(totalExpected, 0);
-  const isBalanced = Math.abs(totalPayments - safeExpectedTotal) < 0.01;
-  const difference = safeExpectedTotal - totalPayments;
+  const safeTotalPayments = safeParseFloat(totalPayments, 0);
+  const isBalanced = Math.abs(safeTotalPayments - safeExpectedTotal) < 0.01;
+  const difference = safeExpectedTotal - safeTotalPayments;
 
   // Mostrar por defecto 2 pagos, máximo 4
   const paymentsToShow = Math.max(2, safePayments.length);
@@ -146,13 +147,13 @@ const MixedPaymentGroup = ({
           <div>
             <span className="text-gray-600">Total Pagos:</span>
             <span className="ml-2 font-medium text-gray-900">
-              ${totalPayments.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+              ${safeTotalPayments.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
             </span>
           </div>
           <div>
             <span className="text-gray-600">Esperado:</span>
             <span className="ml-2 font-medium text-gray-900">
-              ${totalExpected.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+              ${safeExpectedTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
             </span>
           </div>
         </div>
@@ -160,7 +161,7 @@ const MixedPaymentGroup = ({
         {!isBalanced && (
           <div className="mt-2 text-sm">
             <span className={`font-medium ${difference > 0 ? 'text-red-600' : 'text-green-600'}`}>
-              {difference > 0 ? 'Falta:' : 'Sobra:'} ${Math.abs(difference).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+              {difference > 0 ? 'Falta:' : 'Sobra:'} ${Math.abs(safeParseFloat(difference, 0)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
             </span>
           </div>
         )}
