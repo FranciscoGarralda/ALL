@@ -158,7 +158,7 @@ const MixedPaymentGroup = ({
         </div>
         
         {!isBalanced && (
-          <div className="mt-2 text-sm">
+          <div className="text-sm">
             <span className={`font-medium ${difference > 0 ? 'text-red-600' : 'text-green-600'}`}>
               {difference > 0 ? 'Falta:' : 'Sobra:'} ${Math.abs(difference).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
             </span>

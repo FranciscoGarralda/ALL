@@ -183,7 +183,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
           
           {/* Indicador de búsqueda activa */}
           {searchTerm && (
-            <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+            <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-gray-100">
               <Search size={14} className="text-gray-400" />
               <span className="text-xs sm:text-sm text-gray-600">Búsqueda activa:</span>
               <span className="px-2 py-1 bg-error-100 text-error-700 rounded-full text-xs">
@@ -350,7 +350,7 @@ function GastoCard({ movement, onEdit, onDelete, onViewDetail }) {
         </div>
 
         {/* Botones de acción */}
-        <div className="flex justify-end gap-1 border-t pt-3 mt-3">
+        <div className="flex justify-end gap-1 border-t pt-3">
           <button 
             onClick={() => onViewDetail(movement)} 
             className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors touch-target"
