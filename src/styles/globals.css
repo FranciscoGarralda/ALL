@@ -604,6 +604,28 @@
     padding: 12px 16px;
   }
 
+  /* Better responsive tables */
+  .table-responsive {
+    font-size: 14px;
+  }
+  
+  .table-responsive th,
+  .table-responsive td {
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+
+  /* Better spacing for mixed payment groups */
+  .mixed-payment-mobile {
+    gap: 12px;
+  }
+
+  /* Improve card layouts on mobile */
+  .card-grid-mobile {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
   /* Better card spacing on mobile */
   .card {
     margin-bottom: 12px;

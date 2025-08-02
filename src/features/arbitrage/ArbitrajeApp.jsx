@@ -177,7 +177,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="card">
@@ -212,7 +212,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
               Métricas Principales
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {renderMetricCard(
                 'Ganancias Totales por Arbitraje',
                 totalArbitrageProfits,
@@ -478,7 +478,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
         </div>
 
         {/* Información adicional y KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <div className="card">
             <div className="p-3 sm:p-4 lg:p-6">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">

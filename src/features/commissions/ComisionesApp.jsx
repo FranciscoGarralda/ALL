@@ -245,7 +245,7 @@ function ComisionesApp({ movements, onNavigate }) {
               Métricas Principales
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
               {renderMetricCard(
                 'Comisión Total Histórica',
                 totalCommissions,
@@ -297,7 +297,7 @@ function ComisionesApp({ movements, onNavigate }) {
               <span>Buscar Comisiones por Fecha</span>
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <FormInput
                   label="Seleccionar Fecha"
@@ -352,7 +352,7 @@ function ComisionesApp({ movements, onNavigate }) {
             {Object.entries(commissionsByProvider).length > 0 ? (
               <>
                 {/* Tabla para desktop */}
-                <div className="hidden sm:block overflow-x-auto">
+                <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
@@ -498,7 +498,7 @@ function ComisionesApp({ movements, onNavigate }) {
         </div>
 
         {/* Estadísticas adicionales */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <div className="card">
             <div className="p-3 sm:p-4 lg:p-6">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">

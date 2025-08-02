@@ -349,23 +349,23 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
               {detailedAccounts.length > 0 ? (
                 <>
                   {/* Tabla de detalles por moneda - Desktop */}
-                  <div className="hidden sm:block overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
+                  <div className="overflow-x-auto -mx-3 sm:mx-0">
+                    <table className="min-w-full divide-y divide-gray-200 text-sm">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[80px]">
                             Moneda
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
                             Ingresos
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
                             Egresos
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
                             Saldo
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[80px]">
                             Estado
                           </th>
                         </tr>
@@ -373,7 +373,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {detailedAccounts.map((account, index) => (
                           <tr key={`${account.proveedor}-${account.moneda}-${index}`} className="hover:bg-gray-50">
-                            <td className="px-4 py-4 whitespace-nowrap">
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap">
                               <div className="flex items-center">
                                 <span className="text-sm font-medium text-gray-900">{account.moneda}</span>
                               </div>

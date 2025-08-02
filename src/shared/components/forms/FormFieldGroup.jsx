@@ -40,10 +40,25 @@ const FormFieldGroup = ({
 
   const gridCols = getGridColumns();
 
-  // Grid classes for responsive layout - Always use 2 columns for COMPRA layout
+  // Grid classes for responsive layout - Responsive design
+  const getResponsiveGridClass = () => {
+    switch (gridCols) {
+      case 1:
+        return 'grid-cols-1';
+      case 2:
+        return 'grid-cols-1 sm:grid-cols-2';
+      case 3:
+        return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+      case 4:
+        return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4';
+      default:
+        return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+    }
+  };
+
   const gridClasses = [
     'grid',
-    'grid-cols-2',
+    getResponsiveGridClass(),
     gap,
     className
   ].filter(Boolean).join(' ');

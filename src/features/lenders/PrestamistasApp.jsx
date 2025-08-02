@@ -509,7 +509,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
               {processedMovements.movements.length > 0 ? (
                 <>
                   {/* Tabla para desktop */}
-                  <div className="hidden sm:block overflow-x-auto">
+                  <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>

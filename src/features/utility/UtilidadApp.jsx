@@ -327,7 +327,7 @@ function UtilidadApp({ movements, onNavigate }) {
               Métricas Principales
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {renderMetricCard(
                 'Utilidad Total Histórica',
                 totalUtilityCombined,
@@ -369,7 +369,7 @@ function UtilidadApp({ movements, onNavigate }) {
               <span>Buscar Utilidad por Fecha</span>
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <FormInput
                   label="Seleccionar Fecha"
@@ -424,7 +424,7 @@ function UtilidadApp({ movements, onNavigate }) {
             {Object.keys(finalStockData).length > 0 ? (
               <>
                 {/* Tabla para desktop */}
-                <div className="hidden sm:block overflow-x-auto">
+                <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
@@ -491,7 +491,7 @@ function UtilidadApp({ movements, onNavigate }) {
                         <h3 className="font-medium text-gray-900 text-sm truncate flex-1">{currency}</h3>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                         <div>
                           <p className="text-gray-500 text-xs">Stock</p>
                           <p className="font-medium">{formatAmountWithCurrency(data.cantidad, currency)}</p>
@@ -582,7 +582,7 @@ function UtilidadApp({ movements, onNavigate }) {
         </div>
 
         {/* Información adicional */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <div className="card">
             <div className="p-3 sm:p-4 lg:p-6">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">

@@ -586,7 +586,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         {(['COMPRA', 'VENTA'].includes(formData.subOperacion) && formData.total) && (
           <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 mt-4">
             <h3 className="text-sm font-semibold text-primary-900 mb-2">Resumen de la Operación</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
               <div>
                 <span className="text-primary-700">Monto:</span>
                 <div className="font-medium text-primary-900">
@@ -599,7 +599,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                   {formatAmountWithCurrency(formData.tc, formData.monedaTC)}
                 </div>
               </div>
-              <div className="col-span-2 border-t border-primary-200 pt-2 mt-2">
+              <div className="sm:col-span-2 border-t border-primary-200 pt-2 mt-2">
                 <span className="text-primary-700">Total Final:</span>
                 <div className="text-lg font-bold text-primary-900">
                   {formatAmountWithCurrency(formData.total, formData.monedaTC)}

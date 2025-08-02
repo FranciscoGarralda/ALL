@@ -142,7 +142,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
 
         {/* Tarjetas de resumen de gastos */}
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {renderCurrencyMetrics(
               'Gasto Total Histórico',
               totalExpensesByCurrency,
