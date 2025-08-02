@@ -272,7 +272,9 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           const porcentaje = safeParseFloat(newState.comisionPorcentaje);
           
           if (monto > 0 && porcentaje > 0) {
-            newState.montoComision = safeCalculation.percentage(monto, porcentaje).toFixed(2);
+            // Use improved precision calculation
+            const comisionCalculada = safeCalculation.percentage(monto, porcentaje);
+            newState.montoComision = safeCalculation.formatFinancial(comisionCalculada, 4);
           } else {
             newState.montoComision = '';
           }
@@ -282,12 +284,15 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           if (monto > 0) {
             if (newState.subOperacion === 'INGRESO') {
               // Para ingreso: monto real = monto - comisión (lo que realmente ingresa)
-              newState.montoReal = safeCalculation.subtract(monto, montoComision).toFixed(2);
+              const montoRealCalculado = safeCalculation.subtract(monto, montoComision);
+              newState.montoReal = safeCalculation.formatFinancial(montoRealCalculado, 2);
             } else if (newState.subOperacion === 'EGRESO') {
               // Para egreso: monto real = monto - comisión (lo que realmente sale)
-              newState.montoReal = safeCalculation.subtract(monto, montoComision).toFixed(2);
+              const montoRealCalculado = safeCalculation.subtract(monto, montoComision);
+              newState.montoReal = safeCalculation.formatFinancial(montoRealCalculado, 2);
             } else {
-              newState.montoReal = safeCalculation.subtract(monto, montoComision).toFixed(2);
+              const montoRealCalculado = safeCalculation.subtract(monto, montoComision);
+              newState.montoReal = safeCalculation.formatFinancial(montoRealCalculado, 2);
             }
           } else {
             newState.montoReal = '';
