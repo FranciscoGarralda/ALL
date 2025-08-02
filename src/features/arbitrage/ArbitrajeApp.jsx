@@ -17,6 +17,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
+import { getTodayLocalDate, getCurrentYearMonth, isCurrentMonth, isToday } from '../../shared/utils/dateUtils';
 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE ARBITRAJE */
 function ArbitrajeApp({ movements, onNavigate }) {
@@ -75,11 +76,11 @@ function ArbitrajeApp({ movements, onNavigate }) {
 
   // Calcular ganancias del mes actual
   const currentMonthArbitrageProfits = useMemo(() => {
-    const currentYearMonth = new Date().toISOString().substring(0, 7);
+    const currentYearMonth = getCurrentYearMonth();
     const monthly = {};
 
     arbitrageMovements.forEach(mov => {
-      if (mov.fecha && mov.fecha.substring(0, 7) === currentYearMonth) {
+      if (mov.fecha && isCurrentMonth(mov.fecha)) {
         const currency = mov.moneda;
         if (currency) {
           monthly[currency] = (monthly[currency] || 0) + safeParseFloat(mov.comision);
@@ -91,11 +92,11 @@ function ArbitrajeApp({ movements, onNavigate }) {
 
   // Calcular ganancias de hoy
   const todayArbitrageProfits = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayLocalDate();
     const daily = {};
 
     arbitrageMovements.forEach(mov => {
-      if (mov.fecha === today) {
+      if (isToday(mov.fecha)) {
         const currency = mov.moneda;
         if (currency) {
           daily[currency] = (daily[currency] || 0) + safeParseFloat(mov.comision);
@@ -497,7 +498,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                   <span className="text-xs sm:text-sm text-gray-600">Operaciones este mes:</span>
                   <span className="font-semibold text-gray-900 text-sm sm:text-base">
                     {arbitrageMovements.filter(mov => 
-                      mov.fecha && mov.fecha.substring(0, 7) === new Date().toISOString().substring(0, 7)
+                      mov.fecha && isCurrentMonth(mov.fecha)
                     ).length}
                   </span>
                 </div>

@@ -16,6 +16,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
 import { FormInput, formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
+import { getTodayLocalDate, getCurrentYearMonth, isCurrentMonth, isToday } from '../../shared/utils/dateUtils';
 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE COMISIONES */
 function ComisionesApp({ movements, onNavigate }) {
@@ -108,10 +109,10 @@ function ComisionesApp({ movements, onNavigate }) {
 
   // Calcular comisiones de hoy
   const todayCommissions = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayLocalDate();
     const daily = {};
     commissionMovements.forEach(mov => {
-      if (mov.fecha === today) {
+      if (isToday(mov.fecha)) {
         const currency = mov.monedaComision || mov.moneda;
         if (currency) {
           daily[currency] = (daily[currency] || 0) + safeParseFloat(mov.comision);
@@ -123,10 +124,10 @@ function ComisionesApp({ movements, onNavigate }) {
 
   // Calcular comisiones del mes actual
   const currentMonthCommissions = useMemo(() => {
-    const currentYearMonth = new Date().toISOString().substring(0, 7);
+    const currentYearMonth = getCurrentYearMonth();
     const monthly = {};
     commissionMovements.forEach(mov => {
-      if (mov.fecha && mov.fecha.substring(0, 7) === currentYearMonth) {
+      if (mov.fecha && isCurrentMonth(mov.fecha)) {
         const currency = mov.monedaComision || mov.moneda;
         if (currency) {
           monthly[currency] = (monthly[currency] || 0) + safeParseFloat(mov.comision);
