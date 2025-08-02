@@ -112,10 +112,10 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16">
       {/* Header */}
-      <div className="card mb-4 sm:mb-6">
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+      <div className="card mb-3 sm:mb-4">
+        <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-error-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -141,7 +141,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
         </div>
 
         {/* Tarjetas de resumen de gastos */}
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+        <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {renderCurrencyMetrics(
               'Gasto Total Histórico',
@@ -170,7 +170,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
         </div>
 
         {/* Controles de búsqueda */}
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+        <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
           <div className="relative">
             <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -201,7 +201,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
         </div>
 
         {/* Lista de gastos */}
-        <div className="p-3 sm:p-4 lg:p-6">
+        <div className="p-2 sm:p-3 lg:p-4">
           {filteredAndSortedExpenses.length === 0 ? (
             <div className="text-center py-8 sm:py-12">
               <Receipt size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />

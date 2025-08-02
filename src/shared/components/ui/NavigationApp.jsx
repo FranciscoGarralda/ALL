@@ -80,7 +80,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       transition-all duration-300 ease-in-out
     `}>
       {/* Menú de navegación - ocupa todo el espacio */}
-      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto pt-28`}>
+      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto pt-16`}>
         {menuItems.map((item) => (
           <MenuItem
             key={item.id}
@@ -222,7 +222,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
           
           {/* Contenido de la página - Solo esta área hace scroll */}
           <main className="flex-1 content-scrollable main-content-scroll">
-            <div className="p-4 lg:p-6 pt-28">
+            <div className="p-3 lg:p-4 pt-16">
               {children}
             </div>
           </main>
@@ -241,7 +241,7 @@ NavigationApp.displayName = 'NavigationApp';
 const WelcomePage = ({ onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4 lg:p-8">
     <div className="text-center max-w-4xl mx-auto">
-      <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+      <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
         <DollarSign size={32} className="text-primary-600" />
       </div>
       <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-800 animate-fadeIn">
@@ -329,11 +329,11 @@ const WelcomePage = ({ onNavigate }) => (
 const NotFoundPage = ({ onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4">
     <div className="text-center max-w-md mx-auto">
-      <div className="w-16 h-16 bg-error-100 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="w-16 h-16 bg-error-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <span className="text-2xl">🔍</span>
       </div>
       <h2 className="text-xl font-bold mb-4 text-gray-800">Página no encontrada</h2>
-      <p className="mb-6 text-gray-600">La página que buscas no existe o está en desarrollo.</p>
+      <p className="mb-4 text-gray-600">La página que buscas no existe o está en desarrollo.</p>
       <button 
         onClick={() => onNavigate('mainMenu')} 
         className="btn-primary touch-target"
@@ -348,14 +348,14 @@ const NotFoundPage = ({ onNavigate }) => (
 const ModuleInDevelopmentPage = ({ moduleName, onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4">
     <div className="text-center max-w-md mx-auto">
-      <div className="w-16 h-16 bg-warning-100 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="w-16 h-16 bg-warning-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <span className="text-2xl">🚧</span>
       </div>
       <h2 className="text-xl font-bold mb-4 text-gray-800">Módulo en Desarrollo</h2>
       <p className="mb-2 text-gray-600">
         El módulo <strong>{moduleName}</strong> está actualmente en desarrollo.
       </p>
-      <p className="mb-6 text-sm text-gray-500">
+      <p className="mb-4 text-sm text-gray-500">
         Estará disponible en una próxima actualización del sistema.
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">

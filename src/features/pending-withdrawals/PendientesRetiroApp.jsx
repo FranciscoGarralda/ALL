@@ -90,11 +90,11 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16 overflow-x-hidden">
       <div className="w-full max-w-7xl mx-auto">
         <div className="card">
           {/* Header */}
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center">
@@ -115,7 +115,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
           </div>
 
           {/* Filtros y búsqueda */}
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
             <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
@@ -144,7 +144,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
           </div>
 
           {/* Lista de operaciones pendientes */}
-          <div className="p-3 sm:p-4 lg:p-6">
+          <div className="p-2 sm:p-3 lg:p-4">
       {filteredMovements.length === 0 ? (
         <div className="text-center py-12">
           <Clock className="w-16 h-16 text-gray-300 mx-auto mb-4" />

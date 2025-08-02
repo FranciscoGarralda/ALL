@@ -163,11 +163,11 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28 overflow-x-hidden">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16 overflow-x-hidden">
         <div className="w-full max-w-7xl mx-auto">
           {/* Header */}
-          <div className="card mb-4 sm:mb-6">
-            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="card mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -193,8 +193,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
             </div>
 
             {/* Contenido */}
-            <div className="p-3 sm:p-4 lg:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
+            <div className="p-2 sm:p-3 lg:p-4">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4">
                 Resumen por Proveedor
               </h2>
               
@@ -303,11 +303,11 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
   // Vista de detalle
   if (currentView === 'detail' && selectedProviderForDetail) {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28 overflow-x-hidden">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16 overflow-x-hidden">
         <div className="w-full max-w-7xl mx-auto">
           {/* Header con navegación */}
-          <div className="card mb-4 sm:mb-6">
-            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="card mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
               <div className="flex items-center gap-3 mb-2 sm:mb-3">
                 <button
                   onClick={handleBackToSummary}
@@ -345,7 +345,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
             </div>
 
             {/* Contenido del detalle */}
-            <div className="p-3 sm:p-4 lg:p-6">
+            <div className="p-2 sm:p-3 lg:p-4">
               {detailedAccounts.length > 0 ? (
                 <>
                   {/* Tabla de detalles por moneda - Desktop */}

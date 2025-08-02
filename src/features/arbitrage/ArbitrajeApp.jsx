@@ -177,11 +177,11 @@ function ArbitrajeApp({ movements, onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6 safe-top safe-bottom pt-28 overflow-x-hidden">
-      <div className="w-full max-w-7xl mx-auto space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16 overflow-x-hidden">
+              <div className="w-full max-w-7xl mx-auto space-y-3 sm:space-y-4">
         {/* Header */}
         <div className="card">
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -207,8 +207,8 @@ function ArbitrajeApp({ movements, onNavigate }) {
           </div>
 
           {/* Métricas principales */}
-          <div className="p-3 sm:p-4 lg:p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
+          <div className="p-2 sm:p-3 lg:p-4">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4">
               Métricas Principales
             </h2>
             
@@ -248,8 +248,8 @@ function ArbitrajeApp({ movements, onNavigate }) {
 
         {/* Gráfico de ganancias mensuales por arbitraje */}
         <div className="card">
-          <div className="p-3 sm:p-4 lg:p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6 flex items-center gap-2">
+          <div className="p-2 sm:p-3 lg:p-4">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
               <BarChart3 size={18} className="text-indigo-600 flex-shrink-0" />
               <span>Tendencia de Ganancias Mensuales por Arbitraje</span>
             </h2>
@@ -296,14 +296,14 @@ function ArbitrajeApp({ movements, onNavigate }) {
 
         {/* Lista de movimientos de arbitraje */}
         <div className="card">
-          <div className="p-3 sm:p-4 lg:p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6 flex items-center gap-2">
+          <div className="p-2 sm:p-3 lg:p-4">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
               <ArrowUpDown size={18} className="text-indigo-600 flex-shrink-0" />
               <span>Operaciones de Arbitraje</span>
             </h2>
             
             {/* Barra de búsqueda */}
-            <div className="relative mb-4 sm:mb-6">
+            <div className="relative mb-3 sm:mb-4">
               <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -480,7 +480,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
         {/* Información adicional y KPIs */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <div className="card">
-            <div className="p-3 sm:p-4 lg:p-6">
+            <div className="p-2 sm:p-3 lg:p-4">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
                 <Target size={16} className="text-indigo-600" />
                 Resumen de Arbitraje
@@ -520,7 +520,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
           </div>
 
           <div className="card">
-            <div className="p-3 sm:p-4 lg:p-6">
+            <div className="p-2 sm:p-3 lg:p-4">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
                 <Calculator size={16} className="text-emerald-600" />
                 Optimización de Arbitraje
@@ -545,7 +545,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
               <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
                 No hay operaciones de arbitraje registradas
               </h3>
-              <p className="text-sm sm:text-base text-gray-500 mb-6">
+              <p className="text-sm sm:text-base text-gray-500 mb-4">
                 Las operaciones de arbitraje aparecerán aquí cuando se registren transacciones que generen ganancias por diferencias de precios.
               </p>
               <button

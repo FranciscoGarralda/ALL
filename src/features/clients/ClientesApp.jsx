@@ -124,10 +124,10 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
 
   // Vista principal - Lista de clientes
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16">
       {/* Header */}
-      <div className="card mb-4 sm:mb-6">
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+      <div className="card mb-3 sm:mb-4">
+        <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -151,7 +151,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
         </div>
 
         {/* Búsqueda */}
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+        <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
           <div className="relative">
             <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -165,7 +165,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
         </div>
 
         {/* Lista de clientes por categoría */}
-        <div className="p-3 sm:p-4 lg:p-6 space-y-6 sm:space-y-8">
+        <div className="p-2 sm:p-3 lg:p-4 space-y-6 sm:space-y-8">
           {/* Clientes de Operaciones */}
           {clientesOperaciones.length > 0 && (
             <div>
@@ -393,11 +393,11 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16">
       <div className="max-w-2xl mx-auto">
         <div className="card">
           {/* Header */}
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
             <div className="flex items-center gap-3">
               <button 
                 onClick={onCancel} 
@@ -417,7 +417,7 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
           </div>
 
           {/* Formulario */}
-          <div className="p-3 sm:p-4 lg:p-6">
+          <div className="p-2 sm:p-3 lg:p-4">
             <div className="space-y-4 sm:space-y-6">
               {/* Nombres */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -537,11 +537,11 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
   const recomendacion = getRecomendacion();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16">
       <div className="max-w-6xl mx-auto">
         <div className="card">
           {/* Header */}
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
             <div className="flex items-center gap-3">
               <button 
                 onClick={onBack} 
@@ -561,7 +561,7 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
           </div>
 
           {/* Analytics */}
-          <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
+          <div className="p-2 sm:p-3 lg:p-4 space-y-4 sm:space-y-6">
             {/* Métricas principales */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div className="bg-primary-50 rounded-lg p-3 sm:p-4">
