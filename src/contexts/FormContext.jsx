@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import { useMixedPayments } from '../shared/hooks/useMixedPayments';
+import { useFormKeyboardNavigation } from '../shared/hooks/useKeyboardNavigation';
 
 import { safeParseFloat } from '../shared/services/safeOperations';
 
@@ -160,30 +161,6 @@ export const FormProvider = ({ children, initialData = {}, onSave, onCancel, cli
     dispatch({ type: FORM_ACTIONS.SET_MULTIPLE_FIELDS, fields: newState });
   });
   
-
-  
-  // Form actions
-  const setField = useCallback((field, value) => {
-    dispatch({ type: FORM_ACTIONS.SET_FIELD, field, value });
-  }, []);
-  
-  const setMultipleFields = useCallback((fields) => {
-    dispatch({ type: FORM_ACTIONS.SET_MULTIPLE_FIELDS, fields });
-  }, []);
-  
-  const resetForm = useCallback((keepFields = {}) => {
-    dispatch({ type: FORM_ACTIONS.RESET_FORM, keepFields });
-  }, []);
-  
-  const validateForm = useCallback(() => {
-    dispatch({ type: FORM_ACTIONS.VALIDATE_FORM });
-    return formState.isValid;
-  }, [formState.isValid]);
-  
-  const calculateTotal = useCallback(() => {
-    dispatch({ type: FORM_ACTIONS.CALCULATE_TOTAL });
-  }, []);
-  
   // Save handler with validation
   const handleSave = useCallback(async () => {
     dispatch({ type: FORM_ACTIONS.VALIDATE_FORM });
@@ -208,6 +185,34 @@ export const FormProvider = ({ children, initialData = {}, onSave, onCancel, cli
     
     return false;
   }, [formState, onSave]);
+  
+  // Add keyboard navigation hook after handleSave is defined
+  const keyboardNavigation = useFormKeyboardNavigation('form-context', {
+    onSubmit: handleSave,
+    onCancel: onCancel
+  });
+  
+  // Form actions
+  const setField = useCallback((field, value) => {
+    dispatch({ type: FORM_ACTIONS.SET_FIELD, field, value });
+  }, []);
+  
+  const setMultipleFields = useCallback((fields) => {
+    dispatch({ type: FORM_ACTIONS.SET_MULTIPLE_FIELDS, fields });
+  }, []);
+  
+  const resetForm = useCallback((keepFields = {}) => {
+    dispatch({ type: FORM_ACTIONS.RESET_FORM, keepFields });
+  }, []);
+  
+  const validateForm = useCallback(() => {
+    dispatch({ type: FORM_ACTIONS.VALIDATE_FORM });
+    return formState.isValid;
+  }, [formState.isValid]);
+  
+  const calculateTotal = useCallback(() => {
+    dispatch({ type: FORM_ACTIONS.CALCULATE_TOTAL });
+  }, []);
   
   // Context value
   const contextValue = {
