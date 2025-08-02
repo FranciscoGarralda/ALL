@@ -16,21 +16,25 @@ const CurrencyInput = forwardRef(({
   error = '',
   className = '',
   readOnly = false,
-
+  maxDecimals = 6,
+  showDecimals = true,
   ...rest
 }, ref) => {
   const [displayValue, setDisplayValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
+  // Formatting options
+  const formatOptions = { maxDecimals, showDecimals };
+
   // Update display value when external value changes
   useEffect(() => {
     if (value && value !== '') {
-      const { formatted } = formatCurrencyInput(value, currency);
+      const { formatted } = formatCurrencyInput(value, currency, formatOptions);
       setDisplayValue(formatted);
     } else {
       setDisplayValue('');
     }
-  }, [value, currency]);
+  }, [value, currency, maxDecimals, showDecimals]);
 
   // Handle input change with real-time formatting
   const handleChange = (e) => {
@@ -44,7 +48,7 @@ const CurrencyInput = forwardRef(({
     }
 
     // Format the input
-    const { formatted, raw } = formatCurrencyInput(inputValue, currency);
+    const { formatted, raw } = formatCurrencyInput(inputValue, currency, formatOptions);
     
     // Update display
     setDisplayValue(formatted);
@@ -67,7 +71,7 @@ const CurrencyInput = forwardRef(({
     setIsFocused(false);
     // When blurred, show formatted value (only if not readOnly)
     if (value && value !== '' && !readOnly) {
-      const { formatted } = formatCurrencyInput(value, currency);
+      const { formatted } = formatCurrencyInput(value, currency, formatOptions);
       setDisplayValue(formatted);
     }
   };
