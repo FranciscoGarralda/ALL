@@ -66,7 +66,7 @@ const FixedHeader = ({
   const currentTime = formatTime(currentDateTime);
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 shadow-sm z-40 h-16">
+    <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 shadow-sm z-40 h-14">
       <div className="h-full flex items-center justify-between px-4">
         {/* Lado izquierdo: Menú hamburguesa + Título */}
         <div className="flex items-center space-x-3">

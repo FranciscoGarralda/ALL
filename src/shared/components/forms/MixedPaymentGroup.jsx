@@ -35,8 +35,9 @@ const MixedPaymentGroup = ({
 
   // Verificar si el total coincide - VERSIÓN SEGURA
   const safeExpectedTotal = safeParseFloat(totalExpected, 0);
-  const isBalanced = Math.abs(totalPayments - safeExpectedTotal) < 0.01;
-  const difference = safeExpectedTotal - totalPayments;
+  const safeTotalPayments = safeParseFloat(totalPayments, 0);
+  const isBalanced = Math.abs(safeTotalPayments - safeExpectedTotal) < 0.01;
+  const difference = safeExpectedTotal - safeTotalPayments;
 
   // Mostrar por defecto 2 pagos, máximo 4
   const paymentsToShow = Math.max(2, safePayments.length);
@@ -53,11 +54,11 @@ const MixedPaymentGroup = ({
         Configuración de Pago Mixto
       </div>
 
-      {/* Pagos individuales - SIN RECUADRE, campos normales */}
+      {/* Pagos individuales - Layout responsive mejorado */}
       {displayPayments.map((payment, index) => (
-        <div key={payment.id || index} className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div key={payment.id || index} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Selector de Socio */}
-          <div>
+          <div className="sm:col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Cuenta
             </label>
@@ -74,7 +75,7 @@ const MixedPaymentGroup = ({
           </div>
 
           {/* Selector de Tipo */}
-          <div>
+          <div className="sm:col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Modo
             </label>
@@ -91,7 +92,7 @@ const MixedPaymentGroup = ({
           </div>
 
           {/* Campo de Monto */}
-          <div>
+          <div className="sm:col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Monto
             </label>
@@ -107,7 +108,7 @@ const MixedPaymentGroup = ({
           </div>
 
           {/* Botón de eliminar (solo si hay más de 2 pagos) */}
-          <div className="flex items-end">
+          <div className="flex items-end justify-center sm:justify-start lg:col-span-1">
             {safePayments.length > 2 && index >= 2 && (
               <button
                 ref={(el) => registerField && registerField(`mixedPayment_${index}_remove`, el)}
@@ -140,27 +141,27 @@ const MixedPaymentGroup = ({
         </div>
       )}
 
-      {/* Resumen de totales - SIN RECUADRE */}
-      <div className="pt-2 border-t border-gray-200">
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="text-gray-600">Total Pagos:</span>
-            <span className="ml-2 font-medium text-gray-900">
-              ${totalPayments.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+      {/* Resumen de totales - Layout responsive */}
+      <div className="pt-3 border-t border-gray-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
+          <div className="flex flex-col sm:flex-row sm:justify-between">
+            <span className="text-gray-600 mb-1 sm:mb-0">Total Pagos:</span>
+            <span className="font-medium text-gray-900">
+              ${safeTotalPayments.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
             </span>
           </div>
-          <div>
-            <span className="text-gray-600">Esperado:</span>
-            <span className="ml-2 font-medium text-gray-900">
-              ${totalExpected.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+          <div className="flex flex-col sm:flex-row sm:justify-between">
+            <span className="text-gray-600 mb-1 sm:mb-0">Esperado:</span>
+            <span className="font-medium text-gray-900">
+              ${safeExpectedTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
             </span>
           </div>
         </div>
         
         {!isBalanced && (
-          <div className="mt-2 text-sm">
+          <div className="mt-2 text-sm text-center sm:text-left">
             <span className={`font-medium ${difference > 0 ? 'text-red-600' : 'text-green-600'}`}>
-              {difference > 0 ? 'Falta:' : 'Sobra:'} ${Math.abs(difference).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+              {difference > 0 ? 'Falta:' : 'Sobra:'} ${Math.abs(safeParseFloat(difference, 0)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
             </span>
           </div>
         )}

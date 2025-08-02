@@ -90,10 +90,10 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
 
   // Vista principal - Lista de movimientos
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16">
       {/* Header */}
-      <div className="card mb-4 sm:mb-6">
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+      <div className="card mb-3 sm:mb-4">
+        <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-success-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -113,7 +113,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
         </div>
 
         {/* Controles de búsqueda y filtro */}
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100 space-y-3 sm:space-y-4">
+        <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100 space-y-3 sm:space-y-4">
           {/* Barra de búsqueda */}
           <div className="relative">
             <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -177,7 +177,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
         </div>
 
         {/* Lista de movimientos */}
-        <div className="p-3 sm:p-4 lg:p-6">
+        <div className="p-2 sm:p-3 lg:p-4">
           {filteredAndSortedMovements.length === 0 ? (
             <div className="text-center py-8 sm:py-12">
               <List size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
@@ -406,11 +406,11 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16">
       <div className="max-w-4xl mx-auto">
         <div className="card">
           {/* Header */}
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
             <div className="flex items-center gap-3 mb-3 sm:mb-0">
               <button 
                 onClick={onBack} 
@@ -458,7 +458,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
           </div>
 
           {/* Contenido del detalle */}
-          <div className="p-3 sm:p-4 lg:p-6 space-y-6 sm:space-y-8">
+          <div className="p-2 sm:p-3 lg:p-4 space-y-6 sm:space-y-8">
             {/* Información General */}
             <div>
               <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">

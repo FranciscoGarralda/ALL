@@ -160,11 +160,11 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16 overflow-x-hidden">
+        <div className="w-full max-w-7xl mx-auto">
           {/* Header */}
-          <div className="card mb-4 sm:mb-6">
-            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="card mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-warning-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -190,8 +190,8 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
             </div>
 
             {/* Contenido */}
-            <div className="p-3 sm:p-4 lg:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
+            <div className="p-2 sm:p-3 lg:p-4">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4">
                 Resumen de Prestamistas
               </h2>
 
@@ -405,11 +405,11 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
   const finalBalances = processedMovements.finalBalances;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16 overflow-x-hidden">
+      <div className="w-full max-w-7xl mx-auto">
         {/* Header con navegación */}
-        <div className="card mb-4 sm:mb-6">
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+        <div className="card mb-3 sm:mb-4">
+          <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
             <div className="flex items-center gap-3 mb-2 sm:mb-3">
               <button
                 onClick={onBack}
@@ -447,7 +447,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
           </div>
 
           {/* Contenido del detalle */}
-          <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
+          <div className="p-2 sm:p-3 lg:p-4 space-y-4 sm:space-y-6">
             {/* Métricas principales */}
             {Object.keys(finalBalances).length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
@@ -509,7 +509,8 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
               {processedMovements.movements.length > 0 ? (
                 <>
                   {/* Tabla para desktop */}
-                  <div className="hidden sm:block overflow-x-auto">
+                  {/* Tabla para desktop */}
+                  <div className="hidden md:block">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
@@ -574,8 +575,8 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                     </table>
                   </div>
 
-                  {/* Cards para mobile */}
-                  <div className="sm:hidden space-y-3">
+                                      {/* Cards para mobile y tablet */}
+                    <div className="md:hidden space-y-3">
                     {processedMovements.movements.map((mov, index) => (
                       <div key={index} className="card">
                         <div className="p-3 space-y-2">

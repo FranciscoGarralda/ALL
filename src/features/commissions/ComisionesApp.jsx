@@ -16,6 +16,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
 import { FormInput, formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
+import { getTodayLocalDate, getCurrentYearMonth, isCurrentMonth, isToday } from '../../shared/utils/dateUtils';
 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE COMISIONES */
 function ComisionesApp({ movements, onNavigate }) {
@@ -108,10 +109,10 @@ function ComisionesApp({ movements, onNavigate }) {
 
   // Calcular comisiones de hoy
   const todayCommissions = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayLocalDate();
     const daily = {};
     commissionMovements.forEach(mov => {
-      if (mov.fecha === today) {
+      if (isToday(mov.fecha)) {
         const currency = mov.monedaComision || mov.moneda;
         if (currency) {
           daily[currency] = (daily[currency] || 0) + safeParseFloat(mov.comision);
@@ -123,10 +124,10 @@ function ComisionesApp({ movements, onNavigate }) {
 
   // Calcular comisiones del mes actual
   const currentMonthCommissions = useMemo(() => {
-    const currentYearMonth = new Date().toISOString().substring(0, 7);
+    const currentYearMonth = getCurrentYearMonth();
     const monthly = {};
     commissionMovements.forEach(mov => {
-      if (mov.fecha && mov.fecha.substring(0, 7) === currentYearMonth) {
+      if (mov.fecha && isCurrentMonth(mov.fecha)) {
         const currency = mov.monedaComision || mov.moneda;
         if (currency) {
           monthly[currency] = (monthly[currency] || 0) + safeParseFloat(mov.comision);
@@ -209,11 +210,11 @@ function ComisionesApp({ movements, onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16 overflow-x-hidden">
+              <div className="w-full max-w-7xl mx-auto space-y-3 sm:space-y-4">
         {/* Header */}
         <div className="card">
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-success-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -239,12 +240,12 @@ function ComisionesApp({ movements, onNavigate }) {
           </div>
 
           {/* Métricas principales */}
-          <div className="p-3 sm:p-4 lg:p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
+          <div className="p-2 sm:p-3 lg:p-4">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4">
               Métricas Principales
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4">
               {renderMetricCard(
                 'Comisión Total Histórica',
                 totalCommissions,
@@ -290,13 +291,13 @@ function ComisionesApp({ movements, onNavigate }) {
 
         {/* Buscador de comisiones por día */}
         <div className="card">
-          <div className="p-3 sm:p-4 lg:p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6 flex items-center gap-2">
+          <div className="p-2 sm:p-3 lg:p-4">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
               <Search size={18} className="text-indigo-600 flex-shrink-0" />
               <span>Buscar Comisiones por Fecha</span>
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <FormInput
                   label="Seleccionar Fecha"
@@ -342,8 +343,8 @@ function ComisionesApp({ movements, onNavigate }) {
 
         {/* Comisiones por proveedor */}
         <div className="card">
-          <div className="p-3 sm:p-4 lg:p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6 flex items-center gap-2">
+          <div className="p-2 sm:p-3 lg:p-4">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
               <Building2 size={18} className="text-purple-600 flex-shrink-0" />
               <span>Comisiones por Proveedor</span>
             </h2>
@@ -351,8 +352,9 @@ function ComisionesApp({ movements, onNavigate }) {
             {Object.entries(commissionsByProvider).length > 0 ? (
               <>
                 {/* Tabla para desktop */}
-                <div className="hidden sm:block overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
+                                  {/* Tabla para desktop */}
+                  <div className="hidden md:block">
+                    <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -405,8 +407,8 @@ function ComisionesApp({ movements, onNavigate }) {
                   </table>
                 </div>
 
-                {/* Cards para mobile */}
-                <div className="sm:hidden space-y-3">
+                                  {/* Cards para mobile y tablet */}
+                  <div className="md:hidden space-y-3">
                   {Object.entries(commissionsByProvider).map(([provider, currencies]) => {
                     const operationsCount = commissionMovements.filter(mov => 
                       (mov.proveedorCC || 'Operaciones Directas') === provider
@@ -450,8 +452,8 @@ function ComisionesApp({ movements, onNavigate }) {
 
         {/* Gráfico de comisiones mensuales */}
         <div className="card">
-          <div className="p-3 sm:p-4 lg:p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6 flex items-center gap-2">
+          <div className="p-2 sm:p-3 lg:p-4">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
               <BarChart3 size={18} className="text-emerald-600 flex-shrink-0" />
               <span>Tendencia de Comisiones Mensuales</span>
             </h2>
@@ -497,9 +499,9 @@ function ComisionesApp({ movements, onNavigate }) {
         </div>
 
         {/* Estadísticas adicionales */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <div className="card">
-            <div className="p-3 sm:p-4 lg:p-6">
+            <div className="p-2 sm:p-3 lg:p-4">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
                 <TrendingUp size={16} className="text-emerald-600" />
                 Resumen Ejecutivo
@@ -526,7 +528,7 @@ function ComisionesApp({ movements, onNavigate }) {
           </div>
 
           <div className="card">
-            <div className="p-3 sm:p-4 lg:p-6">
+            <div className="p-2 sm:p-3 lg:p-4">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
                 <Target size={16} className="text-primary-600" />
                 Próximos Pasos
@@ -550,7 +552,7 @@ function ComisionesApp({ movements, onNavigate }) {
               <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
                 No hay comisiones registradas
               </h3>
-              <p className="text-sm sm:text-base text-gray-500 mb-6">
+              <p className="text-sm sm:text-base text-gray-500 mb-4">
                 Las comisiones aparecerán aquí cuando se registren operaciones que generen ingresos por comisiones.
               </p>
               <button

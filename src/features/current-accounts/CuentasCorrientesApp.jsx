@@ -163,11 +163,11 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16 overflow-x-hidden">
+        <div className="w-full max-w-7xl mx-auto">
           {/* Header */}
-          <div className="card mb-4 sm:mb-6">
-            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="card mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -193,8 +193,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
             </div>
 
             {/* Contenido */}
-            <div className="p-3 sm:p-4 lg:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
+            <div className="p-2 sm:p-3 lg:p-4">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4">
                 Resumen por Proveedor
               </h2>
               
@@ -303,11 +303,11 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
   // Vista de detalle
   if (currentView === 'detail' && selectedProviderForDetail) {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-28">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-16 overflow-x-hidden">
+        <div className="w-full max-w-7xl mx-auto">
           {/* Header con navegación */}
-          <div className="card mb-4 sm:mb-6">
-            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="card mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 lg:p-4 border-b border-gray-100">
               <div className="flex items-center gap-3 mb-2 sm:mb-3">
                 <button
                   onClick={handleBackToSummary}
@@ -345,27 +345,28 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
             </div>
 
             {/* Contenido del detalle */}
-            <div className="p-3 sm:p-4 lg:p-6">
+            <div className="p-2 sm:p-3 lg:p-4">
               {detailedAccounts.length > 0 ? (
                 <>
                   {/* Tabla de detalles por moneda - Desktop */}
-                  <div className="hidden sm:block overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
+                  {/* Tabla para desktop */}
+              <div className="hidden md:block">
+                <table className="min-w-full divide-y divide-gray-200 text-sm">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[80px]">
                             Moneda
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
                             Ingresos
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
                             Egresos
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]">
                             Saldo
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[80px]">
                             Estado
                           </th>
                         </tr>
@@ -373,7 +374,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {detailedAccounts.map((account, index) => (
                           <tr key={`${account.proveedor}-${account.moneda}-${index}`} className="hover:bg-gray-50">
-                            <td className="px-4 py-4 whitespace-nowrap">
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap">
                               <div className="flex items-center">
                                 <span className="text-sm font-medium text-gray-900">{account.moneda}</span>
                               </div>
@@ -441,8 +442,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                     </table>
                   </div>
 
-                  {/* Cards de detalles por moneda - Mobile */}
-                  <div className="sm:hidden space-y-3">
+                  {/* Cards de detalles por moneda - Mobile y Tablet */}
+                  <div className="md:hidden space-y-3">
                     {detailedAccounts.map((account, index) => (
                       <div key={`${account.proveedor}-${account.moneda}-${index}`} className="card">
                         <div className="p-3 space-y-2">

@@ -7,6 +7,7 @@ import {
   safeCalculation,
   safeArray 
 } from '../../shared/services/safeOperations';
+import { getTodayLocalDate, getDayName } from '../../shared/utils/dateUtils';
 import {
   FormInput,
   FormSelect,
@@ -43,12 +44,8 @@ function DynamicFormFieldGroups({ groups }) {
 const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelEdit, clients, onSaveClient }) => {
   const [formData, setFormData] = useState({
     cliente: '',
-    fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
-    nombreDia: (() => {
-      const today = new Date();
-      const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-      return dayNames[today.getDay()];
-    })(), // Día actual
+    fecha: getTodayLocalDate(), // Fecha actual por defecto
+    nombreDia: getDayName(getTodayLocalDate()), // Día actual
     detalle: '',
     operacion: '', // Sin predeterminado
     subOperacion: '', // Sin auto-selección
@@ -123,20 +120,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       // Calcular día de la semana para fechas - VERSIÓN SEGURA
       if (field === 'fecha') {
         if (value && typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
-          try {
-            // Parse date as local time to avoid timezone issues
-            const [year, month, day] = value.split('-').map(Number);
-            const date = new Date(year, month - 1, day); // month is 0-indexed
-            
-                         if (!isNaN(date.getTime())) {
-               const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-               newState.nombreDia = dayNames[date.getDay()];
-             } else {
-              newState.nombreDia = '';
-            }
-          } catch (error) {
-            newState.nombreDia = '';
-          }
+          newState.nombreDia = getDayName(value);
         } else {
           newState.nombreDia = '';
         }
@@ -165,7 +149,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       // Lógica de pago mixto - VERSIÓN SEGURA
       if (field === 'walletTC' && value === 'pago_mixto') {
         const expectedTotal = safeCalculation.multiply(prev.monto || 0, prev.tc || 1);
-        newState.expectedTotalForMixedPayments = expectedTotal.toFixed(2);
+        const safeExpectedTotal = safeParseFloat(expectedTotal, 0);
+        newState.expectedTotalForMixedPayments = safeExpectedTotal.toFixed(2);
           
           // Determinar si estamos en modo wallet
           let configKey = prev.subOperacion;
@@ -185,10 +170,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           
           // Crear pagos iniciales con nueva estructura (socio + tipo)
           newState.mixedPayments = [
-            { id: 1, socio: '', tipo: '', monto: expectedTotal.toFixed(2) },
+            { id: 1, socio: '', tipo: '', monto: safeExpectedTotal.toFixed(2) },
             { id: 2, socio: '', tipo: '', monto: '' }
                     ];
-          newState.total = expectedTotal.toFixed(2);
+          newState.total = safeExpectedTotal.toFixed(2);
         }
       
       // Limpiar pagos mixtos cuando se cambie de "pago_mixto" a otra opción - VERSIÓN SEGURA
@@ -197,7 +182,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           const currentMonto = safeParseFloat(newState.monto);
           const currentTc = safeParseFloat(newState.tc);
           if (currentMonto > 0 && currentTc > 0) {
-            newState.total = safeCalculation.multiply(currentMonto, currentTc).toFixed(2);
+            const totalResult = safeCalculation.multiply(currentMonto, currentTc);
+            newState.total = safeParseFloat(totalResult, 0).toFixed(2);
           } else {
             newState.total = '';
           }
@@ -214,17 +200,22 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
         if (newState.walletTC !== 'pago_mixto') {
           if (field === 'monto' && currentMonto > 0 && currentTc > 0) {
-            newState.total = safeCalculation.multiply(currentMonto, currentTc).toFixed(2);
+            const totalResult = safeCalculation.multiply(currentMonto, currentTc);
+            newState.total = safeParseFloat(totalResult, 0).toFixed(2);
           } else if (field === 'total' && currentTotal > 0 && currentTc > 0) {
-            newState.monto = safeCalculation.divide(currentTotal, currentTc).toFixed(2);
+            const montoResult = safeCalculation.divide(currentTotal, currentTc);
+            newState.monto = safeParseFloat(montoResult, 0).toFixed(2);
           } else if (field === 'tc' && currentMonto > 0 && currentTc > 0) {
-            newState.total = safeCalculation.multiply(currentMonto, currentTc).toFixed(2);
+            const totalResult = safeCalculation.multiply(currentMonto, currentTc);
+            newState.total = safeParseFloat(totalResult, 0).toFixed(2);
           } else if (field === 'tc' && currentTotal > 0 && currentTc > 0) {
-            newState.monto = safeCalculation.divide(currentTotal, currentTc).toFixed(2);
+            const montoResult = safeCalculation.divide(currentTotal, currentTc);
+            newState.monto = safeParseFloat(montoResult, 0).toFixed(2);
           }
         } else {
           const newExpectedTotal = safeCalculation.multiply(currentMonto, currentTc || 1);
-          newState.expectedTotalForMixedPayments = newExpectedTotal.toFixed(2);
+          const safeNewExpectedTotal = safeParseFloat(newExpectedTotal, 0);
+          newState.expectedTotalForMixedPayments = safeNewExpectedTotal.toFixed(2);
 
           // Verificar que mixedPayments existe y es array
           const mixedPayments = safeArray(newState.mixedPayments);
@@ -233,11 +224,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               return sum + safeParseFloat(p?.monto, 0);
             }, 0);
             
-            mixedPayments[0].monto = (newExpectedTotal - sumOfOtherPaymentsExcludingFirst).toFixed(2);
+            const newFirstPaymentAmount = safeParseFloat(safeNewExpectedTotal - sumOfOtherPaymentsExcludingFirst, 0);
+            mixedPayments[0].monto = newFirstPaymentAmount.toFixed(2);
             
-            newState.total = mixedPayments.reduce((sum, payment) => {
+            const totalSum = mixedPayments.reduce((sum, payment) => {
               return sum + safeParseFloat(payment?.monto, 0);
-            }, 0).toFixed(2);
+            }, 0);
+            newState.total = safeParseFloat(totalSum, 0).toFixed(2);
           }
         }
       }
@@ -262,12 +255,16 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         const montoVenta = safeParseFloat(newState.montoVenta);
         const tcVenta = safeParseFloat(newState.tcVenta);
 
-        newState.totalCompra = safeCalculation.multiply(monto, tc).toFixed(2);
-        newState.totalVenta = safeCalculation.multiply(montoVenta, tcVenta).toFixed(2);
+        const totalCompraResult = safeCalculation.multiply(monto, tc);
+        const totalVentaResult = safeCalculation.multiply(montoVenta, tcVenta);
+        
+        newState.totalCompra = safeParseFloat(totalCompraResult, 0).toFixed(2);
+        newState.totalVenta = safeParseFloat(totalVentaResult, 0).toFixed(2);
         
         const totalCompraNum = safeParseFloat(newState.totalCompra);
         const totalVentaNum = safeParseFloat(newState.totalVenta);
-        newState.comision = (totalVentaNum - totalCompraNum).toFixed(2);
+        const comisionResult = totalVentaNum - totalCompraNum;
+        newState.comision = safeParseFloat(comisionResult, 0).toFixed(2);
       }
 
       // Auto-completado para CUENTAS CORRIENTES
@@ -288,7 +285,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           const porcentaje = safeParseFloat(newState.comisionPorcentaje);
           
           if (monto > 0 && porcentaje > 0) {
-            newState.montoComision = safeCalculation.percentage(monto, porcentaje).toFixed(2);
+            const comisionResult = safeCalculation.percentage(monto, porcentaje);
+            newState.montoComision = safeParseFloat(comisionResult, 0).toFixed(2);
           } else {
             newState.montoComision = '';
           }
@@ -298,12 +296,15 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           if (monto > 0) {
             if (newState.subOperacion === 'INGRESO') {
               // Para ingreso: monto real = monto - comisión (lo que realmente ingresa)
-              newState.montoReal = safeCalculation.subtract(monto, montoComision).toFixed(2);
+              const montoRealResult = safeCalculation.subtract(monto, montoComision);
+              newState.montoReal = safeParseFloat(montoRealResult, 0).toFixed(2);
             } else if (newState.subOperacion === 'EGRESO') {
               // Para egreso: monto real = monto - comisión (lo que realmente sale)
-              newState.montoReal = safeCalculation.subtract(monto, montoComision).toFixed(2);
+              const montoRealResult = safeCalculation.subtract(monto, montoComision);
+              newState.montoReal = safeParseFloat(montoRealResult, 0).toFixed(2);
             } else {
-              newState.montoReal = safeCalculation.subtract(monto, montoComision).toFixed(2);
+              const montoRealResult = safeCalculation.subtract(monto, montoComision);
+              newState.montoReal = safeParseFloat(montoRealResult, 0).toFixed(2);
             }
           } else {
             newState.montoReal = '';
@@ -322,12 +323,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   const clearForm = () => {
     setFormData({
       cliente: '',
-      fecha: new Date().toISOString().split('T')[0], // Fecha actual por defecto
-      nombreDia: (() => {
-        const today = new Date();
-        const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-        return dayNames[today.getDay()];
-      })(), // Día actual
+      fecha: getTodayLocalDate(), // Fecha actual por defecto
+      nombreDia: getDayName(getTodayLocalDate()), // Día actual
       detalle: '',
       operacion: '', // Sin predeterminado
       subOperacion: '', // Sin auto-selección
@@ -473,7 +470,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8 pt-28">
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-2 sm:p-3 lg:p-4 pt-16">
       <div className="max-w-xl mx-auto bg-white shadow-medium rounded-xl p-4 sm:p-6 space-y-4">
         {/* Header de la aplicación */}
         <div className="flex items-center space-x-3 pb-4 border-b border-gray-200">
@@ -589,7 +586,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         {(['COMPRA', 'VENTA'].includes(formData.subOperacion) && formData.total) && (
           <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 mt-4">
             <h3 className="text-sm font-semibold text-primary-900 mb-2">Resumen de la Operación</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
               <div>
                 <span className="text-primary-700">Monto:</span>
                 <div className="font-medium text-primary-900">
@@ -602,7 +599,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                   {formatAmountWithCurrency(formData.tc, formData.monedaTC)}
                 </div>
               </div>
-              <div className="col-span-2 border-t border-primary-200 pt-2 mt-2">
+              <div className="sm:col-span-2 border-t border-primary-200 pt-2 mt-2">
                 <span className="text-primary-700">Total Final:</span>
                 <div className="text-lg font-bold text-primary-900">
                   {formatAmountWithCurrency(formData.total, formData.monedaTC)}
