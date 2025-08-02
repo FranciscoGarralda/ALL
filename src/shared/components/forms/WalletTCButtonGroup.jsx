@@ -21,20 +21,20 @@ export const WalletTCButtonGroup = React.forwardRef(({
     
     if (buttonType === 'socio') {
       // Si es socio, mantener el tipo actual SOLO si ya hay uno seleccionado
-      if (newValue) {
+      if (newValue && (newValue.includes('_efectivo') || newValue.includes('_digital'))) {
         const currentType = newValue.includes('digital') ? 'digital' : 'efectivo';
-        newValue = buttonValue.replace('_efectivo', `_${currentType}`);
+        newValue = `${buttonValue}_${currentType}`;
       } else {
-        // Si no hay valor, solo seleccionar el socio sin tipo automático
+        // Si no hay valor o no tiene tipo, solo seleccionar el socio sin tipo automático
         newValue = buttonValue;
       }
     } else {
       // Si es tipo, mantener el socio actual SOLO si ya hay uno seleccionado
-      if (newValue) {
+      if (newValue && (newValue.includes('socio1') || newValue.includes('socio2'))) {
         const currentSocio = newValue.includes('socio2') ? 'socio2' : 'socio1';
         newValue = `${currentSocio}_${buttonValue}`;
       } else {
-        // Si no hay valor, no hacer nada hasta que se seleccione un socio
+        // Si no hay valor o no hay socio seleccionado, no hacer nada
         return;
       }
     }
@@ -50,7 +50,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
     }
     
     if (buttonType === 'socio') {
-      return value.startsWith(buttonValue.replace('_efectivo', ''));
+      return value.startsWith(buttonValue);
     } else {
       return value.endsWith(buttonValue);
     }
@@ -66,10 +66,10 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             ref={ref}
-            onClick={() => handleButtonClick('socio1_efectivo', 'socio')}
+            onClick={() => handleButtonClick('socio1', 'socio')}
             
             className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive('socio1_efectivo', 'socio')
+              isActive('socio1', 'socio')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
@@ -78,10 +78,10 @@ export const WalletTCButtonGroup = React.forwardRef(({
           </button>
           <button
             type="button"
-            onClick={() => handleButtonClick('socio2_efectivo', 'socio')}
+            onClick={() => handleButtonClick('socio2', 'socio')}
             
             className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive('socio2_efectivo', 'socio')
+              isActive('socio2', 'socio')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
