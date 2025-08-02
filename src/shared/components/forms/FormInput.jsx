@@ -131,6 +131,7 @@ const FormInput = forwardRef(({
           required={required}
           step={type === 'number' ? 'any' : undefined}
           inputMode={type === 'number' ? 'decimal' : undefined}
+          lang={type === 'number' ? 'en-US' : undefined}
           className={inputClasses}
           {...inputProps}
           {...rest}

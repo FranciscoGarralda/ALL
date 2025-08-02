@@ -128,6 +128,7 @@ const CurrencyInput = forwardRef(({
         onFocus={handleFocus}
         onBlur={handleBlur}
         inputMode="decimal"
+        lang="en-US"
         placeholder={placeholder}
         readOnly={readOnly}
         required={required}
