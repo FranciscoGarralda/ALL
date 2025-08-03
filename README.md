@@ -17,7 +17,7 @@ Un sistema completo de gestión financiera multiplataforma construido con Next.j
   - 👥 SOCIOS (Ingreso, Salida, Préstamo, Devolución)
   - 🔧 ADMINISTRATIVAS (Ajuste, Gasto)
   - 🏦 PRESTAMISTAS (Préstamo, Retiro)
-  - 🔄 INTERNAS (Transferencia)
+  - 🔄 INTERNAS (Mov entre cuentas)
 
 ### 🧮 Funcionalidades Avanzadas
 - **Cálculos Automáticos**: Totales, comisiones e intereses en tiempo real

@@ -52,8 +52,8 @@ export const useMixedPayments = (formData, setFormData) => {
         configKey = 'PRESTAMISTAS_PRESTAMO';
       } else if (prev.subOperacion === 'RETIRO' && prev.operacion === 'PRESTAMISTAS') {
         configKey = 'PRESTAMISTAS_RETIRO';
-      } else if (prev.subOperacion === 'TRANSFERENCIA' && prev.operacion === 'INTERNAS') {
-        configKey = 'TRANSFERENCIA';
+      } else if (prev.subOperacion === 'MOV ENTRE CUENTAS' && prev.operacion === 'INTERNAS') {
+        configKey = 'MOV_ENTRE_CUENTAS';
       }
 
       // specificFieldsConfig imported at top

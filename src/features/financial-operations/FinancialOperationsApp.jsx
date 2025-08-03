@@ -144,6 +144,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       // Limpiar sub-operación cuando cambia la operación principal
       if (field === 'operacion' && value !== prev.operacion) {
         newState.subOperacion = '';
+        
+        // Auto-seleccionar MOV ENTRE CUENTAS para INTERNAS
+        if (value === 'INTERNAS') {
+          newState.subOperacion = 'MOV ENTRE CUENTAS';
+        }
       }
 
       // Reset moneda if proveedorCC changes - VERSIÓN SEGURA
@@ -174,8 +179,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             configKey = 'PRESTAMISTAS_PRESTAMO';
           } else if (prev.subOperacion === 'RETIRO' && prev.operacion === 'PRESTAMISTAS') {
             configKey = 'PRESTAMISTAS_RETIRO';
-          } else if (prev.subOperacion === 'TRANSFERENCIA' && prev.operacion === 'INTERNAS') {
-            configKey = 'TRANSFERENCIA';
+                } else if (prev.subOperacion === 'MOV ENTRE CUENTAS' && prev.operacion === 'INTERNAS') {
+        configKey = 'MOV_ENTRE_CUENTAS';
           }
           
           const isWalletMode = specificFieldsConfig[configKey]?.pagoMixtoWalletMode;
@@ -267,12 +272,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         newState.profit = (totalVentaNum - totalCompraNum).toFixed(2);
       }
 
+      // Auto-completar moneda de comisión cuando cambia la moneda principal (para todas las operaciones)
+      if (field === 'moneda') {
+        newState.monedaComision = newState.moneda;
+      }
+
       // Auto-completado para CUENTAS CORRIENTES
       if (newState.operacion === 'CUENTAS_CORRIENTES' && ['INGRESO', 'EGRESO'].includes(newState.subOperacion)) {
-        // Auto-completar moneda de comisión cuando cambia la moneda principal
-        if (field === 'moneda') {
-          newState.monedaComision = newState.moneda;
-        }
         
         // NO auto-completar cuenta de comisión - debe ser seleccionada manualmente
         // if (field === 'cuenta') {
@@ -423,8 +429,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       configKey = 'PRESTAMISTAS_PRESTAMO';
     } else if (formData.subOperacion === 'RETIRO' && formData.operacion === 'PRESTAMISTAS') {
       configKey = 'PRESTAMISTAS_RETIRO';
-    } else if (formData.subOperacion === 'TRANSFERENCIA' && formData.operacion === 'INTERNAS') {
-      configKey = 'TRANSFERENCIA';
+    } else if (formData.subOperacion === 'MOV ENTRE CUENTAS' && formData.operacion === 'INTERNAS') {
+      configKey = 'MOV_ENTRE_CUENTAS';
     }
 
     const config = specificFieldsConfig[configKey];

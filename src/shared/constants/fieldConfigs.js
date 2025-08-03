@@ -304,7 +304,7 @@ export const specificFieldsConfig = {
   },
 
   // Internal transfer operations
-  TRANSFERENCIA: {
+  MOV_ENTRE_CUENTAS: {
     groups: [
       [
         { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
@@ -318,7 +318,7 @@ export const specificFieldsConfig = {
       ],
               [
           { label: 'Comisión', name: 'comision', type: 'commission', placeholder: '0.00', gridCols: 'col-span-1' },
-          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, gridCols: 'col-span-1' }
+          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-1' }
         ],
       [
         { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'wallet-buttons', gridCols: 'col-span-2' }

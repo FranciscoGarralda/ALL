@@ -63,7 +63,7 @@ export const operaciones = {
   SOCIOS: { icon: '👥', subMenu: ['INGRESO', 'SALIDA', 'PRESTAMO', 'DEVOLUCION'] },
   ADMINISTRATIVAS: { icon: '🔧', subMenu: ['AJUSTE', 'GASTO'] },
   PRESTAMISTAS: { icon: '🏦', subMenu: ['PRESTAMO', 'RETIRO'] },
-  INTERNAS: { icon: '🔄', subMenu: ['TRANSFERENCIA'] },
+  INTERNAS: { icon: '🔄', subMenu: ['MOV ENTRE CUENTAS'] },
 };
 
 /**
