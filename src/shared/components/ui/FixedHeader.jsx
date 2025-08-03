@@ -51,6 +51,7 @@ const FixedHeader = ({
       nuevoMovimiento: 'Nuevo Movimiento',
       saldos: 'Saldos',
       movimientos: 'Movimientos',
+      pendientesRetiro: 'Pendientes',
       cuentas: 'Cuentas Corrientes',
       arbitraje: 'Arbitraje',
       utilidad: 'Utilidad',

@@ -75,7 +75,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
     { id: 'nuevoMovimiento', icon: Plus, title: 'Nuevo Movimiento' },
     { id: 'saldos', icon: Wallet, title: 'Saldos' },
     { id: 'movimientos', icon: List, title: 'Movimientos' },
-    { id: 'pendientesRetiro', icon: Clock, title: 'Pendientes de retiro' },
+    { id: 'pendientesRetiro', icon: Clock, title: 'Pendientes' },
     { id: 'cuentas', icon: Building2, title: 'Cuentas Corrientes' },
     { id: 'arbitraje', icon: ArrowUpDown, title: 'Arbitraje' },
     { id: 'utilidad', icon: TrendingUp, title: 'Utilidad' },

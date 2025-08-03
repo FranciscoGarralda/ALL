@@ -99,7 +99,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center">
               <Clock className="w-7 h-7 mr-3 text-orange-600" />
-              Pendientes de Retiro
+              Pendientes
             </h1>
             <p className="text-gray-600 mt-1">
               Gestión de operaciones pendientes de retiro y entrega
