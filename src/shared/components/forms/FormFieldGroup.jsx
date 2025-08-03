@@ -125,7 +125,7 @@ const FormFieldGroup = ({
             placeholder={placeholder || 'Buscar cliente...'}
             onClientCreated={(newClient) => {
               // Por ahora no manejar creación en prestamistas
-              console.log('Cliente creado:', newClient);
+              // Cliente creado exitosamente
             }}
           />
         );

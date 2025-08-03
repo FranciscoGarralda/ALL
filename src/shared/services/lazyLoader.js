@@ -208,7 +208,7 @@ export class PredictivePreloader {
     predictions.forEach(({ route, probability }) => {
       const component = componentMap[route];
       if (component && component.preload) {
-        console.log(`🔮 Preloading ${route} (${(probability * 100).toFixed(1)}% probability)`);
+        // Preloading route based on probability
         component.preload();
       }
     });
