@@ -32,7 +32,6 @@ export const cuentas = [
 export const socios = [
   { value: 'socio1', label: 'Socio 1' },
   { value: 'socio2', label: 'Socio 2' },
-  { value: 'all', label: 'ALL' },
   { value: 'otro', label: 'Otro' },
 ];
 
