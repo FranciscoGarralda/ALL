@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { DollarSign, XCircle, PlusCircle } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 import { 
   safeParseFloat, 
   safeArrayFind, 
@@ -14,7 +14,6 @@ import {
   FormFieldGroup,
   MixedPaymentGroup,
   ClientAutocomplete,
-  CommissionTypeSwitch,
   formatAmountWithCurrency
 } from '../../shared/components/forms';
 import {
