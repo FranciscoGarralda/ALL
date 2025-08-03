@@ -75,32 +75,40 @@ export const specificFieldsConfig = {
   // Arbitrage operations configuration
   ARBITRAJE: {
     groups: [
+      // Monto compra / Moneda
       [
         { label: 'Monto compra', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
+      // TC compra / Moneda
       [
         { label: 'TC compra', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
+      // Total
       [
         { label: 'Total compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
+      // Monto venta / Moneda
       [
         { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'monedaVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
+      // TC venta / Moneda
       [
         { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'monedaTCVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
+      // Total
       [
         { label: 'Total venta', name: 'totalVenta', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
+      // Profit / Moneda
       [
         { label: 'Profit', name: 'profit', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'monedaProfit', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
+      // Cuenta
       [
         { label: 'Cuenta Ingreso', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ]
