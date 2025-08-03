@@ -64,7 +64,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
             type="button"
             ref={ref}
             onClick={() => handleButtonClick('socio1', 'socio')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
               isActive('socio1', 'socio')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -75,7 +75,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('socio2', 'socio')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
               isActive('socio2', 'socio')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -86,7 +86,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('all', 'socio')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
               isActive('all', 'socio')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -101,7 +101,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('efectivo', 'type')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
               isActive('efectivo', 'type')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -112,7 +112,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('digital', 'type')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
               isActive('digital', 'type')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -123,7 +123,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('pago_mixto', 'type')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
               isActive('pago_mixto', 'type')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
