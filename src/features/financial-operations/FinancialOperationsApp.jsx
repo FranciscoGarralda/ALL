@@ -269,9 +269,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         // }
 
         // Calcular monto de comisión cuando cambia el monto, porcentaje o tipo
-        if (['monto', 'comisionPorcentaje', 'tipoComision'].includes(field)) {
+        if (['monto', 'comisionPorcentaje', 'comision', 'tipoComision'].includes(field)) {
           const monto = safeParseFloat(newState.monto);
-          const comisionValue = safeParseFloat(newState.comisionPorcentaje);
+          // Usar comisionPorcentaje o comision según cual esté presente
+          const comisionValue = safeParseFloat(newState.comisionPorcentaje || newState.comision);
           
           if (monto > 0 && comisionValue > 0) {
             if (newState.tipoComision === 'percentage') {

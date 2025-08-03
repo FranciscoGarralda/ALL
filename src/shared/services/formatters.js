@@ -11,14 +11,32 @@ export const formatCurrencyInput = (value, currency = 'PESO', options = {}) => {
   const { maxDecimals = 6, showDecimals = true } = options;
   
   // Remove all non-numeric characters except decimal point and comma
-  const cleanValue = value.toString().replace(/[^\d.,]/g, '');
+  let cleanValue = value.toString().replace(/[^\d.,]/g, '');
   
   // If empty or just symbols, return empty
   if (!cleanValue || cleanValue === '.' || cleanValue === ',') {
     return { formatted: '', raw: '' };
   }
   
-  // Parse using improved safeParseFloat
+  // Handle user input more intelligently
+  // If the value doesn't contain any dots or commas, it's a plain number
+  if (!cleanValue.includes('.') && !cleanValue.includes(',')) {
+    // Just a plain number, no formatting needed yet
+    const number = parseFloat(cleanValue);
+    if (isNaN(number)) {
+      return { formatted: '', raw: '' };
+    }
+    
+    // For display, format with thousands separators
+    const formatted = formatNumberForDisplay(number, currency, showDecimals, maxDecimals);
+    
+    return {
+      formatted,
+      raw: number.toString()
+    };
+  }
+  
+  // Parse using improved safeParseFloat for values with dots/commas
   const number = safeParseFloat(cleanValue, 0);
   
   // Handle invalid numbers
@@ -26,6 +44,17 @@ export const formatCurrencyInput = (value, currency = 'PESO', options = {}) => {
     return { formatted: '', raw: '' };
   }
   
+  // Format for display
+  const formatted = formatNumberForDisplay(number, currency, showDecimals, maxDecimals);
+  
+  return {
+    formatted,
+    raw: number.toString()
+  };
+};
+
+// Helper function to format number for display
+function formatNumberForDisplay(number, currency, showDecimals, maxDecimals) {
   // Handle sign
   const absNumber = Math.abs(number);
   const isNegative = number < 0;
@@ -70,13 +99,8 @@ export const formatCurrencyInput = (value, currency = 'PESO', options = {}) => {
   
   // Add currency symbol
   const currencySymbol = currency === 'PESO' ? '$' : currency === 'USD' ? 'U$S' : '';
-  const formatted = currencySymbol + ' ' + formattedNumber;
-  
-  return {
-    formatted,
-    raw: number.toString()
-  };
-};
+  return currencySymbol + ' ' + formattedNumber;
+}
 
 /**
  * Parse formatted currency input back to raw number

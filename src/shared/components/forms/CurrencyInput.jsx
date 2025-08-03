@@ -42,15 +42,22 @@ const CurrencyInput = forwardRef(({
       onChange('');
       return;
     }
-
-    // Format the input
-    const { formatted, raw } = formatCurrencyInput(inputValue, currency);
     
-    // Update display
-    setDisplayValue(formatted);
+    // Remove currency symbols and spaces for processing
+    const cleanedInput = inputValue.replace(/[^\d.,]/g, '');
     
-    // Send raw numeric value to parent
-    onChange(raw);
+    // If focused, allow raw input without immediate formatting
+    if (isFocused) {
+      setDisplayValue(cleanedInput);
+      // Parse the raw value for the parent component
+      const rawNumber = cleanedInput.replace(/\./g, '').replace(',', '.');
+      onChange(rawNumber);
+    } else {
+      // Format the input when not focused
+      const { formatted, raw } = formatCurrencyInput(cleanedInput, currency, formatOptions);
+      setDisplayValue(formatted);
+      onChange(raw);
+    }
   };
 
   // Handle focus

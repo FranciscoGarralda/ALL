@@ -98,7 +98,7 @@ export const specificFieldsConfig = {
         { label: 'Total venta', name: 'totalVenta', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Comisión / Profit', name: 'comision', type: 'number', placeholder: '0.00', calculated: true, gridCols: 'col-span-1' },
+                  { label: 'Comisión / Profit', name: 'comision', type: 'commission', placeholder: '0.00', calculated: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
       [
@@ -301,10 +301,10 @@ export const specificFieldsConfig = {
       [
         { label: 'Cuenta de Ingreso', name: 'cuentaIngreso', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
-      [
-        { label: 'Comisión (opcional)', name: 'comision', type: 'number', placeholder: '0.00', gridCols: 'col-span-1' },
-        { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, gridCols: 'col-span-1' }
-      ],
+              [
+          { label: 'Comisión', name: 'comision', type: 'commission', placeholder: '0.00', gridCols: 'col-span-1' },
+          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, gridCols: 'col-span-1' }
+        ],
       [
         { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'wallet-buttons', gridCols: 'col-span-2' }
       ]

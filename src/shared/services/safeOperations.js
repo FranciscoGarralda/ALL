@@ -59,14 +59,27 @@ export const safeParseFloat = (value, defaultValue = 0) => {
     
     if (parts.length === 2) {
       // Single dot
+      const beforeDot = parts[0];
       const afterDot = parts[1];
-      // If 1-4 digits after dot, likely decimal. If exactly 3 digits, could be thousands.
-      // Use context: if exactly 3 digits and first part is 1-3 digits, likely thousands
-      if (afterDot.length === 3 && parts[0].length <= 3) {
-        // Likely thousands separator: 1.000 -> 1000
-        cleanValue = cleanValue.replace('.', '');
+      
+      // Better heuristic for determining if it's a thousands separator:
+      // - If after dot has exactly 3 digits AND before dot has 1-3 digits, likely thousands
+      // - BUT if the user is typing and afterDot is still incomplete, keep as decimal
+      // - If afterDot has 0, 1, 2, or 4+ digits, it's definitely a decimal
+      if (afterDot.length === 3 && beforeDot.length >= 1 && beforeDot.length <= 3) {
+        // Additional check: if the number makes more sense as decimal, keep it
+        // For example: 10.000 could be 10 with 3 decimal places (uncommon) or 10000 (more likely)
+        const asDecimal = parseFloat(cleanValue);
+        const asThousands = parseFloat(cleanValue.replace('.', ''));
+        
+        // If the decimal interpretation is less than 100 and thousands interpretation is >= 1000,
+        // it's probably meant to be thousands
+        if (asDecimal < 100 && asThousands >= 1000) {
+          cleanValue = cleanValue.replace('.', '');
+        }
+        // Otherwise, keep as decimal (user probably wants 10.000 as a precise decimal)
       }
-      // Otherwise keep as decimal separator
+      // For any other case, keep the dot as decimal separator
     } else if (parts.length > 2) {
       // Multiple dots - thousands separators: 1.000.000
       const lastPart = parts[parts.length - 1];
