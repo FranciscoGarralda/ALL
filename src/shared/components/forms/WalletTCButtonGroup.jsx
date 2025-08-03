@@ -12,6 +12,11 @@ export const WalletTCButtonGroup = React.forwardRef(({
   required = false 
 }, ref) => {
   const handleButtonClick = (buttonValue, buttonType) => {
+    // Si pago_mixto está seleccionado, solo permitir deseleccionarlo
+    if (value === 'pago_mixto' && buttonValue !== 'pago_mixto') {
+      return; // No hacer nada si intentan clickear otros botones
+    }
+    
     if (buttonType === 'special') {
       onChange(buttonValue);
       return;
@@ -65,9 +70,11 @@ export const WalletTCButtonGroup = React.forwardRef(({
             ref={ref}
             onClick={() => handleButtonClick('socio1', 'socio')}
             className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
-              isActive('socio1', 'socio')
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              value === 'pago_mixto'
+                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                : isActive('socio1', 'socio')
+                  ? 'bg-primary-500 text-white border-primary-500'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
             Socio 1
@@ -76,9 +83,11 @@ export const WalletTCButtonGroup = React.forwardRef(({
             type="button"
             onClick={() => handleButtonClick('socio2', 'socio')}
             className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
-              isActive('socio2', 'socio')
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              value === 'pago_mixto'
+                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                : isActive('socio2', 'socio')
+                  ? 'bg-primary-500 text-white border-primary-500'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
             Socio 2
@@ -87,9 +96,11 @@ export const WalletTCButtonGroup = React.forwardRef(({
             type="button"
             onClick={() => handleButtonClick('all', 'socio')}
             className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
-              isActive('all', 'socio')
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              value === 'pago_mixto'
+                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                : isActive('all', 'socio')
+                  ? 'bg-primary-500 text-white border-primary-500'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
             ALL
@@ -102,9 +113,11 @@ export const WalletTCButtonGroup = React.forwardRef(({
             type="button"
             onClick={() => handleButtonClick('efectivo', 'type')}
             className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
-              isActive('efectivo', 'type')
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              value === 'pago_mixto'
+                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                : isActive('efectivo', 'type')
+                  ? 'bg-primary-500 text-white border-primary-500'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
             Efectivo
@@ -113,9 +126,11 @@ export const WalletTCButtonGroup = React.forwardRef(({
             type="button"
             onClick={() => handleButtonClick('digital', 'type')}
             className={`px-4 py-3 text-sm font-medium rounded-xl border-2 transition-colors ${
-              isActive('digital', 'type')
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              value === 'pago_mixto'
+                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                : isActive('digital', 'type')
+                  ? 'bg-primary-500 text-white border-primary-500'
+                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
             Digital
