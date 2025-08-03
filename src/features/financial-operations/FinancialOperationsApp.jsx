@@ -654,11 +654,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               Cancelar
             </button>
           )}
-            </div>
-          </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
   );
 };
 
