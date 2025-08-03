@@ -124,7 +124,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
 
   // Vista principal - Lista de clientes
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-4">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-20">
       {/* Header */}
       <div className="card mb-4 sm:mb-6">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -393,7 +393,7 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-4">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-20">
       <div className="max-w-2xl mx-auto">
         <div className="card">
           {/* Header */}
@@ -498,7 +498,7 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
               </div>
 
               {/* Botones de acción */}
-              <div className="flex flex-col gap-3 pt-4 border-t border-gray-200 sm:flex-row">
+              <div className="flex flex-col gap-3 pt-20 border-t border-gray-200 sm:flex-row">
                 <button 
                   onClick={onCancel} 
                   className="btn-secondary flex-1 touch-target"
@@ -537,7 +537,7 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
   const recomendacion = getRecomendacion();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-4">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-20">
       <div className="max-w-6xl mx-auto">
         <div className="card">
           {/* Header */}
@@ -622,7 +622,7 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
             </div>
 
             {/* Información del cliente */}
-            <div className="border-t pt-4 sm:pt-6">
+            <div className="border-t pt-20 sm:pt-6">
               <h3 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">Información de Contacto</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                 <div className="flex items-center gap-2">

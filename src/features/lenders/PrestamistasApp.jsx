@@ -160,7 +160,7 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-4">
+      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-20">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="card mb-4 sm:mb-6">
@@ -405,7 +405,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
   const finalBalances = processedMovements.finalBalances;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-4">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-20">
       <div className="max-w-7xl mx-auto">
         {/* Header con navegación */}
         <div className="card mb-4 sm:mb-6">
@@ -634,7 +634,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
             </div>
 
             {/* Información de contacto */}
-            <div className="border-t pt-4 sm:pt-6">
+            <div className="border-t pt-20 sm:pt-6">
               <h3 className="font-semibold text-gray-900 mb-3">Información de Contacto</h3>
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4 text-sm">
                 <div className="flex items-center gap-2">

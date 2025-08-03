@@ -31,11 +31,16 @@ import { useMixedPayments, useFormKeyboardNavigation } from '../../shared/hooks'
 /**
  * Dynamic Form Field Groups Component
  */
-function DynamicFormFieldGroups({ groups }) {
+function DynamicFormFieldGroups({ groups, formData, onFieldChange }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {groups.map((group, groupIndex) => (
-        <FormFieldGroup key={groupIndex} fields={group} />
+        <FormFieldGroup 
+          key={groupIndex} 
+          fields={group} 
+          formData={formData}
+          onFieldChange={onFieldChange}
+        />
       ))}
     </div>
   );
@@ -443,9 +448,17 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
     return (
       <>
-        <DynamicFormFieldGroups groups={fieldGroups} />
+        <DynamicFormFieldGroups 
+          groups={fieldGroups} 
+          formData={formData}
+          onFieldChange={handleInputChange}
+        />
         {conditionalFields.length > 0 && (
-          <FormFieldGroup fields={conditionalFields} />
+          <FormFieldGroup 
+            fields={conditionalFields} 
+            formData={formData}
+            onFieldChange={handleInputChange}
+          />
         )}
 
         {showPagoMixtoOption && (
@@ -465,24 +478,29 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8 pt-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-4xl mx-auto pt-20">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
           {initialMovementData ? 'Editar Movimiento' : 'Nueva Operación Financiera'}
         </h1>
-        <div className="max-w-xl mx-auto bg-white shadow-lg rounded-xl p-6 sm:p-8 space-y-6">
-          {/* Header de la aplicación */}
-          <div className="flex items-center space-x-3 pb-6 border-b border-gray-200">
-            <div className="bg-primary-500 p-3 rounded-lg">
-              <DollarSign className="h-6 w-6 text-white" />
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
+            {/* Header de la aplicación */}
+            <div className="bg-gradient-to-r from-primary-600 to-primary-700 p-6">
+              <div className="flex items-center space-x-4">
+                <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
+                  <DollarSign className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">
+                    {initialMovementData ? 'Editar Movimiento' : 'Nueva Operación'}
+                  </h2>
+                  <p className="text-primary-100 mt-1">Complete los datos de la operación financiera</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-800">
-                {initialMovementData ? 'Editar Movimiento' : 'Nueva Operación'}
-              </h2>
-              <p className="text-sm text-gray-600">Complete los datos de la operación</p>
-            </div>
-          </div>
+            
+            <div className="p-6 sm:p-8 space-y-6">
 
         <div className="form-section">
           {/* Campo Cliente - Universal con autocompletado */}
@@ -611,7 +629,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         )}
 
         {/* Botones de acción */}
-        <div className="flex flex-col sm:flex-row justify-between pt-4 border-t border-gray-200 gap-3">
+        <div className="flex flex-col sm:flex-row justify-between pt-6 border-t border-gray-200 gap-3">
           <button
             ref={createElementRef('guardar', { type: 'button', order: 100 })}
             onClick={handleGuardar}
@@ -636,8 +654,9 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               Cancelar
             </button>
           )}
+            </div>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

@@ -41,10 +41,10 @@ const FormFieldGroup = ({
 
   const gridCols = getGridColumns();
 
-  // Grid classes for responsive layout - Always use 2 columns for COMPRA layout
+  // Grid classes for responsive layout
   const gridClasses = [
     'grid',
-    'grid-cols-2',
+    gridCols === 1 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2',
     gap,
     className
   ].filter(Boolean).join(' ');

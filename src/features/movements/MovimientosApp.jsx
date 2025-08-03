@@ -90,7 +90,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
 
   // Vista principal - Lista de movimientos
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-4">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-20">
       {/* Header */}
       <div className="card mb-4 sm:mb-6">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -406,7 +406,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-4">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-20">
       <div className="max-w-4xl mx-auto">
         <div className="card">
           {/* Header */}
@@ -564,7 +564,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
             )}
 
             {/* Metadatos */}
-            <div className="border-t pt-4 sm:pt-6">
+            <div className="border-t pt-20 sm:pt-6">
               <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">Información del Sistema</h3>
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1 text-xs">
                 {formatField('ID del Movimiento', movement.id)}
