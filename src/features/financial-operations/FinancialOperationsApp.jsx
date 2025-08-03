@@ -501,8 +501,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             </div>
             
             <div className="p-6 sm:p-8 space-y-6">
-
-        <div className="form-section">
+              <div className="form-section">
           {/* Campo Cliente - Universal con autocompletado */}
           {formData.operacion !== 'PRESTAMISTAS' && (
                       <ClientAutocomplete
@@ -655,10 +654,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             </button>
           )}
         </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
   );
 };
 
