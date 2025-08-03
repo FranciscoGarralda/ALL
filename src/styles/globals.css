@@ -4,12 +4,26 @@
 
 /* Modern Design System Variables */
 :root {
-  /* Modern color palette */
-  --color-primary: 59 130 246;
-  --color-success: 34 197 94;
-  --color-warning: 251 146 60;
-  --color-error: 239 68 68;
-  --color-info: 59 130 246;
+  /* Modern color palette with better contrast */
+  --color-primary: 37 99 235; /* Blue-600 - más vibrante */
+  --color-primary-dark: 29 78 216; /* Blue-700 */
+  --color-primary-light: 59 130 246; /* Blue-500 */
+  --color-success: 22 163 74; /* Green-600 - mejor contraste */
+  --color-warning: 234 88 12; /* Orange-600 - más intenso */
+  --color-error: 220 38 38; /* Red-600 - más vibrante */
+  --color-info: 37 99 235; /* Blue-600 */
+  
+  /* Neutral colors with better contrast */
+  --color-gray-50: 249 250 251;
+  --color-gray-100: 243 244 246;
+  --color-gray-200: 229 231 235;
+  --color-gray-300: 209 213 219;
+  --color-gray-400: 156 163 175;
+  --color-gray-500: 107 114 128;
+  --color-gray-600: 75 85 99;
+  --color-gray-700: 55 65 81;
+  --color-gray-800: 31 41 55;
+  --color-gray-900: 17 24 39;
   
   /* Spacing scale */
   --space-xs: 0.5rem;
@@ -252,12 +266,14 @@
 @layer components {
   /* Enhanced Button styles with better hover states */
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 px-5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg focus:ring-4 focus:ring-blue-500/30 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
     transform: translateY(0);
+    background: linear-gradient(135deg, rgb(37 99 235) 0%, rgb(29 78 216) 100%);
   }
   
   .btn-primary:hover:not(:disabled) {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgb(29 78 216) 0%, rgb(30 64 175) 100%);
   }
   
   .btn-primary:active:not(:disabled) {
@@ -267,19 +283,22 @@
   
   /* Button styles */
   .btn-secondary {
-    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md focus:ring-4 focus:ring-gray-500/30 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300;
   }
   
   .btn-success {
-    @apply bg-success-600 hover:bg-success-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-success-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg focus:ring-4 focus:ring-green-500/30 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    background: linear-gradient(135deg, rgb(22 163 74) 0%, rgb(21 128 61) 100%);
   }
   
   .btn-warning {
-    @apply bg-warning-600 hover:bg-warning-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-warning-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg focus:ring-4 focus:ring-orange-500/30 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    background: linear-gradient(135deg, rgb(234 88 12) 0%, rgb(194 65 12) 100%);
   }
   
   .btn-error {
-    @apply bg-error-600 hover:bg-error-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-error-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg focus:ring-4 focus:ring-red-500/30 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    background: linear-gradient(135deg, rgb(220 38 38) 0%, rgb(185 28 28) 100%);
   }
   
   /* Enhanced Card styles with better shadows and borders */
@@ -316,37 +335,37 @@
   
   /* Modern Form Inputs with better focus states */
   .form-input {
-    @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-gray-900;
-    background-color: #fafafa;
+    @apply w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 placeholder-gray-500 text-gray-900 font-medium;
+    background-color: #ffffff;
   }
   
   .form-input:focus {
-    @apply bg-white;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    @apply bg-white border-blue-500;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
   }
   
   .form-input:hover:not(:focus):not(:disabled) {
-    @apply border-gray-400;
+    @apply border-gray-400 bg-gray-50;
   }
   
   .form-input:disabled {
-    @apply bg-gray-50 cursor-not-allowed;
+    @apply bg-gray-100 cursor-not-allowed opacity-60;
   }
   
   .form-input.error {
-    @apply border-error-300 focus:ring-error-500;
+    @apply border-red-500 focus:ring-red-500/20 focus:border-red-600;
   }
   
   .form-label {
-    @apply block text-sm font-medium text-gray-700;
+    @apply block text-sm font-semibold text-gray-800 mb-2;
   }
   
   .form-error {
-    @apply text-sm text-error-600 mt-1;
+    @apply text-sm font-medium text-red-600 mt-1;
   }
   
   .form-help {
-    @apply text-sm text-gray-500 mt-1;
+    @apply text-sm text-gray-600 mt-1;
   }
   
   /* Animation classes */

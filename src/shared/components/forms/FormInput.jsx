@@ -83,21 +83,21 @@ const FormInput = forwardRef(({
   // Input classes with responsive design and states
   const inputClasses = [
     // Base classes with improved styling
-    'w-full px-3 py-2.5 text-sm sm:text-base',
-    'border rounded-lg transition-all duration-200',
-    'placeholder-gray-400 focus:placeholder-gray-500',
-    'focus:outline-none focus:ring-2 focus:ring-offset-1',
+    'w-full px-4 py-3 text-sm sm:text-base font-medium',
+    'border-2 rounded-xl transition-all duration-200',
+    'placeholder-gray-500 focus:placeholder-gray-600',
+    'focus:outline-none focus:ring-4 focus:ring-offset-0',
     // Modern background
-    'bg-gray-50 focus:bg-white',
+    'bg-white hover:bg-gray-50 focus:bg-white',
     // Type-specific classes
     type === 'date' ? 'cursor-pointer' : '',
     type === 'number' ? 'text-right' : '',
     // State classes with better visual feedback
     error 
-      ? 'border-error-300 focus:border-error-500 focus:ring-error-500/20' 
-      : 'border-gray-300 hover:border-gray-400 focus:border-primary-500 focus:ring-primary-500/20',
+      ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20 text-red-900' 
+      : 'border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-blue-500/20 text-gray-900',
     readOnly 
-      ? 'bg-gray-100 cursor-not-allowed opacity-75' 
+      ? 'bg-gray-100 cursor-not-allowed opacity-60 hover:bg-gray-100' 
       : '',
     // Padding adjustments for day name
     showDayName && calculatedDayName 
@@ -108,15 +108,15 @@ const FormInput = forwardRef(({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       {/* Label with better typography */}
       {label && (
         <label 
           htmlFor={name}
-          className="block text-xs sm:text-sm font-medium text-gray-700 transition-colors duration-200"
+          className="block text-sm font-semibold text-gray-800 transition-colors duration-200"
         >
           {label}
-          {required && <span className="text-error-500 ml-1">*</span>}
+          {required && <span className="text-red-600 ml-1 font-bold">*</span>}
         </label>
       )}
       
@@ -135,6 +135,7 @@ const FormInput = forwardRef(({
           required={required}
           step={type === 'number' ? '0.01' : undefined}
           inputMode={type === 'number' ? 'decimal' : undefined}
+          lang={type === 'number' ? 'en-US' : undefined}
           className={inputClasses}
           {...inputProps}
           {...rest}
@@ -142,8 +143,8 @@ const FormInput = forwardRef(({
         
         {/* Day Name Display with improved styling */}
         {showDayName && calculatedDayName && (
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
-            <span className="text-xs text-gray-600 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md border border-gray-200 font-medium shadow-sm">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <span className="text-xs text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 font-semibold shadow-sm">
               {calculatedDayName}
             </span>
           </div>
@@ -151,15 +152,15 @@ const FormInput = forwardRef(({
         
         {/* Read-only indicator with animation */}
         {readOnly && (
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <div className="w-2.5 h-2.5 bg-gray-500 rounded-full animate-pulse"></div>
           </div>
         )}
       </div>
       
       {/* Error message with slide animation */}
       {error && (
-        <p className="text-xs text-error-600 mt-1 animate-fadeIn">
+        <p className="text-sm font-medium text-red-600 mt-1.5 animate-fadeIn">
           {error}
         </p>
       )}
