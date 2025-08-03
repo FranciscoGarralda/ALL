@@ -49,51 +49,49 @@ export const WalletButtonGroup = React.forwardRef(({
       <label className="block text-sm font-medium text-gray-700">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-      <div className="space-y-2">
-        {/* Primera fila: Socio 1, Socio 2, ALL */}
-        <div className="grid grid-cols-3 gap-2">
-          <button
-            type="button"
-            ref={ref}
-            onClick={() => handleButtonClick('socio1', 'socio')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive('socio1', 'socio')
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            Socio 1
-          </button>
-          <button
-            type="button"
-            onClick={() => handleButtonClick('socio2', 'socio')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive('socio2', 'socio')
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            Socio 2
-          </button>
-          <button
-            type="button"
-            onClick={() => handleButtonClick('all', 'socio')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
-              isActive('all', 'socio')
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            ALL
-          </button>
-        </div>
+      <div className="grid grid-cols-2 gap-2">
+        {/* Primera fila: Socio 1, Socio 2 */}
+        <button
+          type="button"
+          ref={ref}
+          onClick={() => handleButtonClick('socio1', 'socio')}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('socio1', 'socio')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Socio 1
+        </button>
+        <button
+          type="button"
+          onClick={() => handleButtonClick('socio2', 'socio')}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('socio2', 'socio')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Socio 2
+        </button>
         
-        {/* Segunda fila: Efectivo, Digital */}
-        <div className="grid grid-cols-2 gap-2">
+        {/* Segunda fila: ALL, Efectivo/Digital combinado */}
+        <button
+          type="button"
+          onClick={() => handleButtonClick('all', 'socio')}
+          className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            isActive('all', 'socio')
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          ALL
+        </button>
+        <div className="grid grid-cols-2 gap-1">
           <button
             type="button"
             onClick={() => handleButtonClick('efectivo', 'type')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            className={`px-2 py-2 text-xs font-medium rounded-md border transition-colors ${
               isActive('efectivo', 'type')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -104,7 +102,7 @@ export const WalletButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('digital', 'type')}
-            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
+            className={`px-2 py-2 text-xs font-medium rounded-md border transition-colors ${
               isActive('digital', 'type')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'

@@ -96,11 +96,10 @@ export const CuentaButtonGroup = React.forwardRef(({
         </div>
         
         {/* Segunda fila: Digital, Efectivo */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
             onClick={() => handleTipoClick('digital')}
-            
             className={getTipoButtonClasses('digital')}
             disabled={readOnly}
           >
@@ -110,13 +109,14 @@ export const CuentaButtonGroup = React.forwardRef(({
             <button
               type="button"
               onClick={() => handleTipoClick('efectivo')}
-              
               className={getTipoButtonClasses('efectivo')}
               disabled={readOnly}
             >
               Efectivo
             </button>
           )}
+          {/* Espacio vacío para mantener simetría */}
+          <div></div>
         </div>
       </div>
     </div>
