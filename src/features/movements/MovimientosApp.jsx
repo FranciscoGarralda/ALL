@@ -202,7 +202,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
               )}
             </div>
           ) : (
-            <div className="space-y-1">
+            <div className="space-y-3">
               {/* Header de columnas - solo visible en desktop */}
               <div className="hidden sm:block bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-600">
                 <div className="flex items-center gap-3">
@@ -278,7 +278,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
 
   return (
     <div className="bg-white border border-gray-200 hover:border-primary-300 hover:shadow-sm transition-all duration-150 rounded-lg overflow-hidden">
-      <div className="px-3 py-2 flex items-center gap-3 min-w-0">
+      <div className="px-4 py-3 flex items-center gap-3 min-w-0">
         {/* Fecha */}
         <div className="flex-shrink-0 w-12 text-center">
           <div className="text-xs text-gray-500 font-medium">{formattedDate}</div>
@@ -465,7 +465,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
                 <User size={16} className="sm:w-5 sm:h-5 text-primary-600 flex-shrink-0" />
                 Información General
               </h3>
-              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2">
                 {formatDateField('Fecha', movement.fecha)}
                 {formatField('Cliente', getClientName(movement.cliente, clients))}
                 {formatField('Operación', movement.operacion?.replace('_', ' '))}
@@ -481,7 +481,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
                 <DollarSign size={16} className="sm:w-5 sm:h-5 text-success-600 flex-shrink-0" />
                 Valores Monetarios
               </h3>
-              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2">
                 {movement.monto && formatField('Monto', movement.monto, movement.moneda)}
                 {movement.tc && formatField('Tipo de Cambio (TC)', movement.tc)}
                 {movement.monedaTC && formatField('Moneda TC', movement.monedaTC)}

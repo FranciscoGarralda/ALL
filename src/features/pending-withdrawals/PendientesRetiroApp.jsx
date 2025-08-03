@@ -170,8 +170,8 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
                   <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
                     <DollarSign className="w-5 h-5 text-orange-600" />
                   </div>
-                                     <div>
-                     <h3 className="font-semibold text-gray-900">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">
                        {getClientName(movement.cliente, clients)}
                      </h3>
                     <p className="text-sm text-gray-500">

@@ -87,11 +87,11 @@ export const WalletButtonGroup = React.forwardRef(({
         >
           ALL
         </button>
-        <div className="grid grid-cols-2 gap-1">
+        <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
             onClick={() => handleButtonClick('efectivo', 'type')}
-            className={`px-2 py-2 text-xs font-medium rounded-md border transition-colors ${
+            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
               isActive('efectivo', 'type')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -102,7 +102,7 @@ export const WalletButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('digital', 'type')}
-            className={`px-2 py-2 text-xs font-medium rounded-md border transition-colors ${
+            className={`px-3 py-2 text-sm font-medium rounded-md border transition-colors ${
               isActive('digital', 'type')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
