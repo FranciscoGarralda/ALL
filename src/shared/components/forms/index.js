@@ -5,6 +5,8 @@ export { default as FormFieldGroup } from './FormFieldGroup';
 export { default as CurrencyInput } from './CurrencyInput';
 export { default as ClientAutocomplete } from './ClientAutocomplete';
 export { default as ClientModal } from './ClientModal';
+export { default as CommissionTypeSwitch } from './CommissionTypeSwitch';
+export { default as CommissionField } from './CommissionField';
 
 export { default as MixedPaymentGroup } from './MixedPaymentGroup';
 

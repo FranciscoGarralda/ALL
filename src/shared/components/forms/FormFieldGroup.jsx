@@ -3,6 +3,7 @@ import FormInput from './FormInput.jsx';
 import FormSelect from './FormSelect.jsx';
 import ClientAutocomplete from './ClientAutocomplete.jsx';
 import CurrencyInput from './CurrencyInput.jsx';
+import CommissionField from './CommissionField.jsx';
 import { WalletButtonGroup, WalletTCButtonGroup, CuentaButtonGroup } from './index.js';
 
 /**
@@ -178,6 +179,15 @@ const FormFieldGroup = ({
             {...commonProps}
             currency={fieldProps.currency || 'PESO'}
             placeholder={placeholder || '$0'}
+          />
+        );
+      
+      case 'commission':
+        return fieldWrapper(
+          <CommissionField
+            {...commonProps}
+            commissionType={formData.tipoComision || 'percentage'}
+            onCommissionTypeChange={(type) => handleFieldChange('tipoComision', type)}
           />
         );
       

@@ -14,6 +14,7 @@ import {
   FormFieldGroup,
   MixedPaymentGroup,
   ClientAutocomplete,
+  CommissionTypeSwitch,
   formatAmountWithCurrency
 } from '../../shared/components/forms';
 import {
@@ -64,6 +65,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     monedaVenta: '',
     tcVenta: '',
     comision: '',
+    tipoComision: 'percentage', // 'percentage' o 'fixed'
     monedaComision: '',
     cuentaComision: '',
     interes: '',
@@ -266,15 +268,20 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         //   newState.cuentaComision = newState.cuenta;
         // }
 
-        // Calcular monto de comisión cuando cambia el monto o el porcentaje
-        if (['monto', 'comisionPorcentaje'].includes(field)) {
+        // Calcular monto de comisión cuando cambia el monto, porcentaje o tipo
+        if (['monto', 'comisionPorcentaje', 'tipoComision'].includes(field)) {
           const monto = safeParseFloat(newState.monto);
-          const porcentaje = safeParseFloat(newState.comisionPorcentaje);
+          const comisionValue = safeParseFloat(newState.comisionPorcentaje);
           
-          if (monto > 0 && porcentaje > 0) {
-            // Use improved precision calculation
-            const comisionCalculada = safeCalculation.percentage(monto, porcentaje);
-            newState.montoComision = safeCalculation.formatFinancial(comisionCalculada, 4);
+          if (monto > 0 && comisionValue > 0) {
+            if (newState.tipoComision === 'percentage') {
+              // Calcular como porcentaje
+              const comisionCalculada = safeCalculation.percentage(monto, comisionValue);
+              newState.montoComision = safeCalculation.formatFinancial(comisionCalculada, 4);
+            } else {
+              // Usar valor fijo
+              newState.montoComision = safeCalculation.formatFinancial(comisionValue, 2);
+            }
           } else {
             newState.montoComision = '';
           }
@@ -458,18 +465,24 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8 pt-28">
-      <div className="max-w-xl mx-auto bg-white shadow-medium rounded-xl p-4 sm:p-6 space-y-4">
-        {/* Header de la aplicación */}
-        <div className="flex items-center space-x-3 pb-4 border-b border-gray-200">
-          <div className="bg-primary-500 p-2 rounded-lg">
-            <DollarSign className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8 pt-4">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">
+          {initialMovementData ? 'Editar Movimiento' : 'Nueva Operación Financiera'}
+        </h1>
+        <div className="max-w-xl mx-auto bg-white shadow-lg rounded-xl p-6 sm:p-8 space-y-6">
+          {/* Header de la aplicación */}
+          <div className="flex items-center space-x-3 pb-6 border-b border-gray-200">
+            <div className="bg-primary-500 p-3 rounded-lg">
+              <DollarSign className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {initialMovementData ? 'Editar Movimiento' : 'Nueva Operación'}
+              </h2>
+              <p className="text-sm text-gray-600">Complete los datos de la operación</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-lg sm:text-xl font-bold text-gray-900">Operaciones Financieras</h1>
-            <p className="text-sm text-gray-600">Gestión de movimientos</p>
-          </div>
-        </div>
 
         <div className="form-section">
           {/* Campo Cliente - Universal con autocompletado */}

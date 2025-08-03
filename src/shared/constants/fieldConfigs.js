@@ -146,7 +146,7 @@ export const specificFieldsConfig = {
           { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
         ],
         [
-          { label: 'Comisión (%)', name: 'comisionPorcentaje', type: 'number', placeholder: '0.00', gridCols: 'col-span-1' },
+          { label: 'Comisión', name: 'comisionPorcentaje', type: 'commission', placeholder: '0.00', gridCols: 'col-span-1' },
           { label: 'Monto Comisión', name: 'montoComision', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-1' }
         ],
         [
