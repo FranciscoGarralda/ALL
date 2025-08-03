@@ -38,7 +38,7 @@ export const CuentaButtonGroup = React.forwardRef(({
   };
 
   const getSocioButtonClasses = (socioValue) => {
-    return `px-4 py-3 text-sm font-medium text-center rounded-xl border-2 transition-colors ${
+    return `px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
       isSocioActive(socioValue)
         ? 'bg-primary-500 text-white border-primary-500'
         : readOnly 
@@ -48,7 +48,7 @@ export const CuentaButtonGroup = React.forwardRef(({
   };
 
   const getTipoButtonClasses = (tipoValue) => {
-    return `px-4 py-3 text-sm font-medium text-center rounded-xl border-2 transition-colors ${
+    return `px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
       isTipoActive(tipoValue)
         ? 'bg-primary-500 text-white border-primary-500'
         : readOnly 

@@ -12,13 +12,18 @@ export const WalletTCButtonGroup = React.forwardRef(({
   required = false 
 }, ref) => {
   const handleButtonClick = (buttonValue, buttonType) => {
-    // Si pago_mixto está seleccionado, solo permitir deseleccionarlo
-    if (value === 'pago_mixto' && buttonValue !== 'pago_mixto') {
-      return; // No hacer nada si intentan clickear otros botones
+    if (buttonType === 'special') {
+      // Si ya está seleccionado pago_mixto y clickean de nuevo, deseleccionar
+      if (value === 'pago_mixto' && buttonValue === 'pago_mixto') {
+        onChange('');
+      } else {
+        onChange(buttonValue);
+      }
+      return;
     }
     
-    if (buttonType === 'special') {
-      onChange(buttonValue);
+    // Si pago_mixto está seleccionado, no permitir seleccionar otros botones
+    if (value === 'pago_mixto') {
       return;
     }
 
@@ -69,7 +74,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
             type="button"
             ref={ref}
             onClick={() => handleButtonClick('socio1', 'socio')}
-            className={`px-4 py-3 text-sm font-medium text-center rounded-xl border-2 transition-colors ${
+            className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
               value === 'pago_mixto'
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                 : isActive('socio1', 'socio')
@@ -82,7 +87,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('socio2', 'socio')}
-            className={`px-4 py-3 text-sm font-medium text-center rounded-xl border-2 transition-colors ${
+            className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
               value === 'pago_mixto'
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                 : isActive('socio2', 'socio')
@@ -95,7 +100,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('all', 'socio')}
-            className={`px-4 py-3 text-sm font-medium text-center rounded-xl border-2 transition-colors ${
+            className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
               value === 'pago_mixto'
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                 : isActive('all', 'socio')
@@ -112,7 +117,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('efectivo', 'type')}
-            className={`px-4 py-3 text-sm font-medium text-center rounded-xl border-2 transition-colors ${
+            className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
               value === 'pago_mixto'
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                 : isActive('efectivo', 'type')
@@ -125,7 +130,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('digital', 'type')}
-            className={`px-4 py-3 text-sm font-medium text-center rounded-xl border-2 transition-colors ${
+            className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
               value === 'pago_mixto'
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                 : isActive('digital', 'type')
@@ -138,7 +143,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('pago_mixto', 'special')}
-            className={`px-4 py-3 text-sm font-medium text-center rounded-xl border-2 transition-colors ${
+            className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
               isActive('pago_mixto', 'special')
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
