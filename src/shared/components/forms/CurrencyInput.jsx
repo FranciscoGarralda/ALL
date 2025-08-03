@@ -96,7 +96,7 @@ const CurrencyInput = forwardRef(({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-3">
       {/* Label */}
       {label && (
         <label 

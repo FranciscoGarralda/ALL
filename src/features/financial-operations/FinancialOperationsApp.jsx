@@ -540,18 +540,21 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             required
           />
 
-          {/* Campo Detalle */}
-          <FormInput
+          <div className="mt-6">
+            {/* Campo Detalle */}
+            <FormInput
             ref={createElementRef('detalle', { type: 'input', order: 3 })}
             label="DETALLE"
             name="detalle"
             value={formData.detalle}
             onChange={(val) => handleInputChange('detalle', val)}
             placeholder="Descripción de la operación"
-          />
+            />
+          </div>
 
-          {/* Selector de Operación principal */}
-          <FormSelect
+          <div className="mt-6">
+            {/* Selector de Operación principal */}
+            <FormSelect
             ref={createElementRef('operacion', { type: 'select', order: 4 })}
             label="OPERACIÓN"
             name="operacion"
@@ -563,14 +566,16 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               label: `${op.icon} ${key.replace('_', ' ')}`,
             })),
           ]}
-          placeholder="Seleccionar operación"
-          required
-        />
+            placeholder="Seleccionar operación"
+            required
+          />
+          </div>
 
           {/* Selector de Detalle de Operación */}
           {formData.operacion &&
             operaciones[formData.operacion]?.subMenu?.length > 0 && (
-              <FormSelect
+              <div className="mt-6">
+                <FormSelect
                 ref={createElementRef('subOperacion', { type: 'select', order: 5 })}
                 label="DETALLE OPERACIÓN"
                 name="subOperacion"
@@ -582,9 +587,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                   label: sub,
                 })),
               ]}
-              placeholder="Seleccionar opción"
-              required
-            />
+                placeholder="Seleccionar opción"
+                required
+              />
+              </div>
             )}
 
           {/* Campos específicos dinámicos */}
