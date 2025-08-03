@@ -202,7 +202,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
       />
 
       {/* Layout principal con altura fija */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden pt-16">
         {/* Sidebar - Solo desktop (lg+), siempre fija */}
         <div className="hidden lg:block">
           <MainMenu 
