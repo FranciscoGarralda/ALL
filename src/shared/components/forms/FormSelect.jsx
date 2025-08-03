@@ -72,7 +72,7 @@ const FormSelect = forwardRef(({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {/* Label */}
       {label && (
         <label 

@@ -136,7 +136,7 @@ const FormFieldGroup = ({
             {...commonProps}
             options={options}
             filterOptions={filterOptions}
-            placeholder={placeholder || `Seleccionar ${label?.toLowerCase() || 'opción'}`}
+                          placeholder={placeholder || `Elegir`}
           />
         );
       
@@ -230,7 +230,7 @@ const FormFieldGroup = ({
       
       case 'textarea':
         return fieldWrapper(
-          <div key={name || index} className="space-y-1">
+          <div key={name || index} className="space-y-3">
             {label && (
               <label 
                 htmlFor={name}

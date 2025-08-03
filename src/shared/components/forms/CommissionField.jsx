@@ -15,7 +15,7 @@ const CommissionField = ({
   ...rest
 }) => {
   return (
-    <div className={`space-y-2 ${className}`}>
+    <div className={`space-y-3 ${className}`}>
       <div className="flex items-center justify-between">
         <label className="block text-xs sm:text-sm font-medium text-gray-700">
           {label} {required && <span className="text-error-500 ml-1">*</span>}
