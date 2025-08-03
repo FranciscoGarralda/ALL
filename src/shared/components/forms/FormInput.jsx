@@ -129,7 +129,9 @@ const FormInput = forwardRef(({
           placeholder={placeholder}
           readOnly={readOnly}
           required={required}
-          step={type === 'number' ? '0.01' : undefined}
+          step={type === 'number' ? 'any' : undefined}
+          inputMode={type === 'number' ? 'decimal' : undefined}
+          lang={type === 'number' ? 'en-US' : undefined}
           className={inputClasses}
           {...inputProps}
           {...rest}
