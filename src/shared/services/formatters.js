@@ -475,17 +475,17 @@ export const getStatusBadge = (status) => {
     'pendiente_retiro': {
       bg: 'bg-yellow-100',
       text: 'text-yellow-800',
-      label: 'Pendiente de retiro'
+      label: 'P. Retiro'
     },
     'pendiente_entrega': {
       bg: 'bg-orange-100',
       text: 'text-orange-800',
-      label: 'Pendiente de entrega'
+      label: 'P. Entrega'
     },
     'realizado': {
       bg: 'bg-green-100',
       text: 'text-green-800',
-      label: 'Realizado'
+      label: 'Finalizado'
     },
     'pendiente': {
       bg: 'bg-blue-100',

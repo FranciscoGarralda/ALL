@@ -70,12 +70,12 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
       'pendiente_retiro': { 
         bg: 'bg-yellow-100', 
         text: 'text-yellow-800', 
-        label: 'Pendiente de retiro' 
+        label: 'P. Retiro' 
       },
       'pendiente_entrega': { 
         bg: 'bg-orange-100', 
         text: 'text-orange-800', 
-        label: 'Pendiente de entrega' 
+        label: 'P. Entrega' 
       }
     };
     
@@ -136,8 +136,8 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="all">Todos los estados</option>
-              <option value="pendiente_retiro">Pendiente de retiro</option>
-              <option value="pendiente_entrega">Pendiente de entrega</option>
+                                <option value="pendiente_retiro">P. Retiro</option>
+                  <option value="pendiente_entrega">P. Entrega</option>
             </select>
             </div>
           </div>
