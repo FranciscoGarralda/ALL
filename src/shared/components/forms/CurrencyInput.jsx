@@ -34,7 +34,10 @@ const CurrencyInput = forwardRef(({
 
   // Handle input change with real-time formatting
   const handleChange = (e) => {
-    const inputValue = e.target.value;
+    let inputValue = e.target.value;
+    
+    // Convert comma to dot for decimal input
+    inputValue = inputValue.replace(',', '.');
     
     // If user clears the input
     if (inputValue === '') {
@@ -44,17 +47,16 @@ const CurrencyInput = forwardRef(({
     }
     
     // Remove currency symbols and spaces for processing
-    const cleanedInput = inputValue.replace(/[^\d.,]/g, '');
+    const cleanedInput = inputValue.replace(/[^\d.]/g, '');
     
     // If focused, allow raw input without immediate formatting
     if (isFocused) {
       setDisplayValue(cleanedInput);
       // Parse the raw value for the parent component
-      const rawNumber = cleanedInput.replace(/\./g, '').replace(',', '.');
-      onChange(rawNumber);
+      onChange(cleanedInput);
     } else {
       // Format the input when not focused
-      const { formatted, raw } = formatCurrencyInput(cleanedInput, currency, formatOptions);
+      const { formatted, raw } = formatCurrencyInput(cleanedInput, currency);
       setDisplayValue(formatted);
       onChange(raw);
     }

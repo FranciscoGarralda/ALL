@@ -70,10 +70,12 @@ const FormInput = forwardRef(({
 
   // Handle change with proper type conversion
   const handleChange = (e) => {
-    const newValue = e.target.value;
+    let newValue = e.target.value;
     
-    // For number inputs, convert to number or keep as string for empty values
+    // For number inputs, convert comma to dot for decimal separator
     if (type === 'number') {
+      // Replace comma with dot for decimal input
+      newValue = newValue.replace(',', '.');
       onChange(newValue === '' ? '' : newValue);
     } else {
       onChange(newValue);
