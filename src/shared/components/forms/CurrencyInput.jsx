@@ -83,14 +83,16 @@ const CurrencyInput = forwardRef(({
 
   // Input classes
   const inputClasses = [
-    'w-full px-3 py-2 text-base border rounded-lg transition-all duration-200',
-    'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
-    'placeholder:text-gray-400 sm:px-4 sm:py-2.5 sm:text-sm',
-    readOnly 
-      ? 'bg-gray-50 text-gray-500 cursor-not-allowed border-gray-200' 
-      : 'bg-white text-gray-900 border-gray-300 hover:border-gray-400',
+    'w-full px-4 py-3 text-sm sm:text-base font-medium border-2 rounded-xl transition-all duration-200',
+    'focus:outline-none focus:ring-4 focus:ring-offset-0',
+    'placeholder-gray-500 focus:placeholder-gray-600',
+    'bg-white hover:bg-gray-50 focus:bg-white',
+    'text-right', // Currency inputs are always right-aligned
     error 
-      ? 'border-error-500 focus:ring-error-500' 
+      ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20 text-red-900' 
+      : 'border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-blue-500/20 text-gray-900',
+    readOnly 
+      ? 'bg-gray-100 cursor-not-allowed opacity-60 hover:bg-gray-100' 
       : '',
     className
   ].filter(Boolean).join(' ');
