@@ -64,7 +64,7 @@ export const CuentaButtonGroup = React.forwardRef(({
       </label>
       <div className="space-y-2">
         {/* Primera fila: Socio 1, Socio 2, ALL */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-3">
           <button
             type="button"
             ref={ref}
@@ -96,7 +96,7 @@ export const CuentaButtonGroup = React.forwardRef(({
         </div>
         
         {/* Segunda fila: Digital, Efectivo */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-3">
           <button
             type="button"
             onClick={() => handleTipoClick('digital')}

@@ -400,7 +400,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   };
 
   const renderEstadoYPor = () => (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-2 gap-6">
       <FormSelect
         label="Estado de retiro"
         name="estado"

@@ -24,7 +24,7 @@ const FormFieldGroup = ({
   errors = {},
   className = '',
   columns = null,
-  gap = 'gap-4',
+  gap = 'gap-6',
 
   ...rest
 }) => {

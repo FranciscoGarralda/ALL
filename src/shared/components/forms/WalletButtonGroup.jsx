@@ -49,7 +49,7 @@ export const WalletButtonGroup = React.forwardRef(({
       <label className="block text-sm font-medium text-gray-700">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-      <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
         {/* Primera fila: Socio 1, Socio 2 */}
         <button
           type="button"
@@ -87,7 +87,7 @@ export const WalletButtonGroup = React.forwardRef(({
         >
           ALL
         </button>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => handleButtonClick('efectivo', 'type')}
