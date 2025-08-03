@@ -4,18 +4,82 @@
  */
 
 /**
- * Safe number parsing
+ * Safe number parsing with improved decimal handling
  */
 export const safeParseFloat = (value, defaultValue = 0) => {
   if (value === null || value === undefined || value === '') {
     return defaultValue;
   }
   
-  // Convert to string and clean
+  // Convert to string and clean basic characters
   const stringValue = value.toString().replace(/[$\s]/g, '');
   
-  // Simple conversion: replace comma with dot for decimal
-  const cleanValue = stringValue.replace(',', '.');
+  // Handle empty string after cleaning
+  if (stringValue === '') {
+    return defaultValue;
+  }
+  
+  // Improved decimal parsing for Spanish formats
+  let cleanValue = stringValue;
+  
+  // Check if we have both dots and commas
+  const hasComma = cleanValue.includes(',');
+  const hasDot = cleanValue.includes('.');
+  
+  if (hasComma && hasDot) {
+    // Format like 1.000.000,50 or 1,000,000.50
+    const lastCommaIndex = cleanValue.lastIndexOf(',');
+    const lastDotIndex = cleanValue.lastIndexOf('.');
+    
+    if (lastCommaIndex > lastDotIndex) {
+      // Spanish format: 1.000.000,50
+      // Remove dots (thousands separators) and replace comma with dot
+      cleanValue = cleanValue.replace(/\./g, '').replace(',', '.');
+    } else {
+      // US format: 1,000,000.50
+      // Remove commas (thousands separators)
+      cleanValue = cleanValue.replace(/,/g, '');
+    }
+  } else if (hasComma && !hasDot) {
+    // Only comma - could be decimal separator or thousands separator
+    const commaIndex = cleanValue.indexOf(',');
+    const afterComma = cleanValue.substring(commaIndex + 1);
+    
+    // If there are 1-4 digits after comma, treat as decimal separator
+    // If more digits or multiple commas, treat as thousands separator
+    if (afterComma.length <= 4 && afterComma.length > 0 && !afterComma.includes(',')) {
+      cleanValue = cleanValue.replace(',', '.');
+    } else {
+      // Thousands separator - remove commas
+      cleanValue = cleanValue.replace(/,/g, '');
+    }
+  } else if (hasDot && !hasComma) {
+    // Only dots - could be decimal separator or thousands separator
+    const parts = cleanValue.split('.');
+    
+    if (parts.length === 2) {
+      // Single dot
+      const afterDot = parts[1];
+      // If 1-4 digits after dot, likely decimal. If exactly 3 digits, could be thousands.
+      // Use context: if exactly 3 digits and first part is 1-3 digits, likely thousands
+      if (afterDot.length === 3 && parts[0].length <= 3) {
+        // Likely thousands separator: 1.000 -> 1000
+        cleanValue = cleanValue.replace('.', '');
+      }
+      // Otherwise keep as decimal separator
+    } else if (parts.length > 2) {
+      // Multiple dots - thousands separators: 1.000.000
+      const lastPart = parts[parts.length - 1];
+      if (lastPart.length === 3) {
+        // All dots are thousands separators
+        cleanValue = cleanValue.replace(/\./g, '');
+      } else {
+        // Last dot might be decimal separator
+        const beforeLastDot = parts.slice(0, -1).join('');
+        cleanValue = beforeLastDot + '.' + lastPart;
+      }
+    }
+  }
   
   const parsed = parseFloat(cleanValue);
   return isNaN(parsed) ? defaultValue : parsed;
@@ -235,13 +299,17 @@ export const safeLocalStorage = {
 };
 
 /**
- * Safe financial calculations
+ * Safe financial calculations with improved precision
  */
 export const safeCalculation = {
   multiply: (a, b) => {
     const numA = safeParseFloat(a);
     const numB = safeParseFloat(b);
-    return numA * numB;
+    
+    // Use more precise calculation for financial operations
+    const result = numA * numB;
+    // Round to avoid floating point precision issues
+    return Math.round(result * 100000000) / 100000000;
   },
   
   divide: (a, b) => {
@@ -253,25 +321,43 @@ export const safeCalculation = {
       return 0;
     }
     
-    return numA / numB;
+    const result = numA / numB;
+    // Round to avoid floating point precision issues
+    return Math.round(result * 100000000) / 100000000;
   },
   
   add: (a, b) => {
     const numA = safeParseFloat(a);
     const numB = safeParseFloat(b);
-    return numA + numB;
+    
+    const result = numA + numB;
+    // Round to avoid floating point precision issues
+    return Math.round(result * 100000000) / 100000000;
   },
   
   subtract: (a, b) => {
     const numA = safeParseFloat(a);
     const numB = safeParseFloat(b);
-    return numA - numB;
+    
+    const result = numA - numB;
+    // Round to avoid floating point precision issues
+    return Math.round(result * 100000000) / 100000000;
   },
   
   percentage: (value, percentage) => {
     const numValue = safeParseFloat(value);
     const numPercentage = safeParseFloat(percentage);
-    return (numValue * numPercentage) / 100;
+    
+    // More precise percentage calculation
+    const result = (numValue * numPercentage) / 100;
+    // Round to avoid floating point precision issues
+    return Math.round(result * 100000000) / 100000000;
+  },
+  
+  // New helper for formatting financial results
+  formatFinancial: (value, decimals = 2) => {
+    const num = safeParseFloat(value);
+    return num.toFixed(decimals);
   }
 };
 

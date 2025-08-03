@@ -2,11 +2,14 @@
  * Format number input in real-time as user types
  * @param {string} value - Raw input value
  * @param {string} currency - Currency code (default: PESO)
+ * @param {object} options - Formatting options
  * @returns {object} { formatted, raw } - Formatted display value and raw numeric value
  */
 
 import { safeParseFloat } from './safeOperations.js';
-export const formatCurrencyInput = (value, currency = 'PESO') => {
+export const formatCurrencyInput = (value, currency = 'PESO', options = {}) => {
+  const { maxDecimals = 6, showDecimals = true } = options;
+  
   // Remove all non-numeric characters except decimal point and comma
   const cleanValue = value.toString().replace(/[^\d.,]/g, '');
   
@@ -15,7 +18,7 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
     return { formatted: '', raw: '' };
   }
   
-  // Simple parsing
+  // Parse using improved safeParseFloat
   const number = safeParseFloat(cleanValue, 0);
   
   // Handle invalid numbers
@@ -27,8 +30,23 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
   const absNumber = Math.abs(number);
   const isNegative = number < 0;
   
+  // Determine decimal places to show
+  let decimalPlaces = 2; // default
+  if (showDecimals) {
+    // Count actual decimal places in the original number
+    const numberStr = absNumber.toString();
+    if (numberStr.includes('.')) {
+      const actualDecimals = numberStr.split('.')[1].length;
+      decimalPlaces = Math.min(actualDecimals, maxDecimals);
+    }
+    // For very small numbers, show more decimals
+    if (absNumber < 1 && absNumber > 0) {
+      decimalPlaces = Math.max(decimalPlaces, 4);
+    }
+  }
+  
   // Split into integer and decimal parts
-  const fixedNumber = absNumber.toFixed(2);
+  const fixedNumber = absNumber.toFixed(Math.max(decimalPlaces, 2));
   const [integerPart, decimalPart] = fixedNumber.split('.');
   
   // Add thousand separators with dots
@@ -36,8 +54,13 @@ export const formatCurrencyInput = (value, currency = 'PESO') => {
   
   // Build the number with comma for decimals
   let formattedNumber = formattedInteger;
-  if (decimalPart && parseInt(decimalPart) > 0) {
-    formattedNumber += ',' + decimalPart;
+  if (showDecimals && decimalPart && (parseInt(decimalPart) > 0 || decimalPlaces > 2)) {
+    // Remove trailing zeros but keep at least 2 decimal places for currencies
+    const trimmedDecimals = decimalPart.replace(/0+$/, '');
+    const finalDecimals = trimmedDecimals.length < 2 ? decimalPart.substring(0, 2) : trimmedDecimals;
+    if (finalDecimals) {
+      formattedNumber += ',' + finalDecimals;
+    }
   }
   
   // Add negative sign if needed
