@@ -478,21 +478,20 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto pt-24">
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100">
-            {/* Header de la aplicación */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-8">
-              <div className="flex items-center space-x-5">
-                <div className="bg-white/25 backdrop-blur-sm p-4 rounded-2xl shadow-lg">
-                  <DollarSign className="h-10 w-10 text-white" />
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+      <div className="max-w-4xl mx-auto">
+        <div className="card mb-4 sm:mb-6">
+            {/* Header de la card */}
+            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <DollarSign size={20} className="sm:w-6 sm:h-6 text-primary-600" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-white">
-                    {initialMovementData ? 'Editar Movimiento' : 'Nueva Operación'}
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+                    {initialMovementData ? 'Editar Movimiento' : 'Nueva Operación Financiera'}
                   </h2>
-                  <p className="text-blue-100 mt-2 text-lg">Complete los datos de la operación financiera</p>
+                  <p className="text-sm text-gray-600 mt-1">Complete los datos de la operación</p>
                 </div>
               </div>
             </div>
@@ -653,7 +652,6 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
