@@ -234,15 +234,15 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                       <div className="space-y-2 sm:space-y-3 text-sm">
                         {/* Ingresos y Egresos */}
                         <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                          <div className="bg-white rounded-lg p-2 sm:p-3 text-center">
-                            <TrendingUp size={14} className="text-success-500 mx-auto mb-1" />
+                          <div className="bg-white rounded-lg p-3 sm:p-4 text-center">
+                            <TrendingUp size={14} className="text-success-500 mx-auto mb-2" />
                             <p className="text-xs text-gray-500">Ingresos</p>
                             <p className="font-semibold text-success-600 text-xs sm:text-sm">
                               {formatAmountWithCurrency(providerSummary.ingresos, 'PESO', { showSymbol: false, decimals: 0 })}
                             </p>
                           </div>
-                          <div className="bg-white rounded-lg p-2 sm:p-3 text-center">
-                            <TrendingDown size={14} className="text-error-500 mx-auto mb-1" />
+                          <div className="bg-white rounded-lg p-3 sm:p-4 text-center">
+                            <TrendingDown size={14} className="text-error-500 mx-auto mb-2" />
                             <p className="text-xs text-gray-500">Egresos</p>
                             <p className="font-semibold text-error-600 text-xs sm:text-sm">
                               {formatAmountWithCurrency(providerSummary.egresos, 'PESO', { showSymbol: false, decimals: 0 })}

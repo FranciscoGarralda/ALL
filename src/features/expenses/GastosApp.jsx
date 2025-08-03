@@ -346,7 +346,7 @@ function GastoCard({ movement, onEdit, onDelete, onViewDetail }) {
         )}
 
         {/* Información adicional */}
-        <div className="flex flex-wrap items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-2">
           {movement.moneda && (
             <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full text-xs">
               {movement.moneda}

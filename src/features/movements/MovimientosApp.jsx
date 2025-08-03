@@ -148,17 +148,17 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
               <Filter size={14} className="text-gray-400" />
               <span className="text-xs sm:text-sm text-gray-600">Filtros activos:</span>
               {searchTerm && (
-                <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm">
+                <span className="px-3 py-1.5 bg-primary-100 text-primary-700 rounded-full text-sm">
                   Búsqueda: "{searchTerm}"
                 </span>
               )}
               {filterType && (
-                <span className="px-3 py-1 bg-success-100 text-success-700 rounded-full text-sm">
+                <span className="px-3 py-1.5 bg-success-100 text-success-700 rounded-full text-sm">
                   Tipo: {filterType.replace('_', ' ')}
                 </span>
               )}
               {filterStatus && (
-                <span className="px-3 py-1 bg-warning-100 text-warning-700 rounded-full text-sm">
+                <span className="px-3 py-1.5 bg-warning-100 text-warning-700 rounded-full text-sm">
                   Estado: {filterStatus}
                 </span>
               )}

@@ -163,7 +163,7 @@ const FormInput = forwardRef(({
       
       {/* Error message with slide animation */}
       {error && (
-        <p className="text-sm font-medium text-red-600 mt-1.5 animate-fadeIn">
+        <p className="text-sm font-medium text-red-600 mt-2 animate-fadeIn">
           {error}
         </p>
       )}

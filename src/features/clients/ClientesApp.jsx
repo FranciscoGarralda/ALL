@@ -271,7 +271,7 @@ function ClienteCard({ cliente, onEdit, onViewAnalytics, onDelete, calcularFrecu
             <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
               {cliente.nombre} {cliente.apellido}
             </h3>
-            <div className="flex flex-wrap items-center gap-1.5 mt-1">
+            <div className="flex flex-wrap items-center gap-2 mt-2">
               <span className={`px-2 py-1 rounded-full text-sm font-medium ${estado.color}`}>
                 {estado.texto}
               </span>
