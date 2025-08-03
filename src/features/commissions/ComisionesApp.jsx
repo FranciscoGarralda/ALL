@@ -191,7 +191,7 @@ function ComisionesApp({ movements, onNavigate }) {
             <h3 className={`text-sm font-semibold ${textColor} truncate`}>{title}</h3>
           </div>
                   {Object.entries(data).length > 0 ? (
-          <div className="space-y-2">
+          <div className="space-y-1">
             {Object.entries(data).map(([currency, amount]) => (
                 <p key={currency} className={`text-lg sm:text-xl font-bold ${textColor} truncate`}>
                   {formatAmountWithCurrency(amount, currency)}

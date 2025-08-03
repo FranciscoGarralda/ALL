@@ -186,7 +186,7 @@ const ClientAutocomplete = forwardRef(({
   };
 
   return (
-    <div className="space-y-3" ref={dropdownRef}>
+    <div className="space-y-2" ref={dropdownRef}>
       {/* Label */}
       {label && (
         <label className="block text-xs sm:text-sm font-medium text-gray-700">

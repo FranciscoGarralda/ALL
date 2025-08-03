@@ -158,7 +158,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
             <p className={`text-sm ${textColor} opacity-75 mb-2`}>{subtitle}</p>
           )}
           {Object.entries(data).length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {Object.entries(data).map(([currency, amount]) => (
                 <p key={currency} className={`text-lg sm:text-xl font-bold ${amount < 0 ? 'text-error-600' : textColor} truncate`}>
                   {formatAmountWithCurrency(amount, currency)}

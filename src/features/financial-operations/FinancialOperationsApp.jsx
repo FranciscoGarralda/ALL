@@ -540,8 +540,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             required
           />
 
-          <div className="mt-6">
-            {/* Campo Detalle */}
+          {/* Campo Detalle */}
+          <div className="mt-4">
             <FormInput
             ref={createElementRef('detalle', { type: 'input', order: 3 })}
             label="DETALLE"
@@ -552,8 +552,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             />
           </div>
 
-          <div className="mt-6">
-            {/* Selector de Operación principal */}
+          {/* Selector de Operación principal */}
+          <div className="mt-4">
             <FormSelect
             ref={createElementRef('operacion', { type: 'select', order: 4 })}
             label="OPERACIÓN"
@@ -574,7 +574,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           {/* Selector de Detalle de Operación */}
           {formData.operacion &&
             operaciones[formData.operacion]?.subMenu?.length > 0 && (
-              <div className="mt-6">
+              <div className="mt-4">
                 <FormSelect
                 ref={createElementRef('subOperacion', { type: 'select', order: 5 })}
                 label="DETALLE OPERACIÓN"

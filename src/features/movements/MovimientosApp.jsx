@@ -202,7 +202,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
               )}
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {/* Header de columnas - solo visible en desktop */}
               <div className="hidden sm:block bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-gray-600">
                 <div className="flex items-center gap-3">
@@ -465,7 +465,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
                 <User size={16} className="sm:w-5 sm:h-5 text-primary-600 flex-shrink-0" />
                 Información General
               </h3>
-              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1">
                 {formatDateField('Fecha', movement.fecha)}
                 {formatField('Cliente', getClientName(movement.cliente, clients))}
                 {formatField('Operación', movement.operacion?.replace('_', ' '))}
@@ -481,7 +481,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
                 <DollarSign size={16} className="sm:w-5 sm:h-5 text-success-600 flex-shrink-0" />
                 Valores Monetarios
               </h3>
-              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1">
                 {movement.monto && formatField('Monto', movement.monto, movement.moneda)}
                 {movement.tc && formatField('Tipo de Cambio (TC)', movement.tc)}
                 {movement.monedaTC && formatField('Moneda TC', movement.monedaTC)}
