@@ -136,8 +136,8 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="all">Todos los estados</option>
-                                <option value="pendiente_retiro">P. Retiro</option>
-                  <option value="pendiente_entrega">P. Entrega</option>
+              <option value="pendiente_retiro">P. Retiro</option>
+              <option value="pendiente_entrega">P. Entrega</option>
             </select>
             </div>
           </div>
