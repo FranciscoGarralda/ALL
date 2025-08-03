@@ -35,10 +35,10 @@ function ArbitrajeApp({ movements, onNavigate }) {
   const totalArbitrageProfits = useMemo(() => {
     const totals = {};
     arbitrageMovements.forEach(mov => {
-      if (mov.comision && safeParseFloat(mov.comision) !== 0) {
-        // La comisión se calcula en la moneda del TC de venta (donde se deposita la ganancia)
-        const currency = mov.monedaTCVenta || mov.monedaTC || 'ARS';
-        totals[currency] = (totals[currency] || 0) + safeParseFloat(mov.comision);
+      if (mov.profit && safeParseFloat(mov.profit) !== 0) {
+        // El profit se calcula en la moneda del TC (donde se deposita la ganancia)
+        const currency = mov.monedaProfit || mov.monedaTC || 'ARS';
+        totals[currency] = (totals[currency] || 0) + safeParseFloat(mov.profit);
       }
     });
     return totals;
@@ -58,7 +58,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
           monthly[yearMonth] = {};
         }
         if (currency) {
-          monthly[yearMonth][currency] = (monthly[yearMonth][currency] || 0) + safeParseFloat(mov.comision);
+          monthly[yearMonth][currency] = (monthly[yearMonth][currency] || 0) + safeParseFloat(mov.profit);
         }
       }
     });
@@ -83,7 +83,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
       if (mov.fecha && isCurrentMonth(mov.fecha)) {
         const currency = mov.moneda;
         if (currency) {
-          monthly[currency] = (monthly[currency] || 0) + safeParseFloat(mov.comision);
+          monthly[currency] = (monthly[currency] || 0) + safeParseFloat(mov.profit);
         }
       }
     });
@@ -99,7 +99,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
       if (isToday(mov.fecha)) {
         const currency = mov.moneda;
         if (currency) {
-          daily[currency] = (daily[currency] || 0) + safeParseFloat(mov.comision);
+          daily[currency] = (daily[currency] || 0) + safeParseFloat(mov.profit);
         }
       }
     });
@@ -360,7 +360,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                       <div className="text-right flex-shrink-0 mt-2 sm:mt-0">
                         <p className="text-xs text-indigo-600 mb-1">Ganancia</p>
                         <p className="font-bold text-lg sm:text-xl text-indigo-700">
-                          {formatAmountWithCurrency(safeParseFloat(mov.comision), mov.monedaTCVenta || mov.monedaTC || 'ARS')}
+                          {formatAmountWithCurrency(safeParseFloat(mov.profit), mov.monedaProfit || mov.monedaTC || 'ARS')}
                         </p>
                       </div>
                     </div>
@@ -407,7 +407,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                             {mov.tc && (
                               <div>
                                 <span className="font-medium text-gray-600">TC Compra:</span>
-                                <p className="text-gray-800">{mov.tc} {mov.monedaTCCompra && `(${mov.monedaTCCompra})`}</p>
+                                <p className="text-gray-800">{mov.tc} {mov.monedaTC && `(${mov.monedaTC})`}</p>
                               </div>
                             )}
                             {mov.tcVenta && (

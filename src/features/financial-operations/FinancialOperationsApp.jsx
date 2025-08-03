@@ -233,7 +233,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
 
       // Cálculo automático para ARBITRAJE - VERSIÓN SEGURA
-      if (['monto', 'moneda', 'monedaTCCompra', 'tc', 'montoVenta', 'tcVenta'].includes(field) && newState.subOperacion === 'ARBITRAJE') {
+      if (['monto', 'moneda', 'monedaTC', 'tc', 'montoVenta', 'tcVenta'].includes(field) && newState.subOperacion === 'ARBITRAJE') {
         // Auto-completar monto y moneda de venta cuando cambia compra
         if (field === 'monto') {
           newState.montoVenta = newState.monto;
@@ -241,10 +241,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         if (field === 'moneda') {
           newState.monedaVenta = newState.moneda;
         }
-        if (field === 'monedaTCCompra') {
-          newState.monedaTCVenta = newState.monedaTCCompra;
-          // La moneda de comisión es igual a la moneda TC (tanto de compra como de venta)
-          newState.monedaComision = newState.monedaTCCompra;
+        if (field === 'monedaTC') {
+          newState.monedaTCVenta = newState.monedaTC;
+          // La moneda de profit es igual a la moneda TC
+          newState.monedaProfit = newState.monedaTC;
         }
 
         const monto = safeParseFloat(newState.monto);
@@ -257,7 +257,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         
         const totalCompraNum = safeParseFloat(newState.totalCompra);
         const totalVentaNum = safeParseFloat(newState.totalVenta);
-        newState.comision = (totalVentaNum - totalCompraNum).toFixed(2);
+        newState.profit = (totalVentaNum - totalCompraNum).toFixed(2);
       }
 
       // Auto-completado para CUENTAS CORRIENTES
