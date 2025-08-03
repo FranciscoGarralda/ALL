@@ -66,7 +66,7 @@ const FixedHeader = ({
   const currentTime = formatTime(currentDateTime);
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 shadow-sm z-40 h-16">
+    <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b-2 border-gray-200 shadow-lg z-40 h-16">
       <div className="h-full flex items-center justify-between px-4">
         {/* Lado izquierdo: Menú hamburguesa + Título */}
         <div className="flex items-center space-x-3">
@@ -74,13 +74,13 @@ const FixedHeader = ({
           {showMenuButton && (
             <button
               onClick={toggleSidebar}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 touch-target"
+              className="lg:hidden p-2.5 rounded-xl hover:bg-blue-50 hover:scale-105 transition-all duration-200 touch-target"
               aria-label={isSidebarOpen ? "Cerrar menú" : "Abrir menú"}
             >
               {isSidebarOpen ? (
-                <X size={24} className="text-gray-700" />
+                <X size={24} className="text-blue-700" />
               ) : (
-                <Menu size={24} className="text-gray-700" />
+                <Menu size={24} className="text-blue-700" />
               )}
             </button>
           )}
@@ -89,20 +89,20 @@ const FixedHeader = ({
           {showMenuButton && (
             <button
               onClick={toggleSidebar}
-              className="hidden lg:block p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 touch-target"
+              className="hidden lg:block p-2.5 rounded-xl hover:bg-blue-50 hover:scale-105 transition-all duration-200 touch-target"
               aria-label={isSidebarOpen ? "Colapsar sidebar" : "Expandir sidebar"}
             >
-              <Menu size={20} className="text-gray-700" />
+              <Menu size={20} className="text-blue-700" />
             </button>
           )}
 
           {/* Logo y título */}
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <DollarSign size={18} className="text-white" />
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+              <DollarSign size={20} className="text-white" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-semibold text-gray-900 truncate">
+              <h1 className="text-xl font-bold text-gray-900 truncate">
                 {getPageTitle(currentPage)}
               </h1>
             </div>
@@ -110,33 +110,33 @@ const FixedHeader = ({
         </div>
 
         {/* Centro: Información de fecha (visible en tablet/desktop) */}
-        <div className="hidden md:flex items-center space-x-4 text-sm text-gray-600">
-          <div className="flex items-center space-x-2">
-            <Calendar size={16} className="text-gray-500" />
+        <div className="hidden md:flex items-center space-x-4 text-sm">
+          <div className="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-xl">
+            <Calendar size={18} className="text-blue-600" />
             <div className="text-center">
-              <div className="font-medium text-gray-900">{dateInfo.dayName}</div>
-              <div className="text-xs text-gray-500">{dateInfo.shortDate}</div>
+              <div className="font-semibold text-gray-900">{dateInfo.dayName}</div>
+              <div className="text-xs text-gray-600">{dateInfo.shortDate}</div>
             </div>
           </div>
           
-          <div className="w-px h-8 bg-gray-200"></div>
+          <div className="w-px h-10 bg-gray-300"></div>
           
-          <div className="flex items-center space-x-2">
-            <Clock size={16} className="text-gray-500" />
-            <div className="font-mono text-gray-900">{currentTime}</div>
+          <div className="flex items-center space-x-2 bg-indigo-50 px-4 py-2 rounded-xl">
+            <Clock size={18} className="text-indigo-600" />
+            <div className="font-mono font-semibold text-gray-900 text-base">{currentTime}</div>
           </div>
         </div>
 
         {/* Lado derecho: Información compacta para móvil */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           {/* Información compacta en móvil */}
-          <div className="md:hidden text-right text-xs text-gray-600">
-            <div className="font-medium text-gray-900">{dateInfo.dayName}</div>
-            <div className="text-gray-500">{currentTime}</div>
+          <div className="md:hidden text-right text-sm">
+            <div className="font-semibold text-gray-900">{dateInfo.dayName}</div>
+            <div className="text-blue-600 font-medium">{currentTime}</div>
           </div>
 
           {/* Indicador de estado (opcional) */}
-          <div className="w-2 h-2 bg-success-500 rounded-full" title="Sistema activo"></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg" title="Sistema activo"></div>
         </div>
       </div>
     </header>

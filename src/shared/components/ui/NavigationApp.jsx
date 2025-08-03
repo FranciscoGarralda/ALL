@@ -29,36 +29,37 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
     <SidebarTooltip content={title} disabled={isSidebarOpen}>
       <button
         className={`
-          w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200
+          w-full flex items-center gap-3 p-3.5 rounded-xl transition-all duration-200
           transform origin-left group relative overflow-hidden
           ${!isSidebarOpen ? 'justify-center' : ''}
           ${isActive 
-            ? 'bg-primary-600 text-white shadow-lg scale-105' 
-            : 'text-gray-700 hover:bg-primary-50 hover:text-primary-700 hover:scale-102'
+            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xl scale-105' 
+            : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:scale-102 hover:shadow-md'
           }
           ${!isActive && 'hover:translate-x-1'}
           touch-manipulation select-none
-          focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+          focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:ring-offset-2
         `}
         onClick={onClick}
         aria-current={isActive ? 'page' : undefined}
       >
         {/* Efecto de onda */}
-        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
         
-        <Icon size={20} className={`
+        <Icon size={22} className={`
           flex-shrink-0 transition-all duration-200 relative z-10
           ${!isActive && 'group-hover:rotate-12'}
+          ${isActive ? 'drop-shadow-md' : ''}
         `} />
         {isSidebarOpen && (
-          <span className="text-sm font-medium truncate relative z-10">
+          <span className={`text-sm font-semibold truncate relative z-10 ${isActive ? 'text-white' : ''}`}>
             {title}
           </span>
         )}
         
         {/* Indicador activo */}
         {isActive && isSidebarOpen && (
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-l-full animate-pulse"></div>
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-l-full animate-pulse shadow-lg"></div>
         )}
       </button>
     </SidebarTooltip>

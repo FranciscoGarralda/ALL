@@ -478,24 +478,24 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto pt-20">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">
           {initialMovementData ? 'Editar Movimiento' : 'Nueva Operación Financiera'}
         </h1>
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
+          <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100">
             {/* Header de la aplicación */}
-            <div className="bg-gradient-to-r from-primary-600 to-primary-700 p-6">
-              <div className="flex items-center space-x-4">
-                <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
-                  <DollarSign className="h-8 w-8 text-white" />
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-8">
+              <div className="flex items-center space-x-5">
+                <div className="bg-white/25 backdrop-blur-sm p-4 rounded-2xl shadow-lg">
+                  <DollarSign className="h-10 w-10 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white">
+                  <h2 className="text-3xl font-bold text-white">
                     {initialMovementData ? 'Editar Movimiento' : 'Nueva Operación'}
                   </h2>
-                  <p className="text-primary-100 mt-1">Complete los datos de la operación financiera</p>
+                  <p className="text-blue-100 mt-2 text-lg">Complete los datos de la operación financiera</p>
                 </div>
               </div>
             </div>
@@ -602,24 +602,24 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
         {/* Resumen para operaciones COMPRA/VENTA */}
         {(['COMPRA', 'VENTA'].includes(formData.subOperacion) && formData.total) && (
-          <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-primary-900 mb-2">Resumen de la Operación</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-primary-700">Monto:</span>
-                <div className="font-medium text-primary-900">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 shadow-md">
+            <h3 className="text-lg font-bold text-blue-900 mb-4">Resumen de la Operación</h3>
+            <div className="grid grid-cols-2 gap-4 text-base">
+              <div className="bg-white rounded-lg p-3 shadow-sm">
+                <span className="text-gray-600 text-sm">Monto:</span>
+                <div className="font-bold text-gray-900 text-lg">
                   {formatAmountWithCurrency(formData.monto, formData.moneda)}
                 </div>
               </div>
-              <div>
-                <span className="text-primary-700">Tipo de Cambio:</span>
-                <div className="font-medium text-primary-900">
+              <div className="bg-white rounded-lg p-3 shadow-sm">
+                <span className="text-gray-600 text-sm">Tipo de Cambio:</span>
+                <div className="font-bold text-gray-900 text-lg">
                   {formatAmountWithCurrency(formData.tc, formData.monedaTC)}
                 </div>
               </div>
-              <div className="col-span-2 border-t border-primary-200 pt-2">
-                <span className="text-primary-700">Total Final:</span>
-                <div className="text-lg font-bold text-primary-900">
+              <div className="col-span-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-4 mt-2 shadow-lg">
+                <span className="text-blue-100 text-sm">Total Final:</span>
+                <div className="text-2xl font-bold text-white">
                   {formatAmountWithCurrency(formData.total, formData.monedaTC)}
                 </div>
               </div>
