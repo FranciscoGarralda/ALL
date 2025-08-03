@@ -78,8 +78,8 @@ function formatNumberForDisplay(number, currency, showDecimals, maxDecimals) {
   const fixedNumber = absNumber.toFixed(Math.max(decimalPlaces, 2));
   const [integerPart, decimalPart] = fixedNumber.split('.');
   
-  // Add thousand separators with dots
-  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  // Add thousand separators with spaces
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   
   // Build the number with comma for decimals
   let formattedNumber = formattedInteger;
@@ -201,8 +201,8 @@ export const formatAmountWithCurrency = (amount, currency = 'PESO', options = {}
   const fixedNumber = absAmount.toFixed(decimals);
   const [integerPart, decimalPart] = fixedNumber.split('.');
   
-  // Add thousand separators with dots
-  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  // Add thousand separators with spaces
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   
   // Build the number with comma for decimals
   let formattedNumber = formattedInteger;
