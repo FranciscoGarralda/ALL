@@ -118,7 +118,7 @@ const LoadingSpinner = () => (
  * Optimized with lazy loading and performance improvements
  */
 export default function MainApp() {
-  const { currentPage, navigateTo } = useNavigation('mainMenu');
+  const { currentPage, navigateTo, navigationParams } = useNavigation('mainMenu');
   
   // Component map for intelligent preloading
   const componentMap = {
@@ -330,7 +330,7 @@ export default function MainApp() {
           <Suspense fallback={<LoadingSpinner />}>
             <FinancialOperationsApp
               onSaveMovement={handleSaveMovement}
-              initialMovementData={editingMovement}
+              initialMovementData={editingMovement || navigationParams}
               onCancelEdit={handleCancelEdit}
               clients={clients}
               onSaveClient={handleSaveClient}

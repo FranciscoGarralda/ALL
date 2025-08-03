@@ -180,7 +180,9 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
                   </div>
                 </div>
                 <button 
-                  onClick={() => onNavigate('nuevoMovimiento')} 
+                  onClick={() => onNavigate('nuevoMovimiento', {
+                  operacion: 'PRESTAMISTAS'
+                })} 
                   className="btn-primary flex items-center justify-center gap-2 touch-target w-full sm:w-auto"
                 >
                   <CreditCard size={18} />

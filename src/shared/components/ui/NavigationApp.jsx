@@ -398,6 +398,7 @@ const ModuleInDevelopmentPage = ({ moduleName, onNavigate }) => (
 /** HOOK PERSONALIZADO PARA NAVEGACIÓN */
 const useNavigation = (initialPage = 'mainMenu') => {
   const [currentPage, setCurrentPage] = useState(initialPage);
+  const [navigationParams, setNavigationParams] = useState(null);
   const [isClient, setIsClient] = useState(false);
 
   // Efecto para detectar que estamos en el cliente y restaurar página
@@ -409,25 +410,36 @@ const useNavigation = (initialPage = 'mainMenu') => {
       if (savedPage) {
         setCurrentPage(savedPage);
       }
+      
+      const savedParams = localStorage.getItem('financial-navigation-params');
+      if (savedParams) {
+        setNavigationParams(JSON.parse(savedParams));
+      }
     } catch (error) {
       console.error('Error loading current page from localStorage:', error);
     }
   }, []);
 
-  const navigateTo = (page) => {
+  const navigateTo = (page, params = null) => {
     setCurrentPage(page);
+    setNavigationParams(params);
     
     // Guardar página actual en localStorage (solo en el cliente)
     if (isClient) {
       try {
         localStorage.setItem('financial-current-page', page);
+        if (params) {
+          localStorage.setItem('financial-navigation-params', JSON.stringify(params));
+        } else {
+          localStorage.removeItem('financial-navigation-params');
+        }
       } catch (error) {
         console.error('Error saving current page to localStorage:', error);
       }
     }
   };
 
-  return { currentPage, navigateTo };
+  return { currentPage, navigateTo, navigationParams };
 };
 
 export {

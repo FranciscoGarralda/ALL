@@ -133,7 +133,10 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
               </div>
             </div>
             <button 
-              onClick={() => onNavigate('nuevoMovimiento')} 
+                              onClick={() => onNavigate('nuevoMovimiento', {
+                  operacion: 'ADMINISTRATIVAS',
+                  subOperacion: 'GASTO'
+                })} 
               className="btn-primary flex items-center justify-center gap-2 touch-target w-full sm:w-auto"
             >
               <Receipt size={18} />

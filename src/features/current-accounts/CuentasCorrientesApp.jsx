@@ -185,7 +185,9 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                   </div>
                 </div>
                 <button 
-                  onClick={() => onNavigate('nuevoMovimiento')} 
+                  onClick={() => onNavigate('nuevoMovimiento', {
+                  operacion: 'CUENTAS_CORRIENTES'
+                })} 
                   className="btn-primary flex items-center justify-center gap-2 touch-target w-full sm:w-auto"
                 >
                   <Building2 size={18} />

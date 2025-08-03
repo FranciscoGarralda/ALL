@@ -199,7 +199,10 @@ function ArbitrajeApp({ movements, onNavigate }) {
                 </div>
               </div>
               <button 
-                onClick={() => onNavigate('nuevoMovimiento')} 
+                onClick={() => onNavigate('nuevoMovimiento', {
+                  operacion: 'TRANSACCIONES',
+                  subOperacion: 'ARBITRAJE'
+                })} 
                 className="btn-primary flex items-center justify-center gap-2 touch-target w-full sm:w-auto"
               >
                 <ArrowUpDown size={18} />
@@ -464,7 +467,10 @@ function ArbitrajeApp({ movements, onNavigate }) {
                         Las operaciones de arbitraje aparecerán aquí cuando se registren transacciones de tipo "ARBITRAJE"
                       </p>
                       <button
-                        onClick={() => onNavigate('nuevoMovimiento')}
+                        onClick={() => onNavigate('nuevoMovimiento', {
+                          operacion: 'TRANSACCIONES',
+                          subOperacion: 'ARBITRAJE'
+                        })}
                         className="btn-primary touch-target"
                       >
                         Registrar arbitraje
