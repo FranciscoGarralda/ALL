@@ -44,7 +44,12 @@ const FormFieldGroup = ({
   // Grid classes for responsive layout
   const gridClasses = [
     'grid',
-    gridCols === 1 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2',
+    // Si hay exactamente 2 campos y ambos tienen gridCols definido, mantenerlos lado a lado en móvil
+    gridCols === 2 && fields.length === 2 && fields.every(f => f.gridCols) 
+      ? 'grid-cols-2' 
+      : gridCols === 1 
+        ? 'grid-cols-1' 
+        : 'grid-cols-1 sm:grid-cols-2',
     gap,
     className
   ].filter(Boolean).join(' ');

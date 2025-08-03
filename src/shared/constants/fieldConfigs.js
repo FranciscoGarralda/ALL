@@ -113,6 +113,8 @@ export const specificFieldsConfig = {
         { label: 'Cuenta Ingreso', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ]
     ],
+    // Configuración especial para mantener campos lado a lado en móvil
+    mobileLayout: 'keep-columns',
     includesEstadoYPor: true,
     includesPagoMixto: false,
     calculations: {
