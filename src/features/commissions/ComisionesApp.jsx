@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   DollarSign,
   TrendingUp,
@@ -21,7 +21,6 @@ import { getTodayLocalDate, getCurrentYearMonth, isCurrentMonth, isToday } from 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE COMISIONES */
 function ComisionesApp({ movements, onNavigate }) {
   const [selectedDate, setSelectedDate] = useState('');
-  const [hasNavigated, setHasNavigated] = useState(false);
 
   // Filtrar movimientos que tienen comisión - SOLO COMISIONES (SIN ARBITRAJES)
   const commissionMovements = useMemo(() => {
@@ -182,13 +181,7 @@ function ComisionesApp({ movements, onNavigate }) {
     return colors[index % colors.length];
   };
 
-  // Auto-navegar al formulario si no hay comisiones
-  useEffect(() => {
-    if (commissionMovements.length === 0 && !hasNavigated && onNavigate) {
-      setHasNavigated(true);
-      onNavigate('nuevoMovimiento');
-    }
-  }, [commissionMovements.length, hasNavigated, onNavigate]);
+
 
   // Función para renderizar cards de métricas
   const renderMetricCard = (title, data, bgColor, textColor, borderColor, icon) => (

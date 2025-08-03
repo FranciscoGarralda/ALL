@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Building2,
   ArrowLeft,
@@ -16,7 +16,6 @@ import { safeParseFloat } from '../../shared/services/safeOperations';
 function CuentasCorrientesApp({ movements, onNavigate }) {
   const [currentView, setCurrentView] = useState('summary'); // 'summary' o 'detail'
   const [selectedProviderForDetail, setSelectedProviderForDetail] = useState(null);
-  const [hasNavigated, setHasNavigated] = useState(false);
 
   // Calcular las cuentas corrientes y sus saldos
   const allCalculatedAccounts = useMemo(() => {
@@ -161,15 +160,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
     return provider ? provider.label : providerCode;
   };
 
-  // Auto-navegar al formulario si no hay cuentas corrientes
-  useEffect(() => {
-    if (allCalculatedAccounts.length === 0 && !hasNavigated && onNavigate) {
-      setHasNavigated(true);
-      onNavigate('nuevoMovimiento', {
-        operacion: 'CUENTAS_CORRIENTES'
-      });
-    }
-  }, [allCalculatedAccounts.length, hasNavigated, onNavigate]);
+
 
   // Vista de resumen
   if (currentView === 'summary') {
