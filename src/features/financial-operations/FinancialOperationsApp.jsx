@@ -639,6 +639,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           )}
         </div>
       </div>
+      </div>
     </div>
   );
 };
