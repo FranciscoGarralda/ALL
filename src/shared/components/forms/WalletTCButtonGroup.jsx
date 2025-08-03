@@ -25,8 +25,9 @@ export const WalletTCButtonGroup = React.forwardRef(({
       newValue = socioName;
     } else {
       // Si es tipo, mantener el socio actual SOLO si ya hay uno seleccionado
-      if (newValue && (newValue.includes('socio1') || newValue.includes('socio2'))) {
-        const currentSocio = newValue.includes('socio2') ? 'socio2' : 'socio1';
+      if (newValue && (newValue.includes('socio1') || newValue.includes('socio2') || newValue.includes('all'))) {
+        const currentSocio = newValue.includes('socio2') ? 'socio2' : 
+                            newValue.includes('all') ? 'all' : 'socio1';
         newValue = `${currentSocio}_${buttonValue}`;
       } else {
         // Si no hay valor o no hay socio seleccionado, no hacer nada
