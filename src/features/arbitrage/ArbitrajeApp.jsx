@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   ArrowUpDown,
   TrendingUp,
@@ -22,6 +22,7 @@ import { getTodayLocalDate, getCurrentYearMonth, isCurrentMonth, isToday } from 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE ARBITRAJE */
 function ArbitrajeApp({ movements, onNavigate }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [hasNavigated, setHasNavigated] = useState(false);
 
   // Filtrar movimientos para mostrar solo arbitraje
   const arbitrageMovements = useMemo(() => {
@@ -144,6 +145,17 @@ function ArbitrajeApp({ movements, onNavigate }) {
     ];
     return colors[index % colors.length];
   };
+
+  // Auto-navegar al formulario si no hay arbitrajes
+  useEffect(() => {
+    if (arbitrageMovements.length === 0 && !hasNavigated && onNavigate) {
+      setHasNavigated(true);
+      onNavigate('nuevoMovimiento', {
+        operacion: 'TRANSACCIONES',
+        subOperacion: 'ARBITRAJE'
+      });
+    }
+  }, [arbitrageMovements.length, hasNavigated, onNavigate]);
 
   // Función para renderizar cards de métricas
   const renderMetricCard = (title, data, bgColor, textColor, borderColor, icon, subtitle = '') => (
@@ -548,12 +560,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
               <p className="text-sm sm:text-base text-gray-500 mb-6">
                 Las operaciones de arbitraje aparecerán aquí cuando se registren transacciones que generen ganancias por diferencias de precios.
               </p>
-              <button
-                onClick={() => onNavigate('nuevoMovimiento')}
-                className="btn-primary touch-target"
-              >
-                Registrar nueva operación de arbitraje
-              </button>
+
             </div>
           </div>
         )}

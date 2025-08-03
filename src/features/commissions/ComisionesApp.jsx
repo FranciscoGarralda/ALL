@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   DollarSign,
   TrendingUp,
@@ -21,6 +21,7 @@ import { getTodayLocalDate, getCurrentYearMonth, isCurrentMonth, isToday } from 
 /** COMPONENTE PRINCIPAL DE ANÁLISIS DE COMISIONES */
 function ComisionesApp({ movements, onNavigate }) {
   const [selectedDate, setSelectedDate] = useState('');
+  const [hasNavigated, setHasNavigated] = useState(false);
 
   // Filtrar movimientos que tienen comisión - SOLO COMISIONES (SIN ARBITRAJES)
   const commissionMovements = useMemo(() => {
@@ -181,6 +182,14 @@ function ComisionesApp({ movements, onNavigate }) {
     return colors[index % colors.length];
   };
 
+  // Auto-navegar al formulario si no hay comisiones
+  useEffect(() => {
+    if (commissionMovements.length === 0 && !hasNavigated && onNavigate) {
+      setHasNavigated(true);
+      onNavigate('nuevoMovimiento');
+    }
+  }, [commissionMovements.length, hasNavigated, onNavigate]);
+
   // Función para renderizar cards de métricas
   const renderMetricCard = (title, data, bgColor, textColor, borderColor, icon) => (
     <div className={`card ${bgColor} border-l-4 ${borderColor} p-4 sm:p-6`}>
@@ -229,13 +238,7 @@ function ComisionesApp({ movements, onNavigate }) {
                   </p>
                 </div>
               </div>
-              <button 
-                onClick={() => onNavigate('nuevoMovimiento')} 
-                className="btn-primary flex items-center justify-center gap-2 touch-target w-full sm:w-auto"
-              >
-                <Calculator size={18} />
-                <span>Nueva Operación</span>
-              </button>
+
             </div>
           </div>
 
@@ -554,12 +557,7 @@ function ComisionesApp({ movements, onNavigate }) {
               <p className="text-sm sm:text-base text-gray-500 mb-6">
                 Las comisiones aparecerán aquí cuando se registren operaciones que generen ingresos por comisiones.
               </p>
-              <button
-                onClick={() => onNavigate('nuevoMovimiento')}
-                className="btn-primary touch-target"
-              >
-                Registrar nueva operación
-              </button>
+
             </div>
           </div>
         )}

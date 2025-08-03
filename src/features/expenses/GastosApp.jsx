@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search,
   Edit3,
@@ -17,6 +17,7 @@ import { getTodayLocalDate, isToday } from '../../shared/utils/dateUtils';
 /** COMPONENTE PRINCIPAL DE GASTOS */
 function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovementDetail, onNavigate }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [hasNavigated, setHasNavigated] = useState(false);
 
   // Filtrar movimientos para mostrar solo gastos
   const allExpenses = useMemo(() => {
@@ -72,6 +73,18 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
     });
     return daily;
   }, [allExpenses]);
+
+  // Auto-navegar al formulario si no hay gastos
+  useEffect(() => {
+    if (allExpenses.length === 0 && !hasNavigated && onNavigate) {
+      setHasNavigated(true);
+      // Navegar al formulario con operación y suboperación preseleccionadas
+      onNavigate('nuevoMovimiento', {
+        operacion: 'ADMINISTRATIVAS',
+        subOperacion: 'GASTO'
+      });
+    }
+  }, [allExpenses.length, hasNavigated, onNavigate]);
 
   // Filtrar y ordenar gastos por término de búsqueda
   const filteredAndSortedExpenses = useMemo(() => {
@@ -220,15 +233,9 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
               ) : allExpenses.length === 0 ? (
                 <div className="px-4">
                   <p className="text-sm sm:text-base text-gray-500 mb-4">No hay gastos registrados</p>
-                  <p className="text-xs sm:text-sm text-gray-400 mb-4">
+                  <p className="text-xs sm:text-sm text-gray-400">
                     Los gastos aparecerán aquí cuando se registren operaciones administrativas de tipo "GASTO"
                   </p>
-                  <button
-                    onClick={() => onNavigate('nuevoMovimiento')}
-                    className="btn-primary touch-target"
-                  >
-                    Registrar primer gasto
-                  </button>
                 </div>
               ) : (
                 <p className="text-sm sm:text-base text-gray-500">Todos los gastos están ocultos por el filtro actual</p>

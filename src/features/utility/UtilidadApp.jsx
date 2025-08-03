@@ -311,13 +311,7 @@ function UtilidadApp({ movements, onNavigate }) {
                   </p>
                 </div>
               </div>
-              <button 
-                onClick={() => onNavigate('nuevoMovimiento')} 
-                className="btn-primary flex items-center justify-center gap-2 touch-target w-full sm:w-auto"
-              >
-                <Activity size={18} />
-                <span>Nueva Transacción</span>
-              </button>
+
             </div>
           </div>
 
@@ -639,12 +633,7 @@ function UtilidadApp({ movements, onNavigate }) {
               <p className="text-sm sm:text-base text-gray-500 mb-6">
                 Las utilidades aparecerán aquí cuando se registren operaciones de compra, venta o arbitraje.
               </p>
-              <button
-                onClick={() => onNavigate('nuevoMovimiento')}
-                className="btn-primary touch-target"
-              >
-                Registrar nueva transacción
-              </button>
+
             </div>
           </div>
         )}
