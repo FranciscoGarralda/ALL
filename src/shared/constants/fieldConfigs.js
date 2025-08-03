@@ -265,7 +265,7 @@ export const specificFieldsConfig = {
         { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Cliente', name: 'cliente', type: 'select', options: prestamistaClients, required: true, gridCols: 'col-span-2' }
+        { label: 'Cliente', name: 'cliente', type: 'client-autocomplete', options: prestamistaClients, required: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: false,
@@ -296,7 +296,7 @@ export const specificFieldsConfig = {
         { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Cliente', name: 'cliente', type: 'select', options: prestamistaClients, required: true, gridCols: 'col-span-2' }
+        { label: 'Cliente', name: 'cliente', type: 'client-autocomplete', options: prestamistaClients, required: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: false,

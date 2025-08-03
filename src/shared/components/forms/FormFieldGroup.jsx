@@ -115,6 +115,20 @@ const FormFieldGroup = ({
             placeholder={placeholder || 'Seleccionar cliente'}
           />
         );
+      
+      case 'client-autocomplete':
+        // Para campos de cliente con autocompletado
+        return fieldWrapper(
+          <ClientAutocomplete
+            {...commonProps}
+            clients={options}
+            placeholder={placeholder || 'Buscar cliente...'}
+            onClientCreated={(newClient) => {
+              // Por ahora no manejar creación en prestamistas
+              console.log('Cliente creado:', newClient);
+            }}
+          />
+        );
 
       case 'select':
         return fieldWrapper(
