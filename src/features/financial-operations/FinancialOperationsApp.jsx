@@ -475,14 +475,16 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         )}
 
         {showPagoMixtoOption && (
-          <MixedPaymentGroup
+          <div className="mt-6">
+            <MixedPaymentGroup
             payments={formData.mixedPayments}
             onPaymentChange={handleMixedPaymentChange}
             onAddPayment={addMixedPayment}
             onRemovePayment={removeMixedPayment}
             totalExpected={formData.expectedTotalForMixedPayments || 0}
             currency={formData.monedaTC || 'PESO'}
-          />
+            />
+          </div>
         )}
 
         {config.includesEstadoYPor && renderEstadoYPor()}
