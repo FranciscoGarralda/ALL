@@ -101,7 +101,7 @@ const CurrencyInput = forwardRef(({
       {label && (
         <label 
           htmlFor={name}
-          className="block text-xs sm:text-sm font-medium text-gray-700"
+          className="block text-sm font-medium text-gray-700"
         >
           {label}
           {required && <span className="text-error-500 ml-1">*</span>}

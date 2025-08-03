@@ -148,17 +148,17 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
               <Filter size={14} className="text-gray-400" />
               <span className="text-xs sm:text-sm text-gray-600">Filtros activos:</span>
               {searchTerm && (
-                <span className="px-2 py-1 bg-primary-100 text-primary-700 rounded-full text-xs">
+                <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm">
                   Búsqueda: "{searchTerm}"
                 </span>
               )}
               {filterType && (
-                <span className="px-2 py-1 bg-success-100 text-success-700 rounded-full text-xs">
+                <span className="px-3 py-1 bg-success-100 text-success-700 rounded-full text-sm">
                   Tipo: {filterType.replace('_', ' ')}
                 </span>
               )}
               {filterStatus && (
-                <span className="px-2 py-1 bg-warning-100 text-warning-700 rounded-full text-xs">
+                <span className="px-3 py-1 bg-warning-100 text-warning-700 rounded-full text-sm">
                   Estado: {filterStatus}
                 </span>
               )}
@@ -204,7 +204,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
           ) : (
             <div className="space-y-3">
               {/* Header de columnas - solo visible en desktop */}
-              <div className="hidden sm:block bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-600">
+              <div className="hidden sm:block bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-gray-600">
                 <div className="flex items-center gap-3">
                   <div className="flex-shrink-0 w-12 text-center">Fecha</div>
                   <div className="flex-shrink-0 w-36">Cliente</div>
@@ -281,7 +281,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
       <div className="px-4 py-3 flex items-center gap-3 min-w-0">
         {/* Fecha */}
         <div className="flex-shrink-0 w-12 text-center">
-          <div className="text-xs text-gray-500 font-medium">{formattedDate}</div>
+          <div className="text-sm text-gray-500 font-medium">{formattedDate}</div>
         </div>
 
         {/* Cliente */}
@@ -293,7 +293,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
 
         {/* Operación */}
         <div className="flex-shrink-0 w-20 sm:w-24">
-          <span className="px-1.5 py-0.5 bg-primary-100 text-primary-700 rounded text-xs font-medium truncate block">
+          <span className="px-1.5 py-0.5 bg-primary-100 text-primary-700 rounded text-sm font-medium truncate block">
             {movement.subOperacion || movement.operacion?.replace('_', ' ') || 'N/A'}
           </span>
         </div>
@@ -309,7 +309,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
 
         {/* Estado */}
         <div className="flex-shrink-0 w-20">
-          <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+          <span className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${
             movement.estado === 'realizado' 
               ? 'bg-success-100 text-success-700' 
               : movement.estado === 'pendiente'

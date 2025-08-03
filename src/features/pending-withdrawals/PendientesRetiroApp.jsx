@@ -82,7 +82,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
     const badge = badges[estado] || { bg: 'bg-gray-100', text: 'text-gray-800', label: estado };
     
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.bg} ${badge.text}`}>
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${badge.bg} ${badge.text}`}>
         <Clock className="w-3 h-3 mr-1" />
         {badge.label}
       </span>
@@ -186,7 +186,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
                 <div className="flex items-center space-x-2">
                   <Calendar className="w-4 h-4 text-gray-400" />
                   <div>
-                    <div className="text-xs text-gray-500">Fecha</div>
+                    <div className="text-sm text-gray-500">Fecha</div>
                     <div className="font-medium">{formatDate(movement.fecha)}</div>
                   </div>
                 </div>
@@ -194,7 +194,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
                 <div className="flex items-center space-x-2">
                   <DollarSign className="w-4 h-4 text-gray-400" />
                   <div>
-                    <div className="text-xs text-gray-500">Monto</div>
+                    <div className="text-sm text-gray-500">Monto</div>
                     <div className="font-medium text-green-600">
                       {formatAmountWithCurrency(movement.monto, movement.moneda, { showSymbol: false })}
                     </div>
@@ -204,7 +204,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
                 <div className="flex items-center space-x-2">
                   <MapPin className="w-4 h-4 text-gray-400" />
                   <div>
-                    <div className="text-xs text-gray-500">Dirección</div>
+                    <div className="text-sm text-gray-500">Dirección</div>
                     <div className="font-medium text-sm">
                       {movement.direccion || 'No especificada'}
                     </div>
@@ -214,7 +214,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
                 <div className="flex items-center space-x-2">
                   <Phone className="w-4 h-4 text-gray-400" />
                   <div>
-                    <div className="text-xs text-gray-500">Teléfono</div>
+                    <div className="text-sm text-gray-500">Teléfono</div>
                     <div className="font-medium">
                       {movement.telefono || 'No especificado'}
                     </div>

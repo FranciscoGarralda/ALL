@@ -270,7 +270,7 @@ function UtilidadApp({ movements, onNavigate }) {
             <h3 className={`text-sm font-semibold ${textColor} truncate`}>{title}</h3>
           </div>
           {subtitle && (
-            <p className={`text-xs ${textColor} opacity-75 mb-2`}>{subtitle}</p>
+            <p className={`text-sm ${textColor} opacity-75 mb-2`}>{subtitle}</p>
           )}
           {Object.entries(data).length > 0 ? (
             <div className="space-y-2">

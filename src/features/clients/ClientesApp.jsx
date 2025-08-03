@@ -272,11 +272,11 @@ function ClienteCard({ cliente, onEdit, onViewAnalytics, onDelete, calcularFrecu
               {cliente.nombre} {cliente.apellido}
             </h3>
             <div className="flex flex-wrap items-center gap-1.5 mt-1">
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${estado.color}`}>
+              <span className={`px-2 py-1 rounded-full text-sm font-medium ${estado.color}`}>
                 {estado.texto}
               </span>
               {cliente.tipoCliente && (
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                <span className={`px-2 py-1 rounded-full text-sm font-medium ${
                   cliente.tipoCliente === 'operaciones' 
                     ? 'bg-primary-100 text-primary-700' 
                     : 'bg-warning-100 text-warning-700'
@@ -314,7 +314,7 @@ function ClienteCard({ cliente, onEdit, onViewAnalytics, onDelete, calcularFrecu
         </div>
 
         {/* Información de contacto */}
-        <div className="space-y-1.5 text-xs sm:text-sm text-gray-600">
+        <div className="space-y-2 text-sm text-gray-600">
           <div className="flex items-center gap-2">
             <Phone size={12} className="text-gray-400 flex-shrink-0" />
             <span className="truncate">{cliente.telefono}</span>
@@ -330,7 +330,7 @@ function ClienteCard({ cliente, onEdit, onViewAnalytics, onDelete, calcularFrecu
         </div>
 
         {/* Métricas del cliente */}
-        <div className="border-t pt-2 flex flex-col sm:flex-row sm:justify-between text-xs text-gray-500 gap-1">
+        <div className="border-t pt-3 flex flex-col sm:flex-row sm:justify-between text-sm text-gray-500 gap-2">
           <span className="truncate">Última: {getDiasDesdeUltimaOperacion()}</span>
           <span className="truncate">Cada {frecuencia} días • {cliente.totalOperaciones || 0} ops</span>
         </div>
