@@ -338,7 +338,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                     {/* Header de la operación */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 text-xs text-indigo-600 mb-1">
+                        <div className="flex items-center gap-2 text-sm text-indigo-600 mb-2">
                           <Calendar size={12} />
                           <span>
                             {mov.fecha ? new Date(mov.fecha + 'T12:00:00').toLocaleDateString('es-ES', { 
@@ -358,7 +358,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                       
                       {/* Ganancia destacada */}
                       <div className="text-right flex-shrink-0 mt-2 sm:mt-0">
-                        <p className="text-xs text-indigo-600 mb-1">Ganancia</p>
+                        <p className="text-sm text-indigo-600 mb-2">Ganancia</p>
                         <p className="font-bold text-lg sm:text-xl text-indigo-700">
                           {formatAmountWithCurrency(safeParseFloat(mov.profit), mov.monedaProfit || mov.monedaTC || 'ARS')}
                         </p>
@@ -542,7 +542,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
           <div className="card">
             <div className="p-6 sm:p-8 lg:p-12 text-center">
               <TrendingDown size={48} className="sm:w-16 sm:h-16 mx-auto text-gray-300 mb-4" />
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">
                 No hay operaciones de arbitraje registradas
               </h3>
               <p className="text-sm sm:text-base text-gray-500 mb-6">

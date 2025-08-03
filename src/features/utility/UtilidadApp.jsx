@@ -633,7 +633,7 @@ function UtilidadApp({ movements, onNavigate }) {
           <div className="card">
             <div className="p-6 sm:p-8 lg:p-12 text-center">
               <TrendingDown size={48} className="sm:w-16 sm:h-16 mx-auto text-gray-300 mb-4" />
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">
                 No hay transacciones para analizar
               </h3>
               <p className="text-sm sm:text-base text-gray-500 mb-6">

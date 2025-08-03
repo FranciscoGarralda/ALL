@@ -615,7 +615,7 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
               <div className="flex items-start gap-2">
                 <Bell size={16} className="text-primary-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <span className="font-semibold text-gray-900 block mb-1 sm:mb-2 text-sm sm:text-base">Recomendación de Contacto</span>
+                  <span className="font-semibold text-gray-900 block mb-2 sm:mb-3 text-base">Recomendación de Contacto</span>
                   <p className="text-xs sm:text-sm text-primary-700">{recomendacion}</p>
                 </div>
               </div>
