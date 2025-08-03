@@ -163,13 +163,13 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
 
   // Auto-navegar al formulario si no hay cuentas corrientes
   useEffect(() => {
-    if (activeAccounts.length === 0 && !hasNavigated && onNavigate) {
+    if (allCalculatedAccounts.length === 0 && !hasNavigated && onNavigate) {
       setHasNavigated(true);
       onNavigate('nuevoMovimiento', {
         operacion: 'CUENTAS_CORRIENTES'
       });
     }
-  }, [activeAccounts.length, hasNavigated, onNavigate]);
+  }, [allCalculatedAccounts.length, hasNavigated, onNavigate]);
 
   // Vista de resumen
   if (currentView === 'summary') {
