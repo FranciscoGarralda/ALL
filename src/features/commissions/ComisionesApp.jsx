@@ -213,7 +213,7 @@ function ComisionesApp({ movements, onNavigate }) {
 
   return (
     <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+      <div className="max-w-full px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="card">
           <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">

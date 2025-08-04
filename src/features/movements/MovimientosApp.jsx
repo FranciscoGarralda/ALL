@@ -407,7 +407,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
 
   return (
     <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-full px-4 sm:px-6 lg:px-8">
         <div className="card">
           {/* Header */}
           <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">

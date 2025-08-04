@@ -39,8 +39,12 @@ const ButtonSelectGroup = ({
   // Si hay más de 6 opciones, usar grid de 3 columnas
   const getGridCols = () => {
     if (isMoneda) {
-      // Para monedas, usar grid de 2 o 4 columnas
-      return options.length > 4 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2 sm:grid-cols-4';
+      // Para monedas, distribuir mejor según la cantidad
+      if (options.length === 7) return 'grid-cols-4 sm:grid-cols-4'; // 4 arriba, 3 abajo
+      if (options.length === 8) return 'grid-cols-4 sm:grid-cols-4'; // 4 y 4
+      if (options.length === 6) return 'grid-cols-3 sm:grid-cols-3'; // 3 y 3
+      if (options.length === 5) return 'grid-cols-3 sm:grid-cols-3'; // 3 arriba, 2 abajo
+      return 'grid-cols-2 sm:grid-cols-4';
     }
     // Para operaciones (6 opciones), usar 3 columnas
     if (options.length === 6) return 'grid-cols-2 sm:grid-cols-3';

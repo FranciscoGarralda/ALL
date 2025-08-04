@@ -259,7 +259,7 @@ NavigationApp.displayName = 'NavigationApp';
 /** PÁGINA DE BIENVENIDA */
 const WelcomePage = ({ onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4 lg:p-8">
-    <div className="text-center max-w-4xl mx-auto">
+    <div className="text-center max-w-full px-4 sm:px-6 lg:px-8">
       <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
         <DollarSign size={32} className="text-indigo-600" />
       </div>
