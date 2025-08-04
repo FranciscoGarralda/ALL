@@ -55,10 +55,10 @@ export const WalletButtonGroup = React.forwardRef(({
           type="button"
           ref={ref}
           onClick={() => handleButtonClick('socio1', 'socio')}
-          className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
+          className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
             isActive('socio1', 'socio')
-              ? 'bg-primary-500 text-white border-primary-500'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              ? 'bg-gray-900 text-white border-gray-900'
+              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
           }`}
         >
           Socio 1
@@ -66,10 +66,10 @@ export const WalletButtonGroup = React.forwardRef(({
         <button
           type="button"
           onClick={() => handleButtonClick('socio2', 'socio')}
-          className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
+          className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
             isActive('socio2', 'socio')
-              ? 'bg-primary-500 text-white border-primary-500'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              ? 'bg-gray-900 text-white border-gray-900'
+              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
           }`}
         >
           Socio 2
@@ -79,10 +79,10 @@ export const WalletButtonGroup = React.forwardRef(({
         <button
           type="button"
           onClick={() => handleButtonClick('all', 'socio')}
-          className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
+          className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
             isActive('all', 'socio')
-              ? 'bg-primary-500 text-white border-primary-500'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              ? 'bg-gray-900 text-white border-gray-900'
+              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
           }`}
         >
           ALL
@@ -91,10 +91,10 @@ export const WalletButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('efectivo', 'type')}
-            className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
+            className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
               isActive('efectivo', 'type')
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-gray-900 text-white border-gray-900'
+                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
             }`}
           >
             Efectivo
@@ -102,10 +102,10 @@ export const WalletButtonGroup = React.forwardRef(({
           <button
             type="button"
             onClick={() => handleButtonClick('digital', 'type')}
-            className={`px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
+            className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
               isActive('digital', 'type')
-                ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-gray-900 text-white border-gray-900'
+                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
             }`}
           >
             Digital

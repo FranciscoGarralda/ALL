@@ -38,22 +38,22 @@ export const CuentaButtonGroup = React.forwardRef(({
   };
 
   const getSocioButtonClasses = (socioValue) => {
-    return `px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
+    return `px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
       isSocioActive(socioValue)
-        ? 'bg-primary-500 text-white border-primary-500'
+        ? 'bg-gray-900 text-white border-gray-900'
         : readOnly 
           ? 'bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed'
-          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
     }`;
   };
 
   const getTipoButtonClasses = (tipoValue) => {
-    return `px-4 py-3 text-sm font-medium flex items-center justify-center rounded-xl border-2 transition-colors ${
+    return `px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
       isTipoActive(tipoValue)
-        ? 'bg-primary-500 text-white border-primary-500'
+        ? 'bg-gray-900 text-white border-gray-900'
         : readOnly 
           ? 'bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed'
-          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
     }`;
   };
 

@@ -86,7 +86,7 @@ const FormInput = forwardRef(({
   const inputClasses = [
     // Base classes with improved styling
     'w-full px-4 py-3 text-sm sm:text-base font-medium',
-    'border-2 rounded-xl transition-all duration-200',
+    'border rounded-lg transition-all duration-200',
     'placeholder-gray-500 focus:placeholder-gray-600',
     'focus:outline-none focus:ring-4 focus:ring-offset-0',
     // Modern background
@@ -97,7 +97,7 @@ const FormInput = forwardRef(({
     // State classes with better visual feedback
     error 
       ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20 text-red-900' 
-      : 'border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-blue-500/20 text-gray-900',
+      : 'border-gray-200 hover:border-gray-300 focus:border-indigo-500 focus:ring-indigo-500/20 text-gray-900',
     readOnly 
       ? 'bg-gray-100 cursor-not-allowed opacity-60 hover:bg-gray-100' 
       : '',

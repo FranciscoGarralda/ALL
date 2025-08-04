@@ -14,6 +14,7 @@ export { default as MixedPaymentGroup } from './MixedPaymentGroup';
 export { default as WalletButtonGroup } from './WalletButtonGroup';
 export { default as WalletTCButtonGroup } from './WalletTCButtonGroup';
 export { default as CuentaButtonGroup } from './CuentaButtonGroup';
+export { default as ButtonSelectGroup } from './ButtonSelectGroup';
 
 // Re-exports from other modules
 export { formatAmountWithCurrency } from '../../services/formatters';
