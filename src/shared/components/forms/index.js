@@ -9,6 +9,7 @@ export { default as CommissionTypeSwitch } from './CommissionTypeSwitch';
 export { default as CommissionField } from './CommissionField';
 
 export { default as MixedPaymentGroup } from './MixedPaymentGroup';
+export { default as MontoMonedaGroup } from './MontoMonedaGroup';
 
 // Button Group Components
 export { default as WalletButtonGroup } from './WalletButtonGroup';

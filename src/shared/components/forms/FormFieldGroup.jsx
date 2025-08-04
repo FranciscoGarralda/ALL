@@ -4,7 +4,7 @@ import FormSelect from './FormSelect.jsx';
 import ClientAutocomplete from './ClientAutocomplete.jsx';
 import CurrencyInput from './CurrencyInput.jsx';
 import CommissionField from './CommissionField.jsx';
-import { WalletButtonGroup, WalletTCButtonGroup, CuentaButtonGroup, ButtonSelectGroup, SubOperationButtons } from './index.js';
+import { WalletButtonGroup, WalletTCButtonGroup, CuentaButtonGroup, ButtonSelectGroup, SubOperationButtons, MontoMonedaGroup } from './index.js';
 
 /**
  * Form field group component that organizes related fields in responsive layouts
@@ -315,6 +315,37 @@ const FormFieldGroup = ({
   // Don't render if no fields
   if (!fields || fields.length === 0) {
     return null;
+  }
+
+  // Detectar si es un grupo de monto/moneda
+  const isMontoMonedaGroup = fields.length === 2 && 
+    fields[0].name === 'monto' && 
+    fields[1].name === 'moneda';
+
+  // Si es un grupo monto/moneda, renderizar con el componente especial
+  if (isMontoMonedaGroup) {
+    const montoField = fields[0];
+    const monedaField = fields[1];
+    
+    return (
+      <MontoMonedaGroup
+        montoValue={formData[montoField.name] || ''}
+        monedaValue={formData[monedaField.name] || ''}
+        onMontoChange={(value) => handleFieldChange(montoField.name, value)}
+        onMonedaChange={(value) => handleFieldChange(monedaField.name, value)}
+        montoName={montoField.name}
+        monedaName={monedaField.name}
+        monedaOptions={monedaField.options || []}
+        montoError={errors[montoField.name] || ''}
+        monedaError={errors[monedaField.name] || ''}
+        montoRequired={montoField.required}
+        monedaRequired={monedaField.required}
+        montoReadOnly={montoField.readOnly}
+        monedaReadOnly={monedaField.readOnly}
+        montoPlaceholder={montoField.placeholder}
+        className={className}
+      />
+    );
   }
 
   return (

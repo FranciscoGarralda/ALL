@@ -16,7 +16,7 @@ const CurrencyInput = forwardRef(({
   error = '',
   className = '',
   readOnly = false,
-
+  hideLabel = false, // Nueva prop para ocultar el label
   ...rest
 }, ref) => {
   const [displayValue, setDisplayValue] = useState('');
@@ -98,9 +98,8 @@ const CurrencyInput = forwardRef(({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className="space-y-3">
-      {/* Label */}
-      {label && (
+    <div className={`space-y-3 ${className}`}>
+      {label && !hideLabel && (
         <label 
           htmlFor={name}
           className="block text-sm font-medium text-gray-700"

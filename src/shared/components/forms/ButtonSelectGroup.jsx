@@ -9,7 +9,8 @@ const ButtonSelectGroup = ({
   required = false,
   error = '',
   readOnly = false,
-  className = ''
+  className = '',
+  hideLabel = false // Nueva prop para ocultar el label
 }) => {
   const handleButtonClick = (optionValue) => {
     if (!readOnly) {
@@ -38,15 +39,15 @@ const ButtonSelectGroup = ({
   // Si hay más de 6 opciones, usar grid de 3 columnas
   const getGridCols = () => {
     if (isMoneda) {
-      // Para monedas, usar grid de 3 o 4 columnas
-      return options.length > 4 ? 'grid-cols-3' : 'grid-cols-2 sm:grid-cols-4';
+      // Para monedas, usar grid de 2 o 4 columnas
+      return options.length > 4 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2 sm:grid-cols-4';
     }
     return options.length > 6 ? 'grid-cols-3' : options.length > 3 ? 'grid-cols-2' : 'grid-cols-1';
   };
 
   return (
     <div className={`space-y-3 ${className}`}>
-      {label && (
+      {label && !hideLabel && (
         <label className="block text-sm font-medium text-gray-700">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
