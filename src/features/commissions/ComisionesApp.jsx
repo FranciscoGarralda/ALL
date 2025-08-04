@@ -212,10 +212,10 @@ function ComisionesApp({ movements, onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="card">
+        <div className="">
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div className="flex items-center gap-3">
@@ -237,7 +237,7 @@ function ComisionesApp({ movements, onNavigate }) {
 
           {/* Métricas principales */}
           <div className="p-3 sm:p-4 lg:p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700"">
               Métricas Principales
             </h2>
             
@@ -286,7 +286,7 @@ function ComisionesApp({ movements, onNavigate }) {
         </div>
 
         {/* Buscador de comisiones por día */}
-        <div className="card">
+        <div className="">
           <div className="p-3 sm:p-4 lg:p-6">
             <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6 flex items-center gap-2">
               <Search size={18} className="text-gray-800 flex-shrink-0" />
@@ -338,7 +338,7 @@ function ComisionesApp({ movements, onNavigate }) {
         </div>
 
         {/* Comisiones por proveedor */}
-        <div className="card">
+        <div className="">
           <div className="p-3 sm:p-4 lg:p-6">
             <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6 flex items-center gap-2">
               <Building2 size={18} className="text-purple-600 flex-shrink-0" />
@@ -446,7 +446,7 @@ function ComisionesApp({ movements, onNavigate }) {
         </div>
 
         {/* Gráfico de comisiones mensuales */}
-        <div className="card">
+        <div className="">
           <div className="p-3 sm:p-4 lg:p-6">
             <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6 flex items-center gap-2">
               <BarChart3 size={18} className="text-emerald-600 flex-shrink-0" />
@@ -495,7 +495,7 @@ function ComisionesApp({ movements, onNavigate }) {
 
         {/* Estadísticas adicionales */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          <div className="card">
+          <div className="">
             <div className="p-3 sm:p-4 lg:p-6">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
                 <TrendingUp size={16} className="text-emerald-600" />
@@ -522,7 +522,7 @@ function ComisionesApp({ movements, onNavigate }) {
             </div>
           </div>
 
-          <div className="card">
+          <div className="">
             <div className="p-3 sm:p-4 lg:p-6">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
                 <Target size={16} className="text-gray-800" />
@@ -541,7 +541,7 @@ function ComisionesApp({ movements, onNavigate }) {
 
         {/* Estado vacío si no hay comisiones */}
         {commissionMovements.length === 0 && (
-          <div className="card">
+          <div className="">
             <div className="p-6 sm:p-8 lg:p-12 text-center">
               <TrendingDown size={48} className="sm:w-16 sm:h-16 mx-auto text-gray-300 mb-4" />
               <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">

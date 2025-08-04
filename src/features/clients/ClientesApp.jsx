@@ -124,9 +124,9 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
 
   // Vista principal - Lista de clientes
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       {/* Header */}
-      <div className="card mb-4 sm:mb-6">
+      <div className=""">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex items-center gap-3">
@@ -263,7 +263,7 @@ function ClienteCard({ cliente, onEdit, onViewAnalytics, onDelete, calcularFrecu
   const frecuencia = calcularFrecuencia(cliente);
 
   return (
-    <div className="card hover:shadow-medium transition-all duration-200 hover:scale-102">
+    <div className=" hover:shadow-medium transition-all duration-200 hover:scale-102">
       <div className="p-3 sm:p-4 space-y-3">
         {/* Header con nombre y estado */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -393,9 +393,9 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full px-4 sm:px-6 lg:px-8">
-        <div className="card">
+        <div className="">
           {/* Header */}
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
@@ -537,9 +537,9 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
   const recomendacion = getRecomendacion();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full px-4 sm:px-6 lg:px-8">
-        <div className="card">
+        <div className="">
           {/* Header */}
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
             <div className="flex items-center gap-3">

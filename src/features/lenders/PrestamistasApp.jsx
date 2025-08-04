@@ -160,10 +160,10 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
         <div className="max-w-full px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="card mb-4 sm:mb-6">
+          <div className=""">
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-3">
@@ -193,7 +193,7 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
 
             {/* Contenido */}
             <div className="p-3 sm:p-4 lg:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-700"">
                 Resumen de Prestamistas
               </h2>
 
@@ -407,10 +407,10 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
   const finalBalances = processedMovements.finalBalances;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full px-4 sm:px-6 lg:px-8">
         {/* Header con navegación */}
-        <div className="card mb-4 sm:mb-6">
+        <div className=""">
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
             <div className="flex items-center gap-3 mb-2 sm:mb-3">
               <button
@@ -579,7 +579,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                   {/* Cards para mobile */}
                   <div className="sm:hidden space-y-3">
                     {processedMovements.movements.map((mov, index) => (
-                      <div key={index} className="card">
+                      <div key={index} className="">
                         <div className="p-3 space-y-2">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">

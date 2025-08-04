@@ -114,9 +114,9 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       {/* Header */}
-      <div className="card mb-4 sm:mb-6">
+      <div className=""">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex items-center gap-3">
@@ -275,7 +275,7 @@ function GastoCard({ movement, onEdit, onDelete, onViewDetail }) {
   };
 
   return (
-    <div className="card hover:shadow-medium transition-all duration-200 hover:scale-102 hover:border-error-300">
+    <div className=" hover:shadow-medium transition-all duration-200 hover:scale-102 hover:border-error-300">
       <div className="p-3 sm:p-4 space-y-3">
         {/* Header con fecha y monto */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">

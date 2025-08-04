@@ -165,10 +165,10 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
         <div className="max-w-full px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="card mb-4 sm:mb-6">
+          <div className=""">
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-3">
@@ -198,7 +198,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
 
             {/* Contenido */}
             <div className="p-3 sm:p-4 lg:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-700"">
                 Resumen por Proveedor
               </h2>
               
@@ -302,10 +302,10 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
   // Vista de detalle
   if (currentView === 'detail' && selectedProviderForDetail) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
         <div className="max-w-full px-4 sm:px-6 lg:px-8">
           {/* Header con navegación */}
-          <div className="card mb-4 sm:mb-6">
+          <div className=""">
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
               <div className="flex items-center gap-3 mb-2 sm:mb-3">
                 <button
@@ -443,7 +443,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                   {/* Cards de detalles por moneda - Mobile */}
                   <div className="sm:hidden space-y-3">
                     {detailedAccounts.map((account, index) => (
-                      <div key={`${account.proveedor}-${account.moneda}-${index}`} className="card">
+                      <div key={`${account.proveedor}-${account.moneda}-${index}`} className="">
                         <div className="p-3 space-y-2">
                           <div className="flex items-center justify-between">
                             <h3 className="font-semibold text-gray-900">{account.moneda}</h3>
@@ -484,7 +484,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                     ))}
                     
                     {/* Card de totales para mobile */}
-                    <div className="card bg-gray-50 border-gray-200">
+                    <div className=" bg-gray-50 border-gray-200">
                       <div className="p-3 space-y-2">
                         <h3 className="font-bold text-gray-900">
                           TOTAL {getProviderLabel(selectedProviderForDetail)}

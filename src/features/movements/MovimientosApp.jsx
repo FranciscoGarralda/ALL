@@ -90,9 +90,9 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
 
   // Vista principal - Lista de movimientos
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       {/* Header */}
-      <div className="card mb-4 sm:mb-6">
+      <div className="">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex items-center gap-3">
@@ -406,9 +406,9 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full px-4 sm:px-6 lg:px-8">
-        <div className="card">
+        <div className="">
           {/* Header */}
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
             <div className="flex items-center gap-3 mb-3 sm:mb-0">

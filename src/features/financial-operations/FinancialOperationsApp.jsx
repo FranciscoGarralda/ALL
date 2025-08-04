@@ -495,11 +495,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full">
-        <div className="card">
-            {/* Header de la card */}
-            <div className="p-4 sm:p-6 lg:p-8 border-b border-gray-100">
+        <div className="bg-white">
+            {/* Header */}
+            <div className="p-2 sm:p-4 lg:p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
                   <DollarSign size={20} className="sm:w-6 sm:h-6 text-gray-800" />
