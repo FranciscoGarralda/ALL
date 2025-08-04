@@ -19,7 +19,11 @@ const ButtonSelectGroup = ({
 
   const getButtonClasses = (optionValue) => {
     const isActive = value === optionValue;
-    return `px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all ${
+    const baseClasses = isMoneda 
+      ? 'px-3 py-2 text-sm font-medium flex items-center justify-center rounded-lg border transition-all whitespace-nowrap flex-shrink-0'
+      : 'px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all';
+    
+    return `${baseClasses} ${
       readOnly
         ? 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
         : isActive
@@ -42,7 +46,7 @@ const ButtonSelectGroup = ({
         </label>
       )}
       
-      <div className={isMoneda ? 'flex flex-wrap gap-2' : `grid ${gridCols} gap-2`}>
+      <div className={isMoneda ? 'flex gap-2 overflow-x-auto pb-2' : `grid ${gridCols} gap-2`}>
         {options.map((option) => {
           const optionValue = typeof option === 'object' ? option.value : option;
           const optionLabel = typeof option === 'object' ? option.label : option;

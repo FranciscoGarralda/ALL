@@ -9,12 +9,13 @@ import CurrencyInput from './CurrencyInput';
 const socioOptions = [
   { value: 'socio1', label: 'Socio 1' },
   { value: 'socio2', label: 'Socio 2' },
+  { value: 'all', label: 'ALL' },
 ];
 
 // Opciones para tipo de pago
 const tipoOptions = [
-  { value: 'efectivo', label: 'Efectivo' },
   { value: 'digital', label: 'Digital' },
+  { value: 'efectivo', label: 'Efectivo' },
 ];
 
 const MixedPaymentGroup = ({
@@ -57,32 +58,48 @@ const MixedPaymentGroup = ({
       {/* Pagos individuales - SIN RECUADRE, campos normales */}
       {displayPayments.map((payment, index) => (
         <div key={payment.id || index} className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          {/* Selector de Socio */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Cuenta
+          {/* Selector de Socio y Tipo combinados */}
+          <div className="sm:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Cuenta y Modo
             </label>
-            <ButtonSelectGroup
-              name={`mixedPayment_${index}_socio`}
-              value={payment.socio || ''}
-              onChange={(value) => onPaymentChange(payment.id || index + 1, 'socio', value)}
-              options={socioOptions}
-              required
-            />
-          </div>
-
-          {/* Selector de Tipo */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Modo
-            </label>
-            <ButtonSelectGroup
-              name={`mixedPayment_${index}_tipo`}
-              value={payment.tipo || ''}
-              onChange={(value) => onPaymentChange(payment.id || index + 1, 'tipo', value)}
-              options={tipoOptions}
-              required
-            />
+            <div className="space-y-2">
+              {/* Primera fila: Socio 1, Socio 2, ALL */}
+              <div className="grid grid-cols-3 gap-2">
+                {socioOptions.map(option => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => onPaymentChange(payment.id || index + 1, 'socio', option.value)}
+                    className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all ${
+                      payment.socio === option.value
+                        ? 'bg-gray-900 text-white border-gray-900'
+                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Segunda fila: Digital, Efectivo */}
+              <div className="grid grid-cols-2 gap-2">
+                {tipoOptions.map(option => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => onPaymentChange(payment.id || index + 1, 'tipo', option.value)}
+                    className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all ${
+                      payment.tipo === option.value
+                        ? 'bg-gray-900 text-white border-gray-900'
+                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Campo de Monto */}
