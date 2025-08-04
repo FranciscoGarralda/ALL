@@ -336,11 +336,11 @@ const ClientAutocomplete = forwardRef(({
           type="button"
           onClick={handleCreateClient}
 
-          className="flex-shrink-0 w-10 h-10 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 touch-target"
+          className="flex-shrink-0 px-3 py-2 sm:px-3.5 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           title="Crear nuevo cliente"
           aria-label="Crear nuevo cliente"
         >
-          <Plus size={20} />
+          <Plus size={18} />
         </button>
       </div>
 
