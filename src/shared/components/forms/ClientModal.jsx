@@ -148,10 +148,10 @@ const ClientModal = ({
           <button
             onClick={handleClose}
             disabled={isLoading}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 disabled:opacity-50"
+            className="p-2 hover:bg-indigo-100 rounded-lg transition-colors duration-200 disabled:opacity-50"
             aria-label="Cerrar modal"
           >
-            <X size={20} className="text-gray-500" />
+            <X size={20} className="text-indigo-700" />
           </button>
         </div>
 
@@ -249,7 +249,7 @@ const ClientModal = ({
               type="button"
               onClick={handleClose}
               disabled={isLoading}
-              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
+              className="px-4 py-2 text-gray-700 bg-indigo-100 hover:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
             >
               Cancelar
             </button>

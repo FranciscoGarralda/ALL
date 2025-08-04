@@ -42,8 +42,8 @@ export const CuentaButtonGroup = React.forwardRef(({
       isSocioActive(socioValue)
         ? 'bg-gray-900 text-white border-gray-900'
         : readOnly 
-          ? 'bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed'
-          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+          ? 'bg-indigo-50 text-indigo-700 border-gray-200 cursor-not-allowed'
+          : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
     }`;
   };
 
@@ -52,8 +52,8 @@ export const CuentaButtonGroup = React.forwardRef(({
       isTipoActive(tipoValue)
         ? 'bg-gray-900 text-white border-gray-900'
         : readOnly 
-          ? 'bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed'
-          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+          ? 'bg-indigo-50 text-indigo-700 border-gray-200 cursor-not-allowed'
+          : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
     }`;
   };
 

@@ -92,7 +92,7 @@ const NotificationSystem = ({ onNotificationCallback }) => {
           
           <button
             onClick={() => removeNotification(notification.id)}
-            className="flex-shrink-0 ml-3 text-gray-400 hover:text-gray-600 transition-colors"
+            className="flex-shrink-0 ml-3 text-indigo-600 hover:text-gray-600 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>

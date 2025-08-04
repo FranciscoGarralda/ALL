@@ -493,11 +493,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-4xl mx-auto">
         <div className="card mb-4 sm:mb-6">
             {/* Header de la card */}
-            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+            <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
                   <DollarSign size={20} className="sm:w-6 sm:h-6 text-indigo-600" />

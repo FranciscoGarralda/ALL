@@ -35,7 +35,7 @@ class ErrorBoundary extends React.Component {
               </div>
             </div>
             
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+            <div className="bg-indigo-50 rounded-lg p-4 mb-4">
               <p className="text-sm text-gray-700 mb-2">
                 <strong>Error:</strong> {this.state.error && this.state.error.toString()}
               </p>

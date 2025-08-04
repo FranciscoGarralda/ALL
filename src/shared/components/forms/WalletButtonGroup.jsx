@@ -58,7 +58,7 @@ export const WalletButtonGroup = React.forwardRef(({
           className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
             isActive('socio1', 'socio')
               ? 'bg-gray-900 text-white border-gray-900'
-              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+              : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
           }`}
         >
           Socio 1
@@ -69,7 +69,7 @@ export const WalletButtonGroup = React.forwardRef(({
           className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
             isActive('socio2', 'socio')
               ? 'bg-gray-900 text-white border-gray-900'
-              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+              : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
           }`}
         >
           Socio 2
@@ -82,7 +82,7 @@ export const WalletButtonGroup = React.forwardRef(({
           className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
             isActive('all', 'socio')
               ? 'bg-gray-900 text-white border-gray-900'
-              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+              : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
           }`}
         >
           ALL
@@ -94,7 +94,7 @@ export const WalletButtonGroup = React.forwardRef(({
             className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
               isActive('efectivo', 'type')
                 ? 'bg-gray-900 text-white border-gray-900'
-                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
             }`}
           >
             Efectivo
@@ -105,7 +105,7 @@ export const WalletButtonGroup = React.forwardRef(({
             className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
               isActive('digital', 'type')
                 ? 'bg-gray-900 text-white border-gray-900'
-                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
             }`}
           >
             Digital

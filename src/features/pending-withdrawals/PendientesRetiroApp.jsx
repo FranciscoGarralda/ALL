@@ -79,7 +79,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
       }
     };
     
-    const badge = badges[estado] || { bg: 'bg-gray-100', text: 'text-gray-800', label: estado };
+    const badge = badges[estado] || { bg: 'bg-indigo-100', text: 'text-gray-800', label: estado };
     
     return (
       <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${badge.bg} ${badge.text}`}>
@@ -90,11 +90,11 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-7xl mx-auto">
         <div className="card">
           {/* Header */}
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center">
@@ -106,7 +106,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
             </p>
           </div>
           <div className="text-right">
-            <div className="text-sm text-gray-500">Total pendientes</div>
+            <div className="text-sm text-indigo-700">Total pendientes</div>
             <div className="text-2xl font-bold text-orange-600">
               {filteredMovements.length}
             </div>
@@ -115,11 +115,11 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
           </div>
 
           {/* Filtros y búsqueda */}
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
             <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-600 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Buscar por cliente, monto, moneda, dirección o teléfono..."
@@ -151,7 +151,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             No hay operaciones pendientes
           </h3>
-          <p className="text-gray-500">
+          <p className="text-indigo-700">
             {searchTerm || filterEstado !== 'all' 
               ? 'No se encontraron operaciones con los filtros aplicados'
               : 'Todas las operaciones están completadas'
@@ -174,7 +174,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
                     <h3 className="font-semibold text-gray-900">
                        {getClientName(movement.cliente, clients)}
                      </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-indigo-700">
                       {movement.operacion} - {movement.subOperacion}
                     </p>
                   </div>
@@ -184,17 +184,17 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <Calendar className="w-4 h-4 text-indigo-600" />
                   <div>
-                    <div className="text-sm text-gray-500">Fecha</div>
+                    <div className="text-sm text-indigo-700">Fecha</div>
                     <div className="font-medium">{formatDate(movement.fecha)}</div>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <DollarSign className="w-4 h-4 text-gray-400" />
+                  <DollarSign className="w-4 h-4 text-indigo-600" />
                   <div>
-                    <div className="text-sm text-gray-500">Monto</div>
+                    <div className="text-sm text-indigo-700">Monto</div>
                     <div className="font-medium text-green-600">
                       {formatAmountWithCurrency(movement.monto, movement.moneda, { showSymbol: false })}
                     </div>
@@ -202,9 +202,9 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <MapPin className="w-4 h-4 text-gray-400" />
+                  <MapPin className="w-4 h-4 text-indigo-600" />
                   <div>
-                    <div className="text-sm text-gray-500">Dirección</div>
+                    <div className="text-sm text-indigo-700">Dirección</div>
                     <div className="font-medium text-sm">
                       {movement.direccion || 'No especificada'}
                     </div>
@@ -212,9 +212,9 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4 text-gray-400" />
+                  <Phone className="w-4 h-4 text-indigo-600" />
                   <div>
-                    <div className="text-sm text-gray-500">Teléfono</div>
+                    <div className="text-sm text-indigo-700">Teléfono</div>
                     <div className="font-medium">
                       {movement.telefono || 'No especificado'}
                     </div>
@@ -223,7 +223,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
               </div>
 
               {/* Acciones */}
-              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-gray-100">
+              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-indigo-100">
                 <button
                   onClick={() => onEditMovement && onEditMovement(movement)}
                   className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors"

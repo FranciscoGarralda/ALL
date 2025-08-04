@@ -90,7 +90,7 @@ const FormInput = forwardRef(({
     'placeholder-gray-500 focus:placeholder-gray-600',
     'focus:outline-none focus:ring-4 focus:ring-offset-0',
     // Modern background
-    'bg-white hover:bg-gray-50 focus:bg-white',
+    'bg-white hover:bg-indigo-50 focus:bg-white',
     // Type-specific classes
     type === 'date' ? 'cursor-pointer' : '',
     type === 'number' ? 'text-right' : '',
@@ -99,7 +99,7 @@ const FormInput = forwardRef(({
       ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20 text-red-900' 
       : 'border-gray-200 hover:border-gray-300 focus:border-indigo-500 focus:ring-indigo-500/20 text-gray-900',
     readOnly 
-      ? 'bg-gray-100 cursor-not-allowed opacity-60 hover:bg-gray-100' 
+      ? 'bg-indigo-100 cursor-not-allowed opacity-60 hover:bg-indigo-100' 
       : '',
     // Padding adjustments for day name
     showDayName && calculatedDayName 
@@ -156,7 +156,7 @@ const FormInput = forwardRef(({
         {/* Read-only indicator with animation */}
         {readOnly && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <div className="w-2.5 h-2.5 bg-gray-500 rounded-full animate-pulse"></div>
+            <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-pulse"></div>
           </div>
         )}
       </div>

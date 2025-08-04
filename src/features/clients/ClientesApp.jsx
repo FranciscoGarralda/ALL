@@ -78,7 +78,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
 
   // Función para determinar estado de contacto
   const getEstadoContacto = (cliente) => {
-    if (!cliente.ultimaOperacion) return { color: 'bg-gray-100 text-gray-600', texto: 'Sin datos' };
+    if (!cliente.ultimaOperacion) return { color: 'bg-indigo-100 text-gray-600', texto: 'Sin datos' };
 
     const dias = Math.floor((new Date() - new Date(cliente.ultimaOperacion)) / (1000 * 60 * 60 * 24));
     const frecuencia = calcularFrecuencia(cliente);
@@ -124,10 +124,10 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
 
   // Vista principal - Lista de clientes
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       {/* Header */}
       <div className="card mb-4 sm:mb-6">
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+        <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -135,7 +135,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">Gestión de Clientes</h1>
-                <p className="text-xs sm:text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-indigo-700">
                   {clientes.length} cliente{clientes.length !== 1 ? 's' : ''} registrado{clientes.length !== 1 ? 's' : ''}
                 </p>
               </div>
@@ -151,9 +151,9 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
         </div>
 
         {/* Búsqueda */}
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+        <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
           <div className="relative">
-            <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-600" />
             <input
               type="text"
               placeholder="Buscar por nombre, teléfono o DNI..."
@@ -222,7 +222,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
               <User size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
               {busqueda ? (
                 <div>
-                  <p className="text-sm sm:text-base text-gray-500 mb-2 px-4">No se encontraron clientes que coincidan con "{busqueda}"</p>
+                  <p className="text-sm sm:text-base text-indigo-700 mb-2 px-4">No se encontraron clientes que coincidan con "{busqueda}"</p>
                   <button
                     onClick={() => setBusqueda('')}
                     className="text-indigo-600 hover:text-indigo-700 text-sm"
@@ -232,7 +232,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
                 </div>
               ) : (
                 <div className="px-4">
-                  <p className="text-sm sm:text-base text-gray-500 mb-4">No hay clientes registrados</p>
+                  <p className="text-sm sm:text-base text-indigo-700 mb-4">No hay clientes registrados</p>
                   <button
                     onClick={crearNuevoCliente}
                     className="btn-primary touch-target"
@@ -298,7 +298,7 @@ function ClienteCard({ cliente, onEdit, onViewAnalytics, onDelete, calcularFrecu
             </button>
             <button 
               onClick={() => onEdit(cliente)} 
-              className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors touch-target"
+              className="p-2 text-gray-600 hover:bg-indigo-50 rounded-lg transition-colors touch-target"
               title="Editar cliente"
             >
               <Edit3 size={14} />
@@ -316,21 +316,21 @@ function ClienteCard({ cliente, onEdit, onViewAnalytics, onDelete, calcularFrecu
         {/* Información de contacto */}
         <div className="space-y-2 text-sm text-gray-600">
           <div className="flex items-center gap-2">
-            <Phone size={12} className="text-gray-400 flex-shrink-0" />
+            <Phone size={12} className="text-indigo-600 flex-shrink-0" />
             <span className="truncate">{cliente.telefono}</span>
           </div>
           <div className="flex items-center gap-2">
-            <CreditCard size={12} className="text-gray-400 flex-shrink-0" />
+            <CreditCard size={12} className="text-indigo-600 flex-shrink-0" />
             <span className="truncate">DNI: {cliente.dni}</span>
           </div>
           <div className="flex items-center gap-2">
-            <MapPin size={12} className="text-gray-400 flex-shrink-0" />
+            <MapPin size={12} className="text-indigo-600 flex-shrink-0" />
             <span className="truncate" title={cliente.direccion}>{cliente.direccion}</span>
           </div>
         </div>
 
         {/* Métricas del cliente */}
-        <div className="border-t pt-3 flex flex-col sm:flex-row sm:justify-between text-sm text-gray-500 gap-2">
+        <div className="border-t pt-3 flex flex-col sm:flex-row sm:justify-between text-sm text-indigo-700 gap-2">
           <span className="truncate">Última: {getDiasDesdeUltimaOperacion()}</span>
           <span className="truncate">Cada {frecuencia} días • {cliente.totalOperaciones || 0} ops</span>
         </div>
@@ -393,15 +393,15 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-2xl mx-auto">
         <div className="card">
           {/* Header */}
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
             <div className="flex items-center gap-3">
               <button 
                 onClick={onCancel} 
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors touch-target flex-shrink-0"
+                className="p-2 hover:bg-indigo-100 rounded-lg transition-colors touch-target flex-shrink-0"
               >
                 <ArrowLeft size={18} />
               </button>
@@ -409,7 +409,7 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
                 <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
                   {cliente ? 'Editar Cliente' : 'Nuevo Cliente'}
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-indigo-700">
                   {cliente ? 'Modifica la información del cliente' : 'Completa los datos del nuevo cliente'}
                 </p>
               </div>
@@ -537,15 +537,15 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
   const recomendacion = getRecomendacion();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-6xl mx-auto">
         <div className="card">
           {/* Header */}
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
             <div className="flex items-center gap-3">
               <button 
                 onClick={onBack} 
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors touch-target flex-shrink-0"
+                className="p-2 hover:bg-indigo-100 rounded-lg transition-colors touch-target flex-shrink-0"
               >
                 <ArrowLeft size={18} />
               </button>
@@ -553,7 +553,7 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
                 <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
                   Análisis de {cliente.nombre} {cliente.apellido}
                 </h1>
-                <p className="text-xs sm:text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-indigo-700">
                   Métricas y patrones de comportamiento del cliente
                 </p>
               </div>
@@ -626,15 +626,15 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
               <h3 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">Información de Contacto</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                 <div className="flex items-center gap-2">
-                  <Phone size={14} className="text-gray-400 flex-shrink-0" />
+                  <Phone size={14} className="text-indigo-600 flex-shrink-0" />
                   <span className="truncate"><strong>Teléfono:</strong> {cliente.telefono}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CreditCard size={14} className="text-gray-400 flex-shrink-0" />
+                  <CreditCard size={14} className="text-indigo-600 flex-shrink-0" />
                   <span className="truncate"><strong>DNI:</strong> {cliente.dni}</span>
                 </div>
                 <div className="flex items-center gap-2 sm:col-span-2">
-                  <MapPin size={14} className="text-gray-400 flex-shrink-0" />
+                  <MapPin size={14} className="text-indigo-600 flex-shrink-0" />
                   <span className="truncate"><strong>Dirección:</strong> {cliente.direccion}</span>
                 </div>
               </div>

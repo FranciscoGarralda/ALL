@@ -168,7 +168,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
               ))}
             </div>
           ) : (
-            <p className="text-base sm:text-lg text-gray-500 font-medium">Sin datos</p>
+            <p className="text-base sm:text-lg text-indigo-700 font-medium">Sin datos</p>
           )}
         </div>
         <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${bgColor} bg-opacity-20 flex items-center justify-center flex-shrink-0`}>
@@ -179,11 +179,11 @@ function ArbitrajeApp({ movements, onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="card">
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+          <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -193,7 +193,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                   <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 truncate">
                     Análisis de Arbitraje
                   </h1>
-                  <p className="text-xs sm:text-sm text-gray-500">
+                  <p className="text-xs sm:text-sm text-indigo-700">
                     Dashboard de operaciones de arbitraje • {arbitrageMovements.length} operacion{arbitrageMovements.length !== 1 ? 'es' : ''} registrada{arbitrageMovements.length !== 1 ? 's' : ''}
                   </p>
                 </div>
@@ -293,7 +293,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
             ) : (
               <div className="text-center py-8 sm:py-12">
                 <PieChart size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
-                <p className="text-sm sm:text-base text-gray-500">No hay datos de ganancias mensuales por arbitraje para graficar.</p>
+                <p className="text-sm sm:text-base text-indigo-700">No hay datos de ganancias mensuales por arbitraje para graficar.</p>
               </div>
             )}
           </div>
@@ -309,7 +309,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
             
             {/* Barra de búsqueda */}
             <div className="relative mb-4 sm:mb-6">
-              <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-600" />
               <input
                 type="text"
                 placeholder="Buscar operación de arbitraje por cliente, detalle, moneda o cuenta..."
@@ -328,7 +328,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                 </span>
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="text-xs text-gray-500 hover:text-gray-700 underline ml-2"
+                  className="text-xs text-indigo-700 hover:text-gray-700 underline ml-2"
                 >
                   Limpiar
                 </button>
@@ -433,12 +433,12 @@ function ArbitrajeApp({ movements, onNavigate }) {
                           ? 'bg-success-100 text-success-700' 
                           : mov.estado === 'pendiente'
                           ? 'bg-warning-100 text-warning-700'
-                          : 'bg-gray-100 text-gray-700'
+                          : 'bg-indigo-100 text-gray-700'
                       }`}>
                         {mov.estado || 'Sin estado'}
                       </span>
                       
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-2 text-xs text-indigo-700">
                         <span>Por: {mov.por || 'N/A'}</span>
                         {mov.nombreOtro && <span>({mov.nombreOtro})</span>}
                       </div>
@@ -450,7 +450,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                   <ArrowUpDown size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
                   {searchTerm ? (
                     <div>
-                      <p className="text-sm sm:text-base text-gray-500 mb-2">
+                      <p className="text-sm sm:text-base text-indigo-700 mb-2">
                         No se encontraron operaciones de arbitraje que coincidan con "{searchTerm}"
                       </p>
                       <button
@@ -462,8 +462,8 @@ function ArbitrajeApp({ movements, onNavigate }) {
                     </div>
                   ) : arbitrageMovements.length === 0 ? (
                     <div>
-                      <p className="text-sm sm:text-base text-gray-500 mb-4">No hay operaciones de arbitraje registradas</p>
-                      <p className="text-xs sm:text-sm text-gray-400 mb-4">
+                      <p className="text-sm sm:text-base text-indigo-700 mb-4">No hay operaciones de arbitraje registradas</p>
+                      <p className="text-xs sm:text-sm text-indigo-600 mb-4">
                         Las operaciones de arbitraje aparecerán aquí cuando se registren transacciones de tipo "ARBITRAJE"
                       </p>
                       <button
@@ -477,7 +477,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
                       </button>
                     </div>
                   ) : (
-                    <p className="text-sm sm:text-base text-gray-500">Todas las operaciones de arbitraje están ocultas por el filtro actual</p>
+                    <p className="text-sm sm:text-base text-indigo-700">Todas las operaciones de arbitraje están ocultas por el filtro actual</p>
                   )}
                 </div>
               )}
@@ -553,7 +553,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
               <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">
                 No hay operaciones de arbitraje registradas
               </h3>
-              <p className="text-sm sm:text-base text-gray-500 mb-6">
+              <p className="text-sm sm:text-base text-indigo-700 mb-6">
                 Las operaciones de arbitraje aparecerán aquí cuando se registren transacciones que generen ganancias por diferencias de precios.
               </p>
 

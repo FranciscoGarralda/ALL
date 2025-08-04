@@ -74,7 +74,7 @@ const MixedPaymentGroup = ({
                     className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all ${
                       payment.socio === option.value
                         ? 'bg-gray-900 text-white border-gray-900'
-                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                        : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
                     }`}
                   >
                     {option.label}
@@ -92,7 +92,7 @@ const MixedPaymentGroup = ({
                     className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all ${
                       payment.tipo === option.value
                         ? 'bg-gray-900 text-white border-gray-900'
-                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                        : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
                     }`}
                   >
                     {option.label}
