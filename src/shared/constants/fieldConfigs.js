@@ -17,8 +17,10 @@ export const specificFieldsConfig = {
         { label: 'Cuenta Ingreso', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Cuenta Egreso', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
@@ -50,8 +52,10 @@ export const specificFieldsConfig = {
         { label: 'Cuenta Egreso', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Cuenta Ingreso', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
@@ -80,10 +84,13 @@ export const specificFieldsConfig = {
         { label: 'Monto compra', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
-      // TC compra / Moneda
+      // TC compra
       [
-        { label: 'TC compra', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'TC compra', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      // Moneda TC
+      [
+        { label: 'Moneda', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       // Total
       [
@@ -94,10 +101,13 @@ export const specificFieldsConfig = {
         { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'monedaVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
-      // TC venta / Moneda
+      // TC venta
       [
-        { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'monedaTCVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
+        { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      // Moneda TC venta
+      [
+        { label: 'Moneda', name: 'monedaTCVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
       // Total
       [
