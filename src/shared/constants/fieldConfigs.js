@@ -110,13 +110,10 @@ export const specificFieldsConfig = {
         { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'monedaVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
-      // TC venta
+      // TC venta / Moneda TC
       [
-        { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
-      ],
-      // Moneda TC venta
-      [
-        { label: 'Moneda TC', name: 'monedaTCVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-2' }
+        { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+        { label: 'Moneda TC', name: 'monedaTCVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
       // Total
       [
@@ -125,7 +122,7 @@ export const specificFieldsConfig = {
       // Profit / Moneda
       [
         { label: 'Profit', name: 'profit', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'monedaProfit', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-1' }
+        { label: 'Moneda', name: 'monedaProfit', type: 'text', readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
       // Cuenta
       [
@@ -151,7 +148,7 @@ export const specificFieldsConfig = {
       montoVenta: (formData) => formData.monto, // Monto venta = monto compra
       monedaVenta: (formData) => getCurrencyLabel(formData.moneda), // Moneda venta = moneda compra (as label)
       monedaTCVenta: (formData) => getCurrencyLabel(formData.monedaTC), // Moneda TC venta = moneda TC compra (as label)
-      monedaProfit: (formData) => formData.monedaTC, // Moneda profit = moneda TC
+      monedaProfit: (formData) => getCurrencyLabel(formData.monedaTC), // Moneda profit = moneda TC (as label)
       profit: (formData) => {
         const totalVenta = safeParseFloat(formData.totalVenta, 0);
         const totalCompra = safeParseFloat(formData.totalCompra, 0);
