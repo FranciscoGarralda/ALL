@@ -495,11 +495,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-full px-4 sm:px-6 lg:px-8">
-        <div className="card mb-4 sm:mb-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8 safe-top safe-bottom pt-24">
+      <div className="max-w-full">
+        <div className="card">
             {/* Header de la card */}
-            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
+            <div className="p-4 sm:p-6 lg:p-8 border-b border-gray-100">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
                   <DollarSign size={20} className="sm:w-6 sm:h-6 text-gray-800" />
@@ -513,29 +513,28 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               </div>
             </div>
             
-            <div className="p-6 sm:p-8 space-y-6">
-              <div className="form-section">
-          {/* Campo Cliente - Universal con autocompletado */}
-          {formData.operacion !== 'PRESTAMISTAS' && (
-                      <ClientAutocomplete
-            ref={createElementRef('cliente', { type: 'autocomplete', order: 1 })}
-            label="CLIENTE"
-            name="cliente"
-            value={formData.cliente}
-            onChange={(val) => handleInputChange('cliente', val)}
-            clients={clients || []}
-            required={true}
-            placeholder="Buscar o seleccionar cliente"
-            onClientCreated={(newClient) => {
-              // Guardar el cliente en la base de datos
-              if (onSaveClient) {
-                onSaveClient(newClient);
-                // Auto-seleccionar el cliente recién creado
-                handleInputChange('cliente', newClient.id || newClient.nombre);
-              }
-            }}
-          />
-          )}
+            <div className="p-6 sm:p-8 lg:p-10 space-y-6">
+              {/* Campo Cliente - Universal con autocompletado */}
+              {formData.operacion !== 'PRESTAMISTAS' && (
+                <ClientAutocomplete
+                  ref={createElementRef('cliente', { type: 'autocomplete', order: 1 })}
+                  label="CLIENTE"
+                  name="cliente"
+                  value={formData.cliente}
+                  onChange={(val) => handleInputChange('cliente', val)}
+                  clients={clients || []}
+                  required={true}
+                  placeholder="Buscar o seleccionar cliente"
+                  onClientCreated={(newClient) => {
+                    // Guardar el cliente en la base de datos
+                    if (onSaveClient) {
+                      onSaveClient(newClient);
+                      // Auto-seleccionar el cliente recién creado
+                      handleInputChange('cliente', newClient.id || newClient.nombre);
+                    }
+                  }}
+                />
+              )}
 
           {/* Campo Fecha */}
           <FormInput
@@ -607,70 +606,68 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               name="nombreOtro"
               value={formData.nombreOtro}
               onChange={(val) => handleInputChange('nombreOtro', val)}
-              placeholder="Ingrese el nombre"
+              placeholder="Nombre de la persona"
               required
             />
           )}
-        </div>
 
-        {/* Resumen para operaciones COMPRA/VENTA */}
-        {(['COMPRA', 'VENTA'].includes(formData.subOperacion) && formData.total) && (
-          <div className="bg-gradient-to-br from-gray-50 to-gray-50 border-2 border-gray-200 rounded-xl p-6 shadow-md">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Resumen de la Operación</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center bg-white rounded-lg p-3 shadow-sm">
-                <span className="text-gray-600 text-sm">Monto:</span>
-                <span className="font-bold text-gray-900 text-lg whitespace-nowrap">
-                  {formatAmountWithCurrency(formData.monto, formData.moneda)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center bg-white rounded-lg p-3 shadow-sm">
-                <span className="text-gray-600 text-sm">Tipo de Cambio:</span>
-                <span className="font-bold text-gray-900 text-lg whitespace-nowrap">
-                  {formatAmountWithCurrency(formData.tc, formData.monedaTC)}
-                </span>
-              </div>
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-lg p-4 shadow-lg">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-100 text-sm">Total Final:</span>
-                  <span className="text-2xl font-bold text-white whitespace-nowrap">
-                    {formatAmountWithCurrency(formData.total, formData.monedaTC)}
+          {/* Resumen para operaciones COMPRA/VENTA */}
+          {(['COMPRA', 'VENTA'].includes(formData.subOperacion) && formData.total) && (
+            <div className="bg-gradient-to-br from-gray-50 to-gray-50 border-2 border-gray-200 rounded-xl p-6 shadow-md">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Resumen de la Operación</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center bg-white rounded-lg p-3 shadow-sm">
+                  <span className="text-gray-600 text-sm">Monto:</span>
+                  <span className="font-bold text-gray-900 text-lg whitespace-nowrap">
+                    {formatAmountWithCurrency(formData.monto, formData.moneda)}
                   </span>
+                </div>
+                <div className="flex justify-between items-center bg-white rounded-lg p-3 shadow-sm">
+                  <span className="text-gray-600 text-sm">Tipo de Cambio:</span>
+                  <span className="font-bold text-gray-900 text-lg whitespace-nowrap">
+                    {formatAmountWithCurrency(formData.tc, formData.monedaTC)}
+                  </span>
+                </div>
+                <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-lg p-4 shadow-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-100 text-sm">Total Final:</span>
+                    <span className="text-2xl font-bold text-white whitespace-nowrap">
+                      {formatAmountWithCurrency(formData.total, formData.monedaTC)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Botones de acción */}
-        <div className="flex flex-col sm:flex-row justify-between pt-6 border-t border-gray-200 gap-3">
-          <button
-            ref={createElementRef('guardar', { type: 'button', order: 100 })}
-            onClick={handleGuardar}
-            className="btn-primary flex-1 sm:flex-none touch-target"
-            disabled={!formData.operacion || !formData.subOperacion}
-          >
-            {initialMovementData ? 'Actualizar' : 'Guardar'}
-          </button>
-          <button
-            ref={createElementRef('limpiar', { type: 'button', order: 101 })}
-            onClick={clearForm}
-            className="btn-secondary flex-1 sm:flex-none touch-target"
-          >
-            Limpiar Formulario
-          </button>
-          {onCancelEdit && (
+          {/* Botones de acción */}
+          <div className="flex flex-col sm:flex-row justify-between pt-6 border-t border-gray-200 gap-3">
             <button
-              ref={createElementRef('cancelar', { type: 'button', order: 102 })}
-              onClick={onCancelEdit}
+              ref={createElementRef('guardar', { type: 'button', order: 100 })}
+              onClick={handleGuardar}
+              className="btn-primary flex-1 sm:flex-none touch-target"
+              disabled={!formData.operacion || !formData.subOperacion}
+            >
+              {initialMovementData ? 'Actualizar' : 'Guardar'}
+            </button>
+            <button
+              ref={createElementRef('limpiar', { type: 'button', order: 101 })}
+              onClick={clearForm}
               className="btn-secondary flex-1 sm:flex-none touch-target"
             >
-              Cancelar
+              Limpiar Formulario
             </button>
-          )}
-        </div>
-            </div>
+            {onCancelEdit && (
+              <button
+                ref={createElementRef('cancelar', { type: 'button', order: 102 })}
+                onClick={onCancelEdit}
+                className="btn-secondary flex-1 sm:flex-none touch-target"
+              >
+                Cancelar
+              </button>
+            )}
           </div>
+        </div>
       </div>
     </div>
   );
