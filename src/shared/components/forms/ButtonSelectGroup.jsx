@@ -21,7 +21,7 @@ const ButtonSelectGroup = ({
   const getButtonClasses = (optionValue) => {
     const isActive = value === optionValue;
     const baseClasses = isMoneda
-      ? 'px-1 py-1.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all min-w-[45px]'
+      ? 'px-1 py-1 text-xs font-medium flex items-center justify-center rounded-md border transition-all min-w-[40px]'
       : isOperacion
         ? 'px-2 py-3 text-sm font-medium flex items-center justify-center rounded-lg border transition-all min-h-[80px]'
         : 'px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all';
@@ -44,12 +44,12 @@ const ButtonSelectGroup = ({
   // Si hay más de 6 opciones, usar grid de 3 columnas
   const getGridCols = () => {
     if (isMoneda) {
-      // Para monedas, diseño responsive para evitar superposición
-      if (options.length === 7) return 'grid-cols-4 sm:grid-cols-7 gap-1 sm:gap-2'; // 4 columnas en móvil, 7 en desktop
-      if (options.length === 8) return 'grid-cols-4 sm:grid-cols-8 gap-1 sm:gap-2'; // 4 columnas en móvil, 8 en desktop
-      if (options.length === 6) return 'grid-cols-3 sm:grid-cols-6 gap-1 sm:gap-2'; // 3 columnas en móvil, 6 en desktop
-      if (options.length === 5) return 'grid-cols-3 sm:grid-cols-5 gap-1 sm:gap-2'; // 3 columnas en móvil, 5 en desktop
-      return 'grid-cols-4';
+      // Para monedas, siempre en una línea horizontal
+      if (options.length === 8) return 'grid-cols-8 gap-1';
+      if (options.length === 7) return 'grid-cols-7 gap-1';
+      if (options.length === 6) return 'grid-cols-6 gap-1';
+      if (options.length === 5) return 'grid-cols-5 gap-1';
+      return 'grid-cols-4 gap-1';
     }
     // Para operaciones principales (6 opciones), usar 3x2
     if (isOperacion && options.length === 6) return 'grid-cols-3 gap-2';
@@ -88,9 +88,9 @@ const ButtonSelectGroup = ({
                   const emoji = parts[0];
                   const code = parts[1];
                   return (
-                    <div className="flex flex-col items-center">
-                      <span className="text-sm">{emoji}</span>
-                      <span className="text-[9px] mt-0">{code}</span>
+                    <div className="flex flex-col items-center gap-0">
+                      <span className="text-xs leading-none">{emoji}</span>
+                      <span className="text-[8px] leading-none">{code}</span>
                     </div>
                   );
                 })()
