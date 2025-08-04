@@ -112,8 +112,8 @@ export const WalletTCButtonGroup = React.forwardRef(({
           </button>
         </div>
         
-        {/* Segunda fila: Efectivo, Digital, Pago Mixto */}
-        <div className="grid grid-cols-3 gap-3">
+        {/* Segunda fila: Efectivo, Digital */}
+        <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => handleButtonClick('efectivo', 'type')}
@@ -140,6 +140,10 @@ export const WalletTCButtonGroup = React.forwardRef(({
           >
             Digital
           </button>
+        </div>
+        
+        {/* Tercera fila: Pago Mixto */}
+        <div className="grid grid-cols-1">
           <button
             type="button"
             onClick={() => handleButtonClick('pago_mixto', 'special')}

@@ -49,45 +49,47 @@ export const WalletButtonGroup = React.forwardRef(({
       <label className="block text-sm font-medium text-gray-700">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-              <div className="grid grid-cols-2 gap-3">
-        {/* Primera fila: Socio 1, Socio 2 */}
-        <button
-          type="button"
-          ref={ref}
-          onClick={() => handleButtonClick('socio1', 'socio')}
-          className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
-            isActive('socio1', 'socio')
-              ? 'bg-gray-900 text-white border-gray-900'
-              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
-          }`}
-        >
-          Socio 1
-        </button>
-        <button
-          type="button"
-          onClick={() => handleButtonClick('socio2', 'socio')}
-          className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
-            isActive('socio2', 'socio')
-              ? 'bg-gray-900 text-white border-gray-900'
-              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
-          }`}
-        >
-          Socio 2
-        </button>
+              <div className="space-y-3">
+        {/* Primera fila: Socio 1, Socio 2, ALL */}
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            ref={ref}
+            onClick={() => handleButtonClick('socio1', 'socio')}
+            className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
+              isActive('socio1', 'socio')
+                ? 'bg-gray-900 text-white border-gray-900'
+                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+            }`}
+          >
+            Socio 1
+          </button>
+          <button
+            type="button"
+            onClick={() => handleButtonClick('socio2', 'socio')}
+            className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
+              isActive('socio2', 'socio')
+                ? 'bg-gray-900 text-white border-gray-900'
+                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+            }`}
+          >
+            Socio 2
+          </button>
+          <button
+            type="button"
+            onClick={() => handleButtonClick('all', 'socio')}
+            className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
+              isActive('all', 'socio')
+                ? 'bg-gray-900 text-white border-gray-900'
+                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+            }`}
+          >
+            ALL
+          </button>
+        </div>
         
-        {/* Segunda fila: ALL, Efectivo/Digital combinado */}
-        <button
-          type="button"
-          onClick={() => handleButtonClick('all', 'socio')}
-          className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
-            isActive('all', 'socio')
-              ? 'bg-gray-900 text-white border-gray-900'
-              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
-          }`}
-        >
-          ALL
-        </button>
-        <div className="grid grid-cols-2 gap-3">
+        {/* Segunda fila: Efectivo, Digital */}
+        <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
             onClick={() => handleButtonClick('efectivo', 'type')}
