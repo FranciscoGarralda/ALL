@@ -4,7 +4,7 @@ import FormSelect from './FormSelect.jsx';
 import ClientAutocomplete from './ClientAutocomplete.jsx';
 import CurrencyInput from './CurrencyInput.jsx';
 import CommissionField from './CommissionField.jsx';
-import { WalletButtonGroup, WalletTCButtonGroup, CuentaButtonGroup, ButtonSelectGroup } from './index.js';
+import { WalletButtonGroup, WalletTCButtonGroup, CuentaButtonGroup, ButtonSelectGroup, SubOperationButtons } from './index.js';
 
 /**
  * Form field group component that organizes related fields in responsive layouts
@@ -131,11 +131,23 @@ const FormFieldGroup = ({
         );
 
       case 'select':
+        // Usar SubOperationButtons para sub-operaciones
+        const isSubOperation = name === 'subOperacion';
+        
         // Usar ButtonSelectGroup para campos de moneda y otros campos con pocas opciones
         const useButtons = name === 'moneda' || name === 'monedaTC' || name === 'monedaVenta' || 
                           name === 'monedaTCVenta' || name === 'monedaProfit' || name === 'monedaComision' ||
                           name === 'estado' || name === 'por' || 
                           (options && options.length <= 6);
+        
+        if (isSubOperation) {
+          return fieldWrapper(
+            <SubOperationButtons
+              {...commonProps}
+              options={options}
+            />
+          );
+        }
         
         if (useButtons) {
           return fieldWrapper(

@@ -15,6 +15,7 @@ export { default as WalletButtonGroup } from './WalletButtonGroup';
 export { default as WalletTCButtonGroup } from './WalletTCButtonGroup';
 export { default as CuentaButtonGroup } from './CuentaButtonGroup';
 export { default as ButtonSelectGroup } from './ButtonSelectGroup';
+export { default as SubOperationButtons } from './SubOperationButtons';
 
 // Re-exports from other modules
 export { formatAmountWithCurrency } from '../../services/formatters';
