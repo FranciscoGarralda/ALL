@@ -619,25 +619,27 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
         {/* Resumen para operaciones COMPRA/VENTA */}
         {(['COMPRA', 'VENTA'].includes(formData.subOperacion) && formData.total) && (
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 shadow-md">
-            <h3 className="text-lg font-bold text-blue-900 mb-4">Resumen de la Operación</h3>
-            <div className="grid grid-cols-2 gap-4 text-base">
-              <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-gradient-to-br from-indigo-50 to-indigo-50 border-2 border-indigo-200 rounded-xl p-6 shadow-md">
+            <h3 className="text-lg font-bold text-indigo-900 mb-4">Resumen de la Operación</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center bg-white rounded-lg p-3 shadow-sm">
                 <span className="text-gray-600 text-sm">Monto:</span>
-                <div className="font-bold text-gray-900 text-lg">
+                <span className="font-bold text-gray-900 text-lg whitespace-nowrap">
                   {formatAmountWithCurrency(formData.monto, formData.moneda)}
-                </div>
+                </span>
               </div>
-              <div className="bg-white rounded-lg p-3 shadow-sm">
+              <div className="flex justify-between items-center bg-white rounded-lg p-3 shadow-sm">
                 <span className="text-gray-600 text-sm">Tipo de Cambio:</span>
-                <div className="font-bold text-gray-900 text-lg">
+                <span className="font-bold text-gray-900 text-lg whitespace-nowrap">
                   {formatAmountWithCurrency(formData.tc, formData.monedaTC)}
-                </div>
+                </span>
               </div>
-              <div className="col-span-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-4 mt-2 shadow-lg">
-                <span className="text-blue-100 text-sm">Total Final:</span>
-                <div className="text-2xl font-bold text-white">
-                  {formatAmountWithCurrency(formData.total, formData.monedaTC)}
+              <div className="bg-gradient-to-r from-indigo-600 to-indigo-600 rounded-lg p-4 shadow-lg">
+                <div className="flex justify-between items-center">
+                  <span className="text-indigo-100 text-sm">Total Final:</span>
+                  <span className="text-2xl font-bold text-white whitespace-nowrap">
+                    {formatAmountWithCurrency(formData.total, formData.monedaTC)}
+                  </span>
                 </div>
               </div>
             </div>

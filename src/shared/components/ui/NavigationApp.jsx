@@ -33,12 +33,12 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
           transform origin-left group relative overflow-hidden
           ${!isSidebarOpen ? 'justify-center' : ''}
           ${isActive 
-            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xl scale-105' 
-            : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 hover:scale-102 hover:shadow-md'
+            ? 'bg-gradient-to-r from-indigo-600 to-indigo-600 text-white shadow-xl scale-105' 
+            : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 hover:scale-102 hover:shadow-md'
           }
           ${!isActive && 'hover:translate-x-1'}
           touch-manipulation select-none
-          focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:ring-offset-2
+          focus:outline-none focus:ring-4 focus:ring-indigo-500/30 focus:ring-offset-2
         `}
         onClick={onClick}
         aria-current={isActive ? 'page' : undefined}
@@ -293,10 +293,10 @@ const WelcomePage = ({ onNavigate }) => (
         
         <button
           onClick={() => onNavigate('movimientos')}
-          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-blue-200 group"
+          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-indigo-200 group"
           style={{animationDelay: '0.2s'}}
         >
-          <List size={32} className="mx-auto mb-3 text-blue-500 group-hover:scale-110 transition-transform" />
+          <List size={32} className="mx-auto mb-3 text-indigo-500 group-hover:scale-110 transition-transform" />
           <span className="block font-semibold text-gray-800 mb-1">Movimientos</span>
           <span className="text-sm text-gray-500">Historial de transacciones</span>
         </button>

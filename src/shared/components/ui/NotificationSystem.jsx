@@ -62,7 +62,7 @@ const NotificationSystem = ({ onNotificationCallback }) => {
       case 'warning':
         return `${baseStyles} bg-yellow-50 border-yellow-500 text-yellow-800`;
       default:
-        return `${baseStyles} bg-blue-50 border-blue-500 text-blue-800`;
+        return `${baseStyles} bg-indigo-50 border-indigo-500 text-indigo-800`;
     }
   };
 

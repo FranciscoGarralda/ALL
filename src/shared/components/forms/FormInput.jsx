@@ -147,7 +147,7 @@ const FormInput = forwardRef(({
         {/* Day Name Display with improved styling */}
         {showDayName && calculatedDayName && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <span className="text-xs text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 font-semibold shadow-sm">
+            <span className="text-xs text-indigo-700 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-200 font-semibold shadow-sm">
               {calculatedDayName}
             </span>
           </div>

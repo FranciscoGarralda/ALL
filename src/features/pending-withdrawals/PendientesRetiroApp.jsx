@@ -226,7 +226,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
               <div className="flex items-center justify-end space-x-2 pt-3 border-t border-gray-100">
                 <button
                   onClick={() => onEditMovement && onEditMovement(movement)}
-                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
+                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors"
                 >
                   <Edit className="w-4 h-4 mr-1" />
                   Editar

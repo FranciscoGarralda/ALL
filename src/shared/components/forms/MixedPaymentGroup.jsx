@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { Plus, X } from 'lucide-react';
 import { safeParseFloat, safeArray } from '../../services/safeOperations';
 import { formatAmountWithCurrency } from '../../services/formatters';
-import FormSelect from './FormSelect';
+import ButtonSelectGroup from './ButtonSelectGroup';
 import CurrencyInput from './CurrencyInput';
 
 // Opciones para socio
@@ -62,14 +62,11 @@ const MixedPaymentGroup = ({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Cuenta
             </label>
-            <FormSelect
-              ref={(el) => registerField && registerField(`mixedPayment_${index}_socio`, el)}
+            <ButtonSelectGroup
               name={`mixedPayment_${index}_socio`}
               value={payment.socio || ''}
               onChange={(value) => onPaymentChange(payment.id || index + 1, 'socio', value)}
-  
               options={socioOptions}
-              placeholder="Seleccionar socio"
               required
             />
           </div>
@@ -79,14 +76,11 @@ const MixedPaymentGroup = ({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Modo
             </label>
-            <FormSelect
-              ref={(el) => registerField && registerField(`mixedPayment_${index}_tipo`, el)}
+            <ButtonSelectGroup
               name={`mixedPayment_${index}_tipo`}
               value={payment.tipo || ''}
               onChange={(value) => onPaymentChange(payment.id || index + 1, 'tipo', value)}
-  
               options={tipoOptions}
-              placeholder="Seleccionar tipo"
               required
             />
           </div>

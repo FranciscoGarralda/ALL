@@ -28,6 +28,9 @@ const ButtonSelectGroup = ({
     }`;
   };
 
+  // Para monedas, usar flex en línea horizontal
+  const isMoneda = name?.includes('moneda') || name?.includes('Moneda');
+  
   // Si hay más de 6 opciones, usar grid de 3 columnas
   const gridCols = options.length > 6 ? 'grid-cols-3' : options.length > 3 ? 'grid-cols-2' : 'grid-cols-1';
 
@@ -39,7 +42,7 @@ const ButtonSelectGroup = ({
         </label>
       )}
       
-      <div className={`grid ${gridCols} gap-2`}>
+      <div className={isMoneda ? 'flex flex-wrap gap-2' : `grid ${gridCols} gap-2`}>
         {options.map((option) => {
           const optionValue = typeof option === 'object' ? option.value : option;
           const optionLabel = typeof option === 'object' ? option.label : option;
