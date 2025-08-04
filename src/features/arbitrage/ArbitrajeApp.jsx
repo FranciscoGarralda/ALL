@@ -213,7 +213,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
 
           {/* Métricas principales */}
           <div className="p-3 sm:p-4 lg:p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-700"">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700">
               Métricas Principales
             </h2>
             
@@ -308,7 +308,7 @@ function ArbitrajeApp({ movements, onNavigate }) {
             </h2>
             
             {/* Barra de búsqueda */}
-            <div className="relative"">
+            <div className="relative">
               <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-800" />
               <input
                 type="text"

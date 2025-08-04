@@ -237,7 +237,7 @@ function ComisionesApp({ movements, onNavigate }) {
 
           {/* Métricas principales */}
           <div className="p-3 sm:p-4 lg:p-6">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-700"">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700">
               Métricas Principales
             </h2>
             

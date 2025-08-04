@@ -126,7 +126,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
   return (
     <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       {/* Header */}
-      <div className=""">
+      <div className="">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex items-center gap-3">

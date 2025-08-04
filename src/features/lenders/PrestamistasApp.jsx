@@ -163,7 +163,7 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
       <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
         <div className="max-w-full px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className=""">
+          <div className="">
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-3">
@@ -193,7 +193,7 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
 
             {/* Contenido */}
             <div className="p-3 sm:p-4 lg:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-700"">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-700">
                 Resumen de Prestamistas
               </h2>
 
@@ -410,7 +410,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
     <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full px-4 sm:px-6 lg:px-8">
         {/* Header con navegación */}
-        <div className=""">
+        <div className="">
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
             <div className="flex items-center gap-3 mb-2 sm:mb-3">
               <button
