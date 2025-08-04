@@ -21,7 +21,7 @@ const ButtonSelectGroup = ({
   const getButtonClasses = (optionValue) => {
     const isActive = value === optionValue;
     const baseClasses = isMoneda 
-      ? 'px-1 sm:px-2 py-2 sm:py-3 text-sm font-medium flex items-center justify-center rounded-lg border transition-all min-w-[50px] sm:min-w-[60px]'
+      ? 'px-1 py-1.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all min-w-[45px]'
       : 'px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all';
     
     return `${baseClasses} ${
@@ -36,6 +36,9 @@ const ButtonSelectGroup = ({
   // Para monedas, usar flex en línea horizontal
   const isMoneda = name?.includes('moneda') || name?.includes('Moneda');
   
+  // Para operaciones principales (las que tienen emoji)
+  const isOperacion = name === 'operacion';
+  
   // Si hay más de 6 opciones, usar grid de 3 columnas
   const getGridCols = () => {
     if (isMoneda) {
@@ -46,7 +49,9 @@ const ButtonSelectGroup = ({
       if (options.length === 5) return 'grid-cols-3 sm:grid-cols-5 gap-1 sm:gap-2'; // 3 columnas en móvil, 5 en desktop
       return 'grid-cols-4';
     }
-    // Para operaciones (6 opciones), usar 3 columnas
+    // Para operaciones principales (6 opciones), usar 3x2
+    if (isOperacion && options.length === 6) return 'grid-cols-3 gap-2';
+    // Para operaciones normales (6 opciones), usar 3 columnas
     if (options.length === 6) return 'grid-cols-2 sm:grid-cols-3';
     // Para 2 opciones, mostrar lado a lado
     if (options.length === 2) return 'grid-cols-2';
@@ -61,42 +66,7 @@ const ButtonSelectGroup = ({
         </label>
       )}
       
-      {/* Para monedas en móviles muy pequeños, usar flex con scroll horizontal si es necesario */}
-      {isMoneda && options.length > 5 ? (
-        <div className="sm:hidden overflow-x-auto -mx-2 px-2">
-          <div className="flex gap-1 pb-2">
-            {options.map((option) => {
-              const optionValue = typeof option === 'object' ? option.value : option;
-              const optionLabel = typeof option === 'object' ? option.label : option;
-              
-              return (
-                <button
-                  key={optionValue}
-                  type="button"
-                  onClick={() => handleButtonClick(optionValue)}
-                  className={getButtonClasses(optionValue) + ' flex-shrink-0'}
-                  disabled={readOnly}
-                >
-                  {(() => {
-                    const parts = optionLabel.split(' ');
-                    const emoji = parts[0];
-                    const code = parts[1];
-                    return (
-                      <div className="flex flex-col items-center">
-                        <span className="text-base">{emoji}</span>
-                        <span className="text-[10px] mt-0.5">{code}</span>
-                      </div>
-                    );
-                  })()}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      ) : null}
-      
-      {/* Grid normal para desktop o cuando no son monedas */}
-      <div className={`grid ${getGridCols()} ${isMoneda && options.length > 5 ? 'hidden sm:grid' : ''}`}>
+      <div className={`grid ${getGridCols()}`}>
         {options.map((option) => {
           const optionValue = typeof option === 'object' ? option.value : option;
           const optionLabel = typeof option === 'object' ? option.label : option;
@@ -117,8 +87,21 @@ const ButtonSelectGroup = ({
                   const code = parts[1];
                   return (
                     <div className="flex flex-col items-center">
-                      <span className="text-base sm:text-lg">{emoji}</span>
-                      <span className="text-[10px] sm:text-xs mt-0.5">{code}</span>
+                      <span className="text-sm">{emoji}</span>
+                      <span className="text-[9px] mt-0">{code}</span>
+                    </div>
+                  );
+                })()
+              ) : isOperacion ? (
+                // Para operaciones principales, separar emoji y texto
+                (() => {
+                  const parts = optionLabel.split(' ');
+                  const emoji = parts[0];
+                  const text = parts.slice(1).join(' ');
+                  return (
+                    <div className="flex flex-col items-center">
+                      <span className="text-lg">{emoji}</span>
+                      <span className="text-[10px] mt-1">{text}</span>
                     </div>
                   );
                 })()
