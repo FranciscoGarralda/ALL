@@ -222,7 +222,7 @@ const ClientAutocomplete = forwardRef(({
               onFocus={handleInputFocus}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
-              className={`w-full px-3 py-2 text-base border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder:text-gray-400 sm:px-4 sm:py-2.5 sm:text-sm ${
+              className={`w-full px-3 py-2 text-base border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder:text-gray-400 sm:px-4 sm:py-2.5 sm:text-sm ${
                 error 
                   ? 'border-error-500 focus:ring-error-500' 
                   : 'bg-white text-gray-900 border-gray-300 hover:border-gray-400'
@@ -261,13 +261,13 @@ const ClientAutocomplete = forwardRef(({
                       onClick={() => handleClientSelect(client)}
                       className={`client-item w-full px-4 py-3 text-left focus:outline-none border-b border-gray-100 transition-colors duration-150 ${
                         index === selectedIndex 
-                          ? 'bg-primary-50 text-primary-900' 
+                          ? 'bg-indigo-50 text-indigo-900' 
                           : 'hover:bg-gray-50 focus:bg-gray-50'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                          <User size={16} className="text-primary-600" />
+                        <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <User size={16} className="text-indigo-600" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">
@@ -336,7 +336,7 @@ const ClientAutocomplete = forwardRef(({
           type="button"
           onClick={handleCreateClient}
 
-          className="flex-shrink-0 w-10 h-10 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 touch-target"
+          className="flex-shrink-0 w-10 h-10 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 touch-target"
           title="Crear nuevo cliente"
           aria-label="Crear nuevo cliente"
         >

@@ -172,8 +172,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Building2 size={20} className="sm:w-6 sm:h-6 text-primary-600" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Building2 size={20} className="sm:w-6 sm:h-6 text-indigo-600" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
@@ -207,19 +207,19 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                   {summaryTotals.map((providerSummary) => (
                     <div
                       key={providerSummary.proveedor}
-                      className="bg-gradient-to-br from-primary-50 to-warning-50 border border-primary-200 rounded-xl p-4 sm:p-6 cursor-pointer hover:from-primary-100 hover:to-warning-100 transition-all duration-200 hover:scale-102 hover:shadow-medium"
+                      className="bg-gradient-to-br from-indigo-50 to-warning-50 border border-indigo-200 rounded-xl p-4 sm:p-6 cursor-pointer hover:from-indigo-100 hover:to-warning-100 transition-all duration-200 hover:scale-102 hover:shadow-medium"
                       onClick={() => handleSelectProvider(providerSummary.proveedor)}
                     >
                       {/* Header del proveedor */}
                       <div className="flex items-center justify-between mb-3 sm:mb-4">
-                        <h3 className="font-bold text-primary-800 text-sm sm:text-base truncate">
+                        <h3 className="font-bold text-indigo-800 text-sm sm:text-base truncate">
                           {getProviderLabel(providerSummary.proveedor)}
                         </h3>
                         <div className="flex items-center gap-1 flex-shrink-0">
-                          <span className="text-xs text-primary-600 bg-primary-100 px-2 py-1 rounded-full">
+                          <span className="text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full">
                             {providerSummary.cantidadMonedas} moneda{providerSummary.cantidadMonedas !== 1 ? 's' : ''}
                           </span>
-                          <ChevronRight size={16} className="text-primary-600" />
+                          <ChevronRight size={16} className="text-indigo-600" />
                         </div>
                       </div>
 
@@ -273,8 +273,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                         )}
 
                         {/* Contador de movimientos */}
-                        <div className="text-center pt-2 border-t border-primary-200">
-                          <p className="text-xs text-primary-600">
+                        <div className="text-center pt-2 border-t border-indigo-200">
+                          <p className="text-xs text-indigo-600">
                             {providerSummary.movimientosCount} movimiento{providerSummary.movimientosCount !== 1 ? 's' : ''}
                           </p>
                         </div>
@@ -315,8 +315,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                 >
                   <ArrowLeft size={18} className="text-gray-600" />
                 </button>
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Building2 size={20} className="sm:w-6 sm:h-6 text-primary-600" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Building2 size={20} className="sm:w-6 sm:h-6 text-indigo-600" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <h1 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
@@ -407,14 +407,14 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                         ))}
                         
                         {/* Fila de totales */}
-                        <tr className="bg-primary-50 font-bold">
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-primary-800">
+                        <tr className="bg-indigo-50 font-bold">
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-indigo-800">
                             TOTAL {getProviderLabel(selectedProviderForDetail)}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-primary-800">
+                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-indigo-800">
                             {formatAmountWithCurrency(detailedViewTotals.ingresos, 'PESO', { showSymbol: false })}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-primary-800">
+                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-indigo-800">
                             {formatAmountWithCurrency(detailedViewTotals.egresos, 'PESO', { showSymbol: false })}
                           </td>
                           <td className={`px-4 py-4 whitespace-nowrap text-right text-sm font-bold ${
@@ -484,30 +484,30 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                     ))}
                     
                     {/* Card de totales para mobile */}
-                    <div className="card bg-primary-50 border-primary-200">
+                    <div className="card bg-indigo-50 border-indigo-200">
                       <div className="p-3 space-y-2">
-                        <h3 className="font-bold text-primary-800">
+                        <h3 className="font-bold text-indigo-800">
                           TOTAL {getProviderLabel(selectedProviderForDetail)}
                         </h3>
                         
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div>
-                            <p className="text-primary-600 text-xs">Total Ingresos</p>
-                            <p className="font-medium text-primary-800">
+                            <p className="text-indigo-600 text-xs">Total Ingresos</p>
+                            <p className="font-medium text-indigo-800">
                               {formatAmountWithCurrency(detailedViewTotals.ingresos, 'PESO', { showSymbol: false })}
                             </p>
                           </div>
                           <div>
-                            <p className="text-primary-600 text-xs">Total Egresos</p>
-                            <p className="font-medium text-primary-800">
+                            <p className="text-indigo-600 text-xs">Total Egresos</p>
+                            <p className="font-medium text-indigo-800">
                               {formatAmountWithCurrency(detailedViewTotals.egresos, 'PESO', { showSymbol: false })}
                             </p>
                           </div>
                         </div>
                         
-                        <div className="pt-2 border-t border-primary-200">
+                        <div className="pt-2 border-t border-indigo-200">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs text-primary-600">Saldo Total</span>
+                            <span className="text-xs text-indigo-600">Saldo Total</span>
                             <span className={`font-bold ${
                               detailedViewTotals.saldo < 0 ? 'text-error-600' : 'text-success-600'
                             }`}>
@@ -527,7 +527,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                   </p>
                   <button
                     onClick={handleBackToSummary}
-                    className="text-primary-600 hover:text-primary-700 text-sm underline"
+                    className="text-indigo-600 hover:text-indigo-700 text-sm underline"
                   >
                     Volver al resumen
                   </button>

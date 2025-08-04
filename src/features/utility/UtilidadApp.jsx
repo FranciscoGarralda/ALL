@@ -335,9 +335,9 @@ function UtilidadApp({ movements, onNavigate }) {
               {renderMetricCard(
                 'Utilidad del Mes Actual',
                 currentMonthUtility.venta,
-                'bg-primary-50',
-                'text-primary-700',
-                'border-primary-500',
+                'bg-indigo-50',
+                'text-indigo-700',
+                'border-indigo-500',
                 Calendar,
                 'Cuánto ganaste y en qué divisa'
               )}
@@ -456,7 +456,7 @@ function UtilidadApp({ movements, onNavigate }) {
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-gray-700">
                             {data.costoPromedio > 0 ? formatAmountWithCurrency(data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium text-primary-600">
+                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium text-indigo-600">
                             {data.cantidad > 0 ? formatAmountWithCurrency(data.cantidad * data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -501,7 +501,7 @@ function UtilidadApp({ movements, onNavigate }) {
                                               <div className="pt-2 border-t border-gray-200">
                           <div className="flex justify-between items-center">
                             <span className="text-xs text-gray-500">Valuación</span>
-                            <span className="font-medium text-primary-600 text-sm">
+                            <span className="font-medium text-indigo-600 text-sm">
                               {data.cantidad > 0 ? formatAmountWithCurrency(data.cantidad * data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
                             </span>
                           </div>
@@ -580,7 +580,7 @@ function UtilidadApp({ movements, onNavigate }) {
           <div className="card">
             <div className="p-3 sm:p-4 lg:p-6">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
-                <Calculator size={16} className="text-primary-600" />
+                <Calculator size={16} className="text-indigo-600" />
                 Metodología WAC
               </h3>
               <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">

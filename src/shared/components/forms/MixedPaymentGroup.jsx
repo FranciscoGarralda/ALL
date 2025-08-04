@@ -144,7 +144,7 @@ const MixedPaymentGroup = ({
             type="button"
             onClick={onAddPayment}
   
-            className="flex items-center space-x-2 px-3 py-2 text-sm text-primary-600 hover:text-primary-800 hover:bg-primary-50 rounded-lg transition-colors border border-primary-200 hover:border-primary-300"
+            className="flex items-center space-x-2 px-3 py-2 text-sm text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors border border-indigo-200 hover:border-indigo-300"
           >
             <Plus size={16} />
             <span>Añadir Pago</span>

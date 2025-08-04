@@ -260,8 +260,8 @@ NavigationApp.displayName = 'NavigationApp';
 const WelcomePage = ({ onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4 lg:p-8">
     <div className="text-center max-w-4xl mx-auto">
-      <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-        <DollarSign size={32} className="text-primary-600" />
+      <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+        <DollarSign size={32} className="text-indigo-600" />
       </div>
       <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-800 animate-fadeIn">
         Bienvenido a Alliance F&R
@@ -274,9 +274,9 @@ const WelcomePage = ({ onNavigate }) => (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         <button
           onClick={() => onNavigate('nuevoMovimiento')}
-          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-primary-200 group"
+          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-indigo-200 group"
         >
-          <Plus size={32} className="mx-auto mb-3 text-primary-500 group-hover:scale-110 transition-transform" />
+          <Plus size={32} className="mx-auto mb-3 text-indigo-500 group-hover:scale-110 transition-transform" />
           <span className="block font-semibold text-gray-800 mb-1">Nuevo Movimiento</span>
           <span className="text-sm text-gray-500">Crear operación financiera</span>
         </button>

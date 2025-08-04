@@ -120,7 +120,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
             <input
               type="text"
               placeholder="Buscar por cliente, detalle, operación o proveedor..."
-              className="w-full pl-10 pr-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -148,7 +148,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
               <Filter size={14} className="text-gray-400" />
               <span className="text-xs sm:text-sm text-gray-600">Filtros activos:</span>
               {searchTerm && (
-                <span className="px-3 py-1.5 bg-primary-100 text-primary-700 rounded-full text-sm">
+                <span className="px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm">
                   Búsqueda: "{searchTerm}"
                 </span>
               )}
@@ -190,7 +190,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
                       setFilterType('');
                       setFilterStatus('');
                     }}
-                    className="text-primary-600 hover:text-primary-700 text-sm underline"
+                    className="text-indigo-600 hover:text-indigo-700 text-sm underline"
                   >
                     Limpiar filtros y ver todos
                   </button>
@@ -277,7 +277,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
   };
 
   return (
-    <div className="bg-white border border-gray-200 hover:border-primary-300 hover:shadow-sm transition-all duration-150 rounded-lg overflow-hidden">
+    <div className="bg-white border border-gray-200 hover:border-indigo-300 hover:shadow-sm transition-all duration-150 rounded-lg overflow-hidden">
       <div className="px-4 py-3 flex items-center gap-3 min-w-0">
         {/* Fecha */}
         <div className="flex-shrink-0 w-12 text-center">
@@ -293,7 +293,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
 
         {/* Operación */}
         <div className="flex-shrink-0 w-20 sm:w-24">
-          <span className="px-1.5 py-0.5 bg-primary-100 text-primary-700 rounded text-sm font-medium truncate block">
+          <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded text-sm font-medium truncate block">
             {movement.subOperacion || movement.operacion?.replace('_', ' ') || 'N/A'}
           </span>
         </div>
@@ -301,7 +301,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
         {/* Monto */}
         <div className="flex-1 min-w-0">
           {displayAmount && (
-            <div className="text-sm font-semibold text-primary-600 truncate">
+            <div className="text-sm font-semibold text-indigo-600 truncate">
               {formatAmountWithCurrency(displayAmount.amount, displayAmount.currency)}
             </div>
           )}
@@ -324,7 +324,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
         <div className="flex-shrink-0 w-20 flex gap-1 justify-center">
           <button 
             onClick={() => onViewDetail(movement)} 
-            className="p-1 text-primary-600 hover:bg-primary-50 rounded transition-colors"
+            className="p-1 text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
             title="Ver detalles"
           >
             <Eye size={14} />
@@ -462,7 +462,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
             {/* Información General */}
             <div>
               <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
-                <User size={16} className="sm:w-5 sm:h-5 text-primary-600 flex-shrink-0" />
+                <User size={16} className="sm:w-5 sm:h-5 text-indigo-600 flex-shrink-0" />
                 Información General
               </h3>
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1">
@@ -501,7 +501,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
             {movement.walletTC === 'pago_mixto' && movement.mixedPayments && movement.mixedPayments.length > 0 && (
               <div>
                 <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">Detalle de Pago Mixto</h3>
-                <div className="bg-primary-50 rounded-lg p-3 sm:p-4">
+                <div className="bg-indigo-50 rounded-lg p-3 sm:p-4">
                   <div className="space-y-2 mb-4">
                     {movement.mixedPayments.map((pago, index) => (
                       <div key={index} className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-2 px-3 bg-white rounded border gap-1 sm:gap-0">

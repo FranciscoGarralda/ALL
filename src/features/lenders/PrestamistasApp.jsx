@@ -455,14 +455,14 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {Object.entries(finalBalances).map(([currency, balance]) => (
                   <React.Fragment key={currency}>
-                    <div className="bg-primary-50 p-3 sm:p-4 rounded-lg text-center">
-                      <DollarSign size={18} className="text-primary-600 mx-auto mb-2" />
+                    <div className="bg-indigo-50 p-3 sm:p-4 rounded-lg text-center">
+                      <DollarSign size={18} className="text-indigo-600 mx-auto mb-2" />
                       <p className="text-xs sm:text-sm font-medium text-gray-700">Principal Pendiente ({currency})</p>
-                      <p className="text-base sm:text-lg lg:text-xl font-bold text-primary-600">
+                      <p className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">
                         {formatAmountWithCurrency(balance.principal, currency)}
                       </p>
                       {balance.effectiveRate > 0 && (
-                        <p className="text-xs text-primary-500 mt-1">
+                        <p className="text-xs text-indigo-500 mt-1">
                           Tasa: {balance.effectiveRate}% anual
                         </p>
                       )}
@@ -547,7 +547,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                             <td className="px-4 py-3 whitespace-nowrap">
                               <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                                 mov.subOperacion === 'PRESTAMO' 
-                                  ? 'bg-primary-100 text-primary-700' 
+                                  ? 'bg-indigo-100 text-indigo-700' 
                                   : 'bg-success-100 text-success-700'
                               }`}>
                                 {mov.subOperacion === 'PRESTAMO' ? 'Préstamo' : 'Retiro'}
@@ -559,7 +559,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
                               {mov.moneda}
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-right text-sm text-primary-600 font-medium">
+                            <td className="px-4 py-3 whitespace-nowrap text-right text-sm text-indigo-600 font-medium">
                               {formatAmountWithCurrency(mov.currentPrincipalSnapshot, mov.moneda)}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-right text-sm text-warning-600 font-medium">
@@ -585,7 +585,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                             <div className="flex items-center gap-2">
                               <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                                 mov.subOperacion === 'PRESTAMO' 
-                                  ? 'bg-primary-100 text-primary-700' 
+                                  ? 'bg-indigo-100 text-indigo-700' 
                                   : 'bg-success-100 text-success-700'
                               }`}>
                                 {mov.subOperacion === 'PRESTAMO' ? 'Préstamo' : 'Retiro'}
@@ -606,7 +606,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                             </div>
                             <div>
                               <p className="text-gray-500 text-xs">Principal</p>
-                              <p className="font-medium text-primary-600">
+                              <p className="font-medium text-indigo-600">
                                 {formatAmountWithCurrency(mov.currentPrincipalSnapshot, mov.moneda)}
                               </p>
                             </div>

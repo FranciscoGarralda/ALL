@@ -245,9 +245,9 @@ function ComisionesApp({ movements, onNavigate }) {
               {renderMetricCard(
                 'Comisión Total Histórica',
                 totalCommissions,
-                'bg-primary-50',
-                'text-primary-700',
-                'border-primary-500',
+                'bg-indigo-50',
+                'text-indigo-700',
+                'border-indigo-500',
                 Target
               )}
               
@@ -525,7 +525,7 @@ function ComisionesApp({ movements, onNavigate }) {
           <div className="card">
             <div className="p-3 sm:p-4 lg:p-6">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
-                <Target size={16} className="text-primary-600" />
+                <Target size={16} className="text-indigo-600" />
                 Próximos Pasos
               </h3>
               <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">

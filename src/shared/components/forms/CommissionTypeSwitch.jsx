@@ -12,8 +12,8 @@ const CommissionTypeSwitch = ({ value = 'percentage', onChange, className = '' }
         onClick={() => onChange(value === 'percentage' ? 'fixed' : 'percentage')}
         className={`
           relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200
-          ${value === 'percentage' ? 'bg-primary-600' : 'bg-gray-200'}
-          focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+          ${value === 'percentage' ? 'bg-indigo-600' : 'bg-gray-200'}
+          focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
         `}
         aria-label="Cambiar tipo de comisión"
       >

@@ -130,8 +130,8 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <User size={20} className="sm:w-6 sm:h-6 text-primary-600" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <User size={20} className="sm:w-6 sm:h-6 text-indigo-600" />
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">Gestión de Clientes</h1>
@@ -157,7 +157,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
             <input
               type="text"
               placeholder="Buscar por nombre, teléfono o DNI..."
-              className="w-full pl-10 pr-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
             />
@@ -170,7 +170,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
           {clientesOperaciones.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-3 sm:mb-4">
-                <TrendingUp size={18} className="text-primary-600 flex-shrink-0" />
+                <TrendingUp size={18} className="text-indigo-600 flex-shrink-0" />
                 <h2 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-800">
                   Clientes de Operaciones ({clientesOperaciones.length})
                 </h2>
@@ -225,7 +225,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
                   <p className="text-sm sm:text-base text-gray-500 mb-2 px-4">No se encontraron clientes que coincidan con "{busqueda}"</p>
                   <button
                     onClick={() => setBusqueda('')}
-                    className="text-primary-600 hover:text-primary-700 text-sm"
+                    className="text-indigo-600 hover:text-indigo-700 text-sm"
                   >
                     Limpiar búsqueda
                   </button>
@@ -278,7 +278,7 @@ function ClienteCard({ cliente, onEdit, onViewAnalytics, onDelete, calcularFrecu
               {cliente.tipoCliente && (
                 <span className={`px-2 py-1 rounded-full text-sm font-medium ${
                   cliente.tipoCliente === 'operaciones' 
-                    ? 'bg-primary-100 text-primary-700' 
+                    ? 'bg-indigo-100 text-indigo-700' 
                     : 'bg-warning-100 text-warning-700'
                 }`}>
                   {cliente.tipoCliente === 'operaciones' ? 'Operaciones' : 'Prestamista'}
@@ -291,7 +291,7 @@ function ClienteCard({ cliente, onEdit, onViewAnalytics, onDelete, calcularFrecu
           <div className="flex items-center gap-1 flex-shrink-0">
             <button 
               onClick={() => onViewAnalytics(cliente)} 
-              className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors touch-target"
+              className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors touch-target"
               title="Ver análisis"
             >
               <TrendingUp size={14} />
@@ -487,10 +487,10 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
               />
 
               {/* Información adicional */}
-              <div className="bg-primary-50 p-3 sm:p-4 rounded-lg">
+              <div className="bg-indigo-50 p-3 sm:p-4 rounded-lg">
                 <div className="flex items-start gap-2">
-                  <Bell size={14} className="text-primary-600 mt-0.5 flex-shrink-0" />
-                  <div className="text-xs sm:text-sm text-primary-700">
+                  <Bell size={14} className="text-indigo-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-xs sm:text-sm text-indigo-700">
                     <p className="font-medium mb-1">Información automática</p>
                     <p>Las métricas de frecuencia de operación, última operación y volumen total se calcularán automáticamente basándose en el historial de movimientos.</p>
                   </div>
@@ -564,11 +564,11 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
           <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
             {/* Métricas principales */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              <div className="bg-primary-50 rounded-lg p-3 sm:p-4">
-                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-600 truncate">
+              <div className="bg-indigo-50 rounded-lg p-3 sm:p-4">
+                <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-indigo-600 truncate">
                   {cliente.totalOperaciones || 0}
                 </div>
-                <div className="text-xs sm:text-sm text-primary-600 font-medium">Operaciones Totales</div>
+                <div className="text-xs sm:text-sm text-indigo-600 font-medium">Operaciones Totales</div>
               </div>
 
               <div className="bg-success-50 rounded-lg p-3 sm:p-4">
@@ -611,12 +611,12 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
             </div>
 
             {/* Recomendaciones */}
-            <div className="bg-primary-50 rounded-lg p-3 sm:p-4">
+            <div className="bg-indigo-50 rounded-lg p-3 sm:p-4">
               <div className="flex items-start gap-2">
-                <Bell size={16} className="text-primary-600 mt-0.5 flex-shrink-0" />
+                <Bell size={16} className="text-indigo-600 mt-0.5 flex-shrink-0" />
                 <div>
                   <span className="font-semibold text-gray-900 block mb-2 sm:mb-3 text-base">Recomendación de Contacto</span>
-                  <p className="text-xs sm:text-sm text-primary-700">{recomendacion}</p>
+                  <p className="text-xs sm:text-sm text-indigo-700">{recomendacion}</p>
                 </div>
               </div>
             </div>

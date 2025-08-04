@@ -266,7 +266,7 @@ const FormFieldGroup = ({
               rows={3}
               className={[
                 'w-full px-3 py-2 text-sm border rounded-lg transition-all duration-200',
-                'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
+                'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
                 'placeholder:text-gray-400 resize-vertical min-h-[80px]',
                 'sm:px-4 sm:py-2.5',
                 readOnly || calculated

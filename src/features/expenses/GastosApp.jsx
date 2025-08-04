@@ -353,7 +353,7 @@ function GastoCard({ movement, onEdit, onDelete, onViewDetail }) {
         <div className="flex justify-end gap-1 border-t pt-3">
           <button 
             onClick={() => onViewDetail(movement)} 
-            className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors touch-target"
+            className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors touch-target"
             title="Ver detalles completos"
           >
             <Eye size={14} />

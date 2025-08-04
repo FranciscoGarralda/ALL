@@ -499,8 +499,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             {/* Header de la card */}
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <DollarSign size={20} className="sm:w-6 sm:h-6 text-primary-600" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <DollarSign size={20} className="sm:w-6 sm:h-6 text-indigo-600" />
                 </div>
                 <div>
                   <h2 className="text-lg sm:text-xl font-bold text-gray-900">

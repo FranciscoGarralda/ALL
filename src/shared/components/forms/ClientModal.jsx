@@ -140,8 +140,8 @@ const ClientModal = ({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
-              <User size={18} className="text-primary-600" />
+            <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <User size={18} className="text-indigo-600" />
             </div>
             <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
           </div>
@@ -257,7 +257,7 @@ const ClientModal = ({
               ref={(el) => registerField('guardar', el)}
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 flex items-center space-x-2"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 flex items-center space-x-2"
             >
               {isLoading ? (
                 <>
