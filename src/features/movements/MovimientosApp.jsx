@@ -277,8 +277,8 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
   };
 
   return (
-    <div className="bg-white border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-150 rounded-lg overflow-hidden">
-      <div className="px-2 py-2 flex items-center gap-3 min-w-0">
+    <div className="bg-white border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-150 rounded-lg">
+      <div className="px-2 sm:px-3 py-2 flex items-center gap-3 min-w-0">
         {/* Fecha */}
         <div className="flex-shrink-0 w-12 text-center">
           <div className="text-sm text-gray-700 font-medium">{formattedDate}</div>
