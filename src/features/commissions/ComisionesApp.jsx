@@ -212,8 +212,8 @@ function ComisionesApp({ movements, onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-full px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
+      <div className="w-full px-2 sm:px-3 lg:px-4 space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="">
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -352,15 +352,15 @@ function ComisionesApp({ movements, onNavigate }) {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Proveedor
                         </th>
                         {allCurrenciesInCommissions.map(currency => (
-                          <th key={currency} className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th key={currency} className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             {currency}
                           </th>
                         ))}
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Operaciones
                         </th>
                       </tr>
@@ -373,7 +373,7 @@ function ComisionesApp({ movements, onNavigate }) {
                         
                         return (
                           <tr key={provider} className="hover:bg-gray-50">
-                            <td className="px-4 py-4 whitespace-nowrap">
+                            <td className="px-2 py-3 whitespace-nowrap">
                               <div className="flex items-center">
                                 <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
                                   <Building2 size={16} className="text-purple-600" />
@@ -382,7 +382,7 @@ function ComisionesApp({ movements, onNavigate }) {
                               </div>
                             </td>
                             {allCurrenciesInCommissions.map(currency => (
-                              <td key={`${provider}-${currency}`} className="px-4 py-4 whitespace-nowrap text-right text-sm">
+                              <td key={`${provider}-${currency}`} className="px-2 py-3 whitespace-nowrap text-right text-sm">
                                 {currencies[currency] ? (
                                   <span className="font-medium text-gray-900">
                                     {formatAmountWithCurrency(currencies[currency], currency)}
@@ -392,7 +392,7 @@ function ComisionesApp({ movements, onNavigate }) {
                                 )}
                               </td>
                             ))}
-                            <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium text-purple-600">
+                            <td className="px-2 py-3 whitespace-nowrap text-right text-sm font-medium text-purple-600">
                               {operationsCount}
                             </td>
                           </tr>

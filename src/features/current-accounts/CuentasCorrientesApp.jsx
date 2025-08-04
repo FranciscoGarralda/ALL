@@ -165,8 +165,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-        <div className="max-w-full px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
+        <div className="w-full px-2 sm:px-3 lg:px-4">
           {/* Header */}
           <div className="">
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -302,8 +302,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
   // Vista de detalle
   if (currentView === 'detail' && selectedProviderForDetail) {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-        <div className="max-w-full px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
+        <div className="w-full px-2 sm:px-3 lg:px-4">
           {/* Header con navegación */}
           <div className="">
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -352,19 +352,19 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Moneda
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Ingresos
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Egresos
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Saldo
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Estado
                           </th>
                         </tr>
@@ -372,23 +372,23 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {detailedAccounts.map((account, index) => (
                           <tr key={`${account.proveedor}-${account.moneda}-${index}`} className="hover:bg-gray-50">
-                            <td className="px-4 py-4 whitespace-nowrap">
+                            <td className="px-2 py-3 whitespace-nowrap">
                               <div className="flex items-center">
                                 <span className="text-sm font-medium text-gray-900">{account.moneda}</span>
                               </div>
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-success-600 font-medium">
+                            <td className="px-2 py-3 whitespace-nowrap text-right text-sm text-success-600 font-medium">
                               {formatAmountWithCurrency(account.ingresos, account.moneda)}
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-error-600 font-medium">
+                            <td className="px-2 py-3 whitespace-nowrap text-right text-sm text-error-600 font-medium">
                               {formatAmountWithCurrency(account.egresos, account.moneda)}
                             </td>
-                            <td className={`px-4 py-4 whitespace-nowrap text-right text-sm font-bold ${
+                            <td className={`px-2 py-3 whitespace-nowrap text-right text-sm font-bold ${
                               account.saldo < 0 ? 'text-error-600' : 'text-success-600'
                             }`}>
                               {formatAmountWithCurrency(account.saldo, account.moneda)}
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-right text-sm">
+                            <td className="px-2 py-3 whitespace-nowrap text-right text-sm">
                               {account.debeUsuario > 0 ? (
                                 <span className="px-2 py-1 bg-error-100 text-error-700 rounded-full text-xs font-medium">
                                   Nosotros: {formatAmountWithCurrency(account.debeUsuario, account.moneda)}
@@ -408,21 +408,21 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                         
                         {/* Fila de totales */}
                         <tr className="bg-gray-50 font-bold">
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                             TOTAL {getProviderLabel(selectedProviderForDetail)}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-gray-900">
+                          <td className="px-2 py-3 whitespace-nowrap text-right text-sm text-gray-900">
                             {formatAmountWithCurrency(detailedViewTotals.ingresos, 'PESO', { showSymbol: false })}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-gray-900">
+                          <td className="px-2 py-3 whitespace-nowrap text-right text-sm text-gray-900">
                             {formatAmountWithCurrency(detailedViewTotals.egresos, 'PESO', { showSymbol: false })}
                           </td>
-                          <td className={`px-4 py-4 whitespace-nowrap text-right text-sm font-bold ${
+                          <td className={`px-2 py-3 whitespace-nowrap text-right text-sm font-bold ${
                             detailedViewTotals.saldo < 0 ? 'text-error-600' : 'text-success-600'
                           }`}>
                             {formatAmountWithCurrency(detailedViewTotals.saldo, 'PESO', { showSymbol: false })}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm">
+                          <td className="px-2 py-3 whitespace-nowrap text-right text-sm">
                             {detailedViewTotals.debeUsuario > 0 ? (
                               <span className="text-error-800 text-xs font-medium">
                                 Nosotros: {formatAmountWithCurrency(detailedViewTotals.debeUsuario, 'PESO', { showSymbol: false })}

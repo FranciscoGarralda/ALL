@@ -495,11 +495,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-full">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-24">
+      <div className="w-full">
         <div className="bg-white">
             {/* Header */}
-            <div className="p-2 sm:p-4 lg:p-6 border-b border-gray-200">
+            <div className="p-1 sm:p-2 lg:p-3 border-b border-gray-200">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
                   <DollarSign size={20} className="sm:w-6 sm:h-6 text-gray-800" />
@@ -513,7 +513,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               </div>
             </div>
             
-            <div className="p-6 sm:p-8 lg:p-10 space-y-6">
+            <div className="p-3 sm:p-4 lg:p-6 space-y-6">
               {/* Campo Cliente - Universal con autocompletado */}
               {formData.operacion !== 'PRESTAMISTAS' && (
                 <ClientAutocomplete

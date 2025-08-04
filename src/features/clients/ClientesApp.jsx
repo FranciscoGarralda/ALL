@@ -124,7 +124,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
 
   // Vista principal - Lista de clientes
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
       {/* Header */}
       <div className="">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -231,7 +231,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
                   </button>
                 </div>
               ) : (
-                <div className="px-4">
+                <div className="px-2">
                   <p className="text-sm sm:text-base text-gray-700 mb-4">No hay clientes registrados</p>
                   <button
                     onClick={crearNuevoCliente}
@@ -393,8 +393,8 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-full px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
+      <div className="w-full px-2 sm:px-3 lg:px-4">
         <div className="">
           {/* Header */}
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -537,8 +537,8 @@ function AnalyticsCliente({ cliente, onBack, calcularFrecuencia }) {
   const recomendacion = getRecomendacion();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-full px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
+      <div className="w-full px-2 sm:px-3 lg:px-4">
         <div className="">
           {/* Header */}
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">

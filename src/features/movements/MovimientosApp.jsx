@@ -90,7 +90,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
 
   // Vista principal - Lista de movimientos
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
       {/* Header */}
       <div className="">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -182,7 +182,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
             <div className="text-center py-8 sm:py-12">
               <List size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
               {searchTerm || filterType || filterStatus ? (
-                <div className="px-4">
+                <div className="px-2">
                   <p className="text-sm sm:text-base text-gray-700 mb-2">No se encontraron movimientos con los filtros aplicados</p>
                   <button
                     onClick={() => {
@@ -196,7 +196,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
                   </button>
                 </div>
               ) : (
-                <div className="px-4">
+                <div className="px-2">
                   <p className="text-sm sm:text-base text-gray-700">No hay movimientos registrados</p>
                 </div>
               )}
@@ -278,7 +278,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
 
   return (
     <div className="bg-white border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-150 rounded-lg overflow-hidden">
-      <div className="px-4 py-3 flex items-center gap-3 min-w-0">
+      <div className="px-2 py-2 flex items-center gap-3 min-w-0">
         {/* Fecha */}
         <div className="flex-shrink-0 w-12 text-center">
           <div className="text-sm text-gray-700 font-medium">{formattedDate}</div>
@@ -406,8 +406,8 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-full px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
+      <div className="w-full px-2 sm:px-3 lg:px-4">
         <div className="">
           {/* Header */}
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">

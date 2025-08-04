@@ -259,7 +259,7 @@ const ClientAutocomplete = forwardRef(({
                       key={client.id || client.nombre || index}
                       type="button"
                       onClick={() => handleClientSelect(client)}
-                      className={`client-item w-full px-4 py-3 text-left focus:outline-none border-b border-gray-100 transition-colors duration-150 ${
+                      className={`client-item w-full px-2 py-2 text-left focus:outline-none border-b border-gray-100 transition-colors duration-150 ${
                         index === selectedIndex 
                           ? 'bg-gray-50 text-gray-900' 
                           : 'hover:bg-gray-50 focus:bg-gray-50'
@@ -287,7 +287,7 @@ const ClientAutocomplete = forwardRef(({
                   <button
                     type="button"
                     onClick={handleCreateClient}
-                    className="create-client-item w-full px-4 py-3 text-left focus:outline-none border-t border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors duration-150"
+                    className="create-client-item w-full px-2 py-2 text-left focus:outline-none border-t border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors duration-150"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -303,7 +303,7 @@ const ClientAutocomplete = forwardRef(({
                 </>
               ) : (
                 <>
-                  <div className="px-4 py-3 text-sm text-gray-700 text-center border-b border-gray-200">
+                  <div className="px-2 py-2 text-sm text-gray-700 text-center border-b border-gray-200">
                     {inputValue ? 'No se encontraron clientes' : 'No hay clientes disponibles'}
                   </div>
                   
@@ -311,7 +311,7 @@ const ClientAutocomplete = forwardRef(({
                   <button
                     type="button"
                     onClick={handleCreateClient}
-                    className="create-client-item w-full px-4 py-3 text-left focus:outline-none bg-gray-50 hover:bg-gray-100 transition-colors duration-150"
+                    className="create-client-item w-full px-2 py-2 text-left focus:outline-none bg-gray-50 hover:bg-gray-100 transition-colors duration-150"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">

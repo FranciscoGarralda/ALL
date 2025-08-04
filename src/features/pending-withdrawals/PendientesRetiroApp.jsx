@@ -90,8 +90,8 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-full px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
+      <div className="w-full px-2 sm:px-3 lg:px-4">
         <div className="">
           {/* Header */}
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">

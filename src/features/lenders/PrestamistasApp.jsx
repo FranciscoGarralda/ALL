@@ -160,8 +160,8 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-        <div className="max-w-full px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
+        <div className="w-full px-2 sm:px-3 lg:px-4">
           {/* Header */}
           <div className="">
             <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -407,8 +407,8 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
   const finalBalances = processedMovements.finalBalances;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-full px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
+      <div className="w-full px-2 sm:px-3 lg:px-4">
         {/* Header con navegación */}
         <div className="">
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -515,25 +515,25 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Fecha
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Tipo
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Monto
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Moneda
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Principal
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Interés Acum.
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Saldo Neto
                           </th>
                         </tr>
@@ -541,10 +541,10 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {processedMovements.movements.map((mov, index) => (
                           <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
+                            <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700">
                               {new Date(mov.fecha).toLocaleDateString('es-ES')}
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap">
+                            <td className="px-2 py-2 whitespace-nowrap">
                               <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                                 mov.subOperacion === 'PRESTAMO' 
                                   ? 'bg-gray-100 text-gray-700' 
@@ -553,19 +553,19 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                                 {mov.subOperacion === 'PRESTAMO' ? 'Préstamo' : 'Retiro'}
                               </span>
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                            <td className="px-2 py-2 whitespace-nowrap text-right text-sm font-medium">
                               {formatAmountWithCurrency(safeParseFloat(mov.monto), mov.moneda)}
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
+                            <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-700">
                               {mov.moneda}
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-right text-sm text-gray-800 font-medium">
+                            <td className="px-2 py-2 whitespace-nowrap text-right text-sm text-gray-800 font-medium">
                               {formatAmountWithCurrency(mov.currentPrincipalSnapshot, mov.moneda)}
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-right text-sm text-warning-600 font-medium">
+                            <td className="px-2 py-2 whitespace-nowrap text-right text-sm text-warning-600 font-medium">
                               {formatAmountWithCurrency(mov.currentInterestAccruedSnapshot, mov.moneda)}
                             </td>
-                            <td className={`px-4 py-3 whitespace-nowrap text-right text-sm font-bold ${
+                            <td className={`px-2 py-2 whitespace-nowrap text-right text-sm font-bold ${
                               mov.currentNetBalanceSnapshot < 0 ? 'text-success-600' : 'text-error-600'
                             }`}>
                               {formatAmountWithCurrency(mov.currentNetBalanceSnapshot, mov.moneda)}

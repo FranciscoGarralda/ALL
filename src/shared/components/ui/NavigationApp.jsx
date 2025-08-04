@@ -241,7 +241,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
           
           {/* Contenido de la página - Solo esta área hace scroll */}
           <main className="flex-1 content-scrollable main-content-scroll">
-            <div className="p-4 lg:p-6 pt-4">
+            <div className="p-0">
               {children}
             </div>
           </main>
@@ -259,7 +259,7 @@ NavigationApp.displayName = 'NavigationApp';
 /** PÁGINA DE BIENVENIDA */
 const WelcomePage = ({ onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4 lg:p-8">
-    <div className="text-center max-w-full px-4 sm:px-6 lg:px-8">
+    <div className="text-center w-full px-2 sm:px-3 lg:px-4">
       <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
         <DollarSign size={32} className="text-gray-800" />
       </div>

@@ -292,8 +292,8 @@ function UtilidadApp({ movements, onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
-      <div className="max-w-full px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
+      <div className="w-full px-2 sm:px-3 lg:px-4 space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="">
           <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -422,19 +422,19 @@ function UtilidadApp({ movements, onNavigate }) {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Activo
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Cantidad en Stock
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Costo Promedio (WAC)
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Valuación Total
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Utilidad Venta
                         </th>
                       </tr>
@@ -442,7 +442,7 @@ function UtilidadApp({ movements, onNavigate }) {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {Object.entries(finalStockData).map(([currency, data]) => (
                         <tr key={currency} className="hover:bg-gray-50">
-                          <td className="px-4 py-4 whitespace-nowrap">
+                          <td className="px-2 py-3 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="w-8 h-8 bg-warning-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
                                 <Wallet size={16} className="text-warning-600" />
@@ -450,16 +450,16 @@ function UtilidadApp({ movements, onNavigate }) {
                               <span className="text-sm font-medium text-gray-900">{currency}</span>
                             </div>
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900">
+                          <td className="px-2 py-3 whitespace-nowrap text-right text-sm font-medium text-gray-900">
                             {formatAmountWithCurrency(data.cantidad, currency)}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-gray-700">
+                          <td className="px-2 py-3 whitespace-nowrap text-right text-sm text-gray-700">
                             {data.costoPromedio > 0 ? formatAmountWithCurrency(data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-800">
+                          <td className="px-2 py-3 whitespace-nowrap text-right text-sm font-medium text-gray-800">
                             {data.cantidad > 0 ? formatAmountWithCurrency(data.cantidad * data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <td className="px-2 py-3 whitespace-nowrap text-right text-sm font-medium">
                             {data.utilidadPorVenta !== 0 ? (
                               <div className="text-emerald-600">
                                 {formatAmountWithCurrency(data.utilidadPorVenta, data.monedaTCAsociada || 'PESO')}

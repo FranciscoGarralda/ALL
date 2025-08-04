@@ -114,7 +114,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
       {/* Header */}
       <div className="">
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
@@ -211,7 +211,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
             <div className="text-center py-8 sm:py-12">
               <Receipt size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
               {searchTerm ? (
-                <div className="px-4">
+                <div className="px-2">
                   <p className="text-sm sm:text-base text-gray-700 mb-2">
                     No se encontraron gastos que coincidan con "{searchTerm}"
                   </p>
@@ -223,7 +223,7 @@ function GastosApp({ movements, onEditMovement, onDeleteMovement, onViewMovement
                   </button>
                 </div>
               ) : allExpenses.length === 0 ? (
-                <div className="px-4">
+                <div className="px-2">
                   <p className="text-sm sm:text-base text-gray-700 mb-4">No hay gastos registrados</p>
                   <p className="text-xs sm:text-sm text-gray-800">
                     Los gastos aparecerán aquí cuando se registren operaciones administrativas de tipo "GASTO"

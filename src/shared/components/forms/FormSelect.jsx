@@ -56,7 +56,7 @@ const FormSelect = forwardRef(({
 
   // Select classes with responsive design and states
   const selectClasses = [
-    'w-full px-4 py-3 text-sm sm:text-base font-medium border rounded-lg transition-all duration-200 appearance-none',
+    'w-full px-2 py-2 text-sm sm:text-base font-medium border rounded-lg transition-all duration-200 appearance-none',
     'focus:outline-none focus:ring-2 focus:ring-offset-0',
     'placeholder-gray-500 focus:placeholder-gray-600',
     'bg-white hover:bg-gray-50 focus:bg-white',
