@@ -89,7 +89,7 @@ const ButtonSelectGroup = ({
                   const code = parts[1];
                   return (
                     <div className="flex flex-col items-center gap-0">
-                      <span className="text-xs leading-none">{emoji}</span>
+                      <span className="text-sm leading-none">{emoji}</span>
                       <span className="text-[8px] leading-none">{code}</span>
                     </div>
                   );
