@@ -292,8 +292,29 @@ function ArbitrajeApp({ movements, onNavigate }) {
               </div>
             ) : (
               <div className="text-center py-8 sm:py-12">
-                <PieChart size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
-                <p className="text-sm sm:text-base text-gray-700">No hay datos de ganancias mensuales por arbitraje para graficar.</p>
+                <ArrowUpDown size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
+                {searchTerm ? (
+                  <div>
+                    <p className="text-sm sm:text-base text-gray-700 mb-2">
+                      No se encontraron operaciones de arbitraje que coincidan con "{searchTerm}"
+                    </p>
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="text-gray-800 hover:text-gray-700 text-sm underline"
+                    >
+                      Limpiar búsqueda
+                    </button>
+                  </div>
+                ) : arbitrageMovements.length === 0 ? (
+                  <div>
+                    <p className="text-sm sm:text-base text-gray-700 mb-4">No hay operaciones de arbitraje registradas</p>
+                    <p className="text-xs sm:text-sm text-gray-800">
+                      Las operaciones de arbitraje aparecerán aquí cuando se registren transacciones de tipo "ARBITRAJE"
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm sm:text-base text-gray-700">Todas las operaciones de arbitraje están ocultas por el filtro actual</p>
+                )}
               </div>
             )}
           </div>
@@ -446,39 +467,11 @@ function ArbitrajeApp({ movements, onNavigate }) {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 sm:py-12">
-                  <ArrowUpDown size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
-                  {searchTerm ? (
-                    <div>
-                      <p className="text-sm sm:text-base text-gray-700 mb-2">
-                        No se encontraron operaciones de arbitraje que coincidan con "{searchTerm}"
-                      </p>
-                      <button
-                        onClick={() => setSearchTerm('')}
-                        className="text-gray-800 hover:text-gray-700 text-sm underline"
-                      >
-                        Limpiar búsqueda
-                      </button>
-                    </div>
-                  ) : arbitrageMovements.length === 0 ? (
-                    <div>
-                      <p className="text-sm sm:text-base text-gray-700 mb-4">No hay operaciones de arbitraje registradas</p>
-                      <p className="text-xs sm:text-sm text-gray-800 mb-4">
-                        Las operaciones de arbitraje aparecerán aquí cuando se registren transacciones de tipo "ARBITRAJE"
-                      </p>
-                      <button
-                        onClick={() => onNavigate('nuevoMovimiento', {
-                          operacion: 'TRANSACCIONES',
-                          subOperacion: 'ARBITRAJE'
-                        })}
-                        className="btn-primary touch-target"
-                      >
-                        Registrar arbitraje
-                      </button>
-                    </div>
-                  ) : (
-                    <p className="text-sm sm:text-base text-gray-700">Todas las operaciones de arbitraje están ocultas por el filtro actual</p>
-                  )}
+                <div className="text-center">
+                  <p className="text-sm sm:text-base text-gray-700 mb-4">No hay operaciones de arbitraje registradas</p>
+                  <p className="text-xs sm:text-sm text-gray-800">
+                    Las operaciones de arbitraje aparecerán aquí cuando se registren transacciones de tipo "ARBITRAJE"
+                  </p>
                 </div>
               )}
             </div>
