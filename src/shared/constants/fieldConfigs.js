@@ -79,10 +79,13 @@ export const specificFieldsConfig = {
   // Arbitrage operations configuration
   ARBITRAJE: {
     groups: [
-      // Monto compra / Moneda
+      // Monto compra
       [
-        { label: 'Monto compra', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Monto compra', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      // Moneda
+      [
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       // TC compra
       [
@@ -96,10 +99,13 @@ export const specificFieldsConfig = {
       [
         { label: 'Total compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
-      // Monto venta / Moneda
+      // Monto venta
       [
-        { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'monedaVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
+        { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-2' }
+      ],
+      // Moneda venta
+      [
+        { label: 'Moneda', name: 'monedaVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
       // TC venta
       [
