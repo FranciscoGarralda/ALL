@@ -1,6 +1,12 @@
 import { monedas, cuentas, socios, sociosSinOtro, proveedoresCC, prestamistaClientsDefault, walletTypes, walletTypesTC } from './constants';
 import { safeParseFloat } from '../services/safeOperations';
 
+// Helper function to get currency label
+const getCurrencyLabel = (value) => {
+  const currency = monedas.find(m => m.value === value);
+  return currency ? currency.label.split(' ')[1] : value; // Return just the code (ARS, USD, etc.)
+};
+
 /**
  * Configuration object for specific operation field layouts
  * Each operation type defines its field groups, validation rules, and special behaviors
@@ -99,13 +105,10 @@ export const specificFieldsConfig = {
       [
         { label: 'Total compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
-      // Monto venta
+      // Monto venta / Moneda venta
       [
-        { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-2' }
-      ],
-      // Moneda venta
-      [
-        { label: 'Moneda', name: 'monedaVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-2' }
+        { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' },
+        { label: 'Moneda', name: 'monedaVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
       // TC venta
       [
@@ -113,7 +116,7 @@ export const specificFieldsConfig = {
       ],
       // Moneda TC venta
       [
-        { label: 'Moneda', name: 'monedaTCVenta', type: 'select', options: monedas, required: true, readOnly: true, calculated: true, gridCols: 'col-span-2' }
+        { label: 'Moneda TC', name: 'monedaTCVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
       // Total
       [
@@ -146,8 +149,8 @@ export const specificFieldsConfig = {
       },
       // Campos que se completan automáticamente
       montoVenta: (formData) => formData.monto, // Monto venta = monto compra
-      monedaVenta: (formData) => formData.moneda, // Moneda venta = moneda compra
-      monedaTCVenta: (formData) => formData.monedaTC, // Moneda TC venta = moneda TC compra
+      monedaVenta: (formData) => getCurrencyLabel(formData.moneda), // Moneda venta = moneda compra (as label)
+      monedaTCVenta: (formData) => getCurrencyLabel(formData.monedaTC), // Moneda TC venta = moneda TC compra (as label)
       monedaProfit: (formData) => formData.monedaTC, // Moneda profit = moneda TC
       profit: (formData) => {
         const totalVenta = safeParseFloat(formData.totalVenta, 0);
