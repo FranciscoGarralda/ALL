@@ -27,12 +27,13 @@ const CommissionField = ({
       </div>
       <FormInput
         name={name}
-        type="number"
+        type="text"
         value={value}
         onChange={onChange}
         placeholder={commissionType === 'percentage' ? '0.00%' : '0.00'}
         error={error}
         required={required}
+        inputMode="decimal"
         {...rest}
       />
     </div>

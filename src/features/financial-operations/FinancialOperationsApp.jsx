@@ -276,7 +276,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
       // Auto-completar moneda de comisión cuando cambia la moneda principal (para todas las operaciones)
       if (field === 'moneda') {
-        newState.monedaComision = newState.moneda;
+        // Si monedaComision es un campo de texto (CUENTAS_CORRIENTES), mostrar el label
+        if (newState.operacion === 'CUENTAS_CORRIENTES') {
+          const selectedMoneda = monedas.find(m => m.value === newState.moneda);
+          newState.monedaComision = selectedMoneda ? selectedMoneda.label.split(' ')[1] : newState.moneda;
+        } else {
+          newState.monedaComision = newState.moneda;
+        }
       }
 
       // Auto-completado para CUENTAS CORRIENTES

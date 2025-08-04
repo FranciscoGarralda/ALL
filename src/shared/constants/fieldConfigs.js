@@ -181,7 +181,7 @@ export const specificFieldsConfig = {
           { label: 'Monto Comisión', name: 'montoComision', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-1' }
         ],
         [
-          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-2' }
+          { label: 'Moneda Comisión', name: 'monedaComision', type: 'text', readOnly: true, calculated: true, gridCols: 'col-span-2' }
         ],
         [
           { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'wallet-buttons', gridCols: 'col-span-2', required: true }
