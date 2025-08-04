@@ -4,12 +4,12 @@
 
 import { safeParseFloat } from '../services/safeOperations.js';
 export const monedas = [
-  { value: 'PESO', label: '🇦🇷 PESO' },
+  { value: 'PESO', label: '🇦🇷 ARS' },
   { value: 'USD', label: '💵 USD' },
-  { value: 'EURO', label: '🇪🇺 EURO' },
+  { value: 'EURO', label: '🇪🇺 EUR' },
   { value: 'USDT', label: '₿ USDT' },
-  { value: 'REAL', label: '🇧🇷 REAL' },
-  { value: 'LIBRA', label: '🇬🇧 LIBRA' },
+  { value: 'REAL', label: '🇧🇷 BRL' },
+  { value: 'LIBRA', label: '🇬🇧 GBP' },
   { value: 'CLP', label: '🇨🇱 CLP' },
 ];
 
