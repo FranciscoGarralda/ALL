@@ -20,13 +20,15 @@ const ButtonSelectGroup = ({
 
   const getButtonClasses = (optionValue) => {
     const isActive = value === optionValue;
-    const baseClasses = isMoneda 
+    const baseClasses = isMoneda
       ? 'px-1 py-1.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all min-w-[45px]'
-      : 'px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all';
+      : isOperacion
+        ? 'px-2 py-3 text-sm font-medium flex items-center justify-center rounded-lg border transition-all min-h-[80px]'
+        : 'px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all';
     
     return `${baseClasses} ${
       readOnly
-        ? 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+        ? 'bg-gray-50 text-gray-400 cursor-not-allowed'
         : isActive
           ? 'bg-gray-900 text-white border-gray-900'
           : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
@@ -97,11 +99,13 @@ const ButtonSelectGroup = ({
                 (() => {
                   const parts = optionLabel.split(' ');
                   const emoji = parts[0];
-                  const text = parts.slice(1).join(' ');
+                  const text = parts.slice(1).join(' ').replace('_', ' ');
                   return (
-                    <div className="flex flex-col items-center">
-                      <span className="text-lg">{emoji}</span>
-                      <span className="text-[10px] mt-1">{text}</span>
+                    <div className="flex flex-col items-center justify-center h-full">
+                      <span className="text-xl mb-1">{emoji}</span>
+                      <span className="text-[8px] leading-tight text-center break-words hyphens-auto px-1" style={{ wordBreak: 'break-word' }}>
+                        {text}
+                      </span>
                     </div>
                   );
                 })()
