@@ -577,10 +577,15 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
             />
           </div>
 
+          {/* Línea divisoria */}
+          {formData.operacion && (
+            <div className="my-6 border-t-2 border-gray-200"></div>
+          )}
+
           {/* Selector de Detalle de Operación */}
           {formData.operacion &&
             operaciones[formData.operacion]?.subMenu?.length > 0 && (
-              <div className="mt-4">
+              <div>
                 <SubOperationButtons
                   ref={createElementRef('subOperacion', { type: 'select', order: 5 })}
                   label="DETALLE OPERACIÓN"
