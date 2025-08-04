@@ -14,7 +14,9 @@ import {
   FormFieldGroup,
   MixedPaymentGroup,
   ClientAutocomplete,
-  formatAmountWithCurrency
+  formatAmountWithCurrency,
+  SubOperationButtons,
+  ButtonSelectGroup
 } from '../../shared/components/forms';
 import {
   monedas,
@@ -562,42 +564,36 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
           {/* Selector de Operación principal */}
           <div className="mt-4">
-            <FormSelect
-            ref={createElementRef('operacion', { type: 'select', order: 4 })}
-            label="OPERACIÓN"
-            name="operacion"
-            value={formData.operacion}
-            onChange={(val) => handleInputChange('operacion', val)}
-            options={[
-              ...Object.entries(operaciones).map(([key, op]) => ({
-              value: key,
-              label: `${op.icon} ${key.replace('_', ' ')}`,
-            })),
-          ]}
-            placeholder="Seleccionar operación"
-            required
-          />
+            <ButtonSelectGroup
+              ref={createElementRef('operacion', { type: 'select', order: 4 })}
+              label="OPERACIÓN"
+              name="operacion"
+              value={formData.operacion}
+              onChange={(val) => handleInputChange('operacion', val)}
+              options={Object.entries(operaciones).map(([key, op]) => ({
+                value: key,
+                label: `${op.icon} ${key.replace('_', ' ')}`,
+              }))}
+              required
+            />
           </div>
 
           {/* Selector de Detalle de Operación */}
           {formData.operacion &&
             operaciones[formData.operacion]?.subMenu?.length > 0 && (
               <div className="mt-4">
-                <FormSelect
-                ref={createElementRef('subOperacion', { type: 'select', order: 5 })}
-                label="DETALLE OPERACIÓN"
-                name="subOperacion"
-                value={formData.subOperacion}
-                onChange={(val) => handleInputChange('subOperacion', val)}
-                options={[
-                  ...operaciones[formData.operacion].subMenu.map((sub) => ({
-                  value: sub,
-                  label: sub,
-                })),
-              ]}
-                placeholder="Seleccionar opción"
-                required
-              />
+                <SubOperationButtons
+                  ref={createElementRef('subOperacion', { type: 'select', order: 5 })}
+                  label="DETALLE OPERACIÓN"
+                  name="subOperacion"
+                  value={formData.subOperacion}
+                  onChange={(val) => handleInputChange('subOperacion', val)}
+                  options={operaciones[formData.operacion].subMenu.map((sub) => ({
+                    value: sub,
+                    label: sub,
+                  }))}
+                  required
+                />
               </div>
             )}
 
