@@ -277,38 +277,39 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
   };
 
   return (
-    <div className="bg-white border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-150 rounded-lg">
-      <div className="px-2 sm:px-3 py-2 flex items-center gap-3 min-w-0">
+    <div className="bg-white border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-150 rounded-lg overflow-hidden">
+      <div className="px-2 py-2 flex items-center gap-2 sm:gap-3">
         {/* Fecha */}
-        <div className="flex-shrink-0 w-12 text-center">
+        <div className="flex-shrink-0 w-12 text-center hidden sm:block">
           <div className="text-sm text-gray-700 font-medium">{formattedDate}</div>
         </div>
 
         {/* Cliente */}
-        <div className="flex-shrink-0 w-32 sm:w-36">
+        <div className="flex-1 min-w-0">
           <div className="text-sm font-medium text-gray-900 truncate">
             {getClientName(movement.cliente, clients)}
           </div>
+          <div className="text-xs text-gray-600 sm:hidden">{formattedDate}</div>
         </div>
 
         {/* Operación */}
-        <div className="flex-shrink-0 w-20 sm:w-24">
+        <div className="flex-shrink-0 hidden sm:block w-24">
           <span className="px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded text-sm font-medium truncate block">
             {movement.subOperacion || movement.operacion?.replace('_', ' ') || 'N/A'}
           </span>
         </div>
 
         {/* Monto */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-shrink-0">
           {displayAmount && (
-            <div className="text-sm font-semibold text-gray-800 truncate">
+            <div className="text-sm font-semibold text-gray-800">
               {formatAmountWithCurrency(displayAmount.amount, displayAmount.currency)}
             </div>
           )}
         </div>
 
         {/* Estado */}
-        <div className="flex-shrink-0 w-20">
+        <div className="flex-shrink-0 hidden sm:block">
           <span className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${
             movement.estado === 'realizado' 
               ? 'bg-success-100 text-success-700' 
@@ -321,7 +322,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
         </div>
 
         {/* Acciones */}
-        <div className="flex-shrink-0 w-20 flex gap-1 justify-center">
+        <div className="flex-shrink-0 flex gap-1">
           <button 
             onClick={() => onViewDetail(movement)} 
             className="p-1 text-gray-800 hover:bg-gray-50 rounded transition-colors"
@@ -331,14 +332,14 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
           </button>
           <button 
             onClick={() => onEdit(movement)} 
-            className="p-1 text-gray-600 hover:bg-gray-50 rounded transition-colors"
+            className="p-1 text-gray-600 hover:bg-gray-50 rounded transition-colors hidden sm:block"
             title="Editar"
           >
             <Edit3 size={14} />
           </button>
           <button 
             onClick={handleDelete} 
-            className="p-1 text-error-600 hover:bg-error-50 rounded transition-colors"
+            className="p-1 text-error-600 hover:bg-error-50 rounded transition-colors hidden sm:block"
             title="Eliminar"
           >
             <Trash2 size={14} />
