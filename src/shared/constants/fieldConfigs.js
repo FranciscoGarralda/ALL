@@ -195,7 +195,6 @@ export const specificFieldsConfig = {
           name: 'socioSeleccionado', 
           type: 'select', 
           options: [
-            { value: '', label: 'Seleccionar socio' }, 
             { value: 'socio1', label: 'Socio 1' }, 
             { value: 'socio2', label: 'Socio 2' }
           ],
