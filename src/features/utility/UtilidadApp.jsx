@@ -281,7 +281,7 @@ function UtilidadApp({ movements, onNavigate }) {
               ))}
             </div>
           ) : (
-            <p className="text-base sm:text-lg text-indigo-700 font-medium">Sin datos</p>
+            <p className="text-base sm:text-lg text-gray-700 font-medium">Sin datos</p>
           )}
         </div>
         <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${bgColor} bg-opacity-20 flex items-center justify-center flex-shrink-0`}>
@@ -292,11 +292,11 @@ function UtilidadApp({ movements, onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="card">
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
+          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -306,7 +306,7 @@ function UtilidadApp({ movements, onNavigate }) {
                   <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 truncate">
                     Análisis de Utilidad
                   </h1>
-                  <p className="text-xs sm:text-sm text-indigo-700">
+                  <p className="text-xs sm:text-sm text-gray-700">
                     Dashboard completo con sistema WAC • {processedMovements.length} transaccion{processedMovements.length !== 1 ? 'es' : ''} procesada{processedMovements.length !== 1 ? 's' : ''}
                   </p>
                 </div>
@@ -335,9 +335,9 @@ function UtilidadApp({ movements, onNavigate }) {
               {renderMetricCard(
                 'Utilidad del Mes Actual',
                 currentMonthUtility.venta,
-                'bg-indigo-50',
-                'text-indigo-700',
-                'border-indigo-500',
+                'bg-gray-50',
+                'text-gray-700',
+                'border-gray-500',
                 Calendar,
                 'Cuánto ganaste y en qué divisa'
               )}
@@ -345,9 +345,9 @@ function UtilidadApp({ movements, onNavigate }) {
               {renderMetricCard(
                 'Utilidad de Hoy',
                 todayUtility.venta,
-                'bg-indigo-50',
-                'text-indigo-700',
-                'border-indigo-500',
+                'bg-gray-50',
+                'text-gray-700',
+                'border-gray-500',
                 Clock,
                 'Cuánto ganaste y en qué divisa'
               )}
@@ -394,12 +394,12 @@ function UtilidadApp({ movements, onNavigate }) {
                     </div>
                   </div>
                 ) : selectedDate ? (
-                  <div className="bg-indigo-50 p-3 sm:p-4 rounded-lg w-full text-center">
-                    <p className="text-xs sm:text-sm text-indigo-700">No hay utilidad para la fecha seleccionada</p>
+                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg w-full text-center">
+                    <p className="text-xs sm:text-sm text-gray-700">No hay utilidad para la fecha seleccionada</p>
                   </div>
                 ) : (
-                  <div className="bg-indigo-50 p-3 sm:p-4 rounded-lg w-full text-center">
-                    <p className="text-xs sm:text-sm text-indigo-600">Selecciona una fecha para ver la utilidad</p>
+                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg w-full text-center">
+                    <p className="text-xs sm:text-sm text-gray-800">Selecciona una fecha para ver la utilidad</p>
                   </div>
                 )}
               </div>
@@ -420,28 +420,28 @@ function UtilidadApp({ movements, onNavigate }) {
                 {/* Tabla para desktop */}
                 <div className="hidden sm:block overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-indigo-50">
+                    <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Activo
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Cantidad en Stock
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Costo Promedio (WAC)
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Valuación Total
                         </th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                           Utilidad Venta
                         </th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {Object.entries(finalStockData).map(([currency, data]) => (
-                        <tr key={currency} className="hover:bg-indigo-50">
+                        <tr key={currency} className="hover:bg-gray-50">
                           <td className="px-4 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="w-8 h-8 bg-warning-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
@@ -456,7 +456,7 @@ function UtilidadApp({ movements, onNavigate }) {
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm text-gray-700">
                             {data.costoPromedio > 0 ? formatAmountWithCurrency(data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium text-indigo-600">
+                          <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-800">
                             {data.cantidad > 0 ? formatAmountWithCurrency(data.cantidad * data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -465,7 +465,7 @@ function UtilidadApp({ movements, onNavigate }) {
                                 {formatAmountWithCurrency(data.utilidadPorVenta, data.monedaTCAsociada || 'PESO')}
                               </div>
                             ) : (
-                              <span className="text-indigo-600">-</span>
+                              <span className="text-gray-800">-</span>
                             )}
                           </td>
                         </tr>
@@ -477,7 +477,7 @@ function UtilidadApp({ movements, onNavigate }) {
                 {/* Cards para mobile */}
                 <div className="sm:hidden space-y-3">
                   {Object.entries(finalStockData).map(([currency, data]) => (
-                    <div key={currency} className="bg-indigo-50 rounded-lg p-3">
+                    <div key={currency} className="bg-gray-50 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-3">
                         <div className="w-6 h-6 bg-warning-100 rounded-lg flex items-center justify-center flex-shrink-0">
                           <Wallet size={14} className="text-warning-600" />
@@ -487,11 +487,11 @@ function UtilidadApp({ movements, onNavigate }) {
                       
                       <div className="grid grid-cols-2 gap-2 text-sm">
                         <div>
-                          <p className="text-indigo-700 text-xs">Stock</p>
+                          <p className="text-gray-700 text-xs">Stock</p>
                           <p className="font-medium">{formatAmountWithCurrency(data.cantidad, currency)}</p>
                         </div>
                         <div>
-                          <p className="text-indigo-700 text-xs">Costo WAC</p>
+                          <p className="text-gray-700 text-xs">Costo WAC</p>
                           <p className="font-medium">
                             {data.costoPromedio > 0 ? formatAmountWithCurrency(data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
                           </p>
@@ -500,15 +500,15 @@ function UtilidadApp({ movements, onNavigate }) {
                       
                                               <div className="pt-2 border-t border-gray-200">
                           <div className="flex justify-between items-center">
-                            <span className="text-xs text-indigo-700">Valuación</span>
-                            <span className="font-medium text-indigo-600 text-sm">
+                            <span className="text-xs text-gray-700">Valuación</span>
+                            <span className="font-medium text-gray-800 text-sm">
                               {data.cantidad > 0 ? formatAmountWithCurrency(data.cantidad * data.costoPromedio, data.monedaTCAsociada || currency) : '-'}
                             </span>
                           </div>
                           {data.utilidadPorVenta !== 0 && (
                             <div>
                               <div className="flex justify-between text-xs">
-                                <span className="text-indigo-700">Util. Venta</span>
+                                <span className="text-gray-700">Util. Venta</span>
                                 <span className="text-emerald-600 font-medium">
                                   {formatAmountWithCurrency(data.utilidadPorVenta, data.monedaTCAsociada || 'PESO')}
                                 </span>
@@ -523,7 +523,7 @@ function UtilidadApp({ movements, onNavigate }) {
             ) : (
               <div className="text-center py-6 sm:py-8">
                 <Package size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
-                <p className="text-sm sm:text-base text-indigo-700">No hay stock para mostrar</p>
+                <p className="text-sm sm:text-base text-gray-700">No hay stock para mostrar</p>
               </div>
             )}
           </div>
@@ -569,7 +569,7 @@ function UtilidadApp({ movements, onNavigate }) {
             ) : (
               <div className="text-center py-8 sm:py-12">
                 <PieChart size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
-                <p className="text-sm sm:text-base text-indigo-700">No hay datos de utilidad mensuales para graficar.</p>
+                <p className="text-sm sm:text-base text-gray-700">No hay datos de utilidad mensuales para graficar.</p>
               </div>
             )}
           </div>
@@ -580,7 +580,7 @@ function UtilidadApp({ movements, onNavigate }) {
           <div className="card">
             <div className="p-3 sm:p-4 lg:p-6">
               <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 flex items-center gap-2">
-                <Calculator size={16} className="text-indigo-600" />
+                <Calculator size={16} className="text-gray-800" />
                 Metodología WAC
               </h3>
               <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-600">
@@ -630,7 +630,7 @@ function UtilidadApp({ movements, onNavigate }) {
               <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">
                 No hay transacciones para analizar
               </h3>
-              <p className="text-sm sm:text-base text-indigo-700 mb-6">
+              <p className="text-sm sm:text-base text-gray-700 mb-6">
                 Las utilidades aparecerán aquí cuando se registren operaciones de compra, venta o arbitraje.
               </p>
 

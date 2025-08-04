@@ -21,8 +21,8 @@ const SubOperationButtons = ({
       readOnly
         ? 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
         : isActive
-          ? 'bg-indigo-600 text-white border-indigo-600'
-          : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
+          ? 'bg-gray-900 text-white border-gray-900'
+          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
     }`;
   };
 

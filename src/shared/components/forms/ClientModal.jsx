@@ -140,18 +140,18 @@ const ClientModal = ({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <User size={18} className="text-indigo-600" />
+            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+              <User size={18} className="text-gray-800" />
             </div>
             <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
           </div>
           <button
             onClick={handleClose}
             disabled={isLoading}
-            className="p-2 hover:bg-indigo-100 rounded-lg transition-colors duration-200 disabled:opacity-50"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 disabled:opacity-50"
             aria-label="Cerrar modal"
           >
-            <X size={20} className="text-indigo-700" />
+            <X size={20} className="text-gray-700" />
           </button>
         </div>
 
@@ -249,7 +249,7 @@ const ClientModal = ({
               type="button"
               onClick={handleClose}
               disabled={isLoading}
-              className="px-4 py-2 text-gray-700 bg-indigo-100 hover:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
+              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
             >
               Cancelar
             </button>
@@ -257,7 +257,7 @@ const ClientModal = ({
               ref={(el) => registerField('guardar', el)}
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 flex items-center space-x-2"
+              className="px-4 py-2 bg-gray-900 hover:bg-slate-800 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 flex items-center space-x-2"
             >
               {isLoading ? (
                 <>

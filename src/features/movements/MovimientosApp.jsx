@@ -90,10 +90,10 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
 
   // Vista principal - Lista de movimientos
   return (
-    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       {/* Header */}
       <div className="card mb-4 sm:mb-6">
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
+        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-success-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -103,7 +103,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
                 <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
                   Gestión de Movimientos
                 </h1>
-                <p className="text-xs sm:text-sm text-indigo-700">
+                <p className="text-xs sm:text-sm text-gray-700">
                   {filteredAndSortedMovements.length} de {movements.length} movimiento{movements.length !== 1 ? 's' : ''}
                 </p>
               </div>
@@ -113,14 +113,14 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
         </div>
 
         {/* Controles de búsqueda y filtro */}
-        <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100 space-y-3 sm:space-y-4">
+        <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100 space-y-3 sm:space-y-4">
           {/* Barra de búsqueda */}
           <div className="relative">
-            <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-600" />
+            <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-800" />
             <input
               type="text"
               placeholder="Buscar por cliente, detalle, operación o proveedor..."
-              className="w-full pl-10 pr-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-500 focus:border-transparent transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -144,11 +144,11 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
 
           {/* Indicadores de filtros activos */}
           {(searchTerm || filterType || filterStatus) && (
-            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-indigo-100">
-              <Filter size={14} className="text-indigo-600" />
+            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100">
+              <Filter size={14} className="text-gray-800" />
               <span className="text-xs sm:text-sm text-gray-600">Filtros activos:</span>
               {searchTerm && (
-                <span className="px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm">
+                <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">
                   Búsqueda: "{searchTerm}"
                 </span>
               )}
@@ -168,7 +168,7 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
                   setFilterType('');
                   setFilterStatus('');
                 }}
-                className="text-xs text-indigo-700 hover:text-gray-700 underline ml-2"
+                className="text-xs text-gray-700 hover:text-gray-700 underline ml-2"
               >
                 Limpiar filtros
               </button>
@@ -183,28 +183,28 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
               <List size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
               {searchTerm || filterType || filterStatus ? (
                 <div className="px-4">
-                  <p className="text-sm sm:text-base text-indigo-700 mb-2">No se encontraron movimientos con los filtros aplicados</p>
+                  <p className="text-sm sm:text-base text-gray-700 mb-2">No se encontraron movimientos con los filtros aplicados</p>
                   <button
                     onClick={() => {
                       setSearchTerm('');
                       setFilterType('');
                       setFilterStatus('');
                     }}
-                    className="text-indigo-600 hover:text-indigo-700 text-sm underline"
+                    className="text-gray-800 hover:text-gray-700 text-sm underline"
                   >
                     Limpiar filtros y ver todos
                   </button>
                 </div>
               ) : (
                 <div className="px-4">
-                  <p className="text-sm sm:text-base text-indigo-700">No hay movimientos registrados</p>
+                  <p className="text-sm sm:text-base text-gray-700">No hay movimientos registrados</p>
                 </div>
               )}
             </div>
           ) : (
             <div className="space-y-2">
               {/* Header de columnas - solo visible en desktop */}
-              <div className="hidden sm:block bg-indigo-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-gray-600">
+              <div className="hidden sm:block bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-gray-600">
                 <div className="flex items-center gap-3">
                   <div className="flex-shrink-0 w-12 text-center">Fecha</div>
                   <div className="flex-shrink-0 w-36">Cliente</div>
@@ -277,11 +277,11 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
   };
 
   return (
-    <div className="bg-white border border-gray-200 hover:border-indigo-300 hover:shadow-sm transition-all duration-150 rounded-lg overflow-hidden">
+    <div className="bg-white border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-150 rounded-lg overflow-hidden">
       <div className="px-4 py-3 flex items-center gap-3 min-w-0">
         {/* Fecha */}
         <div className="flex-shrink-0 w-12 text-center">
-          <div className="text-sm text-indigo-700 font-medium">{formattedDate}</div>
+          <div className="text-sm text-gray-700 font-medium">{formattedDate}</div>
         </div>
 
         {/* Cliente */}
@@ -293,7 +293,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
 
         {/* Operación */}
         <div className="flex-shrink-0 w-20 sm:w-24">
-          <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded text-sm font-medium truncate block">
+          <span className="px-1.5 py-0.5 bg-gray-100 text-gray-700 rounded text-sm font-medium truncate block">
             {movement.subOperacion || movement.operacion?.replace('_', ' ') || 'N/A'}
           </span>
         </div>
@@ -301,7 +301,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
         {/* Monto */}
         <div className="flex-1 min-w-0">
           {displayAmount && (
-            <div className="text-sm font-semibold text-indigo-600 truncate">
+            <div className="text-sm font-semibold text-gray-800 truncate">
               {formatAmountWithCurrency(displayAmount.amount, displayAmount.currency)}
             </div>
           )}
@@ -314,7 +314,7 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
               ? 'bg-success-100 text-success-700' 
               : movement.estado === 'pendiente'
               ? 'bg-warning-100 text-warning-700'
-              : 'bg-indigo-100 text-gray-700'
+              : 'bg-gray-100 text-gray-700'
           }`}>
             {movement.estado === 'realizado' ? 'OK' : movement.estado === 'pendiente' ? 'PEND' : 'N/A'}
           </span>
@@ -324,14 +324,14 @@ function MovimientoCard({ movement, onEdit, onDelete, onViewDetail, clients = []
         <div className="flex-shrink-0 w-20 flex gap-1 justify-center">
           <button 
             onClick={() => onViewDetail(movement)} 
-            className="p-1 text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+            className="p-1 text-gray-800 hover:bg-gray-50 rounded transition-colors"
             title="Ver detalles"
           >
             <Eye size={14} />
           </button>
           <button 
             onClick={() => onEdit(movement)} 
-            className="p-1 text-gray-600 hover:bg-indigo-50 rounded transition-colors"
+            className="p-1 text-gray-600 hover:bg-gray-50 rounded transition-colors"
             title="Editar"
           >
             <Edit3 size={14} />
@@ -357,7 +357,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
         <div className="text-center max-w-md mx-auto">
           <List size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-4" />
           <p className="text-lg sm:text-xl font-semibold mb-2">Movimiento no encontrado</p>
-          <p className="text-sm sm:text-base mb-4 text-indigo-700">El movimiento que buscas no existe o ha sido eliminado.</p>
+          <p className="text-sm sm:text-base mb-4 text-gray-700">El movimiento que buscas no existe o ha sido eliminado.</p>
           <button 
             onClick={onBack} 
             className="btn-secondary touch-target"
@@ -370,7 +370,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
   }
 
   const formatField = (label, value, currency = null) => (
-    <div className="flex flex-col sm:flex-row sm:justify-between py-2 sm:py-3 border-b border-indigo-100 last:border-b-0">
+    <div className="flex flex-col sm:flex-row sm:justify-between py-2 sm:py-3 border-b border-gray-100 last:border-b-0">
       <span className="text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-0">{label}:</span>
       <span className="text-xs sm:text-sm text-gray-900 font-mono break-words">
         {currency ? formatAmountWithCurrency(value, currency) : (value || 'N/A')}
@@ -406,15 +406,15 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
   };
 
   return (
-    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full px-4 sm:px-6 lg:px-8">
         <div className="card">
           {/* Header */}
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
+          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
             <div className="flex items-center gap-3 mb-3 sm:mb-0">
               <button 
                 onClick={onBack} 
-                className="p-2 hover:bg-indigo-100 rounded-lg transition-colors touch-target flex-shrink-0"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors touch-target flex-shrink-0"
               >
                 <ArrowLeft size={18} />
               </button>
@@ -422,7 +422,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
                 <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
                   Detalle del Movimiento
                 </h1>
-                <p className="text-xs sm:text-sm text-indigo-700 truncate">
+                <p className="text-xs sm:text-sm text-gray-700 truncate">
                   {movement.operacion?.replace('_', ' ')} - {movement.subOperacion || 'N/A'}
                 </p>
               </div>
@@ -432,14 +432,14 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
                   ? 'bg-success-100 text-success-700' 
                   : movement.estado === 'pendiente'
                   ? 'bg-warning-100 text-warning-700'
-                  : 'bg-indigo-100 text-gray-700'
+                  : 'bg-gray-100 text-gray-700'
               }`}>
                 {movement.estado || 'Sin estado'}
               </span>
             </div>
 
             {/* Botones de acción en header */}
-            <div className="flex justify-end gap-2 pt-3 border-t border-indigo-100">
+            <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
               <button 
                 onClick={() => onEdit(movement)} 
                 className="btn-secondary flex items-center gap-2 touch-target"
@@ -462,10 +462,10 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
             {/* Información General */}
             <div>
               <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
-                <User size={16} className="sm:w-5 sm:h-5 text-indigo-600 flex-shrink-0" />
+                <User size={16} className="sm:w-5 sm:h-5 text-gray-800 flex-shrink-0" />
                 Información General
               </h3>
-              <div className="bg-indigo-50 rounded-lg p-3 sm:p-4 space-y-1">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1">
                 {formatDateField('Fecha', movement.fecha)}
                 {formatField('Cliente', getClientName(movement.cliente, clients))}
                 {formatField('Operación', movement.operacion?.replace('_', ' '))}
@@ -481,7 +481,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
                 <DollarSign size={16} className="sm:w-5 sm:h-5 text-success-600 flex-shrink-0" />
                 Valores Monetarios
               </h3>
-              <div className="bg-indigo-50 rounded-lg p-3 sm:p-4 space-y-1">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1">
                 {movement.monto && formatField('Monto', movement.monto, movement.moneda)}
                 {movement.tc && formatField('Tipo de Cambio (TC)', movement.tc)}
                 {movement.monedaTC && formatField('Moneda TC', movement.monedaTC)}
@@ -501,7 +501,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
             {movement.walletTC === 'pago_mixto' && movement.mixedPayments && movement.mixedPayments.length > 0 && (
               <div>
                 <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">Detalle de Pago Mixto</h3>
-                <div className="bg-indigo-50 rounded-lg p-3 sm:p-4">
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
                   <div className="space-y-2 mb-4">
                     {movement.mixedPayments.map((pago, index) => (
                       <div key={index} className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-2 px-3 bg-white rounded border gap-1 sm:gap-0">
@@ -530,7 +530,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
             {/* Cuentas y Estados */}
             <div>
               <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">Cuentas y Estados</h3>
-              <div className="bg-indigo-50 rounded-lg p-3 sm:p-4 space-y-1">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1">
                 {movement.cuenta && formatField('Cuenta Principal', movement.cuenta)}
                 {movement.cuentaSalida && formatField('Cuenta de Salida', movement.cuentaSalida)}
                 {movement.cuentaIngreso && formatField('Cuenta de Ingreso', movement.cuentaIngreso)}
@@ -566,7 +566,7 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
             {/* Metadatos */}
             <div className="border-t pt-24 sm:pt-6">
               <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">Información del Sistema</h3>
-              <div className="bg-indigo-50 rounded-lg p-3 sm:p-4 space-y-1 text-xs">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-1 text-xs">
                 {formatField('ID del Movimiento', movement.id)}
                 {formatField(
                   'Fecha de Creación', 

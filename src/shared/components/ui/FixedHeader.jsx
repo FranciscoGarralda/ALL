@@ -67,7 +67,7 @@ const FixedHeader = ({
   const currentTime = formatTime(currentDateTime);
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b-2 border-gray-200 shadow-lg z-40 h-16">
+    <header className="fixed top-0 left-0 right-0 bg-gray-900 backdrop-blur-md border-b border-gray-800 shadow-xl z-40 h-16">
       <div className="h-full flex items-center justify-between px-4">
         {/* Lado izquierdo: Menú hamburguesa + Título */}
         <div className="flex items-center space-x-3">
@@ -75,13 +75,13 @@ const FixedHeader = ({
           {showMenuButton && (
             <button
               onClick={toggleSidebar}
-              className="lg:hidden p-2.5 rounded-xl hover:bg-indigo-50 hover:scale-105 transition-all duration-200 touch-target"
+              className="lg:hidden p-2.5 rounded-xl hover:bg-gray-800 hover:scale-105 transition-all duration-200 touch-target"
               aria-label={isSidebarOpen ? "Cerrar menú" : "Abrir menú"}
             >
               {isSidebarOpen ? (
-                <X size={24} className="text-indigo-700" />
+                <X size={24} className="text-gray-100" />
               ) : (
-                <Menu size={24} className="text-indigo-700" />
+                <Menu size={24} className="text-gray-100" />
               )}
             </button>
           )}
@@ -90,20 +90,20 @@ const FixedHeader = ({
           {showMenuButton && (
             <button
               onClick={toggleSidebar}
-              className="hidden lg:block p-2.5 rounded-xl hover:bg-indigo-50 hover:scale-105 transition-all duration-200 touch-target"
+              className="hidden lg:block p-2.5 rounded-xl hover:bg-gray-800 hover:scale-105 transition-all duration-200 touch-target"
               aria-label={isSidebarOpen ? "Colapsar sidebar" : "Expandir sidebar"}
             >
-              <Menu size={20} className="text-indigo-700" />
+              <Menu size={20} className="text-gray-100" />
             </button>
           )}
 
           {/* Logo y título */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
-              <DollarSign size={20} className="text-white" />
+            <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl flex items-center justify-center shadow-md border border-gray-600">
+              <DollarSign size={20} className="text-gray-100" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-gray-900 truncate">
+              <h1 className="text-xl font-bold text-gray-100 truncate">
                 {getPageTitle(currentPage)}
               </h1>
             </div>
@@ -112,19 +112,19 @@ const FixedHeader = ({
 
         {/* Centro: Información de fecha (visible en tablet/desktop) */}
         <div className="hidden md:flex items-center space-x-4 text-sm">
-          <div className="flex items-center space-x-2 bg-indigo-50 px-4 py-2 rounded-xl">
-            <Calendar size={18} className="text-indigo-600" />
+          <div className="flex items-center space-x-2 bg-gray-800 px-4 py-2 rounded-xl border border-gray-700">
+            <Calendar size={18} className="text-gray-300" />
             <div className="text-center">
-              <div className="font-semibold text-gray-900">{dateInfo.dayName}</div>
-              <div className="text-xs text-gray-600">{dateInfo.shortDate}</div>
+              <div className="font-semibold text-gray-100">{dateInfo.dayName}</div>
+              <div className="text-xs text-gray-400">{dateInfo.shortDate}</div>
             </div>
           </div>
           
-          <div className="w-px h-10 bg-gray-300"></div>
+          <div className="w-px h-10 bg-gray-700"></div>
           
-          <div className="flex items-center space-x-2 bg-indigo-50 px-4 py-2 rounded-xl">
-            <Clock size={18} className="text-indigo-600" />
-            <div className="font-mono font-semibold text-gray-900 text-base">{currentTime}</div>
+          <div className="flex items-center space-x-2 bg-gray-800 px-4 py-2 rounded-xl border border-gray-700">
+            <Clock size={18} className="text-gray-300" />
+            <div className="font-mono font-semibold text-gray-100 text-base">{currentTime}</div>
           </div>
         </div>
 
@@ -132,12 +132,12 @@ const FixedHeader = ({
         <div className="flex items-center space-x-3">
           {/* Información compacta en móvil */}
           <div className="md:hidden text-right text-sm">
-            <div className="font-semibold text-gray-900">{dateInfo.dayName}</div>
-            <div className="text-indigo-600 font-medium">{currentTime}</div>
+            <div className="font-semibold text-gray-100">{dateInfo.dayName}</div>
+            <div className="text-gray-300 font-medium">{currentTime}</div>
           </div>
 
           {/* Indicador de estado (opcional) */}
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg" title="Sistema activo"></div>
+          <div className="w-3 h-3 bg-gray-400 rounded-full animate-pulse shadow-lg" title="Sistema activo"></div>
         </div>
       </div>
     </header>

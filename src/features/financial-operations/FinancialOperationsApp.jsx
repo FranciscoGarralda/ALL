@@ -495,14 +495,14 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   }, [formData, handleInputChange, renderEstadoYPor, prestamistaClientsOptions, handleMixedPaymentChange, addMixedPayment, removeMixedPayment]);
 
   return (
-    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full px-4 sm:px-6 lg:px-8">
         <div className="card mb-4 sm:mb-6">
             {/* Header de la card */}
-            <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
+            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <DollarSign size={20} className="sm:w-6 sm:h-6 text-indigo-600" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <DollarSign size={20} className="sm:w-6 sm:h-6 text-gray-800" />
                 </div>
                 <div>
                   <h2 className="text-lg sm:text-xl font-bold text-gray-900">
@@ -615,8 +615,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
         {/* Resumen para operaciones COMPRA/VENTA */}
         {(['COMPRA', 'VENTA'].includes(formData.subOperacion) && formData.total) && (
-          <div className="bg-gradient-to-br from-indigo-50 to-indigo-50 border-2 border-indigo-200 rounded-xl p-6 shadow-md">
-            <h3 className="text-lg font-bold text-indigo-900 mb-4">Resumen de la Operación</h3>
+          <div className="bg-gradient-to-br from-gray-50 to-gray-50 border-2 border-gray-200 rounded-xl p-6 shadow-md">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Resumen de la Operación</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-white rounded-lg p-3 shadow-sm">
                 <span className="text-gray-600 text-sm">Monto:</span>
@@ -630,9 +630,9 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                   {formatAmountWithCurrency(formData.tc, formData.monedaTC)}
                 </span>
               </div>
-              <div className="bg-gradient-to-r from-indigo-600 to-indigo-600 rounded-lg p-4 shadow-lg">
+              <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-lg p-4 shadow-lg">
                 <div className="flex justify-between items-center">
-                  <span className="text-indigo-100 text-sm">Total Final:</span>
+                  <span className="text-gray-100 text-sm">Total Final:</span>
                   <span className="text-2xl font-bold text-white whitespace-nowrap">
                     {formatAmountWithCurrency(formData.total, formData.monedaTC)}
                   </span>

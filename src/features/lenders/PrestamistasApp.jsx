@@ -160,11 +160,11 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
   // Vista de resumen
   if (currentView === 'summary') {
     return (
-      <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
         <div className="max-w-full px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="card mb-4 sm:mb-6">
-            <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
+            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-warning-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -174,7 +174,7 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
                     <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
                       Gestión de Prestamistas
                     </h1>
-                    <p className="text-xs sm:text-sm text-indigo-700">
+                    <p className="text-xs sm:text-sm text-gray-700">
                       {prestamistaSummary.length} prestamista{prestamistaSummary.length !== 1 ? 's' : ''} registrado{prestamistaSummary.length !== 1 ? 's' : ''}
                     </p>
                   </div>
@@ -251,8 +251,8 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
                           </div>
                         ) : (
                           <div className="bg-white rounded-lg p-3 sm:p-4 text-center">
-                            <CheckCircle size={20} className="text-indigo-600 mx-auto mb-2" />
-                            <p className="text-xs sm:text-sm text-indigo-700">Sin movimientos activos</p>
+                            <CheckCircle size={20} className="text-gray-800 mx-auto mb-2" />
+                            <p className="text-xs sm:text-sm text-gray-700">Sin movimientos activos</p>
                           </div>
                         )}
 
@@ -275,8 +275,8 @@ function PrestamistasApp({ clients, movements, onNavigate }) {
               ) : (
                 <div className="text-center py-8 sm:py-12">
                   <CreditCard size={40} className="sm:w-12 sm:h-12 mx-auto text-gray-300 mb-3 sm:mb-4" />
-                  <p className="text-sm sm:text-base text-indigo-700 mb-2">No hay prestamistas registrados</p>
-                  <p className="text-xs sm:text-sm text-indigo-600 mb-4">
+                  <p className="text-sm sm:text-base text-gray-700 mb-2">No hay prestamistas registrados</p>
+                  <p className="text-xs sm:text-sm text-gray-800 mb-4">
                     Los prestamistas aparecerán aquí cuando se registren clientes con tipo "prestamistas"
                   </p>
                   <button
@@ -407,15 +407,15 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
   const finalBalances = processedMovements.finalBalances;
 
   return (
-    <div className="min-h-screen bg-indigo-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-6 safe-top safe-bottom pt-24">
       <div className="max-w-full px-4 sm:px-6 lg:px-8">
         {/* Header con navegación */}
         <div className="card mb-4 sm:mb-6">
-          <div className="p-3 sm:p-4 lg:p-6 border-b border-indigo-100">
+          <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-100">
             <div className="flex items-center gap-3 mb-2 sm:mb-3">
               <button
                 onClick={onBack}
-                className="p-2 rounded-lg hover:bg-indigo-100 transition-colors duration-200 touch-target flex-shrink-0"
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 touch-target flex-shrink-0"
                 aria-label="Volver al resumen"
               >
                 <ArrowLeft size={18} className="text-gray-600" />
@@ -427,14 +427,14 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                 <h1 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
                   {prestamista.nombre} {prestamista.apellido}
                 </h1>
-                <p className="text-xs sm:text-sm text-indigo-700">
+                <p className="text-xs sm:text-sm text-gray-700">
                   Detalle completo de préstamos e intereses
                 </p>
               </div>
             </div>
             
             {/* Breadcrumb */}
-            <nav className="text-xs sm:text-sm text-indigo-700">
+            <nav className="text-xs sm:text-sm text-gray-700">
               <button 
                 onClick={onBack}
                 className="hover:text-gray-700 transition-colors"
@@ -455,14 +455,14 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {Object.entries(finalBalances).map(([currency, balance]) => (
                   <React.Fragment key={currency}>
-                    <div className="bg-indigo-50 p-3 sm:p-4 rounded-lg text-center">
-                      <DollarSign size={18} className="text-indigo-600 mx-auto mb-2" />
+                    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg text-center">
+                      <DollarSign size={18} className="text-gray-800 mx-auto mb-2" />
                       <p className="text-xs sm:text-sm font-medium text-gray-700">Principal Pendiente ({currency})</p>
-                      <p className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">
+                      <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-800">
                         {formatAmountWithCurrency(balance.principal, currency)}
                       </p>
                       {balance.effectiveRate > 0 && (
-                        <p className="text-xs text-indigo-500 mt-1">
+                        <p className="text-xs text-gray-500 mt-1">
                           Tasa: {balance.effectiveRate}% anual
                         </p>
                       )}
@@ -496,9 +496,9 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                 ))}
               </div>
             ) : (
-              <div className="bg-indigo-50 p-4 sm:p-6 rounded-lg text-center">
-                <Calendar size={28} className="sm:w-8 sm:h-8 text-indigo-600 mx-auto mb-3" />
-                <p className="text-sm sm:text-base text-indigo-700">No hay balances activos para este prestamista</p>
+              <div className="bg-gray-50 p-4 sm:p-6 rounded-lg text-center">
+                <Calendar size={28} className="sm:w-8 sm:h-8 text-gray-800 mx-auto mb-3" />
+                <p className="text-sm sm:text-base text-gray-700">No hay balances activos para este prestamista</p>
               </div>
             )}
 
@@ -513,41 +513,41 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                   {/* Tabla para desktop */}
                   <div className="hidden sm:block overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-indigo-50">
+                      <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Fecha
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Tipo
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Monto
                           </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Moneda
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Principal
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Interés Acum.
                           </th>
-                          <th className="px-4 py-3 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">
+                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Saldo Neto
                           </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {processedMovements.movements.map((mov, index) => (
-                          <tr key={index} className="hover:bg-indigo-50">
+                          <tr key={index} className="hover:bg-gray-50">
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
                               {new Date(mov.fecha).toLocaleDateString('es-ES')}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
                               <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                                 mov.subOperacion === 'PRESTAMO' 
-                                  ? 'bg-indigo-100 text-indigo-700' 
+                                  ? 'bg-gray-100 text-gray-700' 
                                   : 'bg-success-100 text-success-700'
                               }`}>
                                 {mov.subOperacion === 'PRESTAMO' ? 'Préstamo' : 'Retiro'}
@@ -559,7 +559,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
                               {mov.moneda}
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-right text-sm text-indigo-600 font-medium">
+                            <td className="px-4 py-3 whitespace-nowrap text-right text-sm text-gray-800 font-medium">
                               {formatAmountWithCurrency(mov.currentPrincipalSnapshot, mov.moneda)}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-right text-sm text-warning-600 font-medium">
@@ -585,36 +585,36 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
                             <div className="flex items-center gap-2">
                               <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                                 mov.subOperacion === 'PRESTAMO' 
-                                  ? 'bg-indigo-100 text-indigo-700' 
+                                  ? 'bg-gray-100 text-gray-700' 
                                   : 'bg-success-100 text-success-700'
                               }`}>
                                 {mov.subOperacion === 'PRESTAMO' ? 'Préstamo' : 'Retiro'}
                               </span>
-                              <span className="text-xs text-indigo-700">{mov.moneda}</span>
+                              <span className="text-xs text-gray-700">{mov.moneda}</span>
                             </div>
-                            <span className="text-xs text-indigo-700">
+                            <span className="text-xs text-gray-700">
                               {new Date(mov.fecha).toLocaleDateString('es-ES')}
                             </span>
                           </div>
                           
                           <div className="grid grid-cols-2 gap-2 text-sm">
                             <div>
-                              <p className="text-indigo-700 text-xs">Monto</p>
+                              <p className="text-gray-700 text-xs">Monto</p>
                               <p className="font-medium">
                                 {formatAmountWithCurrency(safeParseFloat(mov.monto), mov.moneda)}
                               </p>
                             </div>
                             <div>
-                              <p className="text-indigo-700 text-xs">Principal</p>
-                              <p className="font-medium text-indigo-600">
+                              <p className="text-gray-700 text-xs">Principal</p>
+                              <p className="font-medium text-gray-800">
                                 {formatAmountWithCurrency(mov.currentPrincipalSnapshot, mov.moneda)}
                               </p>
                             </div>
                           </div>
                           
-                          <div className="pt-2 border-t border-indigo-100">
+                          <div className="pt-2 border-t border-gray-100">
                             <div className="flex items-center justify-between">
-                              <span className="text-xs text-indigo-700">Saldo Neto</span>
+                              <span className="text-xs text-gray-700">Saldo Neto</span>
                               <span className={`font-bold ${
                                 mov.currentNetBalanceSnapshot < 0 ? 'text-success-600' : 'text-error-600'
                               }`}>
@@ -630,7 +630,7 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
               ) : (
                 <div className="text-center py-6 sm:py-8">
                   <Calendar size={28} className="sm:w-8 sm:h-8 mx-auto text-gray-300 mb-3" />
-                  <p className="text-sm sm:text-base text-indigo-700">No hay movimientos registrados para este prestamista</p>
+                  <p className="text-sm sm:text-base text-gray-700">No hay movimientos registrados para este prestamista</p>
                 </div>
               )}
             </div>
@@ -638,19 +638,19 @@ function PrestamistaDetailView({ prestamista, allMovements, clients, onBack }) {
             {/* Información de contacto */}
             <div className="border-t pt-24 sm:pt-6">
               <h3 className="font-semibold text-gray-900 mb-3">Información de Contacto</h3>
-              <div className="bg-indigo-50 rounded-lg p-3 sm:p-4 space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4 text-sm">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <Phone size={14} className="text-indigo-600" />
+                  <Phone size={14} className="text-gray-800" />
                   <span className="font-medium text-gray-700">Teléfono:</span> 
                   <span>{prestamista.telefono}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Hash size={14} className="text-indigo-600" />
+                  <Hash size={14} className="text-gray-800" />
                   <span className="font-medium text-gray-700">DNI:</span> 
                   <span>{prestamista.dni}</span>
                 </div>
                 <div className="flex items-start gap-2 sm:col-span-2">
-                  <MapPin size={14} className="text-indigo-600 mt-0.5" />
+                  <MapPin size={14} className="text-gray-800 mt-0.5" />
                   <span className="font-medium text-gray-700">Dirección:</span> 
                   <span>{prestamista.direccion}</span>
                 </div>

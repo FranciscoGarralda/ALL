@@ -278,11 +278,11 @@ const FormFieldGroup = ({
               rows={3}
               className={[
                 'w-full px-3 py-2 text-sm border rounded-lg transition-all duration-200',
-                'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
-                'placeholder:text-indigo-600 resize-vertical min-h-[80px]',
+                'focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-transparent',
+                'placeholder:text-gray-800 resize-vertical min-h-[80px]',
                 'sm:px-4 sm:py-2.5',
                 readOnly || calculated
-                  ? 'bg-indigo-50 text-gray-600 cursor-not-allowed border-gray-200'
+                  ? 'bg-gray-50 text-gray-600 cursor-not-allowed border-gray-200'
                   : 'bg-white text-gray-900 border-gray-300 hover:border-gray-400',
                 fieldError
                   ? 'border-error-500 focus:ring-error-500'

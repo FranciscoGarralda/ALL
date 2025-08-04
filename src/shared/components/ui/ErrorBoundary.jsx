@@ -35,7 +35,7 @@ class ErrorBoundary extends React.Component {
               </div>
             </div>
             
-            <div className="bg-indigo-50 rounded-lg p-4 mb-4">
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
               <p className="text-sm text-gray-700 mb-2">
                 <strong>Error:</strong> {this.state.error && this.state.error.toString()}
               </p>
@@ -49,7 +49,7 @@ class ErrorBoundary extends React.Component {
             
             <button
               onClick={() => window.location.reload()}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              className="w-full bg-gray-900 hover:bg-slate-800 text-white font-medium py-2 px-4 rounded-lg transition-colors"
             >
               Recargar Página
             </button>

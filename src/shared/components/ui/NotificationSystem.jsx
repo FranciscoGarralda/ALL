@@ -62,7 +62,7 @@ const NotificationSystem = ({ onNotificationCallback }) => {
       case 'warning':
         return `${baseStyles} bg-yellow-50 border-yellow-500 text-yellow-800`;
       default:
-        return `${baseStyles} bg-indigo-50 border-indigo-500 text-indigo-800`;
+        return `${baseStyles} bg-gray-50 border-gray-500 text-gray-900`;
     }
   };
 
@@ -92,7 +92,7 @@ const NotificationSystem = ({ onNotificationCallback }) => {
           
           <button
             onClick={() => removeNotification(notification.id)}
-            className="flex-shrink-0 ml-3 text-indigo-600 hover:text-gray-600 transition-colors"
+            className="flex-shrink-0 ml-3 text-gray-800 hover:text-gray-600 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>

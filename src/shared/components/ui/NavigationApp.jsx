@@ -33,18 +33,18 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
           transform origin-left group relative overflow-hidden
           ${!isSidebarOpen ? 'justify-center' : ''}
           ${isActive 
-            ? 'bg-gradient-to-r from-indigo-600 to-indigo-600 text-white shadow-xl scale-105' 
-            : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 hover:scale-102 hover:shadow-md'
+            ? 'bg-gray-900 text-white shadow-xl scale-105' 
+            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 hover:scale-102 hover:shadow-md'
           }
           ${!isActive && 'hover:translate-x-1'}
           touch-manipulation select-none
-          focus:outline-none focus:ring-4 focus:ring-indigo-500/30 focus:ring-offset-2
+          focus:outline-none focus:ring-1 focus:ring-gray-400/30 focus:ring-offset-2
         `}
         onClick={onClick}
         aria-current={isActive ? 'page' : undefined}
       >
         {/* Efecto de onda */}
-        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
         
         <Icon size={22} className={`
           flex-shrink-0 transition-all duration-200 relative z-10
@@ -95,7 +95,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
         ? `fixed top-0 left-0 h-screen z-40 w-64 ${!isSidebarOpen ? '-translate-x-full' : ''}`
         : `h-full z-30 ${isSidebarOpen ? 'w-64' : 'w-16'}`
       }
-      bg-white shadow-lg flex flex-col border-r border-gray-200
+      bg-gray-50 shadow-xl flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out
     `}>
       {/* Menú de navegación - ocupa todo el espacio */}
@@ -192,7 +192,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
   }, [isMobile, isSidebarOpen]);
 
   return (
-    <div className="layout-fixed flex flex-col bg-indigo-50">
+    <div className="layout-fixed flex flex-col bg-gray-50">
       {/* Header fijo */}
       <FixedHeader 
         isSidebarOpen={isSidebarOpen}
@@ -260,8 +260,8 @@ NavigationApp.displayName = 'NavigationApp';
 const WelcomePage = ({ onNavigate }) => (
   <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4 lg:p-8">
     <div className="text-center max-w-full px-4 sm:px-6 lg:px-8">
-      <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-        <DollarSign size={32} className="text-indigo-600" />
+      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+        <DollarSign size={32} className="text-gray-800" />
       </div>
       <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-gray-800 animate-fadeIn">
         Bienvenido a Alliance F&R
@@ -274,11 +274,11 @@ const WelcomePage = ({ onNavigate }) => (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         <button
           onClick={() => onNavigate('nuevoMovimiento')}
-          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-indigo-200 group"
+          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-gray-200 group"
         >
-          <Plus size={32} className="mx-auto mb-3 text-indigo-500 group-hover:scale-110 transition-transform" />
+          <Plus size={32} className="mx-auto mb-3 text-gray-500 group-hover:scale-110 transition-transform" />
           <span className="block font-semibold text-gray-800 mb-1">Nuevo Movimiento</span>
-          <span className="text-sm text-indigo-700">Crear operación financiera</span>
+          <span className="text-sm text-gray-700">Crear operación financiera</span>
         </button>
         
         <button
@@ -288,17 +288,17 @@ const WelcomePage = ({ onNavigate }) => (
         >
           <Wallet size={32} className="mx-auto mb-3 text-success-500 group-hover:scale-110 transition-transform" />
           <span className="block font-semibold text-gray-800 mb-1">Saldos</span>
-          <span className="text-sm text-indigo-700">Ver estado de cuentas</span>
+          <span className="text-sm text-gray-700">Ver estado de cuentas</span>
         </button>
         
         <button
           onClick={() => onNavigate('movimientos')}
-          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-indigo-200 group"
+          className="text-center p-6 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border-2 border-transparent hover:border-gray-200 group"
           style={{animationDelay: '0.2s'}}
         >
-          <List size={32} className="mx-auto mb-3 text-indigo-500 group-hover:scale-110 transition-transform" />
+          <List size={32} className="mx-auto mb-3 text-gray-500 group-hover:scale-110 transition-transform" />
           <span className="block font-semibold text-gray-800 mb-1">Movimientos</span>
-          <span className="text-sm text-indigo-700">Historial de transacciones</span>
+          <span className="text-sm text-gray-700">Historial de transacciones</span>
         </button>
       </div>
       
@@ -306,7 +306,7 @@ const WelcomePage = ({ onNavigate }) => (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
         <button
           onClick={() => onNavigate('utilidad')}
-          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-indigo-100 hover:border-gray-200"
+          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-gray-100 hover:border-gray-200"
           style={{animationDelay: '0.3s'}}
         >
           <TrendingUp size={20} className="mx-auto mb-2 text-emerald-500" />
@@ -315,16 +315,16 @@ const WelcomePage = ({ onNavigate }) => (
         
         <button
           onClick={() => onNavigate('arbitraje')}
-          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-indigo-100 hover:border-gray-200"
+          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-gray-100 hover:border-gray-200"
           style={{animationDelay: '0.4s'}}
         >
-          <ArrowUpDown size={20} className="mx-auto mb-2 text-indigo-500" />
+          <ArrowUpDown size={20} className="mx-auto mb-2 text-gray-500" />
           <span className="block font-medium text-gray-700">Arbitraje</span>
         </button>
         
         <button
           onClick={() => onNavigate('cuentas')}
-          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-indigo-100 hover:border-gray-200"
+          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-gray-100 hover:border-gray-200"
           style={{animationDelay: '0.5s'}}
         >
           <Building2 size={20} className="mx-auto mb-2 text-orange-500" />
@@ -333,7 +333,7 @@ const WelcomePage = ({ onNavigate }) => (
         
         <button
           onClick={() => onNavigate('clientes')}
-          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-indigo-100 hover:border-gray-200"
+          className="text-center p-4 bg-white rounded-lg shadow-soft hover:shadow-medium transition-all duration-200 animate-scaleIn border border-gray-100 hover:border-gray-200"
           style={{animationDelay: '0.6s'}}
         >
           <UserCheck size={20} className="mx-auto mb-2 text-purple-500" />
@@ -374,7 +374,7 @@ const ModuleInDevelopmentPage = ({ moduleName, onNavigate }) => (
       <p className="mb-2 text-gray-600">
         El módulo <strong>{moduleName}</strong> está actualmente en desarrollo.
       </p>
-      <p className="mb-6 text-sm text-indigo-700">
+      <p className="mb-6 text-sm text-gray-700">
         Estará disponible en una próxima actualización del sistema.
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">

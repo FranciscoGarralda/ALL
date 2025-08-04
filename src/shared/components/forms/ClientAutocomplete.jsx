@@ -222,7 +222,7 @@ const ClientAutocomplete = forwardRef(({
               onFocus={handleInputFocus}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
-              className={`w-full px-3 py-2 text-base border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder:text-indigo-600 sm:px-4 sm:py-2.5 sm:text-sm ${
+              className={`w-full px-3 py-2 text-base border rounded-lg transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-transparent placeholder:text-gray-800 sm:px-4 sm:py-2.5 sm:text-sm ${
                 error 
                   ? 'border-error-500 focus:ring-error-500' 
                   : 'bg-white text-gray-900 border-gray-300 hover:border-gray-400'
@@ -235,7 +235,7 @@ const ClientAutocomplete = forwardRef(({
               <button
                 type="button"
                 onClick={clearSelection}
-                className="absolute right-8 top-1/2 -translate-y-1/2 p-1 text-indigo-600 hover:text-gray-600"
+                className="absolute right-8 top-1/2 -translate-y-1/2 p-1 text-gray-800 hover:text-gray-600"
               >
                 <X size={16} />
               </button>
@@ -245,7 +245,7 @@ const ClientAutocomplete = forwardRef(({
             <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
               <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
                 isOpen ? 'rotate-180' : ''
-              } text-indigo-700`} />
+              } text-gray-700`} />
             </div>
           </div>
 
@@ -259,22 +259,22 @@ const ClientAutocomplete = forwardRef(({
                       key={client.id || client.nombre || index}
                       type="button"
                       onClick={() => handleClientSelect(client)}
-                      className={`client-item w-full px-4 py-3 text-left focus:outline-none border-b border-indigo-100 transition-colors duration-150 ${
+                      className={`client-item w-full px-4 py-3 text-left focus:outline-none border-b border-gray-100 transition-colors duration-150 ${
                         index === selectedIndex 
-                          ? 'bg-indigo-50 text-indigo-900' 
-                          : 'hover:bg-indigo-50 focus:bg-indigo-50'
+                          ? 'bg-gray-50 text-gray-900' 
+                          : 'hover:bg-gray-50 focus:bg-gray-50'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
-                          <User size={16} className="text-indigo-600" />
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <User size={16} className="text-gray-800" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">
                             {client.nombre} {client.apellido || ''}
                           </p>
                           {client.telefono && (
-                            <p className="text-xs text-indigo-700 truncate">
+                            <p className="text-xs text-gray-700 truncate">
                               {client.telefono}
                             </p>
                           )}
@@ -287,7 +287,7 @@ const ClientAutocomplete = forwardRef(({
                   <button
                     type="button"
                     onClick={handleCreateClient}
-                    className="create-client-item w-full px-4 py-3 text-left focus:outline-none border-t border-gray-200 bg-indigo-50 hover:bg-indigo-100 transition-colors duration-150"
+                    className="create-client-item w-full px-4 py-3 text-left focus:outline-none border-t border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors duration-150"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -303,7 +303,7 @@ const ClientAutocomplete = forwardRef(({
                 </>
               ) : (
                 <>
-                  <div className="px-4 py-3 text-sm text-indigo-700 text-center border-b border-gray-200">
+                  <div className="px-4 py-3 text-sm text-gray-700 text-center border-b border-gray-200">
                     {inputValue ? 'No se encontraron clientes' : 'No hay clientes disponibles'}
                   </div>
                   
@@ -311,7 +311,7 @@ const ClientAutocomplete = forwardRef(({
                   <button
                     type="button"
                     onClick={handleCreateClient}
-                    className="create-client-item w-full px-4 py-3 text-left focus:outline-none bg-indigo-50 hover:bg-indigo-100 transition-colors duration-150"
+                    className="create-client-item w-full px-4 py-3 text-left focus:outline-none bg-gray-50 hover:bg-gray-100 transition-colors duration-150"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -336,7 +336,7 @@ const ClientAutocomplete = forwardRef(({
           type="button"
           onClick={handleCreateClient}
 
-          className="flex-shrink-0 px-3 py-2 sm:px-3.5 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="flex-shrink-0 px-3 py-2 sm:px-3.5 sm:py-2.5 bg-gray-900 hover:bg-slate-800 text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-1 focus:ring-gray-500 focus:ring-offset-2"
           title="Crear nuevo cliente"
           aria-label="Crear nuevo cliente"
         >

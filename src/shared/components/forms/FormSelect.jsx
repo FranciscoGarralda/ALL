@@ -57,15 +57,15 @@ const FormSelect = forwardRef(({
   // Select classes with responsive design and states
   const selectClasses = [
     'w-full px-4 py-3 text-sm sm:text-base font-medium border rounded-lg transition-all duration-200 appearance-none',
-    'focus:outline-none focus:ring-4 focus:ring-offset-0',
+    'focus:outline-none focus:ring-2 focus:ring-offset-0',
     'placeholder-gray-500 focus:placeholder-gray-600',
-    'bg-white hover:bg-indigo-50 focus:bg-white',
+    'bg-white hover:bg-gray-50 focus:bg-white',
     // State-based styling
     error 
       ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20 text-red-900' 
-      : 'border-gray-200 hover:border-gray-300 focus:border-indigo-500 focus:ring-indigo-500/20 text-gray-900',
+      : 'border-gray-200 hover:border-gray-300 focus:border-gray-500 focus:ring-gray-500/20 text-gray-900',
     disabled || readOnly
-      ? 'bg-indigo-100 cursor-not-allowed opacity-60 hover:bg-indigo-100' 
+      ? 'bg-gray-100 cursor-not-allowed opacity-60 hover:bg-gray-100' 
       : '',
     // Additional classes
     className
@@ -122,7 +122,7 @@ const FormSelect = forwardRef(({
         <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
           <ChevronDown 
             className={`w-4 h-4 transition-colors duration-200 ${
-              disabled ? 'text-indigo-600' : 'text-indigo-700'
+              disabled ? 'text-gray-800' : 'text-gray-700'
             }`} 
           />
         </div>

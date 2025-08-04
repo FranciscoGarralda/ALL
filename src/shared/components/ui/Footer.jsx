@@ -11,7 +11,7 @@ const Footer = () => {
   return (
     <footer className="bg-white border-t border-gray-200 flex-shrink-0">
       <div className="px-4 py-2">
-        <div className="flex justify-between items-center text-xs text-indigo-700">
+        <div className="flex justify-between items-center text-xs text-gray-700">
           <span>© {currentYear} Alliance F&R</span>
           <div className="flex items-center space-x-1">
             <span>Hecho con</span>

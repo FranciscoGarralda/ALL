@@ -73,8 +73,8 @@ const MixedPaymentGroup = ({
                     onClick={() => onPaymentChange(payment.id || index + 1, 'socio', option.value)}
                     className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all ${
                       payment.socio === option.value
-                        ? 'bg-indigo-600 text-white border-indigo-600'
-                        : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
+                        ? 'bg-gray-900 text-white border-gray-900'
+                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
                     }`}
                   >
                     {option.label}
@@ -91,8 +91,8 @@ const MixedPaymentGroup = ({
                     onClick={() => onPaymentChange(payment.id || index + 1, 'tipo', option.value)}
                     className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all ${
                       payment.tipo === option.value
-                        ? 'bg-indigo-600 text-white border-indigo-600'
-                        : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
+                        ? 'bg-gray-900 text-white border-gray-900'
+                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
                     }`}
                   >
                     {option.label}
@@ -144,7 +144,7 @@ const MixedPaymentGroup = ({
             type="button"
             onClick={onAddPayment}
   
-            className="flex items-center space-x-2 px-3 py-2 text-sm text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors border border-indigo-200 hover:border-indigo-300"
+            className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-800 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors border border-gray-200 hover:border-gray-300"
           >
             <Plus size={16} />
             <span>Añadir Pago</span>
