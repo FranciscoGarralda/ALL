@@ -78,7 +78,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
               value === 'pago_mixto'
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                 : isActive('socio1', 'socio')
-                  ? 'bg-gray-900 text-white border-gray-900'
+                  ? 'bg-indigo-600 text-white border-indigo-600'
                   : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
             }`}
           >
@@ -91,7 +91,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
               value === 'pago_mixto'
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                 : isActive('socio2', 'socio')
-                  ? 'bg-gray-900 text-white border-gray-900'
+                  ? 'bg-indigo-600 text-white border-indigo-600'
                   : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
             }`}
           >
@@ -104,7 +104,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
               value === 'pago_mixto'
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                 : isActive('all', 'socio')
-                  ? 'bg-gray-900 text-white border-gray-900'
+                  ? 'bg-indigo-600 text-white border-indigo-600'
                   : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
             }`}
           >
@@ -121,7 +121,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
               value === 'pago_mixto'
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                 : isActive('efectivo', 'type')
-                  ? 'bg-gray-900 text-white border-gray-900'
+                  ? 'bg-indigo-600 text-white border-indigo-600'
                   : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
             }`}
           >
@@ -134,7 +134,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
               value === 'pago_mixto'
                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                 : isActive('digital', 'type')
-                  ? 'bg-gray-900 text-white border-gray-900'
+                  ? 'bg-indigo-600 text-white border-indigo-600'
                   : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
             }`}
           >
@@ -145,7 +145,7 @@ export const WalletTCButtonGroup = React.forwardRef(({
             onClick={() => handleButtonClick('pago_mixto', 'special')}
             className={`px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-colors ${
               isActive('pago_mixto', 'special')
-                ? 'bg-gray-900 text-white border-gray-900'
+                ? 'bg-indigo-600 text-white border-indigo-600'
                 : 'bg-white text-gray-600 border-gray-200 hover:bg-indigo-50 hover:border-gray-300'
             }`}
           >
