@@ -36,6 +36,14 @@ export const socios = [
 ];
 
 /**
+ * Partner options without "Otro" for specific operations
+ */
+export const sociosSinOtro = [
+  { value: 'socio1', label: 'Socio 1' },
+  { value: 'socio2', label: 'Socio 2' },
+];
+
+/**
  * Operation status options - Updated for Estado de retiro
  */
 export const estados = [

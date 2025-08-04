@@ -21,7 +21,7 @@ const ButtonSelectGroup = ({
   const getButtonClasses = (optionValue) => {
     const isActive = value === optionValue;
     const baseClasses = isMoneda 
-      ? 'px-3 py-2 text-sm font-medium flex items-center justify-center rounded-lg border transition-all'
+      ? 'px-2 py-3 text-sm font-medium flex items-center justify-center rounded-lg border transition-all min-w-[60px]'
       : 'px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all';
     
     return `${baseClasses} ${
@@ -48,6 +48,8 @@ const ButtonSelectGroup = ({
     }
     // Para operaciones (6 opciones), usar 3 columnas
     if (options.length === 6) return 'grid-cols-2 sm:grid-cols-3';
+    // Para 2 opciones, mostrar lado a lado
+    if (options.length === 2) return 'grid-cols-2';
     return options.length > 6 ? 'grid-cols-3' : options.length > 3 ? 'grid-cols-2' : 'grid-cols-1';
   };
 
@@ -72,7 +74,22 @@ const ButtonSelectGroup = ({
               className={getButtonClasses(optionValue)}
               disabled={readOnly}
             >
-              {optionLabel}
+              {isMoneda ? (
+                // Para monedas, separar emoji y texto
+                (() => {
+                  const parts = optionLabel.split(' ');
+                  const emoji = parts[0];
+                  const code = parts[1];
+                  return (
+                    <div className="flex flex-col items-center">
+                      <span className="text-lg">{emoji}</span>
+                      <span className="text-xs mt-0.5">{code}</span>
+                    </div>
+                  );
+                })()
+              ) : (
+                optionLabel
+              )}
             </button>
           );
         })}

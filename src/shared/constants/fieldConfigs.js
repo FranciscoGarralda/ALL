@@ -1,4 +1,4 @@
-import { monedas, cuentas, socios, proveedoresCC, prestamistaClientsDefault, walletTypes, walletTypesTC } from './constants';
+import { monedas, cuentas, socios, sociosSinOtro, proveedoresCC, prestamistaClientsDefault, walletTypes, walletTypesTC } from './constants';
 import { safeParseFloat } from '../services/safeOperations';
 
 /**
@@ -221,7 +221,7 @@ export const specificFieldsConfig = {
         { label: 'Motivo (obligatorio)', name: 'detalle', type: 'text', placeholder: 'Descripción del ajuste...', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Autorizado por', name: 'por', type: 'select', options: socios, required: true, gridCols: 'col-span-2' }
+        { label: 'Autorizado por', name: 'por', type: 'select', options: sociosSinOtro, required: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: false,
@@ -242,7 +242,7 @@ export const specificFieldsConfig = {
         { label: 'Motivo (obligatorio)', name: 'detalle', type: 'text', placeholder: 'Descripción del gasto...', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Autorizado por', name: 'por', type: 'select', options: socios, required: true, gridCols: 'col-span-2' }
+        { label: 'Autorizado por', name: 'por', type: 'select', options: sociosSinOtro, required: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: false,
