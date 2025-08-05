@@ -1,7 +1,11 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Head from 'next/head';
 import { safeLocalStorage } from '../shared/services/safeOperations';
+import { apiService } from '../shared/services/api';
 // import { handleStorageError } from '../shared/services/errorHandler';
+
+// Import login component
+import LoginPage from '../features/auth/LoginPage';
 
 // Import navigation components
 import { 
@@ -129,6 +133,11 @@ const LoadingSpinner = () => (
 export default function MainApp() {
   const { currentPage, navigateTo, navigationParams } = useNavigation('mainMenu');
   
+  // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  
   // Component map for intelligent preloading
   const componentMap = {
     'operaciones': FinancialOperationsApp,
@@ -148,6 +157,53 @@ export default function MainApp() {
     enablePredictive: true,
     preloadThreshold: 0.2 // Preload if 20% probability
   });
+  
+  // Check authentication on mount
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+  
+  // Check if user is authenticated
+  const checkAuthStatus = async () => {
+    try {
+      const token = apiService.getToken();
+      const savedUser = localStorage.getItem('user');
+      
+      if (token && savedUser) {
+        // Verify token is still valid
+        const response = await apiService.getMe();
+        if (response.success) {
+          setCurrentUser(response.user);
+          setIsAuthenticated(true);
+        } else {
+          // Token invalid, clear everything
+          handleLogout();
+        }
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+      // If error, assume not authenticated
+      handleLogout();
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
+  
+  // Handle successful login
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+    setIsAuthenticated(true);
+    navigateTo('mainMenu');
+  };
+  
+  // Handle logout
+  const handleLogout = () => {
+    apiService.logout();
+    localStorage.removeItem('user');
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    navigateTo('mainMenu');
+  };
   
   // Global state management with performance optimizations
   const [movements, setMovements] = useState([]);
@@ -478,9 +534,28 @@ export default function MainApp() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <NavigationApp currentPage={currentPage} onNavigate={navigateTo}>
-        {renderCurrentPage()}
-      </NavigationApp>
+      {/* Show loading spinner while checking authentication */}
+      {checkingAuth ? (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Verificando autenticación...</p>
+          </div>
+        </div>
+      ) : !isAuthenticated ? (
+        /* Show login page if not authenticated */
+        <LoginPage onLoginSuccess={handleLoginSuccess} />
+      ) : (
+        /* Show main app if authenticated */
+        <NavigationApp 
+          currentPage={currentPage} 
+          onNavigate={navigateTo}
+          currentUser={currentUser}
+          onLogout={handleLogout}
+        >
+          {renderCurrentPage()}
+        </NavigationApp>
+      )}
     </>
   );
 }
