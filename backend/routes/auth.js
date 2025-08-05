@@ -66,14 +66,14 @@ router.post('/register', [
 // @desc    Login user
 // @access  Public
 router.post('/login', [
-  body('email').isEmail().withMessage('Email inválido'),
+  body('email').notEmpty().withMessage('Usuario es requerido'),
   body('password').notEmpty().withMessage('Contraseña es requerida')
 ], handleValidationErrors, async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Check for user
-    const user = await User.findOne({ email }).select('+password');
+    // Check for user by name (using email field as username)
+    const user = await User.findOne({ name: email }).select('+password');
 
     if (!user) {
       return res.status(401).json({

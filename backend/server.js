@@ -112,14 +112,14 @@ async function initializeAdmin() {
     
     if (!adminExists) {
       const adminUser = await User.create({
-        name: process.env.ADMIN_NAME,
-        email: process.env.ADMIN_EMAIL,
+        name: process.env.ADMIN_EMAIL, // Usando ADMIN_EMAIL como username
+        email: `${process.env.ADMIN_EMAIL}@sistema.com`, // Email opcional
         password: process.env.ADMIN_PASSWORD,
         role: 'admin'
       });
       
       console.log('✅ Usuario administrador creado exitosamente');
-      console.log('📧 Email:', process.env.ADMIN_EMAIL);
+      console.log('👤 Usuario:', process.env.ADMIN_EMAIL);
       console.log('🔐 Contraseña:', process.env.ADMIN_PASSWORD);
       console.log('⚠️  Por favor, cambie la contraseña después del primer login');
     }
