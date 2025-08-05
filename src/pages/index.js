@@ -78,6 +78,15 @@ const PrestamistasApp = createLazyComponent(
   }
 );
 
+const SaldosApp = createLazyComponent(
+  () => import('../features/balances/SaldosApp'),
+  'SaldosApp',
+  { 
+    preloadDelay: 2000,
+    fallback: <AdvancedLoadingFallback componentName="Saldos" estimatedLoadTime={300} />
+  }
+);
+
 const ComisionesApp = createLazyComponent(
   () => import('../features/commissions/ComisionesApp'),
   'ComisionesApp',
@@ -376,7 +385,13 @@ export default function MainApp() {
         );
       
       case 'saldos':
-        return <ModuleInDevelopmentPage moduleName="Saldos" onNavigate={navigateTo} />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <SaldosApp 
+              movements={movements}
+            />
+          </Suspense>
+        );
       
       case 'cuentas':
         return (
