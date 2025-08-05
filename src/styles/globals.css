@@ -5,13 +5,13 @@
 /* Modern Design System Variables */
 :root {
   /* Modern color palette with better contrast */
-  --color-primary: 37 99 235; /* Blue-600 - más vibrante */
-  --color-primary-dark: 29 78 216; /* Blue-700 */
-  --color-primary-light: 59 130 246; /* Blue-500 */
+  --color-primary: 17 24 39; /* Gray-900 - más oscuro */
+  --color-primary-dark: 31 41 55; /* Gray-800 */
+  --color-primary-light: 55 65 81; /* Gray-700 */
   --color-success: 22 163 74; /* Green-600 - mejor contraste */
   --color-warning: 234 88 12; /* Orange-600 - más intenso */
   --color-error: 220 38 38; /* Red-600 - más vibrante */
-  --color-info: 37 99 235; /* Blue-600 */
+  --color-info: 75 85 99; /* Gray-600 */
   
   /* Neutral colors with better contrast */
   --color-gray-50: 249 250 251;
@@ -57,50 +57,50 @@
 /* Keyboard Navigation Styles */
 .keyboard-navigation-active .keyboard-focused {
   /* Indicador visual de foco para navegación por teclado */
-  outline: 2px solid #3b82f6 !important;
+  outline: 2px solid #374151 !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important;
+  box-shadow: 0 0 0 4px rgba(55, 65, 81, 0.2) !important;
   border-radius: 6px;
   transition: all 0.15s ease-in-out;
 }
 
 .keyboard-navigation-active .keyboard-focused.focus-button {
   /* Estilo especial para botones */
-  background-color: #eff6ff !important;
+  background-color: #f9fafb !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(55, 65, 81, 0.3) !important;
 }
 
 .keyboard-navigation-active .keyboard-focused.focus-input {
   /* Estilo especial para inputs */
-  border-color: #3b82f6 !important;
+  border-color: #374151 !important;
   background-color: #fefefe !important;
 }
 
 .keyboard-navigation-active .keyboard-focused.focus-select {
   /* Estilo especial para selects */
-  border-color: #3b82f6 !important;
-  background-color: #eff6ff !important;
+  border-color: #374151 !important;
+  background-color: #f9fafb !important;
 }
 
 .keyboard-navigation-active .keyboard-focused.focus-menu-item {
   /* Estilo especial para items de menú */
-  background-color: #3b82f6 !important;
+  background-color: #374151 !important;
   color: white !important;
   outline: none !important;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4) !important;
+  box-shadow: 0 2px 8px rgba(55, 65, 81, 0.4) !important;
 }
 
 /* Animaciones suaves para el foco */
 @keyframes focusRing {
   0% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 0 0 rgba(55, 65, 81, 0.4);
   }
   50% {
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 4px rgba(55, 65, 81, 0.2);
   }
   100% {
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 4px rgba(55, 65, 81, 0.2);
   }
 }
 
@@ -117,19 +117,19 @@
 /* Estilos para diferentes tipos de elementos focuseables */
 .keyboard-navigation-active button.keyboard-focused,
 .keyboard-navigation-active [role="button"].keyboard-focused {
-  background-color: #eff6ff;
-  border-color: #3b82f6;
+  background-color: #f9fafb;
+  border-color: #374151;
 }
 
 .keyboard-navigation-active input.keyboard-focused,
 .keyboard-navigation-active textarea.keyboard-focused {
-  border-color: #3b82f6;
+  border-color: #374151;
   background-color: #fefefe;
 }
 
 .keyboard-navigation-active select.keyboard-focused {
-  border-color: #3b82f6;
-  background-color: #eff6ff;
+  border-color: #374151;
+  background-color: #f9fafb;
 }
 
 /* Indicador de contexto activo */
@@ -144,7 +144,7 @@
   left: -2px;
   right: -2px;
   bottom: -2px;
-  border: 1px dashed #3b82f6;
+  border: 1px dashed #374151;
   border-radius: 8px;
   opacity: 0.5;
   pointer-events: none;
@@ -230,7 +230,7 @@
   }
   
   *:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid #374151;
     outline-offset: 2px;
     /* Optimize focus animations */
     transition: outline-offset 0.1s ease;
@@ -266,14 +266,14 @@
 @layer components {
   /* Enhanced Button styles with better hover states */
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg focus:ring-4 focus:ring-blue-500/30 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-gray-900 hover:bg-gray-800 active:bg-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg focus:ring-4 focus:ring-gray-700/30 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
     transform: translateY(0);
-    background: linear-gradient(135deg, rgb(37 99 235) 0%, rgb(29 78 216) 100%);
+    background: linear-gradient(135deg, rgb(17 24 39) 0%, rgb(31 41 55) 100%);
   }
   
   .btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, rgb(29 78 216) 0%, rgb(30 64 175) 100%);
+    background: linear-gradient(135deg, rgb(31 41 55) 0%, rgb(55 65 81) 100%);
   }
   
   .btn-primary:active:not(:disabled) {
@@ -335,13 +335,13 @@
   
   /* Modern Form Inputs with better focus states */
   .form-input {
-    @apply w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 placeholder-gray-500 text-gray-900 font-medium;
+    @apply w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-gray-700/20 focus:border-gray-700 transition-all duration-200 placeholder-gray-500 text-gray-900 font-medium;
     background-color: #ffffff;
   }
   
   .form-input:focus {
-    @apply bg-white border-blue-500;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    @apply bg-white border-gray-700;
+    box-shadow: 0 0 0 4px rgba(55, 65, 81, 0.1);
   }
   
   .form-input:hover:not(:focus):not(:disabled) {

@@ -488,8 +488,8 @@ export const getStatusBadge = (status) => {
       label: 'Finalizado'
     },
     'pendiente': {
-      bg: 'bg-blue-100',
-      text: 'text-blue-800',
+      bg: 'bg-gray-100',
+      text: 'text-gray-800',
       label: 'Pendiente'
     }
   };
