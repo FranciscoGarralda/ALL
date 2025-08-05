@@ -2,16 +2,19 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Wallet, TrendingUp, TrendingDown, DollarSign, CreditCard, Banknote } from 'lucide-react';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
-import { apiService } from '../../shared/services/api';
+// import { apiService } from '../../shared/services/api'; // TEMPORAL: Comentado
 import { monedas } from '../../shared/constants';
 
-function SaldosApp() {
+function SaldosApp({ movements = [] }) { // TEMPORAL: Vuelvo a recibir movements como prop
   const [filterSocio, setFilterSocio] = useState('all'); // 'all', 'socio1', 'socio2', 'all_wallet'
   const [filterTipo, setFilterTipo] = useState('all'); // 'all', 'digital', 'efectivo'
-  const [movements, setMovements] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // TEMPORAL: Comentado para no usar API
+  // const [movements, setMovements] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
 
+  // TEMPORAL: Comentado para no cargar desde API
+  /*
   // Cargar movimientos desde la API
   useEffect(() => {
     loadMovements();
@@ -32,6 +35,7 @@ function SaldosApp() {
       setLoading(false);
     }
   };
+  */
 
   // Calcular saldos por socio, tipo y moneda
   const saldos = useMemo(() => {
@@ -186,33 +190,10 @@ function SaldosApp() {
             </div>
           </div>
 
-          {/* Loading State */}
-          {loading && (
-            <div className="p-8 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Cargando movimientos...</p>
-            </div>
-          )}
-
-          {/* Error State */}
-          {error && !loading && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg m-4">
-              <p className="text-red-800 font-medium">Error al cargar los datos</p>
-              <p className="text-red-600 text-sm mt-1">{error}</p>
-              <button
-                onClick={loadMovements}
-                className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Reintentar
-              </button>
-            </div>
-          )}
-
-          {/* Content */}
-          {!loading && !error && (
-            <>
-              {/* Filtros */}
-              <div className="p-3 sm:p-4 space-y-4">
+          {/* Content - TEMPORAL: Sin loading ni error states */}
+          <>
+            {/* Filtros */}
+            <div className="p-3 sm:p-4 space-y-4">
                 {/* Filtro por Socio */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Socio</label>
@@ -396,7 +377,7 @@ function SaldosApp() {
                 )}
               </div>
             </>
-          )}
+          </div>
         </div>
       </div>
     </div>

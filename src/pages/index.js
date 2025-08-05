@@ -134,9 +134,13 @@ export default function MainApp() {
   const { currentPage, navigateTo, navigationParams } = useNavigation('mainMenu');
   
   // Authentication state
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // TEMPORAL: true para no requerir login
+  const [currentUser, setCurrentUser] = useState({
+    name: 'Francisco Garralda',
+    email: 'francisco@garralda.com',
+    role: 'admin'
+  }); // TEMPORAL: usuario por defecto
+  const [checkingAuth, setCheckingAuth] = useState(false); // TEMPORAL: false para no mostrar loading
   
   // Component map for intelligent preloading
   const componentMap = {
@@ -158,6 +162,8 @@ export default function MainApp() {
     preloadThreshold: 0.2 // Preload if 20% probability
   });
   
+  // TEMPORAL: Comentado para no requerir autenticación
+  /*
   // Check authentication on mount
   useEffect(() => {
     checkAuthStatus();
@@ -188,6 +194,7 @@ export default function MainApp() {
       setCheckingAuth(false);
     }
   };
+  */
   
   // Handle successful login
   const handleLoginSuccess = (user) => {
@@ -198,10 +205,13 @@ export default function MainApp() {
   
   // Handle logout
   const handleLogout = () => {
+    // TEMPORAL: No hacer logout real
+    /*
     apiService.logout();
     localStorage.removeItem('user');
     setCurrentUser(null);
     setIsAuthenticated(false);
+    */
     navigateTo('mainMenu');
   };
   
@@ -443,7 +453,7 @@ export default function MainApp() {
       case 'saldos':
         return (
           <Suspense fallback={<LoadingSpinner />}>
-            <SaldosApp />
+            <SaldosApp movements={movements} />
           </Suspense>
         );
       
