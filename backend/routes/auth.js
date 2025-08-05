@@ -22,24 +22,29 @@ const handleValidationErrors = (req, res, next) => {
 // @access  Public
 router.post('/register', [
   body('name').notEmpty().withMessage('Nombre es requerido'),
+  body('username').notEmpty().withMessage('Nombre de usuario es requerido'),
   body('email').isEmail().withMessage('Email inválido'),
   body('password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres')
 ], handleValidationErrors, async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, username, email, password } = req.body;
 
-    // Check if user exists
-    const userExists = await User.findOne({ email });
+    // Check if user exists by email or username
+    const userExists = await User.findOne({ 
+      $or: [{ email }, { username }] 
+    });
+    
     if (userExists) {
       return res.status(400).json({
         success: false,
-        message: 'El usuario ya existe'
+        message: userExists.email === email ? 'El email ya está registrado' : 'El nombre de usuario ya existe'
       });
     }
 
     // Create user
     const user = await User.create({
       name,
+      username,
       email,
       password
     });
@@ -52,6 +57,7 @@ router.post('/register', [
       token,
       user: {
         id: user._id,
+        username: user.username,
         name: user.name,
         email: user.email,
         role: user.role
@@ -70,10 +76,10 @@ router.post('/login', [
   body('password').notEmpty().withMessage('Contraseña es requerida')
 ], handleValidationErrors, async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body; // 'email' field is used as username in frontend
 
-    // Check for user by name (using email field as username)
-    const user = await User.findOne({ name: email }).select('+password');
+    // Check for user by username
+    const user = await User.findOne({ username: email }).select('+password');
 
     if (!user) {
       return res.status(401).json({
@@ -111,6 +117,7 @@ router.post('/login', [
       token,
       user: {
         id: user._id,
+        username: user.username,
         name: user.name,
         email: user.email,
         role: user.role

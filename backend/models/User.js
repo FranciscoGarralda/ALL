@@ -7,11 +7,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Por favor ingrese un nombre'],
     trim: true,
-    unique: true,
     maxlength: [50, 'El nombre no puede tener más de 50 caracteres']
+  },
+  username: {
+    type: String,
+    required: [true, 'Por favor ingrese un nombre de usuario'],
+    unique: true,
+    trim: true,
+    maxlength: [30, 'El nombre de usuario no puede tener más de 30 caracteres']
   },
   email: {
     type: String,
+    required: [true, 'Por favor ingrese un email'],
+    unique: true,
     lowercase: true,
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -66,7 +74,7 @@ userSchema.pre('findOneAndUpdate', function(next) {
 // Sign JWT and return
 userSchema.methods.getSignedJwtToken = function() {
   return jwt.sign(
-    { id: this._id, name: this.name, email: this.email, role: this.role },
+    { id: this._id, username: this.username, name: this.name, email: this.email, role: this.role },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE }
   );
