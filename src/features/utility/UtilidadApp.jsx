@@ -251,7 +251,7 @@ function UtilidadApp({ movements, onNavigate }) {
   const getUtilityColor = (currencyType, index) => {
     const colors = [
       '#10B981', // Verde para VENTA
-      '#3B82F6', // Azul para ARBITRAJE
+      '#374151', // Gris oscuro para ARBITRAJE
       '#F59E0B', // Amarillo
       '#EF4444', // Rojo
       '#8B5CF6', // Violeta

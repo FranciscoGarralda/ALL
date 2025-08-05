@@ -169,7 +169,7 @@ function ComisionesApp({ movements, onNavigate }) {
   // Función para obtener colores para cada moneda
   const getCurrencyColor = (currency, index) => {
     const colors = [
-      '#3B82F6', // Azul
+      '#374151', // Gris oscuro
       '#10B981', // Verde
       '#F59E0B', // Amarillo
       '#EF4444', // Rojo
