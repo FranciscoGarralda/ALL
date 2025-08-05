@@ -380,7 +380,6 @@ function SaldosApp({ movements = [] }) { // TEMPORAL: Vuelvo a recibir movements
           </div>
         </div>
       </div>
-    </div>
   );
 }
 
