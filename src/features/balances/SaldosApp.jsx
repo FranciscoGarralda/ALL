@@ -1,12 +1,37 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Wallet, TrendingUp, TrendingDown, DollarSign, CreditCard, Banknote } from 'lucide-react';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
+import { apiService } from '../../shared/services/api';
 import { monedas } from '../../shared/constants';
 
-function SaldosApp({ movements }) {
+function SaldosApp() {
   const [filterSocio, setFilterSocio] = useState('all'); // 'all', 'socio1', 'socio2', 'all_wallet'
   const [filterTipo, setFilterTipo] = useState('all'); // 'all', 'digital', 'efectivo'
+  const [movements, setMovements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Cargar movimientos desde la API
+  useEffect(() => {
+    loadMovements();
+  }, []);
+
+  const loadMovements = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await apiService.getMovements({ limit: 1000 });
+      if (response.success) {
+        setMovements(response.data);
+      }
+    } catch (err) {
+      setError(err.message || 'Error al cargar los movimientos');
+      console.error('Error loading movements:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Calcular saldos por socio, tipo y moneda
   const saldos = useMemo(() => {
@@ -161,189 +186,216 @@ function SaldosApp({ movements }) {
             </div>
           </div>
 
-          {/* Filtros */}
-          <div className="p-3 sm:p-4 space-y-4">
-            {/* Filtro por Socio */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Socio</label>
-              <div className="grid grid-cols-4 gap-2">
-                <button
-                  onClick={() => setFilterSocio('all')}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
-                    filterSocio === 'all'
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  Todos
-                </button>
-                <button
-                  onClick={() => setFilterSocio('socio1')}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
-                    filterSocio === 'socio1'
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  Socio 1
-                </button>
-                <button
-                  onClick={() => setFilterSocio('socio2')}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
-                    filterSocio === 'socio2'
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  Socio 2
-                </button>
-                <button
-                  onClick={() => setFilterSocio('all_wallet')}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
-                    filterSocio === 'all_wallet'
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  ALL
-                </button>
-              </div>
+          {/* Loading State */}
+          {loading && (
+            <div className="p-8 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Cargando movimientos...</p>
             </div>
+          )}
 
-            {/* Filtro por Tipo */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  onClick={() => setFilterTipo('all')}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
-                    filterTipo === 'all'
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  Todos
-                </button>
-                <button
-                  onClick={() => setFilterTipo('digital')}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors flex items-center justify-center gap-2 ${
-                    filterTipo === 'digital'
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  <CreditCard size={16} />
-                  Digital
-                </button>
-                <button
-                  onClick={() => setFilterTipo('efectivo')}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors flex items-center justify-center gap-2 ${
-                    filterTipo === 'efectivo'
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  <Banknote size={16} />
-                  Efectivo
-                </button>
-              </div>
+          {/* Error State */}
+          {error && !loading && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg m-4">
+              <p className="text-red-800 font-medium">Error al cargar los datos</p>
+              <p className="text-red-600 text-sm mt-1">{error}</p>
+              <button
+                onClick={loadMovements}
+                className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Reintentar
+              </button>
             </div>
-          </div>
-        </div>
+          )}
 
-        {/* Resumen de Totales */}
-        {totalesPorMoneda.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Totales por Moneda</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {totalesPorMoneda.map(total => (
-                <div 
-                  key={total.moneda}
-                  className={`p-4 rounded-lg border-2 ${
-                    total.total >= 0 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
-                  }`}
-                >
-                  <div className="text-lg font-bold mb-1">
-                    {total.monedaLabel}
-                  </div>
-                  <div className={`text-2xl font-bold ${
-                    total.total >= 0 ? 'text-green-700' : 'text-red-700'
-                  }`}>
-                    {formatAmountWithCurrency(Math.abs(total.total), total.moneda)}
-                  </div>
-                  <div className="text-xs text-gray-600 mt-2 space-y-1">
-                    <div className="flex items-center gap-1">
-                      <TrendingUp size={12} className="text-green-600" />
-                      <span>Ingresos: {formatAmountWithCurrency(total.ingresos, total.moneda)}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <TrendingDown size={12} className="text-red-600" />
-                      <span>Egresos: {formatAmountWithCurrency(total.egresos, total.moneda)}</span>
-                    </div>
+          {/* Content */}
+          {!loading && !error && (
+            <>
+              {/* Filtros */}
+              <div className="p-3 sm:p-4 space-y-4">
+                {/* Filtro por Socio */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Socio</label>
+                  <div className="grid grid-cols-4 gap-2">
+                    <button
+                      onClick={() => setFilterSocio('all')}
+                      className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                        filterSocio === 'all'
+                          ? 'bg-gray-900 text-white border-gray-900'
+                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      Todos
+                    </button>
+                    <button
+                      onClick={() => setFilterSocio('socio1')}
+                      className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                        filterSocio === 'socio1'
+                          ? 'bg-gray-900 text-white border-gray-900'
+                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      Socio 1
+                    </button>
+                    <button
+                      onClick={() => setFilterSocio('socio2')}
+                      className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                        filterSocio === 'socio2'
+                          ? 'bg-gray-900 text-white border-gray-900'
+                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      Socio 2
+                    </button>
+                    <button
+                      onClick={() => setFilterSocio('all_wallet')}
+                      className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                        filterSocio === 'all_wallet'
+                          ? 'bg-gray-900 text-white border-gray-900'
+                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      ALL
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* Detalle de Saldos */}
-        <div className="bg-white rounded-lg shadow-sm">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-800">Detalle de Saldos</h2>
-          </div>
-          
-          {filteredSaldos.length === 0 ? (
-            <div className="p-8 text-center">
-              <DollarSign className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600">No hay saldos para mostrar con los filtros seleccionados</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase">Socio</th>
-                    <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase">Tipo</th>
-                    <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase">Moneda</th>
-                    <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase">Ingresos</th>
-                    <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase">Egresos</th>
-                    <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase">Saldo</th>
-                    <th className="px-2 py-2 text-center text-xs font-medium text-gray-700 uppercase">Movs</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {filteredSaldos.map(saldo => (
-                    <tr key={`${saldo.socio}-${saldo.tipo}-${saldo.moneda}`} className="hover:bg-gray-50">
-                      <td className="px-2 py-3 text-sm font-medium text-gray-900">
-                        {saldo.socio === 'all' ? 'ALL' : saldo.socio === 'socio1' ? 'Socio 1' : 'Socio 2'}
-                      </td>
-                      <td className="px-2 py-3 text-sm text-gray-700">
-                        <div className="flex items-center gap-1">
-                          {saldo.tipo === 'digital' ? <CreditCard size={14} /> : <Banknote size={14} />}
-                          {saldo.tipo === 'digital' ? 'Digital' : 'Efectivo'}
+                {/* Filtro por Tipo */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      onClick={() => setFilterTipo('all')}
+                      className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                        filterTipo === 'all'
+                          ? 'bg-gray-900 text-white border-gray-900'
+                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      Todos
+                    </button>
+                    <button
+                      onClick={() => setFilterTipo('digital')}
+                      className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors flex items-center justify-center gap-2 ${
+                        filterTipo === 'digital'
+                          ? 'bg-gray-900 text-white border-gray-900'
+                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      <CreditCard size={16} />
+                      Digital
+                    </button>
+                    <button
+                      onClick={() => setFilterTipo('efectivo')}
+                      className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors flex items-center justify-center gap-2 ${
+                        filterTipo === 'efectivo'
+                          ? 'bg-gray-900 text-white border-gray-900'
+                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      <Banknote size={16} />
+                      Efectivo
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Resumen de Totales */}
+              {totalesPorMoneda.length > 0 && (
+                <div className="bg-white rounded-lg shadow-sm p-4">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-4">Totales por Moneda</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {totalesPorMoneda.map(total => (
+                      <div 
+                        key={total.moneda}
+                        className={`p-4 rounded-lg border-2 ${
+                          total.total >= 0 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
+                        }`}
+                      >
+                        <div className="text-lg font-bold mb-1">
+                          {total.monedaLabel}
                         </div>
-                      </td>
-                      <td className="px-2 py-3 text-sm text-gray-700">{saldo.monedaLabel}</td>
-                      <td className="px-2 py-3 text-sm text-right text-green-600 font-medium">
-                        {formatAmountWithCurrency(saldo.ingresos, saldo.moneda)}
-                      </td>
-                      <td className="px-2 py-3 text-sm text-right text-red-600 font-medium">
-                        {formatAmountWithCurrency(saldo.egresos, saldo.moneda)}
-                      </td>
-                      <td className={`px-2 py-3 text-sm text-right font-bold ${
-                        saldo.saldo >= 0 ? 'text-green-700' : 'text-red-700'
-                      }`}>
-                        {formatAmountWithCurrency(saldo.saldo, saldo.moneda)}
-                      </td>
-                      <td className="px-2 py-3 text-sm text-center text-gray-600">
-                        {saldo.movimientosCount}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        <div className={`text-2xl font-bold ${
+                          total.total >= 0 ? 'text-green-700' : 'text-red-700'
+                        }`}>
+                          {formatAmountWithCurrency(Math.abs(total.total), total.moneda)}
+                        </div>
+                        <div className="text-xs text-gray-600 mt-2 space-y-1">
+                          <div className="flex items-center gap-1">
+                            <TrendingUp size={12} className="text-green-600" />
+                            <span>Ingresos: {formatAmountWithCurrency(total.ingresos, total.moneda)}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <TrendingDown size={12} className="text-red-600" />
+                            <span>Egresos: {formatAmountWithCurrency(total.egresos, total.moneda)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Detalle de Saldos */}
+              <div className="bg-white rounded-lg shadow-sm">
+                <div className="p-4 border-b border-gray-200">
+                  <h2 className="text-lg font-semibold text-gray-800">Detalle de Saldos</h2>
+                </div>
+                
+                {filteredSaldos.length === 0 ? (
+                  <div className="p-8 text-center">
+                    <DollarSign className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-600">No hay saldos para mostrar con los filtros seleccionados</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase">Socio</th>
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase">Tipo</th>
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-700 uppercase">Moneda</th>
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase">Ingresos</th>
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase">Egresos</th>
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase">Saldo</th>
+                          <th className="px-2 py-2 text-center text-xs font-medium text-gray-700 uppercase">Movs</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {filteredSaldos.map(saldo => (
+                          <tr key={`${saldo.socio}-${saldo.tipo}-${saldo.moneda}`} className="hover:bg-gray-50">
+                            <td className="px-2 py-3 text-sm font-medium text-gray-900">
+                              {saldo.socio === 'all' ? 'ALL' : saldo.socio === 'socio1' ? 'Socio 1' : 'Socio 2'}
+                            </td>
+                            <td className="px-2 py-3 text-sm text-gray-700">
+                              <div className="flex items-center gap-1">
+                                {saldo.tipo === 'digital' ? <CreditCard size={14} /> : <Banknote size={14} />}
+                                {saldo.tipo === 'digital' ? 'Digital' : 'Efectivo'}
+                              </div>
+                            </td>
+                            <td className="px-2 py-3 text-sm text-gray-700">{saldo.monedaLabel}</td>
+                            <td className="px-2 py-3 text-sm text-right text-green-600 font-medium">
+                              {formatAmountWithCurrency(saldo.ingresos, saldo.moneda)}
+                            </td>
+                            <td className="px-2 py-3 text-sm text-right text-red-600 font-medium">
+                              {formatAmountWithCurrency(saldo.egresos, saldo.moneda)}
+                            </td>
+                            <td className={`px-2 py-3 text-sm text-right font-bold ${
+                              saldo.saldo >= 0 ? 'text-green-700' : 'text-red-700'
+                            }`}>
+                              {formatAmountWithCurrency(saldo.saldo, saldo.moneda)}
+                            </td>
+                            <td className="px-2 py-3 text-sm text-center text-gray-600">
+                              {saldo.movimientosCount}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>
