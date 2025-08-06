@@ -90,6 +90,8 @@ function SaldosApp({ movements = [] }) { // TEMPORAL: Vuelvo a recibir movements
         
         switch (mov.operacion) {
           case 'TRANSACCIONES':
+            // COMPRA: Casa de cambio compra (paga) = EGRESO
+            // VENTA: Casa de cambio vende (cobra) = INGRESO
             esIngreso = mov.subOperacion === 'VENTA';
             break;
           case 'CUENTAS_CORRIENTES':

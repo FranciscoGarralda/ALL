@@ -20,19 +20,19 @@ export const specificFieldsConfig = {
         { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Cuenta Ingreso', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        { label: 'Cuenta donde Recibimos', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
+        { label: 'Moneda a Pagar', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Cuenta Egreso', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+        { label: 'Cuenta desde donde Pagamos', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
+        { label: 'Total a Pagar', name: 'total', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: true,
@@ -55,19 +55,19 @@ export const specificFieldsConfig = {
         { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
       ],
       [
-        { label: 'Cuenta Egreso', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        { label: 'Cuenta desde donde Entregamos', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Moneda TC', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
+        { label: 'Moneda a Cobrar', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Cuenta Ingreso', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+        { label: 'Cuenta donde Cobramos', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
       ],
       [
-        { label: 'Total', name: 'total', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
+        { label: 'Total a Cobrar', name: 'total', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ]
     ],
     includesEstadoYPor: true,

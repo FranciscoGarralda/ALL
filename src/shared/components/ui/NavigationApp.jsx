@@ -14,7 +14,9 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  Home
+  Home,
+  Calculator,
+  BarChart3
 } from 'lucide-react';
 import FixedHeader from './FixedHeader';
 import Footer from './Footer';
@@ -80,6 +82,8 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
     { id: 'arbitraje', icon: ArrowUpDown, title: 'Arbitraje' },
     { id: 'utilidad', icon: TrendingUp, title: 'Utilidad' },
     { id: 'comisiones', icon: DollarSign, title: 'Comisiones' },
+    { id: 'caja', icon: Calculator, title: 'Caja Diaria' },
+    { id: 'rentabilidad', icon: BarChart3, title: 'Rentabilidad' },
     { id: 'prestamistas', icon: CreditCard, title: 'Prestamistas' },
     { id: 'gastos', icon: Receipt, title: 'Gastos' },
     { id: 'clientes', icon: UserCheck, title: 'Clientes' }

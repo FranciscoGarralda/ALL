@@ -118,6 +118,24 @@ const ArbitrajeApp = createLazyComponent(
   }
 );
 
+const CajaApp = createLazyComponent(
+  () => import('../features/cash-register/CajaApp'),
+  'CajaApp',
+  { 
+    preloadDelay: 3500,
+    fallback: <AdvancedLoadingFallback componentName="Caja Diaria" estimatedLoadTime={400} />
+  }
+);
+
+const RentabilidadApp = createLazyComponent(
+  () => import('../features/profitability/RentabilidadApp'),
+  'RentabilidadApp',
+  { 
+    preloadDelay: 4500,
+    fallback: <AdvancedLoadingFallback componentName="Rentabilidad" estimatedLoadTime={600} />
+  }
+);
+
 // Loading component for better UX
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -153,7 +171,9 @@ export default function MainApp() {
     'prestamistas': PrestamistasApp,
     'comisiones': ComisionesApp,
     'utilidad': UtilidadApp,
-    'arbitraje': ArbitrajeApp
+    'arbitraje': ArbitrajeApp,
+    'caja': CajaApp,
+    'rentabilidad': RentabilidadApp
   };
   
   // Enable intelligent preloading based on user behavior
@@ -521,6 +541,24 @@ export default function MainApp() {
                 // Aquí podrías implementar una navegación más específica si es necesario
               }}
               onNavigate={navigateTo}
+            />
+          </Suspense>
+        );
+      
+      case 'caja':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <CajaApp 
+              movements={movements}
+            />
+          </Suspense>
+        );
+      
+      case 'rentabilidad':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <RentabilidadApp 
+              movements={movements}
             />
           </Suspense>
         );
