@@ -80,6 +80,14 @@ const movementSchema = new mongoose.Schema({
     enum: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP', '']
   },
   
+  // Wallet fields (for new UI)
+  walletCompra: {
+    type: String
+  },
+  walletTC: {
+    type: String
+  },
+  
   // Commission
   comision: {
     type: Number,
@@ -134,14 +142,26 @@ const movementSchema = new mongoose.Schema({
   tcVenta: {
     type: Number
   },
+  montoVenta: {
+    type: Number
+  },
   totalCompra: {
     type: Number
   },
   totalVenta: {
     type: Number
   },
-  montoVenta: {
-    type: Number
+  walletCompraCmpra: {
+    type: String
+  },
+  walletTCCmpra: {
+    type: String
+  },
+  walletCompraVenta: {
+    type: String
+  },
+  walletTCVenta: {
+    type: String
   },
   
   // Internal movements

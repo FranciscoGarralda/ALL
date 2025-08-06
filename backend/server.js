@@ -131,7 +131,7 @@ async function initializeAdmin() {
 }
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 const server = app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
   console.log(`📍 Entorno: ${process.env.NODE_ENV}`);
