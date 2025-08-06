@@ -1,13 +1,16 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
+const bcrypt = require('bcryptjs');
 
 // Load environment variables
 dotenv.config();
+
+// Import database and models
+const { sequelize, User, Movement, Client } = require('./models');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -21,46 +24,31 @@ const errorHandler = require('./middleware/errorHandler');
 // Create Express app
 const app = express();
 
+// Trust proxy for Railway
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 
 // CORS configuration
-const corsOptions = {
+app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
-  optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+  credentials: true
+}));
 
-// Compression middleware
+// Body parser
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Compression
 app.use(compression());
 
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Demasiadas solicitudes desde esta IP, por favor intente más tarde.'
+  max: 100 // limit each IP to 100 requests per windowMs
 });
 app.use('/api/', limiter);
-
-// Body parser middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('✅ MongoDB conectado exitosamente');
-  // Initialize admin user after connection
-  initializeAdmin();
-})
-.catch((err) => {
-  console.error('❌ Error conectando a MongoDB:', err);
-  process.exit(1);
-});
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -68,19 +56,18 @@ app.use('/api/users', userRoutes);
 app.use('/api/movements', movementRoutes);
 app.use('/api/clients', clientRoutes);
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
+  res.json({ 
+    status: 'ok', 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
-    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+    environment: process.env.NODE_ENV
   });
 });
 
-// Root endpoint
+// Root route
 app.get('/', (req, res) => {
-  res.json({
+  res.json({ 
     message: 'Financial System API',
     version: '1.0.0',
     endpoints: {
@@ -93,55 +80,81 @@ app.get('/', (req, res) => {
   });
 });
 
-// Error handling middleware (must be last)
+// Error handler (must be last)
 app.use(errorHandler);
 
-// Handle 404
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Endpoint no encontrado'
-  });
-});
-
 // Initialize admin user
-async function initializeAdmin() {
+const initializeAdmin = async () => {
   try {
-    const User = require('./models/User');
-    const adminExists = await User.findOne({ role: 'admin' });
+    const adminEmail = process.env.ADMIN_EMAIL || 'francisco@garralda.com';
+    const adminUsername = process.env.ADMIN_USERNAME || 'FranciscoGarralda';
     
-    if (!adminExists) {
+    // Check if admin exists
+    const existingAdmin = await User.findOne({ 
+      where: { 
+        email: adminEmail 
+      } 
+    });
+    
+    if (!existingAdmin) {
+      // Create admin user
       const adminUser = await User.create({
-        name: process.env.ADMIN_NAME,
-        username: process.env.ADMIN_USERNAME || 'admin',
-        email: process.env.ADMIN_EMAIL,
-        password: process.env.ADMIN_PASSWORD,
-        role: 'admin'
+        name: process.env.ADMIN_NAME || 'Francisco Garralda',
+        username: adminUsername,
+        email: adminEmail,
+        password: process.env.ADMIN_PASSWORD || 'garralda1',
+        role: 'admin',
+        isActive: true
       });
       
       console.log('✅ Usuario administrador creado exitosamente');
-      console.log('👤 Usuario:', process.env.ADMIN_USERNAME || 'admin');
-      console.log('📧 Email:', process.env.ADMIN_EMAIL);
-      console.log('🔐 Contraseña:', process.env.ADMIN_PASSWORD);
-      console.log('⚠️  Por favor, cambie la contraseña después del primer login');
+      console.log(`📧 Email: ${adminEmail}`);
+      console.log(`👤 Username: ${adminUsername}`);
+    } else {
+      console.log('ℹ️  Usuario administrador ya existe');
     }
   } catch (error) {
-    console.error('Error creando usuario administrador:', error);
+    console.error('❌ Error al crear usuario administrador:', error.message);
   }
-}
+};
 
-// Start server
-const PORT = process.env.PORT || 3001;
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
-  console.log(`📍 Entorno: ${process.env.NODE_ENV}`);
-});
+// Connect to database and start server
+const startServer = async () => {
+  try {
+    // Test database connection
+    await sequelize.authenticate();
+    console.log('✅ Conexión a PostgreSQL establecida exitosamente');
+    
+    // Sync database (create tables if they don't exist)
+    await sequelize.sync({ alter: true });
+    console.log('✅ Base de datos sincronizada');
+    
+    // Initialize admin user
+    await initializeAdmin();
+    
+    // Start server
+    const PORT = process.env.PORT || 3001;
+    const server = app.listen(PORT, () => {
+      console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+      console.log(`📍 Entorno: ${process.env.NODE_ENV}`);
+      console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL}`);
+    });
+    
+    // Graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM recibido, cerrando servidor...');
+      server.close(() => {
+        console.log('Servidor cerrado');
+        sequelize.close();
+        process.exit(0);
+      });
+    });
+    
+  } catch (error) {
+    console.error('❌ Error al iniciar el servidor:', error);
+    process.exit(1);
+  }
+};
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise) => {
-  console.error('Unhandled Rejection:', err);
-  // Close server & exit process
-  server.close(() => process.exit(1));
-});
-
-module.exports = app;
+// Start the server
+startServer();

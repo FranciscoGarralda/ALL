@@ -1,94 +1,71 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const sequelize = require('../config/database');
 
-const userSchema = new mongoose.Schema({
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   name: {
-    type: String,
-    required: [true, 'Por favor ingrese un nombre'],
-    trim: true,
-    maxlength: [50, 'El nombre no puede tener más de 50 caracteres']
+    type: DataTypes.STRING,
+    allowNull: false
   },
   username: {
-    type: String,
-    required: [true, 'Por favor ingrese un nombre de usuario'],
-    unique: true,
-    trim: true,
-    maxlength: [30, 'El nombre de usuario no puede tener más de 30 caracteres']
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
   },
   email: {
-    type: String,
-    required: [true, 'Por favor ingrese un email'],
+    type: DataTypes.STRING,
+    allowNull: false,
     unique: true,
-    lowercase: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Por favor ingrese un email válido'
-    ]
+    validate: {
+      isEmail: true
+    }
   },
   password: {
-    type: String,
-    required: [true, 'Por favor ingrese una contraseña'],
-    minlength: [6, 'La contraseña debe tener al menos 6 caracteres'],
-    select: false
+    type: DataTypes.STRING,
+    allowNull: false
   },
   role: {
-    type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
+    type: DataTypes.ENUM('admin', 'user'),
+    defaultValue: 'user'
   },
   isActive: {
-    type: Boolean,
-    default: true
-  },
-  lastLogin: {
-    type: Date
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  }
+}, {
+  timestamps: true,
+  hooks: {
+    beforeSave: async (user) => {
+      if (user.changed('password')) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
+      }
+    }
   }
 });
 
-// Encrypt password before saving
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
-    next();
-  }
-  
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  this.updatedAt = Date.now();
-});
-
-// Update updatedAt on any update
-userSchema.pre('findOneAndUpdate', function(next) {
-  this.set({ updatedAt: Date.now() });
-  next();
-});
-
-// Sign JWT and return
-userSchema.methods.getSignedJwtToken = function() {
-  return jwt.sign(
-    { id: this._id, username: this.username, name: this.name, email: this.email, role: this.role },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRE }
-  );
-};
-
-// Match user entered password to hashed password in database
-userSchema.methods.matchPassword = async function(enteredPassword) {
+// Instance methods
+User.prototype.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Update last login
-userSchema.methods.updateLastLogin = async function() {
-  this.lastLogin = Date.now();
-  await this.save({ validateBeforeSave: false });
+User.prototype.getSignedJwtToken = function() {
+  return jwt.sign(
+    { 
+      id: this.id,
+      email: this.email,
+      username: this.username,
+      role: this.role 
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '30d' }
+  );
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = User;

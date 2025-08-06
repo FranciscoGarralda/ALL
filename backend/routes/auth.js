@@ -1,43 +1,46 @@
 const express = require('express');
-const { body, validationResult } = require('express-validator');
-const User = require('../models/User');
+const { check, validationResult } = require('express-validator');
+const { User } = require('../models');
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Validation middleware
-const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      success: false,
-      errors: errors.array()
-    });
-  }
-  next();
-};
-
-// @route   POST /api/auth/register
 // @desc    Register user
+// @route   POST /api/auth/register
 // @access  Public
 router.post('/register', [
-  body('name').notEmpty().withMessage('Nombre es requerido'),
-  body('username').notEmpty().withMessage('Nombre de usuario es requerido'),
-  body('email').isEmail().withMessage('Email inválido'),
-  body('password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres')
-], handleValidationErrors, async (req, res, next) => {
+  check('name', 'Nombre es requerido').notEmpty(),
+  check('username', 'Nombre de usuario es requerido').notEmpty(),
+  check('email', 'Por favor incluya un email válido').isEmail(),
+  check('password', 'La contraseña debe tener 6 o más caracteres').isLength({ min: 6 })
+], async (req, res) => {
   try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array()
+      });
+    }
+
     const { name, username, email, password } = req.body;
 
     // Check if user exists by email or username
-    const userExists = await User.findOne({ 
-      $or: [{ email }, { username }] 
+    const existingUser = await User.findOne({
+      where: {
+        [require('sequelize').Op.or]: [
+          { email },
+          { username }
+        ]
+      }
     });
-    
-    if (userExists) {
+
+    if (existingUser) {
+      const field = existingUser.email === email ? 'email' : 'usuario';
       return res.status(400).json({
         success: false,
-        message: userExists.email === email ? 'El email ya está registrado' : 'El nombre de usuario ya existe'
+        message: `El ${field} ya está registrado`
       });
     }
 
@@ -56,42 +59,47 @@ router.post('/register', [
       success: true,
       token,
       user: {
-        id: user._id,
-        username: user.username,
+        id: user.id,
         name: user.name,
+        username: user.username,
         email: user.email,
         role: user.role
       }
     });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor'
+    });
   }
 });
 
-// @route   POST /api/auth/login
 // @desc    Login user
+// @route   POST /api/auth/login
 // @access  Public
 router.post('/login', [
-  body('email').notEmpty().withMessage('Usuario es requerido'),
-  body('password').notEmpty().withMessage('Contraseña es requerida')
-], handleValidationErrors, async (req, res, next) => {
+  check('email', 'Por favor incluya un usuario válido').notEmpty(),
+  check('password', 'Contraseña es requerida').notEmpty()
+], async (req, res) => {
   try {
-    const { email, password } = req.body; // 'email' field is used as username in frontend
-
-    // Check for user by username
-    const user = await User.findOne({ username: email }).select('+password');
-
-    if (!user) {
-      return res.status(401).json({
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
         success: false,
-        message: 'Credenciales inválidas'
+        errors: errors.array()
       });
     }
 
-    // Check if password matches
-    const isMatch = await user.matchPassword(password);
+    const { email, password } = req.body;
 
-    if (!isMatch) {
+    // Check for user by username (email field contains username)
+    const user = await User.findOne({
+      where: { username: email }
+    });
+
+    if (!user) {
       return res.status(401).json({
         success: false,
         message: 'Credenciales inválidas'
@@ -106,8 +114,15 @@ router.post('/login', [
       });
     }
 
-    // Update last login
-    await user.updateLastLogin();
+    // Check password
+    const isMatch = await user.matchPassword(password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Credenciales inválidas'
+      });
+    }
 
     // Create token
     const token = user.getSignedJwtToken();
@@ -116,71 +131,85 @@ router.post('/login', [
       success: true,
       token,
       user: {
-        id: user._id,
-        username: user.username,
+        id: user.id,
         name: user.name,
+        username: user.username,
         email: user.email,
         role: user.role
       }
     });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor'
+    });
   }
 });
 
-// @route   GET /api/auth/me
 // @desc    Get current logged in user
+// @route   GET /api/auth/me
 // @access  Private
-router.get('/me', protect, async (req, res, next) => {
+router.get('/me', protect, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['id', 'name', 'username', 'email', 'role', 'isActive']
+    });
 
     res.json({
       success: true,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        lastLogin: user.lastLogin,
-        createdAt: user.createdAt
-      }
+      user
     });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor'
+    });
   }
 });
 
-// @route   PUT /api/auth/updatepassword
 // @desc    Update password
+// @route   PUT /api/auth/updatepassword
 // @access  Private
 router.put('/updatepassword', protect, [
-  body('currentPassword').notEmpty().withMessage('Contraseña actual es requerida'),
-  body('newPassword').isLength({ min: 6 }).withMessage('La nueva contraseña debe tener al menos 6 caracteres')
-], handleValidationErrors, async (req, res, next) => {
+  check('currentPassword', 'Contraseña actual es requerida').notEmpty(),
+  check('newPassword', 'Nueva contraseña debe tener 6 o más caracteres').isLength({ min: 6 })
+], async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('+password');
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array()
+      });
+    }
+
+    const user = await User.findByPk(req.user.id);
 
     // Check current password
-    if (!(await user.matchPassword(req.body.currentPassword))) {
+    const isMatch = await user.matchPassword(req.body.currentPassword);
+    if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Contraseña actual incorrecta'
+        message: 'Contraseña incorrecta'
       });
     }
 
     user.password = req.body.newPassword;
     await user.save();
 
-    const token = user.getSignedJwtToken();
-
     res.json({
       success: true,
-      token,
       message: 'Contraseña actualizada exitosamente'
     });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error en el servidor'
+    });
   }
 });
 

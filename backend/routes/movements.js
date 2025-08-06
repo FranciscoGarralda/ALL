@@ -1,191 +1,135 @@
 const express = require('express');
-const Movement = require('../models/Movement');
+const { Movement } = require('../models');
 const { protect } = require('../middleware/auth');
+const { Op } = require('sequelize');
 
 const router = express.Router();
 
+// All routes require authentication
+router.use(protect);
+
 // @route   GET /api/movements
-// @desc    Get all movements for logged in user
-// @access  Private
-router.get('/', protect, async (req, res, next) => {
+// @desc    Get all movements for user
+router.get('/', async (req, res) => {
   try {
-    // Build query
-    const query = { user: req.user.id };
-
-    // Add filters if provided
-    if (req.query.operacion) {
-      query.operacion = req.query.operacion;
-    }
-    if (req.query.estado) {
-      query.estado = req.query.estado;
-    }
-    if (req.query.cliente) {
-      query.cliente = new RegExp(req.query.cliente, 'i');
-    }
-    if (req.query.startDate || req.query.endDate) {
-      query.fecha = {};
-      if (req.query.startDate) {
-        query.fecha.$gte = new Date(req.query.startDate);
-      }
-      if (req.query.endDate) {
-        query.fecha.$lte = new Date(req.query.endDate);
-      }
-    }
-
-    // Pagination
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 100;
-    const startIndex = (page - 1) * limit;
-
-    // Execute query
-    const movements = await Movement.find(query)
-      .sort('-fecha')
-      .limit(limit)
-      .skip(startIndex);
-
-    // Get total count
-    const total = await Movement.countDocuments(query);
-
+    const { limit = 100, offset = 0, operacion, estado, cliente } = req.query;
+    
+    // Build where clause
+    const where = { userId: req.user.id };
+    if (operacion) where.operacion = operacion;
+    if (estado) where.estado = estado;
+    if (cliente) where.cliente = { [Op.like]: `%${cliente}%` };
+    
+    const movements = await Movement.findAll({
+      where,
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [['fecha', 'DESC']]
+    });
+    
+    const total = await Movement.count({ where });
+    
     res.json({
       success: true,
-      count: movements.length,
+      data: movements,
       total,
-      page,
-      pages: Math.ceil(total / limit),
-      data: movements
+      limit: parseInt(limit),
+      offset: parseInt(offset)
     });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// @route   GET /api/movements/:id
-// @desc    Get single movement
-// @access  Private
-router.get('/:id', protect, async (req, res, next) => {
-  try {
-    const movement = await Movement.findOne({
-      _id: req.params.id,
-      user: req.user.id
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener movimientos'
     });
-
-    if (!movement) {
-      return res.status(404).json({
-        success: false,
-        message: 'Movimiento no encontrado'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: movement
-    });
-  } catch (err) {
-    next(err);
   }
 });
 
 // @route   POST /api/movements
 // @desc    Create new movement
-// @access  Private
-router.post('/', protect, async (req, res, next) => {
+router.post('/', async (req, res) => {
   try {
-    // Add user to req.body
-    req.body.user = req.user.id;
-
-    const movement = await Movement.create(req.body);
-
+    const movement = await Movement.create({
+      ...req.body,
+      userId: req.user.id
+    });
+    
     res.status(201).json({
       success: true,
       data: movement
     });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al crear movimiento'
+    });
   }
 });
 
 // @route   PUT /api/movements/:id
 // @desc    Update movement
-// @access  Private
-router.put('/:id', protect, async (req, res, next) => {
+router.put('/:id', async (req, res) => {
   try {
-    // Remove user field if present in body
-    delete req.body.user;
-
-    const movement = await Movement.findOneAndUpdate(
-      { _id: req.params.id, user: req.user.id },
-      req.body,
-      {
-        new: true,
-        runValidators: true
+    const movement = await Movement.findOne({
+      where: {
+        id: req.params.id,
+        userId: req.user.id
       }
-    );
-
+    });
+    
     if (!movement) {
       return res.status(404).json({
         success: false,
         message: 'Movimiento no encontrado'
       });
     }
-
+    
+    await movement.update(req.body);
+    
     res.json({
       success: true,
       data: movement
     });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al actualizar movimiento'
+    });
   }
 });
 
 // @route   DELETE /api/movements/:id
 // @desc    Delete movement
-// @access  Private
-router.delete('/:id', protect, async (req, res, next) => {
+router.delete('/:id', async (req, res) => {
   try {
-    const movement = await Movement.findOneAndDelete({
-      _id: req.params.id,
-      user: req.user.id
+    const movement = await Movement.findOne({
+      where: {
+        id: req.params.id,
+        userId: req.user.id
+      }
     });
-
+    
     if (!movement) {
       return res.status(404).json({
         success: false,
         message: 'Movimiento no encontrado'
       });
     }
-
+    
+    await movement.destroy();
+    
     res.json({
       success: true,
-      data: {}
+      message: 'Movimiento eliminado'
     });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// @route   GET /api/movements/stats/summary
-// @desc    Get movements summary statistics
-// @access  Private
-router.get('/stats/summary', protect, async (req, res, next) => {
-  try {
-    const stats = await Movement.aggregate([
-      { $match: { user: req.user._id } },
-      {
-        $group: {
-          _id: '$moneda',
-          totalMonto: { $sum: '$monto' },
-          totalOperaciones: { $sum: 1 },
-          avgMonto: { $avg: '$monto' }
-        }
-      }
-    ]);
-
-    res.json({
-      success: true,
-      data: stats
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al eliminar movimiento'
     });
-  } catch (err) {
-    next(err);
   }
 });
 

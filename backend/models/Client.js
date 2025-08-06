@@ -1,107 +1,65 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const clientSchema = new mongoose.Schema({
-  // User reference
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: true
+const Client = sequelize.define('Client', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
   },
-  
-  // Basic information
   nombre: {
-    type: String,
-    required: [true, 'Nombre es requerido'],
-    trim: true,
-    maxlength: [50, 'El nombre no puede tener más de 50 caracteres']
+    type: DataTypes.STRING,
+    allowNull: false
   },
   apellido: {
-    type: String,
-    required: [true, 'Apellido es requerido'],
-    trim: true,
-    maxlength: [50, 'El apellido no puede tener más de 50 caracteres']
+    type: DataTypes.STRING,
+    allowNull: false
   },
   tipoCliente: {
-    type: String,
-    required: [true, 'Tipo de cliente es requerido'],
-    enum: ['operaciones', 'prestamistas']
+    type: DataTypes.ENUM('operaciones', 'prestamistas', 'cuentas_corrientes'),
+    defaultValue: 'operaciones'
   },
-  
-  // Contact information
+  dni: {
+    type: DataTypes.STRING,
+    unique: true
+  },
   telefono: {
-    type: String,
-    trim: true,
-    maxlength: [20, 'El teléfono no puede tener más de 20 caracteres']
-  },
-  email: {
-    type: String,
-    trim: true,
-    lowercase: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Por favor ingrese un email válido'
-    ]
+    type: DataTypes.STRING
   },
   direccion: {
-    type: String,
-    trim: true,
-    maxlength: [200, 'La dirección no puede tener más de 200 caracteres']
+    type: DataTypes.STRING
   },
-  
-  // Additional information
-  notas: {
-    type: String,
-    trim: true,
-    maxlength: [500, 'Las notas no pueden tener más de 500 caracteres']
+  email: {
+    type: DataTypes.STRING,
+    validate: {
+      isEmail: true
+    }
   },
-  
-  // Statistics (calculated fields)
   ultimaOperacion: {
-    type: Date
+    type: DataTypes.DATE
   },
   totalOperaciones: {
-    type: Number,
-    default: 0
+    type: DataTypes.INTEGER,
+    defaultValue: 0
   },
   volumenTotal: {
-    type: Number,
-    default: 0
+    type: DataTypes.DECIMAL(15, 2),
+    defaultValue: 0
   },
-  
-  // Status
   isActive: {
-    type: Boolean,
-    default: true
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
   },
-  
-  // Timestamps
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id'
+    }
   }
+}, {
+  timestamps: true
 });
 
-// Update updatedAt on any update
-clientSchema.pre('findOneAndUpdate', function(next) {
-  this.set({ updatedAt: Date.now() });
-  next();
-});
-
-// Create compound index for unique client per user
-clientSchema.index({ user: 1, nombre: 1, apellido: 1 }, { unique: true });
-
-// Virtual for full name
-clientSchema.virtual('fullName').get(function() {
-  return `${this.nombre} ${this.apellido}`;
-});
-
-// Ensure virtual fields are serialized
-clientSchema.set('toJSON', {
-  virtuals: true
-});
-
-module.exports = mongoose.model('Client', clientSchema);
+module.exports = Client;

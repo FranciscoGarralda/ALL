@@ -1,216 +1,210 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const movementSchema = new mongoose.Schema({
-  // User reference
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: true
+const Movement = sequelize.define('Movement', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
   },
   
   // Basic information
   cliente: {
-    type: String,
-    required: [true, 'Cliente es requerido'],
-    trim: true
+    type: DataTypes.STRING,
+    allowNull: false
   },
   fecha: {
-    type: Date,
-    required: [true, 'Fecha es requerida']
+    type: DataTypes.DATE,
+    allowNull: false
   },
   nombreDia: {
-    type: String,
-    trim: true
+    type: DataTypes.STRING
   },
   detalle: {
-    type: String,
-    trim: true,
-    maxlength: [500, 'El detalle no puede tener más de 500 caracteres']
+    type: DataTypes.TEXT
   },
   
   // Operation details
   operacion: {
-    type: String,
-    required: [true, 'Operación es requerida'],
-    enum: ['TRANSACCIONES', 'CUENTAS_CORRIENTES', 'SOCIOS', 'ADMINISTRATIVAS', 'PRESTAMISTAS', 'INTERNAS']
+    type: DataTypes.ENUM('TRANSACCIONES', 'CUENTAS_CORRIENTES', 'SOCIOS', 'ADMINISTRATIVAS', 'PRESTAMISTAS', 'INTERNAS'),
+    allowNull: false
   },
   subOperacion: {
-    type: String,
-    required: [true, 'Sub-operación es requerida']
+    type: DataTypes.STRING,
+    allowNull: false
   },
   
   // Financial data
   monto: {
-    type: Number,
-    required: [true, 'Monto es requerido'],
-    min: [0, 'El monto debe ser mayor a 0']
+    type: DataTypes.DECIMAL(15, 2),
+    allowNull: false,
+    validate: {
+      min: 0
+    }
   },
   moneda: {
-    type: String,
-    required: [true, 'Moneda es requerida'],
-    enum: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP']
+    type: DataTypes.ENUM('PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP'),
+    allowNull: false
   },
   cuenta: {
-    type: String,
-    required: [true, 'Cuenta es requerida']
+    type: DataTypes.STRING,
+    allowNull: false
   },
   total: {
-    type: Number,
-    default: 0
+    type: DataTypes.DECIMAL(15, 2),
+    defaultValue: 0
   },
   
   // Status
   estado: {
-    type: String,
-    enum: ['pendiente_retiro', 'pendiente_entrega', 'realizado'],
-    default: 'pendiente_retiro'
+    type: DataTypes.ENUM('pendiente_retiro', 'pendiente_entrega', 'realizado'),
+    defaultValue: 'pendiente_retiro'
   },
   por: {
-    type: String,
-    trim: true
+    type: DataTypes.STRING
   },
   
   // Exchange rates
   tc: {
-    type: Number,
-    default: 0
+    type: DataTypes.DECIMAL(10, 4),
+    defaultValue: 0
   },
   monedaTC: {
-    type: String,
-    enum: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP', '']
+    type: DataTypes.STRING
   },
   
-  // Wallet fields (for new UI)
+  // Wallet fields
   walletCompra: {
-    type: String
+    type: DataTypes.STRING
   },
   walletTC: {
-    type: String
+    type: DataTypes.STRING
   },
   
   // Commission
   comision: {
-    type: Number,
-    default: 0
+    type: DataTypes.DECIMAL(10, 2),
+    defaultValue: 0
   },
   tipoComision: {
-    type: String,
-    enum: ['percentage', 'fixed'],
-    default: 'percentage'
+    type: DataTypes.ENUM('percentage', 'fixed'),
+    defaultValue: 'percentage'
   },
   monedaComision: {
-    type: String,
-    enum: ['PESO', 'USD', 'EURO', 'USDT', 'REAL', 'LIBRA', 'CLP', '']
+    type: DataTypes.STRING
   },
   cuentaComision: {
-    type: String
+    type: DataTypes.STRING
   },
   
   // Interest (for loans)
   interes: {
-    type: Number,
-    default: 0
+    type: DataTypes.DECIMAL(5, 2),
+    defaultValue: 0
   },
   lapso: {
-    type: String
+    type: DataTypes.STRING
   },
   fechaLimite: {
-    type: Date
+    type: DataTypes.DATE
   },
   
-  // Additional fields for specific operations
+  // Additional fields
   proveedorCC: {
-    type: String
+    type: DataTypes.STRING
   },
   nombreOtro: {
-    type: String
+    type: DataTypes.STRING
   },
   socioSeleccionado: {
-    type: String
+    type: DataTypes.STRING
   },
   
   // Arbitrage specific
   monedaTCCmpra: {
-    type: String
+    type: DataTypes.STRING
   },
   monedaTCVenta: {
-    type: String
+    type: DataTypes.STRING
   },
   monedaVenta: {
-    type: String
+    type: DataTypes.STRING
   },
   tcVenta: {
-    type: Number
+    type: DataTypes.DECIMAL(10, 4)
   },
   montoVenta: {
-    type: Number
+    type: DataTypes.DECIMAL(15, 2)
   },
   totalCompra: {
-    type: Number
+    type: DataTypes.DECIMAL(15, 2)
   },
   totalVenta: {
-    type: Number
+    type: DataTypes.DECIMAL(15, 2)
   },
   walletCompraCmpra: {
-    type: String
+    type: DataTypes.STRING
   },
   walletTCCmpra: {
-    type: String
+    type: DataTypes.STRING
   },
   walletCompraVenta: {
-    type: String
+    type: DataTypes.STRING
   },
   walletTCVenta: {
-    type: String
+    type: DataTypes.STRING
   },
   
   // Internal movements
   cuentaSalida: {
-    type: String
+    type: DataTypes.STRING
   },
   cuentaIngreso: {
-    type: String
+    type: DataTypes.STRING
+  },
+  cuentaDestino: {
+    type: DataTypes.STRING
   },
   
-  // Wallet selections
-  walletCompra: {
-    type: String
+  // Payment methods
+  metodoPago: {
+    type: DataTypes.STRING
   },
-  walletTC: {
-    type: String
-  },
-  
-  // Mixed payments
-  mixedPayments: [{
-    tipoPago: String,
-    monto: Number,
-    cuenta: String
-  }],
-  expectedTotalForMixedPayments: {
-    type: Number
+  cuentaPago: {
+    type: DataTypes.STRING
   },
   
-  // Timestamps
-  createdAt: {
-    type: Date,
-    default: Date.now
+  // Mixed payment
+  pagoMixto: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
-  updatedAt: {
-    type: Date,
-    default: Date.now
+  montoEfectivo: {
+    type: DataTypes.DECIMAL(15, 2),
+    defaultValue: 0
+  },
+  montoDigital: {
+    type: DataTypes.DECIMAL(15, 2),
+    defaultValue: 0
+  },
+  cuentaEfectivo: {
+    type: DataTypes.STRING
+  },
+  cuentaDigital: {
+    type: DataTypes.STRING
+  },
+  
+  // User reference
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id'
+    }
   }
+}, {
+  timestamps: true
 });
 
-// Update updatedAt on any update
-movementSchema.pre('findOneAndUpdate', function(next) {
-  this.set({ updatedAt: Date.now() });
-  next();
-});
-
-// Index for better query performance
-movementSchema.index({ user: 1, fecha: -1 });
-movementSchema.index({ user: 1, operacion: 1 });
-movementSchema.index({ user: 1, estado: 1 });
-movementSchema.index({ user: 1, cliente: 1 });
-
-module.exports = mongoose.model('Movement', movementSchema);
+module.exports = Movement;
