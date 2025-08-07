@@ -36,6 +36,15 @@ app.use(cors({
   credentials: true
 }));
 
+// TEMPORAL: Hacer todas las rutas públicas
+app.use((req, res, next) => {
+  // Si es una ruta de API, simular un usuario autenticado
+  if (req.path.startsWith('/api/')) {
+    req.user = { id: 1, role: 'admin' };
+  }
+  next();
+});
+
 // Body parser
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));

@@ -1,17 +1,16 @@
 const express = require('express');
 const { Movement } = require('../models');
-// const { protect } = require('../middleware/auth'); // TEMPORAL: Comentado
+const { protect } = require('../middleware/auth');
 const { Op } = require('sequelize');
 
 const router = express.Router();
 
 // All routes require authentication
-// router.use(protect); // TEMPORAL: Comentado
+router.use(protect);
 
 // @route   GET /api/movements
 // @desc    Get all movements for user
-// @access  Private -> TEMPORAL: Public
-router.get('/', /* protect, */ async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { limit = 100, offset = 0, operacion, estado, cliente } = req.query;
     
@@ -48,8 +47,7 @@ router.get('/', /* protect, */ async (req, res) => {
 
 // @route   POST /api/movements
 // @desc    Create new movement
-// @access  Private -> TEMPORAL: Public
-router.post('/', /* protect, */ async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const movement = await Movement.create({
       ...req.body,
@@ -71,8 +69,7 @@ router.post('/', /* protect, */ async (req, res) => {
 
 // @route   PUT /api/movements/:id
 // @desc    Update movement
-// @access  Private -> TEMPORAL: Public
-router.put('/:id', /* protect, */ async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const movement = await Movement.findOne({
       where: {
@@ -105,8 +102,7 @@ router.put('/:id', /* protect, */ async (req, res) => {
 
 // @route   DELETE /api/movements/:id
 // @desc    Delete movement
-// @access  Private -> TEMPORAL: Public
-router.delete('/:id', /* protect, */ async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const movement = await Movement.findOne({
       where: {

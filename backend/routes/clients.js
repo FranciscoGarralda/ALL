@@ -1,12 +1,12 @@
 const express = require('express');
 const { Client, Movement } = require('../models');
-// const { protect } = require('../middleware/auth'); // TEMPORAL: Comentado
+const { protect } = require('../middleware/auth');
 const { Op } = require('sequelize');
 
 const router = express.Router();
 
 // All routes require authentication
-// router.use(protect); // TEMPORAL: Comentado
+router.use(protect);
 
 // @route   GET /api/clients
 // @desc    Get all clients for user
