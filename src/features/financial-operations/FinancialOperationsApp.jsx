@@ -258,12 +258,16 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           newState.montoVenta = newState.monto;
         }
         if (field === 'moneda') {
-          newState.monedaVenta = newState.moneda;
+          // Para campos de texto, necesitamos solo el código de la moneda
+          const monedaObj = monedas.find(m => m.value === newState.moneda);
+          newState.monedaVenta = monedaObj ? monedaObj.label.split(' ')[1] : newState.moneda;
         }
         if (field === 'monedaTC') {
-          newState.monedaTCVenta = newState.monedaTC;
+          // Para campos de texto, necesitamos solo el código de la moneda
+          const monedaTCObj = monedas.find(m => m.value === newState.monedaTC);
+          newState.monedaTCVenta = monedaTCObj ? monedaTCObj.label.split(' ')[1] : newState.monedaTC;
           // La moneda de profit es igual a la moneda TC
-          newState.monedaProfit = newState.monedaTC;
+          newState.monedaProfit = monedaTCObj ? monedaTCObj.label.split(' ')[1] : newState.monedaTC;
         }
 
         const monto = safeParseFloat(newState.monto);
