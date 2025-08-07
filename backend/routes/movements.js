@@ -1,21 +1,22 @@
 const express = require('express');
 const { Movement } = require('../models');
-const { protect } = require('../middleware/auth');
+// const { protect } = require('../middleware/auth'); // TEMPORAL: Comentado
 const { Op } = require('sequelize');
 
 const router = express.Router();
 
 // All routes require authentication
-router.use(protect);
+// router.use(protect); // TEMPORAL: Comentado
 
 // @route   GET /api/movements
 // @desc    Get all movements for user
-router.get('/', async (req, res) => {
+// @access  Private -> TEMPORAL: Public
+router.get('/', /* protect, */ async (req, res) => {
   try {
     const { limit = 100, offset = 0, operacion, estado, cliente } = req.query;
     
     // Build where clause
-    const where = { userId: req.user.id };
+    const where = {}; // TEMPORAL: No filtrar por usuario
     if (operacion) where.operacion = operacion;
     if (estado) where.estado = estado;
     if (cliente) where.cliente = { [Op.like]: `%${cliente}%` };
@@ -47,11 +48,12 @@ router.get('/', async (req, res) => {
 
 // @route   POST /api/movements
 // @desc    Create new movement
-router.post('/', async (req, res) => {
+// @access  Private -> TEMPORAL: Public
+router.post('/', /* protect, */ async (req, res) => {
   try {
     const movement = await Movement.create({
       ...req.body,
-      userId: req.user.id
+      userId: 1 // TEMPORAL: Usuario por defecto
     });
     
     res.status(201).json({
@@ -69,12 +71,13 @@ router.post('/', async (req, res) => {
 
 // @route   PUT /api/movements/:id
 // @desc    Update movement
-router.put('/:id', async (req, res) => {
+// @access  Private -> TEMPORAL: Public
+router.put('/:id', /* protect, */ async (req, res) => {
   try {
     const movement = await Movement.findOne({
       where: {
-        id: req.params.id,
-        userId: req.user.id
+        id: req.params.id
+        // userId: req.user.id // TEMPORAL: No filtrar por usuario
       }
     });
     
@@ -102,12 +105,13 @@ router.put('/:id', async (req, res) => {
 
 // @route   DELETE /api/movements/:id
 // @desc    Delete movement
-router.delete('/:id', async (req, res) => {
+// @access  Private -> TEMPORAL: Public
+router.delete('/:id', /* protect, */ async (req, res) => {
   try {
     const movement = await Movement.findOne({
       where: {
-        id: req.params.id,
-        userId: req.user.id
+        id: req.params.id
+        // userId: req.user.id // TEMPORAL: No filtrar por usuario
       }
     });
     

@@ -1,20 +1,23 @@
 const express = require('express');
 const { Client, Movement } = require('../models');
-const { protect } = require('../middleware/auth');
+// const { protect } = require('../middleware/auth'); // TEMPORAL: Comentado
 const { Op } = require('sequelize');
 
 const router = express.Router();
 
 // All routes require authentication
-router.use(protect);
+// router.use(protect); // TEMPORAL: Comentado
 
 // @route   GET /api/clients
 // @desc    Get all clients for user
+// @access  Private -> TEMPORAL: Public
 router.get('/', async (req, res) => {
   try {
     const clients = await Client.findAll({
-      where: { userId: req.user.id },
-      order: [['apellido', 'ASC'], ['nombre', 'ASC']]
+      where: {
+        // userId: req.user.id // TEMPORAL: No filtrar por usuario
+      },
+      order: [['nombre', 'ASC']]
     });
     
     res.json({
@@ -32,11 +35,12 @@ router.get('/', async (req, res) => {
 
 // @route   POST /api/clients
 // @desc    Create new client
+// @access  Private -> TEMPORAL: Public
 router.post('/', async (req, res) => {
   try {
     const client = await Client.create({
       ...req.body,
-      userId: req.user.id
+      userId: 1 // TEMPORAL: Usuario por defecto
     });
     
     res.status(201).json({
@@ -52,14 +56,47 @@ router.post('/', async (req, res) => {
   }
 });
 
+// @route   GET /api/clients/:id
+// @desc    Get client by ID
+// @access  Private -> TEMPORAL: Public
+router.get('/:id', async (req, res) => {
+  try {
+    const client = await Client.findOne({
+      where: {
+        id: req.params.id
+        // userId: req.user.id // TEMPORAL: No filtrar por usuario
+      }
+    });
+    
+    if (!client) {
+      return res.status(404).json({
+        success: false,
+        message: 'Cliente no encontrado'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: client
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener cliente por ID'
+    });
+  }
+});
+
 // @route   PUT /api/clients/:id
 // @desc    Update client
+// @access  Private -> TEMPORAL: Public
 router.put('/:id', async (req, res) => {
   try {
     const client = await Client.findOne({
       where: {
-        id: req.params.id,
-        userId: req.user.id
+        id: req.params.id
+        // userId: req.user.id // TEMPORAL: No filtrar por usuario
       }
     });
     
@@ -87,12 +124,13 @@ router.put('/:id', async (req, res) => {
 
 // @route   DELETE /api/clients/:id
 // @desc    Delete client
+// @access  Private -> TEMPORAL: Public
 router.delete('/:id', async (req, res) => {
   try {
     const client = await Client.findOne({
       where: {
-        id: req.params.id,
-        userId: req.user.id
+        id: req.params.id
+        // userId: req.user.id // TEMPORAL: No filtrar por usuario
       }
     });
     
@@ -106,7 +144,7 @@ router.delete('/:id', async (req, res) => {
     // Check if client has movements
     const movementCount = await Movement.count({
       where: {
-        userId: req.user.id,
+        userId: 1, // TEMPORAL: Usuario por defecto
         cliente: `${client.nombre} ${client.apellido}`
       }
     });

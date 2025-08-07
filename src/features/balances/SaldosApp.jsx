@@ -2,19 +2,16 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Wallet, TrendingUp, TrendingDown, DollarSign, CreditCard, Banknote } from 'lucide-react';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
-// import { apiService } from '../../shared/services/api'; // TEMPORAL: Comentado
+import { apiService } from '../../shared/services/api';
 import { monedas } from '../../shared/constants';
 
-function SaldosApp({ movements = [] }) { // TEMPORAL: Vuelvo a recibir movements como prop
+function SaldosApp() {
   const [filterSocio, setFilterSocio] = useState('all'); // 'all', 'socio1', 'socio2', 'all_wallet'
   const [filterTipo, setFilterTipo] = useState('all'); // 'all', 'digital', 'efectivo'
-  // TEMPORAL: Comentado para no usar API
-  // const [movements, setMovements] = useState([]);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
+  const [movements, setMovements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // TEMPORAL: Comentado para no cargar desde API
-  /*
   // Cargar movimientos desde la API
   useEffect(() => {
     loadMovements();
@@ -35,7 +32,6 @@ function SaldosApp({ movements = [] }) { // TEMPORAL: Vuelvo a recibir movements
       setLoading(false);
     }
   };
-  */
 
   // Calcular saldos por socio, tipo y moneda
   const saldos = useMemo(() => {
@@ -174,6 +170,35 @@ function SaldosApp({ movements = [] }) { // TEMPORAL: Vuelvo a recibir movements
     
     return Array.from(totales.values()).filter(t => t.total !== 0);
   }, [filteredSaldos]);
+
+  // Mostrar loading
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Cargando saldos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar error
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button
+            onClick={loadMovements}
+            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">
