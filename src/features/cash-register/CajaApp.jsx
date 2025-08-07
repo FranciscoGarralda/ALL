@@ -190,8 +190,8 @@ function CajaApp({ movements = [] }) {
                 </h3>
                 <div className={`px-2 py-1 rounded text-xs font-medium ${
                   Math.abs(caja.diferencia) < 0.01 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
+                    ? 'bg-gray-50 text-gray-700' 
+                    : 'bg-gray-100 text-gray-800'
                 }`}>
                   {Math.abs(caja.diferencia) < 0.01 ? (
                     <Check size={14} className="inline" />

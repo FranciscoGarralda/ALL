@@ -231,9 +231,9 @@ function ArbitrajeApp({ movements, onNavigate }) {
               {renderMetricCard(
                 'Ganancias del Mes Actual',
                 currentMonthArbitrageProfits,
-                'bg-purple-50',
-                'text-purple-700',
-                'border-purple-500',
+                'bg-gray-50',
+                'text-gray-700',
+                'border-gray-500',
                 Calendar,
                 'Mes en curso'
               )}

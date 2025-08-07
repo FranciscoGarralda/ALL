@@ -267,7 +267,7 @@ function SaldosApp({ movements = [] }) {
                       <div 
                         key={total.moneda}
                         className={`p-4 rounded-lg border-2 ${
-                          total.total >= 0 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
+                          total.total >= 0 ? 'border-gray-300 bg-gray-50' : 'border-gray-400 bg-gray-100'
                         }`}
                       >
                         <div className="text-lg font-bold mb-1">

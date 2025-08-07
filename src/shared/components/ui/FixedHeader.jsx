@@ -141,7 +141,7 @@ const FixedHeader = ({
 
 
           {/* Indicador de estado (opcional) */}
-          <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg" title="Sistema activo"></div>
+          <div className="w-3 h-3 bg-gray-400 rounded-full animate-pulse shadow-lg" title="Sistema activo"></div>
         </div>
       </div>
     </header>

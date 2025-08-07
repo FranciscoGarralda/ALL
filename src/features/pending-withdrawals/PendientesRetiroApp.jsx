@@ -68,13 +68,13 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
   const getEstadoBadge = (estado) => {
     const badges = {
       'pendiente_retiro': { 
-        bg: 'bg-yellow-100', 
-        text: 'text-yellow-800', 
+        bg: 'bg-gray-100', 
+        text: 'text-gray-800', 
         label: 'P. Retiro' 
       },
       'pendiente_entrega': { 
-        bg: 'bg-orange-100', 
-        text: 'text-orange-800', 
+        bg: 'bg-gray-200', 
+        text: 'text-gray-900', 
         label: 'P. Entrega' 
       }
     };
@@ -167,8 +167,8 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                    <DollarSign className="w-5 h-5 text-orange-600" />
+                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                    <DollarSign className="w-5 h-5 text-gray-600" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">
@@ -233,7 +233,7 @@ const PendientesRetiroApp = ({ movements = [], clients = [], onEditMovement, onD
                 </button>
                 <button
                   onClick={() => onDeleteMovement && onDeleteMovement(movement.id)}
-                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
+                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
                 >
                   <Trash2 className="w-4 h-4 mr-1" />
                   Eliminar
