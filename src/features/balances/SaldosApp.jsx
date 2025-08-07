@@ -66,7 +66,80 @@ function SaldosApp({ movements = [] }) {
           case 'TRANSACCIONES':
             // COMPRA: Casa de cambio compra (paga) = EGRESO
             // VENTA: Casa de cambio vende (cobra) = INGRESO
-            esIngreso = mov.subOperacion === 'VENTA';
+            if (mov.subOperacion === 'VENTA') {
+              esIngreso = true;
+            } else if (mov.subOperacion === 'ARBITRAJE') {
+              // ARBITRAJE: Procesar las 4 cuentas involucradas
+              // 1. Cuenta donde recibimos (walletCompra) - INGRESO de moneda
+              if (mov.walletCompra) {
+                const cuentaRecibeParts = mov.walletCompra.split('_');
+                if (cuentaRecibeParts.length === 2) {
+                  const [socioRecibe, tipoRecibe] = cuentaRecibeParts;
+                  const keyRecibe = `${socioRecibe}-${tipoRecibe}-${mov.moneda}`;
+                  const saldoRecibe = saldosMap.get(keyRecibe);
+                  if (saldoRecibe) {
+                    saldoRecibe.ingresos += monto;
+                    saldoRecibe.saldo += monto;
+                    saldoRecibe.movimientosCount++;
+                  }
+                }
+              }
+              
+              // 2. Cuenta desde donde pagamos (walletTC) - EGRESO de monedaTC
+              if (mov.walletTC && mov.totalCompra) {
+                const cuentaPagaParts = mov.walletTC.split('_');
+                if (cuentaPagaParts.length === 2) {
+                  const [socioPaga, tipoPaga] = cuentaPagaParts;
+                  const keyPaga = `${socioPaga}-${tipoPaga}-${mov.monedaTC}`;
+                  const saldoPaga = saldosMap.get(keyPaga);
+                  if (saldoPaga) {
+                    const totalCompra = safeParseFloat(mov.totalCompra);
+                    saldoPaga.egresos += totalCompra;
+                    saldoPaga.saldo -= totalCompra;
+                    saldoPaga.movimientosCount++;
+                  }
+                }
+              }
+              
+              // 3. Cuenta desde donde entregamos (walletCompraVenta) - EGRESO de monedaVenta
+              if (mov.walletCompraVenta && mov.montoVenta) {
+                const cuentaEntregaParts = mov.walletCompraVenta.split('_');
+                if (cuentaEntregaParts.length === 2) {
+                  const [socioEntrega, tipoEntrega] = cuentaEntregaParts;
+                  // monedaVenta es monedaTC en la lógica de arbitraje
+                  const keyEntrega = `${socioEntrega}-${tipoEntrega}-${mov.monedaTC}`;
+                  const saldoEntrega = saldosMap.get(keyEntrega);
+                  if (saldoEntrega) {
+                    const montoVenta = safeParseFloat(mov.montoVenta);
+                    saldoEntrega.egresos += montoVenta;
+                    saldoEntrega.saldo -= montoVenta;
+                    saldoEntrega.movimientosCount++;
+                  }
+                }
+              }
+              
+              // 4. Cuenta donde cobramos (walletTCVenta) - INGRESO de monedaTCVenta
+              if (mov.walletTCVenta && mov.totalVenta) {
+                const cuentaCobraParts = mov.walletTCVenta.split('_');
+                if (cuentaCobraParts.length === 2) {
+                  const [socioCobra, tipoCobra] = cuentaCobraParts;
+                  // monedaTCVenta es moneda en la lógica de arbitraje
+                  const keyCobra = `${socioCobra}-${tipoCobra}-${mov.moneda}`;
+                  const saldoCobra = saldosMap.get(keyCobra);
+                  if (saldoCobra) {
+                    const totalVenta = safeParseFloat(mov.totalVenta);
+                    saldoCobra.ingresos += totalVenta;
+                    saldoCobra.saldo += totalVenta;
+                    saldoCobra.movimientosCount++;
+                  }
+                }
+              }
+              
+              // No procesar la cuenta principal para arbitraje
+              return;
+            } else {
+              esIngreso = false;
+            }
             break;
           case 'CUENTAS_CORRIENTES':
             esIngreso = mov.subOperacion === 'INGRESO';

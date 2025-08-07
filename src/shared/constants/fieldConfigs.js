@@ -97,6 +97,10 @@ export const specificFieldsConfig = {
       [
         { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
+      // Cuenta donde recibimos la moneda comprada
+      [
+        { label: 'Cuenta donde Recibimos', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+      ],
       // TC compra
       [
         { label: 'TC compra', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
@@ -105,19 +109,33 @@ export const specificFieldsConfig = {
       [
         { label: 'Moneda', name: 'monedaTC', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
+      // Cuenta desde donde pagamos
+      [
+        { label: 'Cuenta desde donde Pagamos', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+      ],
       // Total
       [
         { label: 'Total compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
       ],
+      // Separador visual
+      [],
       // Monto venta / Moneda venta
       [
         { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'monedaVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
       ],
+      // Cuenta desde donde entregamos
+      [
+        { label: 'Cuenta desde donde Entregamos', name: 'walletCompraVenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+      ],
       // TC venta / Moneda TC
       [
         { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
         { label: 'Moneda TC', name: 'monedaTCVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
+      ],
+      // Cuenta donde cobramos
+      [
+        { label: 'Cuenta donde Cobramos', name: 'walletTCVenta', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
       ],
       // Total
       [
@@ -127,10 +145,6 @@ export const specificFieldsConfig = {
       [
         { label: 'Profit', name: 'profit', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-1' },
         { label: 'Moneda', name: 'monedaProfit', type: 'text', readOnly: true, calculated: true, gridCols: 'col-span-1' }
-      ],
-      // Cuenta
-      [
-        { label: 'Cuenta Ingreso', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ]
     ],
     // Configuración especial para mantener campos lado a lado en móvil
@@ -315,6 +329,10 @@ export const specificFieldsConfig = {
         [
           { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
         ],
+        // Cuenta donde recibimos la moneda comprada
+        [
+          { label: 'Cuenta donde Recibimos', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        ],
         // TC compra
         [
           { label: 'TC compra', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
@@ -323,19 +341,33 @@ export const specificFieldsConfig = {
         [
           { label: 'Moneda', name: 'monedaTC', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
         ],
+        // Cuenta desde donde pagamos
+        [
+          { label: 'Cuenta desde donde Pagamos', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+        ],
         // Total
         [
           { label: 'Total compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
         ],
+        // Separador visual
+        [],
         // Monto venta / Moneda venta
         [
           { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' },
           { label: 'Moneda', name: 'monedaVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
         ],
+        // Cuenta desde donde entregamos
+        [
+          { label: 'Cuenta desde donde Entregamos', name: 'walletCompraVenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        ],
         // TC venta / Moneda TC
         [
           { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
           { label: 'Moneda TC', name: 'monedaTCVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
+        ],
+        // Cuenta donde cobramos
+        [
+          { label: 'Cuenta donde Cobramos', name: 'walletTCVenta', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
         ],
         // Total
         [
@@ -345,10 +377,6 @@ export const specificFieldsConfig = {
         [
           { label: 'Profit', name: 'profit', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-1' },
           { label: 'Moneda', name: 'monedaProfit', type: 'text', readOnly: true, calculated: true, gridCols: 'col-span-1' }
-        ],
-        // Cuenta
-        [
-          { label: 'Cuenta Ingreso', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
         ]
       ];
     },

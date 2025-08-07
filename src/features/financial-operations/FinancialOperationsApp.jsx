@@ -424,6 +424,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         }
       } else if (formData.subOperacion === 'ARBITRAJE') {
         // En arbitraje: compramos una moneda y vendemos otra
+        // IMPORTANTE: NO afecta el stock porque entra y sale instantáneamente
+        // Solo importa la comisión/profit
+        
+        // Comentado porque el arbitraje no afecta stock
+        /*
         const tcCompra = safeParseFloat(formData.tc);
         const tcVenta = safeParseFloat(formData.tcVenta);
         
@@ -435,6 +440,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           formData.utilidadCalculada = resultado.utilidadTotal;
           formData.utilidadPorcentaje = resultado.utilidadPorcentaje;
         }
+        */
       }
     } else if (formData.operacion === 'CUENTAS_CORRIENTES') {
       // Similar lógica para CC
@@ -453,6 +459,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         }
       } else if (formData.subOperacion === 'ARBITRAJE') {
         // Ahora usa los mismos campos que ARBITRAJE normal
+        // IMPORTANTE: NO afecta el stock porque entra y sale instantáneamente
+        
+        // Comentado porque el arbitraje no afecta stock
+        /*
         const tcCompra = safeParseFloat(formData.tc);
         const tcVenta = safeParseFloat(formData.tcVenta);
         
@@ -464,6 +474,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           formData.utilidadCalculada = resultado.utilidadTotal;
           formData.utilidadPorcentaje = resultado.utilidadPorcentaje;
         }
+        */
       }
     }
     
