@@ -7,6 +7,7 @@ import {
   safeCalculation,
   safeArray 
 } from '../../shared/services/safeOperations';
+import { stockService } from '../../shared/services/stockService';
 import { getTodayLocalDate, getDayName } from '../../shared/utils/dateUtils';
 import {
   FormInput,
@@ -393,6 +394,70 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     if (!validation.isValid) {
       alert(validation.error);
       return;
+    }
+    
+    // Actualizar stock según el tipo de operación
+    if (formData.operacion === 'TRANSACCIONES') {
+      if (formData.subOperacion === 'COMPRA') {
+        // En compra: recibimos la moneda, pagamos monedaTC
+        // Actualizamos stock de la moneda que recibimos
+        const tc = safeParseFloat(formData.tc);
+        if (tc > 0) {
+          stockService.registrarCompra(formData.moneda, formData.monto, tc);
+        }
+      } else if (formData.subOperacion === 'VENTA') {
+        // En venta: vendemos la moneda, recibimos monedaTC
+        // Registramos venta y calculamos utilidad
+        const tc = safeParseFloat(formData.tc);
+        if (tc > 0) {
+          const resultado = stockService.registrarVenta(formData.moneda, formData.monto, tc);
+          // Guardamos la utilidad calculada en el movimiento
+          formData.utilidadCalculada = resultado.utilidadTotal;
+          formData.utilidadPorcentaje = resultado.utilidadPorcentaje;
+          formData.costoPromedio = resultado.costoPromedio;
+        }
+      } else if (formData.subOperacion === 'ARBITRAJE') {
+        // En arbitraje: compramos una moneda y vendemos otra
+        const tcCompra = safeParseFloat(formData.tc);
+        const tcVenta = safeParseFloat(formData.tcVenta);
+        
+        if (tcCompra > 0) {
+          stockService.registrarCompra(formData.moneda, formData.monto, tcCompra);
+        }
+        if (tcVenta > 0) {
+          const resultado = stockService.registrarVenta(formData.monedaVenta, formData.montoVenta, tcVenta);
+          formData.utilidadCalculada = resultado.utilidadTotal;
+          formData.utilidadPorcentaje = resultado.utilidadPorcentaje;
+        }
+      }
+    } else if (formData.operacion === 'CUENTAS_CORRIENTES') {
+      // Similar lógica para CC
+      if (formData.subOperacion === 'COMPRA') {
+        const tc = safeParseFloat(formData.tc);
+        if (tc > 0) {
+          stockService.registrarCompra(formData.moneda, formData.monto, tc);
+        }
+      } else if (formData.subOperacion === 'VENTA') {
+        const tc = safeParseFloat(formData.tc);
+        if (tc > 0) {
+          const resultado = stockService.registrarVenta(formData.moneda, formData.monto, tc);
+          formData.utilidadCalculada = resultado.utilidadTotal;
+          formData.utilidadPorcentaje = resultado.utilidadPorcentaje;
+          formData.costoPromedio = resultado.costoPromedio;
+        }
+      } else if (formData.subOperacion === 'ARBITRAJE') {
+        const tcCompra = safeParseFloat(formData.tcCompra);
+        const tcVenta = safeParseFloat(formData.tcVenta);
+        
+        if (tcCompra > 0) {
+          stockService.registrarCompra(formData.monedaCompra, formData.montoCompra, tcCompra);
+        }
+        if (tcVenta > 0) {
+          const resultado = stockService.registrarVenta(formData.monedaVenta, formData.montoVenta, tcVenta);
+          formData.utilidadCalculada = resultado.utilidadTotal;
+          formData.utilidadPorcentaje = resultado.utilidadPorcentaje;
+        }
+      }
     }
     
     onSaveMovement(formData);

@@ -152,20 +152,17 @@ function RentabilidadApp({ movements = [] }) {
       const tc = safeParseFloat(op.tc);
       volumen = monto * tc;
       
-      // La ganancia en COMPRA/VENTA viene de:
-      // 1. Comisión explícita si existe
-      // 2. Spread del TC (diferencia entre TC de compra y venta)
-      // Como no tenemos el TC de mercado, estimamos un margen promedio
-      
-      if (op.comision && safeParseFloat(op.comision) > 0) {
+      // Usar utilidad calculada si está disponible (promedio ponderado)
+      if (op.utilidadCalculada !== undefined) {
+        ganancia = safeParseFloat(op.utilidadCalculada);
+      } else if (op.comision && safeParseFloat(op.comision) > 0) {
+        // Si no hay utilidad calculada pero hay comisión
         const comision = safeParseFloat(op.comision);
         ganancia = op.tipoComision === 'percentage' 
           ? (monto * comision / 100)
           : comision;
       } else {
-        // Estimamos un spread promedio del 1.5% en operaciones de cambio
-        // En COMPRA: compramos barato al cliente, vendemos caro
-        // En VENTA: vendemos caro al cliente, compramos barato
+        // Estimación si no hay datos
         ganancia = volumen * 0.015; // 1.5% de margen
       }
 
@@ -232,7 +229,9 @@ function RentabilidadApp({ movements = [] }) {
         const tc = safeParseFloat(op.tc);
         volumen = monto * tc;
         
-        if (op.comision) {
+        if (op.utilidadCalculada !== undefined) {
+          ganancia = safeParseFloat(op.utilidadCalculada);
+        } else if (op.comision) {
           const comision = safeParseFloat(op.comision);
           ganancia = op.tipoComision === 'percentage' 
             ? (monto * comision / 100)
@@ -246,7 +245,9 @@ function RentabilidadApp({ movements = [] }) {
         const tc = safeParseFloat(op.tc);
         volumen = monto * tc;
         
-        if (op.comision) {
+        if (op.utilidadCalculada !== undefined) {
+          ganancia = safeParseFloat(op.utilidadCalculada);
+        } else if (op.comision) {
           const comision = safeParseFloat(op.comision);
           ganancia = op.tipoComision === 'percentage' 
             ? (monto * comision / 100)

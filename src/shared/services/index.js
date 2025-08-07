@@ -1,4 +1,5 @@
 // Shared Services
-export * from './formatters';
+export * from './clientService';
+export * from './movementService';
 export * from './safeOperations';
-export * from './lazyLoader';
+export * from './stockService';

@@ -126,13 +126,20 @@ const CajaApp = createLazyComponent(
     fallback: <AdvancedLoadingFallback componentName="Caja Diaria" estimatedLoadTime={400} />
   }
 );
-
 const RentabilidadApp = createLazyComponent(
   () => import('../features/profitability/RentabilidadApp'),
   'RentabilidadApp',
   { 
     preloadDelay: 4500,
     fallback: <AdvancedLoadingFallback componentName="Rentabilidad" estimatedLoadTime={600} />
+  }
+);
+const StockApp = createLazyComponent(
+  () => import('../features/stock/StockApp'),
+  'StockApp',
+  { 
+    preloadDelay: 3000,
+    fallback: <AdvancedLoadingFallback componentName="Stock" estimatedLoadTime={500} />
   }
 );
 
@@ -166,7 +173,8 @@ export default function MainApp() {
     'utilidad': UtilidadApp,
     'arbitraje': ArbitrajeApp,
     'caja': CajaApp,
-    'rentabilidad': RentabilidadApp
+    'rentabilidad': RentabilidadApp,
+    'stock': StockApp
   };
   
   // Enable intelligent preloading based on user behavior
@@ -504,6 +512,16 @@ export default function MainApp() {
           <Suspense fallback={<LoadingSpinner />}>
             <RentabilidadApp 
               movements={movements}
+            />
+          </Suspense>
+        );
+      
+      case 'stock':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <StockApp 
+              movements={movements}
+              clients={clients}
             />
           </Suspense>
         );
