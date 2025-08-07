@@ -16,8 +16,10 @@ export const specificFieldsConfig = {
   COMPRA: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Cuenta donde Recibimos', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -51,8 +53,10 @@ export const specificFieldsConfig = {
   VENTA: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Cuenta desde donde Entregamos', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -170,8 +174,10 @@ export const specificFieldsConfig = {
           { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true, gridCols: 'col-span-2' }
         ],
         [
-          { label: `Monto ${formData.subOperacion || 'Ingreso/Egreso'}`, name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
+          { label: `Monto ${formData.subOperacion || 'Ingreso/Egreso'}`, name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
         ],
         [
           { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -208,8 +214,10 @@ export const specificFieldsConfig = {
           { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true, gridCols: 'col-span-2' }
         ],
         [
-          { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
+          { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
         ],
         [
           { label: 'Cuenta donde Recibimos', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -253,8 +261,10 @@ export const specificFieldsConfig = {
           { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true, gridCols: 'col-span-2' }
         ],
         [
-          { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
+          { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
         ],
         [
           { label: 'Cuenta desde donde Entregamos', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -298,8 +308,10 @@ export const specificFieldsConfig = {
           { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true, gridCols: 'col-span-2' }
         ],
         [
-          { label: 'Monto Compra', name: 'montoCompra', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-          { label: 'Moneda Compra', name: 'monedaCompra', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
+          { label: 'Monto Compra', name: 'montoCompra', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Moneda Compra', name: 'monedaCompra', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
         ],
         [
           { label: 'Cuenta Compra', name: 'walletCompraCmpra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -318,8 +330,10 @@ export const specificFieldsConfig = {
         ],
         [],
         [
-          { label: 'Monto Venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-          { label: 'Moneda Venta', name: 'monedaVenta', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
+          { label: 'Monto Venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Moneda Venta', name: 'monedaVenta', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
         ],
         [
           { label: 'Cuenta Venta', name: 'walletCompraVenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -382,8 +396,10 @@ export const specificFieldsConfig = {
   SOCIOS_SHARED: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
