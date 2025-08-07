@@ -306,3 +306,4 @@ npm install
 - Opciones filtradas por contexto
 
 ¡El sistema está listo para producción y optimizado para el mejor rendimiento en Vercel! 🚀# Trigger deployment - Sun Jul 27 01:21:23 PM UTC 2025
+# Force deploy Thu Aug  7 03:07:07 AM UTC 2025
