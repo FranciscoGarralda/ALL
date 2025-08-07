@@ -96,19 +96,19 @@ function SaldosInicialesApp() {
 
           {/* Selector de moneda */}
           <div className="p-3 sm:p-4 border-b border-gray-100">
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
               {monedas.filter(m => m.value !== '').map(moneda => (
                 <button
                   key={moneda.value}
                   onClick={() => setSelectedMoneda(moneda.value)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  className={`px-2 py-3 rounded-lg font-medium transition-colors flex flex-col items-center justify-center ${
                     selectedMoneda === moneda.value
                       ? 'bg-gray-800 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  <span className="mr-2">{moneda.emoji}</span>
-                  {moneda.value}
+                  <span className="text-2xl mb-1">{moneda.emoji}</span>
+                  <span className="text-xs">{moneda.value}</span>
                 </button>
               ))}
             </div>
