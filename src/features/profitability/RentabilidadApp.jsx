@@ -84,6 +84,102 @@ function RentabilidadApp({ movements = [] }) {
       }
     });
 
+    // Analizar operaciones de CUENTAS_CORRIENTES
+    const operacionesCC = filteredMovements.filter(mov => 
+      mov.operacion === 'CUENTAS_CORRIENTES' && 
+      ['COMPRA', 'VENTA', 'ARBITRAJE'].includes(mov.subOperacion)
+    );
+
+    operacionesCC.forEach(op => {
+      let ganancia = 0;
+      let volumen = 0;
+      let monedaKey = 'PESO';
+
+      if (op.subOperacion === 'COMPRA') {
+        // En compra: compramos al proveedor y vendemos al cliente
+        // La ganancia real vendría de la diferencia entre el TC que nos da el proveedor
+        // y el TC que le cobramos al cliente final
+        const monto = safeParseFloat(op.monto);
+        const tc = safeParseFloat(op.tc);
+        volumen = monto * tc;
+        
+        // Si tenemos comisión registrada, esa es parte de nuestra ganancia
+        if (op.comision) {
+          const comision = safeParseFloat(op.comision);
+          ganancia = op.tipoComision === 'percentage' 
+            ? (monto * comision / 100)
+            : comision;
+        } else {
+          // Si no hay comisión explícita, estimamos un margen del 1.5%
+          ganancia = volumen * 0.015;
+        }
+        monedaKey = op.monedaTC || 'PESO';
+      } else if (op.subOperacion === 'VENTA') {
+        // En venta: compramos del cliente y vendemos al proveedor
+        // Similar lógica pero invertida
+        const monto = safeParseFloat(op.monto);
+        const tc = safeParseFloat(op.tc);
+        volumen = monto * tc;
+        
+        if (op.comision) {
+          const comision = safeParseFloat(op.comision);
+          ganancia = op.tipoComision === 'percentage' 
+            ? (monto * comision / 100)
+            : comision;
+        } else {
+          ganancia = volumen * 0.015;
+        }
+        monedaKey = op.monedaTC || 'PESO';
+      } else if (op.subOperacion === 'ARBITRAJE') {
+        // Arbitraje con CC
+        const montoCompra = safeParseFloat(op.montoCompra);
+        const tcCompra = safeParseFloat(op.tcCompra);
+        const montoVenta = safeParseFloat(op.montoVenta || 0);
+        const tcVenta = safeParseFloat(op.tcVenta || 0);
+        
+        const totalCompra = montoCompra * tcCompra;
+        const totalVenta = montoVenta * tcVenta;
+        ganancia = totalVenta - totalCompra;
+        volumen = totalCompra;
+        monedaKey = op.monedaTCCompra || 'PESO';
+      }
+
+      // Actualizar estadísticas generales
+      if (ganancia !== 0) {
+        data.general.totalOperaciones++;
+        if (ganancia > 0) data.general.operacionesRentables++;
+        data.general.gananciaTotal += ganancia;
+
+        // Por moneda
+        if (!data.porMoneda[monedaKey]) {
+          data.porMoneda[monedaKey] = {
+            operaciones: 0,
+            gananciaTotal: 0,
+            margenPromedio: 0,
+            volumen: 0
+          };
+        }
+        data.porMoneda[monedaKey].operaciones++;
+        data.porMoneda[monedaKey].gananciaTotal += ganancia;
+        data.porMoneda[monedaKey].volumen += volumen;
+
+        // Por proveedor CC (en lugar de cliente)
+        if (op.proveedorCC) {
+          const proveedorKey = `CC-${op.proveedorCC}`;
+          if (!data.porCliente[proveedorKey]) {
+            data.porCliente[proveedorKey] = {
+              operaciones: 0,
+              gananciaTotal: 0,
+              volumen: 0
+            };
+          }
+          data.porCliente[proveedorKey].operaciones++;
+          data.porCliente[proveedorKey].gananciaTotal += ganancia;
+          data.porCliente[proveedorKey].volumen += volumen;
+        }
+      }
+    });
+
     // Analizar comisiones de otras operaciones
     filteredMovements.forEach(mov => {
       if (mov.comision && safeParseFloat(mov.comision) > 0) {
