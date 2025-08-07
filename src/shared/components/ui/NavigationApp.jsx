@@ -256,6 +256,21 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
           <Footer />
         </div>
       </div>
+
+      {/* Botón temporal para limpiar datos */}
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <button
+          onClick={() => {
+            if (confirm('¿Borrar TODOS los datos locales? Esto no se puede deshacer.')) {
+              localStorage.clear();
+              window.location.reload();
+            }
+          }}
+          className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+        >
+          🗑️ Limpiar Datos Locales
+        </button>
+      </div>
     </div>
   );
 });
