@@ -86,13 +86,12 @@ app.use(errorHandler);
 // Initialize admin user
 const initializeAdmin = async () => {
   try {
-    const adminEmail = process.env.ADMIN_EMAIL || 'francisco@garralda.com';
     const adminUsername = process.env.ADMIN_USERNAME || 'FranciscoGarralda';
     
     // Check if admin exists
     const existingAdmin = await User.findOne({ 
       where: { 
-        email: adminEmail 
+        username: adminUsername 
       } 
     });
     
@@ -101,14 +100,12 @@ const initializeAdmin = async () => {
       const adminUser = await User.create({
         name: process.env.ADMIN_NAME || 'Francisco Garralda',
         username: adminUsername,
-        email: adminEmail,
         password: process.env.ADMIN_PASSWORD || 'garralda1',
         role: 'admin',
         isActive: true
       });
       
       console.log('✅ Usuario administrador creado exitosamente');
-      console.log(`📧 Email: ${adminEmail}`);
       console.log(`👤 Username: ${adminUsername}`);
     } else {
       console.log('ℹ️  Usuario administrador ya existe');

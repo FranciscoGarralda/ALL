@@ -153,15 +153,7 @@ const LoginPage = ({ onLoginSuccess }) => {
             </button>
           </div>
 
-          <div className="text-center space-y-2">
-            <p className="text-sm text-gray-600">
-              Credenciales de acceso:
-            </p>
-            <div className="bg-gray-100 rounded p-2 font-mono text-xs">
-              <p>Usuario: <span className="font-bold">FranciscoGarralda</span></p>
-              <p>Contraseña: <span className="font-bold">garralda1</span></p>
-            </div>
-          </div>
+
         </form>
       </div>
     </div>

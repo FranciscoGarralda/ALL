@@ -20,10 +20,13 @@ const User = sequelize.define('User', {
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true, // Email es opcional
     unique: true,
     validate: {
-      isEmail: true
+      isEmail: {
+        msg: 'Debe ser un email válido',
+        args: true
+      }
     }
   },
   password: {

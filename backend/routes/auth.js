@@ -5,6 +5,45 @@ const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
+// TEMPORAL: Endpoint para crear admin
+// @route   GET /api/auth/create-admin
+// @access  Public (temporal)
+router.get('/create-admin', async (req, res) => {
+  try {
+    // Verificar si ya existe
+    const existing = await User.findOne({
+      where: { username: 'FranciscoGarralda' }
+    });
+    
+    if (existing) {
+      return res.json({
+        success: true,
+        message: 'Admin ya existe'
+      });
+    }
+    
+    // Crear admin
+    const admin = await User.create({
+      name: 'Francisco Garralda',
+      username: 'FranciscoGarralda',
+      password: 'garralda1',
+      role: 'admin',
+      isActive: true
+    });
+    
+    res.json({
+      success: true,
+      message: 'Admin creado exitosamente'
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al crear admin'
+    });
+  }
+});
+
 // @desc    Register user
 // @route   POST /api/auth/register
 // @access  Public
