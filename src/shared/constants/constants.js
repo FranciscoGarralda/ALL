@@ -67,7 +67,7 @@ export const proveedoresCC = [
  */
 export const operaciones = {
   TRANSACCIONES: { icon: '💱', subMenu: ['COMPRA', 'VENTA', 'ARBITRAJE'] },
-  CUENTAS_CORRIENTES: { icon: '🤝', subMenu: ['INGRESO', 'EGRESO'] },
+  CUENTAS_CORRIENTES: { icon: '🤝', subMenu: ['INGRESO', 'EGRESO', 'COMPRA', 'VENTA', 'ARBITRAJE'] },
   SOCIOS: { icon: '👥', subMenu: ['INGRESO', 'SALIDA', 'PRESTAMO', 'DEVOLUCION'] },
   ADMINISTRATIVAS: { icon: '🔧', subMenu: ['AJUSTE', 'GASTO'] },
   PRESTAMISTAS: { icon: '🏦', subMenu: ['PRESTAMO', 'RETIRO'] },

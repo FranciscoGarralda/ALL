@@ -44,31 +44,124 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
 
     // Procesar movimientos de cuentas corrientes
     movements.forEach(mov => {
-      if (mov.operacion === 'CUENTAS_CORRIENTES' && mov.proveedorCC && mov.moneda && mov.monto) {
-        const key = `${mov.proveedorCC}-${mov.moneda}`;
-        const account = accountsMap.get(key);
-
-        if (account) {
-          const amount = safeParseFloat(mov.monto);
-          account.movimientosCount++;
-          
-          if (mov.subOperacion === 'INGRESO') {
+      if (mov.operacion === 'CUENTAS_CORRIENTES' && mov.proveedorCC) {
+        
+        if (mov.subOperacion === 'INGRESO' && mov.moneda && mov.monto) {
+          const key = `${mov.proveedorCC}-${mov.moneda}`;
+          const account = accountsMap.get(key);
+          if (account) {
+            const amount = safeParseFloat(mov.monto);
+            account.movimientosCount++;
             account.ingresos += amount;
             account.saldo += amount;
-          } else if (mov.subOperacion === 'EGRESO') {
+          }
+        } else if (mov.subOperacion === 'EGRESO' && mov.moneda && mov.monto) {
+          const key = `${mov.proveedorCC}-${mov.moneda}`;
+          const account = accountsMap.get(key);
+          if (account) {
+            const amount = safeParseFloat(mov.monto);
+            account.movimientosCount++;
             account.egresos += amount;
             account.saldo -= amount;
           }
-
-          // Agregar comisiones si existen
-          if (mov.comision && mov.monedaComision) {
-            const comisionAmount = safeParseFloat(mov.comision);
-            // La comisión se agrega a la cuenta en la moneda de la comisión
-            const comisionKey = `${mov.proveedorCC}-${mov.monedaComision}`;
-            const comisionAccount = accountsMap.get(comisionKey);
-            if (comisionAccount) {
-              comisionAccount.comisionesGeneradas += comisionAmount;
+        } else if (mov.subOperacion === 'COMPRA') {
+          // En COMPRA: pagamos monedaTC, recibimos moneda
+          if (mov.monedaTC && mov.total) {
+            const keyPago = `${mov.proveedorCC}-${mov.monedaTC}`;
+            const accountPago = accountsMap.get(keyPago);
+            if (accountPago) {
+              const totalPago = safeParseFloat(mov.total);
+              accountPago.movimientosCount++;
+              accountPago.egresos += totalPago;
+              accountPago.saldo -= totalPago;
             }
+          }
+          if (mov.moneda && mov.monto) {
+            const keyRecibo = `${mov.proveedorCC}-${mov.moneda}`;
+            const accountRecibo = accountsMap.get(keyRecibo);
+            if (accountRecibo) {
+              const montoRecibo = safeParseFloat(mov.monto);
+              accountRecibo.movimientosCount++;
+              accountRecibo.ingresos += montoRecibo;
+              accountRecibo.saldo += montoRecibo;
+            }
+          }
+        } else if (mov.subOperacion === 'VENTA') {
+          // En VENTA: entregamos moneda, recibimos monedaTC
+          if (mov.moneda && mov.monto) {
+            const keyEntrega = `${mov.proveedorCC}-${mov.moneda}`;
+            const accountEntrega = accountsMap.get(keyEntrega);
+            if (accountEntrega) {
+              const montoEntrega = safeParseFloat(mov.monto);
+              accountEntrega.movimientosCount++;
+              accountEntrega.egresos += montoEntrega;
+              accountEntrega.saldo -= montoEntrega;
+            }
+          }
+          if (mov.monedaTC && mov.total) {
+            const keyCobro = `${mov.proveedorCC}-${mov.monedaTC}`;
+            const accountCobro = accountsMap.get(keyCobro);
+            if (accountCobro) {
+              const totalCobro = safeParseFloat(mov.total);
+              accountCobro.movimientosCount++;
+              accountCobro.ingresos += totalCobro;
+              accountCobro.saldo += totalCobro;
+            }
+          }
+        } else if (mov.subOperacion === 'ARBITRAJE') {
+          // En ARBITRAJE: procesamos ambas operaciones
+          // COMPRA: pagamos monedaTCCompra, recibimos monedaCompra
+          if (mov.monedaTCCompra && mov.totalCompra) {
+            const keyPagoCompra = `${mov.proveedorCC}-${mov.monedaTCCompra}`;
+            const accountPagoCompra = accountsMap.get(keyPagoCompra);
+            if (accountPagoCompra) {
+              const totalPagoCompra = safeParseFloat(mov.totalCompra);
+              accountPagoCompra.movimientosCount++;
+              accountPagoCompra.egresos += totalPagoCompra;
+              accountPagoCompra.saldo -= totalPagoCompra;
+            }
+          }
+          if (mov.monedaCompra && mov.montoCompra) {
+            const keyReciboCompra = `${mov.proveedorCC}-${mov.monedaCompra}`;
+            const accountReciboCompra = accountsMap.get(keyReciboCompra);
+            if (accountReciboCompra) {
+              const montoReciboCompra = safeParseFloat(mov.montoCompra);
+              accountReciboCompra.movimientosCount++;
+              accountReciboCompra.ingresos += montoReciboCompra;
+              accountReciboCompra.saldo += montoReciboCompra;
+            }
+          }
+          // VENTA: entregamos monedaVenta, recibimos monedaTCVenta
+          if (mov.monedaVenta && mov.montoVenta) {
+            const keyEntregaVenta = `${mov.proveedorCC}-${mov.monedaVenta}`;
+            const accountEntregaVenta = accountsMap.get(keyEntregaVenta);
+            if (accountEntregaVenta) {
+              const montoEntregaVenta = safeParseFloat(mov.montoVenta);
+              accountEntregaVenta.movimientosCount++;
+              accountEntregaVenta.egresos += montoEntregaVenta;
+              accountEntregaVenta.saldo -= montoEntregaVenta;
+            }
+          }
+          if (mov.monedaTCVenta && mov.totalVenta) {
+            const keyCobroVenta = `${mov.proveedorCC}-${mov.monedaTCVenta}`;
+            const accountCobroVenta = accountsMap.get(keyCobroVenta);
+            if (accountCobroVenta) {
+              const totalCobroVenta = safeParseFloat(mov.totalVenta);
+              accountCobroVenta.movimientosCount++;
+              accountCobroVenta.ingresos += totalCobroVenta;
+              accountCobroVenta.saldo += totalCobroVenta;
+            }
+          }
+        }
+
+        // Agregar comisiones si existen (para todas las sub-operaciones)
+        if (mov.comision && mov.monedaComision) {
+          const comisionAmount = safeParseFloat(mov.comision);
+          // La comisión se agrega a la cuenta en la moneda de la comisión
+          const comisionKey = `${mov.proveedorCC}-${mov.monedaComision}`;
+          const comisionAccount = accountsMap.get(comisionKey);
+          if (comisionAccount) {
+            comisionAccount.comisionesGeneradas += comisionAmount;
           }
         }
       }

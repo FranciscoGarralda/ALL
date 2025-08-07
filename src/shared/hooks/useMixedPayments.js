@@ -46,6 +46,8 @@ export const useMixedPayments = (formData, setFormData) => {
       let configKey = prev.subOperacion;
       if (['INGRESO', 'EGRESO'].includes(prev.subOperacion) && prev.operacion === 'CUENTAS_CORRIENTES') {
         configKey = 'CUENTAS_CORRIENTES_INGRESO_EGRESO';
+      } else if (['COMPRA', 'VENTA', 'ARBITRAJE'].includes(prev.subOperacion) && prev.operacion === 'CUENTAS_CORRIENTES') {
+        configKey = `CUENTAS_CORRIENTES_${prev.subOperacion}`;
       } else if (['INGRESO', 'SALIDA', 'PRESTAMO', 'DEVOLUCION'].includes(prev.subOperacion) && prev.operacion === 'SOCIOS') {
         configKey = 'SOCIOS_SHARED';
       } else if (prev.subOperacion === 'PRESTAMO' && prev.operacion === 'PRESTAMISTAS') {

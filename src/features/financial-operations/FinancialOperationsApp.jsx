@@ -175,6 +175,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           let configKey = prev.subOperacion;
           if (['INGRESO', 'EGRESO'].includes(prev.subOperacion) && prev.operacion === 'CUENTAS_CORRIENTES') {
             configKey = 'CUENTAS_CORRIENTES_INGRESO_EGRESO';
+          } else if (['COMPRA', 'VENTA', 'ARBITRAJE'].includes(prev.subOperacion) && prev.operacion === 'CUENTAS_CORRIENTES') {
+            configKey = `CUENTAS_CORRIENTES_${prev.subOperacion}`;
           } else if (['INGRESO', 'SALIDA', 'PRESTAMO', 'DEVOLUCION'].includes(prev.subOperacion) && prev.operacion === 'SOCIOS') {
             configKey = 'SOCIOS_SHARED';
           } else if (prev.subOperacion === 'PRESTAMO' && prev.operacion === 'PRESTAMISTAS') {
@@ -286,7 +288,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
 
       // Auto-completado para CUENTAS CORRIENTES
-      if (newState.operacion === 'CUENTAS_CORRIENTES' && ['INGRESO', 'EGRESO'].includes(newState.subOperacion)) {
+      if (newState.operacion === 'CUENTAS_CORRIENTES' && ['INGRESO', 'EGRESO', 'COMPRA', 'VENTA', 'ARBITRAJE'].includes(newState.subOperacion)) {
         
         // NO auto-completar cuenta de comisión - debe ser seleccionada manualmente
         // if (field === 'cuenta') {
@@ -431,6 +433,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
     if (['INGRESO', 'EGRESO'].includes(formData.subOperacion) && formData.operacion === 'CUENTAS_CORRIENTES') {
       configKey = 'CUENTAS_CORRIENTES_INGRESO_EGRESO';
+    } else if (['COMPRA', 'VENTA', 'ARBITRAJE'].includes(formData.subOperacion) && formData.operacion === 'CUENTAS_CORRIENTES') {
+      configKey = `CUENTAS_CORRIENTES_${formData.subOperacion}`;
     } else if (['INGRESO', 'SALIDA', 'PRESTAMO', 'DEVOLUCION'].includes(formData.subOperacion) && formData.operacion === 'SOCIOS') {
       configKey = 'SOCIOS_SHARED';
     } else if (formData.subOperacion === 'PRESTAMO' && formData.operacion === 'PRESTAMISTAS') {

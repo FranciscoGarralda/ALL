@@ -195,6 +195,189 @@ export const specificFieldsConfig = {
     includesPagoMixto: false
   },
 
+  // Current accounts COMPRA configuration
+  CUENTAS_CORRIENTES_COMPRA: {
+    groups: (formData) => {
+      const selectedProveedor = proveedoresCC.find(p => p.value === formData.proveedorCC);
+      const availableMonedas = selectedProveedor 
+        ? monedas.filter(m => selectedProveedor.allowedCurrencies.includes(m.value) || m.value === '') 
+        : monedas;
+
+      return [
+        [
+          { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
+        ],
+        [
+          { label: 'Cuenta donde Recibimos', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Moneda a Pagar', name: 'monedaTC', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Cuenta desde donde Pagamos', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Total a Pagar', name: 'total', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
+        ]
+      ];
+    },
+    includesEstadoYPor: true,
+    includesPagoMixto: true,
+    pagoMixtoWalletMode: true,
+    calculations: {
+      total: (formData) => {
+        const monto = safeParseFloat(formData.monto, 0);
+        const tc = safeParseFloat(formData.tc, 0);
+        return monto * tc;
+      }
+    }
+  },
+
+  // Current accounts VENTA configuration
+  CUENTAS_CORRIENTES_VENTA: {
+    groups: (formData) => {
+      const selectedProveedor = proveedoresCC.find(p => p.value === formData.proveedorCC);
+      const availableMonedas = selectedProveedor 
+        ? monedas.filter(m => selectedProveedor.allowedCurrencies.includes(m.value) || m.value === '') 
+        : monedas;
+
+      return [
+        [
+          { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
+        ],
+        [
+          { label: 'Cuenta desde donde Entregamos', name: 'walletCompra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'TC (Tipo de Cambio)', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Moneda a Cobrar', name: 'monedaTC', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Cuenta donde Cobramos', name: 'walletTC', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Total a Cobrar', name: 'total', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
+        ]
+      ];
+    },
+    includesEstadoYPor: true,
+    includesPagoMixto: true,
+    pagoMixtoWalletMode: true,
+    calculations: {
+      total: (formData) => {
+        const monto = safeParseFloat(formData.monto, 0);
+        const tc = safeParseFloat(formData.tc, 0);
+        return monto * tc;
+      }
+    }
+  },
+
+  // Current accounts ARBITRAJE configuration
+  CUENTAS_CORRIENTES_ARBITRAJE: {
+    groups: (formData) => {
+      const selectedProveedor = proveedoresCC.find(p => p.value === formData.proveedorCC);
+      const availableMonedas = selectedProveedor 
+        ? monedas.filter(m => selectedProveedor.allowedCurrencies.includes(m.value) || m.value === '') 
+        : monedas;
+
+      return [
+        [
+          { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Monto Compra', name: 'montoCompra', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+          { label: 'Moneda Compra', name: 'monedaCompra', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
+        ],
+        [
+          { label: 'Cuenta Compra', name: 'walletCompraCmpra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'TC Compra', name: 'tcCompra', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Moneda TC Compra', name: 'monedaTCCompra', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Cuenta TC Compra', name: 'walletTCCmpra', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Total Compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
+        ],
+        [],
+        [
+          { label: 'Monto Venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+          { label: 'Moneda Venta', name: 'monedaVenta', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-1' }
+        ],
+        [
+          { label: 'Cuenta Venta', name: 'walletCompraVenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'TC Venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Moneda TC Venta', name: 'monedaTCVenta', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Cuenta TC Venta', name: 'walletTCVenta', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Total Venta', name: 'totalVenta', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
+        ],
+        [],
+        [
+          { label: 'Comisión', name: 'comisionPorcentaje', type: 'commission', placeholder: '0.00', gridCols: 'col-span-1' },
+          { label: 'Monto Comisión', name: 'montoComision', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-1' }
+        ],
+        [
+          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: availableMonedas, gridCols: 'col-span-2' }
+        ],
+        [
+          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'wallet-buttons', gridCols: 'col-span-2', required: true }
+        ],
+        [
+          { label: 'Utilidad', name: 'utilidad', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
+        ]
+      ];
+    },
+    includesEstadoYPor: true,
+    includesPagoMixto: false,
+    calculations: {
+      totalCompra: (formData) => {
+        const monto = safeParseFloat(formData.montoCompra, 0);
+        const tc = safeParseFloat(formData.tcCompra, 0);
+        return monto * tc;
+      },
+      totalVenta: (formData) => {
+        const monto = safeParseFloat(formData.montoVenta, 0);
+        const tc = safeParseFloat(formData.tcVenta, 0);
+        return monto * tc;
+      },
+      utilidad: (formData) => {
+        const totalVenta = safeParseFloat(formData.totalVenta, 0);
+        const totalCompra = safeParseFloat(formData.totalCompra, 0);
+        const comision = safeParseFloat(formData.montoComision, 0);
+        
+        if (formData.monedaTCVenta === formData.monedaTCCompra) {
+          return totalVenta - totalCompra + comision;
+        }
+        return 0;
+      }
+    }
+  },
+
   // Partners shared configuration for multiple operations
   SOCIOS_SHARED: {
     groups: [
