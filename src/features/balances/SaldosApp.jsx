@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Wallet, TrendingUp, TrendingDown, DollarSign, CreditCard, Banknote } from 'lucide-react';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
+import { initialBalanceService } from '../../shared/services/initialBalanceService';
 import { monedas } from '../../shared/constants';
 
 function SaldosApp({ movements = [] }) {
@@ -107,6 +108,31 @@ function SaldosApp({ movements = [] }) {
           saldo.egresos += monto;
           saldo.saldo -= monto;
         }
+      }
+    });
+
+    // Agregar saldos iniciales
+    const saldosIniciales = initialBalanceService.getAllBalances();
+    Object.entries(saldosIniciales).forEach(([key, monto]) => {
+      const [cuenta, moneda] = key.split('-');
+      if (!cuenta || !moneda) return;
+      
+      // Extraer socio y tipo de la cuenta
+      const cuentaParts = cuenta.split('_');
+      if (cuentaParts.length !== 2) return;
+      
+      const [socio, tipo] = cuentaParts;
+      if (!['socio1', 'socio2', 'all'].includes(socio)) return;
+      if (!['digital', 'efectivo'].includes(tipo)) return;
+      
+      const saldoKey = `${socio}-${tipo}-${moneda}`;
+      const saldo = saldosMap.get(saldoKey);
+      
+      if (saldo) {
+        const montoInicial = safeParseFloat(monto);
+        saldo.saldo += montoInicial;
+        // También agregamos a ingresos para que se refleje en el total
+        saldo.ingresos += montoInicial;
       }
     });
 

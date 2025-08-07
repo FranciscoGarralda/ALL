@@ -142,6 +142,10 @@ const StockApp = createLazyComponent(
     fallback: <AdvancedLoadingFallback componentName="Stock" estimatedLoadTime={500} />
   }
 );
+const SaldosInicialesApp = createLazyComponent(
+  () => import('../features/initial-balances/SaldosInicialesApp'),
+  'SaldosInicialesApp'
+);
 
 // Loading component for better UX
 const LoadingSpinner = () => (
@@ -174,7 +178,8 @@ export default function MainApp() {
     'arbitraje': ArbitrajeApp,
     'caja': CajaApp,
     'rentabilidad': RentabilidadApp,
-    'stock': StockApp
+    'stock': StockApp,
+    'saldosIniciales': SaldosInicialesApp
   };
   
   // Enable intelligent preloading based on user behavior
@@ -523,6 +528,13 @@ export default function MainApp() {
               movements={movements}
               clients={clients}
             />
+          </Suspense>
+        );
+      
+      case 'saldosIniciales':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <SaldosInicialesApp />
           </Suspense>
         );
       

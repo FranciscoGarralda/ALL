@@ -17,7 +17,8 @@ import {
   Home,
   Calculator,
   BarChart3,
-  Package
+  Package,
+  Settings
 } from 'lucide-react';
 import FixedHeader from './FixedHeader';
 import Footer from './Footer';
@@ -88,7 +89,8 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
     { id: 'prestamistas', icon: CreditCard, title: 'Prestamistas' },
     { id: 'gastos', icon: Receipt, title: 'Gastos' },
     { id: 'clientes', icon: UserCheck, title: 'Clientes' },
-    { id: 'stock', icon: Package, title: 'Stock' }
+    { id: 'stock', icon: Package, title: 'Stock' },
+    { id: 'saldosIniciales', icon: Settings, title: 'Saldos Iniciales' }
   ], []);
 
   const handleItemClick = useCallback((itemId) => {
