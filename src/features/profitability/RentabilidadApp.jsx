@@ -139,6 +139,83 @@ function RentabilidadApp({ movements = [] }) {
       }
     });
 
+    // Analizar operaciones COMPRA/VENTA de TRANSACCIONES
+    const comprasVentas = movementsList.filter(mov => 
+      mov.operacion === 'TRANSACCIONES' && 
+      ['COMPRA', 'VENTA'].includes(mov.subOperacion)
+    );
+
+    comprasVentas.forEach(op => {
+      let ganancia = 0;
+      let volumen = 0;
+      const monto = safeParseFloat(op.monto);
+      const tc = safeParseFloat(op.tc);
+      volumen = monto * tc;
+      
+      // La ganancia en COMPRA/VENTA viene de:
+      // 1. Comisión explícita si existe
+      // 2. Spread del TC (diferencia entre TC de compra y venta)
+      // Como no tenemos el TC de mercado, estimamos un margen promedio
+      
+      if (op.comision && safeParseFloat(op.comision) > 0) {
+        const comision = safeParseFloat(op.comision);
+        ganancia = op.tipoComision === 'percentage' 
+          ? (monto * comision / 100)
+          : comision;
+      } else {
+        // Estimamos un spread promedio del 1.5% en operaciones de cambio
+        // En COMPRA: compramos barato al cliente, vendemos caro
+        // En VENTA: vendemos caro al cliente, compramos barato
+        ganancia = volumen * 0.015; // 1.5% de margen
+      }
+
+      if (ganancia !== 0) {
+        data.general.totalOperaciones++;
+        if (ganancia > 0) data.general.operacionesRentables++;
+        data.general.gananciaTotal += ganancia;
+
+        // Por moneda (usamos monedaTC que es la que pagamos/cobramos)
+        const monedaKey = op.monedaTC || 'PESO';
+        if (!data.porMoneda[monedaKey]) {
+          data.porMoneda[monedaKey] = {
+            operaciones: 0,
+            gananciaTotal: 0,
+            margenPromedio: 0,
+            volumen: 0
+          };
+        }
+        data.porMoneda[monedaKey].operaciones++;
+        data.porMoneda[monedaKey].gananciaTotal += ganancia;
+        data.porMoneda[monedaKey].volumen += volumen;
+
+        // Por cliente
+        if (op.cliente) {
+          if (!data.porCliente[op.cliente]) {
+            data.porCliente[op.cliente] = {
+              operaciones: 0,
+              gananciaTotal: 0,
+              volumen: 0
+            };
+          }
+          data.porCliente[op.cliente].operaciones++;
+          data.porCliente[op.cliente].gananciaTotal += ganancia;
+          data.porCliente[op.cliente].volumen += volumen;
+        }
+
+        // Por tipo de operación
+        if (!data.porTipo['TRANSACCIONES']) {
+          data.porTipo['TRANSACCIONES'] = {
+            operaciones: 0,
+            comisionTotal: 0,
+            volumen: 0
+          };
+        }
+        data.porTipo['TRANSACCIONES'].operaciones++;
+        data.porTipo['TRANSACCIONES'].comisionTotal += ganancia;
+        data.porTipo['TRANSACCIONES'].volumen += volumen;
+      }
+    });
+
     // Analizar operaciones de CUENTAS_CORRIENTES
     const operacionesCC = movementsList.filter(mov => 
       mov.operacion === 'CUENTAS_CORRIENTES' && 
