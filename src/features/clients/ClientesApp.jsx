@@ -232,13 +232,7 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
                 </div>
               ) : (
                 <div className="px-2">
-                  <p className="text-sm sm:text-base text-gray-700 mb-4">No hay clientes registrados</p>
-                  <button
-                    onClick={crearNuevoCliente}
-                    className="btn-primary touch-target"
-                  >
-                    Crear primer cliente
-                  </button>
+                  <p className="text-sm sm:text-base text-gray-700">No hay clientes registrados</p>
                 </div>
               )}
             </div>
