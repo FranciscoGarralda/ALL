@@ -122,7 +122,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
 MainMenu.displayName = 'MainMenu';
 
 /** COMPONENTE PRINCIPAL DE NAVEGACIÓN OPTIMIZADO */
-const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, onLogout }) => {
+const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Iniciar cerrado en móvil
   const [isMobile, setIsMobile] = useState(false);
 
