@@ -18,7 +18,8 @@ router.get('/create-admin', async (req, res) => {
     if (existing) {
       return res.json({
         success: true,
-        message: 'Admin ya existe'
+        message: 'Admin ya existe',
+        userExists: true
       });
     }
     
@@ -33,13 +34,34 @@ router.get('/create-admin', async (req, res) => {
     
     res.json({
       success: true,
-      message: 'Admin creado exitosamente'
+      message: 'Admin creado exitosamente',
+      userCreated: true
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error creando admin:', error);
     res.status(500).json({
       success: false,
-      message: 'Error al crear admin'
+      message: 'Error al crear admin',
+      error: error.message
+    });
+  }
+});
+
+// Endpoint simple para verificar
+router.get('/test', async (req, res) => {
+  try {
+    const userCount = await User.count();
+    res.json({
+      success: true,
+      message: 'Auth routes funcionando',
+      userCount,
+      timestamp: new Date()
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: 'Error conectando a la base de datos',
+      error: error.message
     });
   }
 });
@@ -248,45 +270,6 @@ router.put('/updatepassword', protect, [
     res.status(500).json({
       success: false,
       message: 'Error en el servidor'
-    });
-  }
-});
-
-// TEMPORAL: Endpoint para crear admin
-// @route   GET /api/auth/create-admin
-// @access  Public (temporal)
-router.get('/create-admin', async (req, res) => {
-  try {
-    // Verificar si ya existe
-    const existing = await User.findOne({
-      where: { username: 'FranciscoGarralda' }
-    });
-    
-    if (existing) {
-      return res.json({
-        success: true,
-        message: 'Admin ya existe'
-      });
-    }
-    
-    // Crear admin
-    const admin = await User.create({
-      name: 'Francisco Garralda',
-      username: 'FranciscoGarralda',
-      password: 'garralda1',
-      role: 'admin',
-      isActive: true
-    });
-    
-    res.json({
-      success: true,
-      message: 'Admin creado exitosamente'
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: 'Error al crear admin'
     });
   }
 });
