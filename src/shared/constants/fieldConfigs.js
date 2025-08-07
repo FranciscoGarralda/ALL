@@ -366,10 +366,10 @@ export const specificFieldsConfig = {
         return formData.monto || '0.00';
       },
       monedaVenta: (formData) => {
-        return formData.monedaTC || '';
+        return getCurrencyLabel(formData.monedaTC);
       },
       monedaTCVenta: (formData) => {
-        return formData.moneda || '';
+        return getCurrencyLabel(formData.moneda);
       },
       totalVenta: (formData) => {
         const montoVenta = safeParseFloat(formData.montoVenta, 0);
@@ -386,7 +386,7 @@ export const specificFieldsConfig = {
         return 0;
       },
       monedaProfit: (formData) => {
-        return formData.monedaTC || '';
+        return getCurrencyLabel(formData.monedaTC);
       }
     }
   },
