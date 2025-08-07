@@ -305,17 +305,20 @@ export default function MainApp() {
 
   // Load data from localStorage on mount - VERSIÓN SEGURA
   useEffect(() => {
-    // BORRAR TODOS LOS DATOS LOCALES AL CARGAR
-    localStorage.clear();
+    // Por ahora no borrar hasta que Railway funcione
+    const savedMovements = safeLocalStorage.getItem('financial-movements', []);
+    const savedClients = safeLocalStorage.getItem('financial-clients', []);
     
-    // No cargar nada de localStorage, empezar vacío
-    setMovements([]);
-    setClients([]);
+    if (Array.isArray(savedMovements)) {
+      setMovements(savedMovements);
+    }
+    
+    if (Array.isArray(savedClients)) {
+      setClients(savedClients);
+    }
   }, []);
 
-  // NO GUARDAR EN LOCALSTORAGE - TODO A LA NUBE
-  // Desactivado para forzar uso de la API
-  /*
+  // Guardar temporalmente hasta que Railway funcione
   useEffect(() => {
     if (movements.length > 0) {
       const result = safeLocalStorage.setItem('financial-movements', movements);
@@ -333,7 +336,6 @@ export default function MainApp() {
       }
     }
   }, [clients]);
-  */
 
   // Movement management functions
   const handleSaveMovement = (movementData) => {
