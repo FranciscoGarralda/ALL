@@ -1,25 +1,35 @@
 {
-  "name": "financial-operations-system",
-  "version": "2.1.0",
+  "name": "financial-system",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "cross-env ANALYZE=true next build",
+    "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
-    "next": "14.2.30",
+    "@next/bundle-analyzer": "^14.2.21",
+    "@vercel/analytics": "^1.4.1",
+    "@vercel/speed-insights": "^1.1.0",
+    "lucide-react": "^0.469.0",
+    "next": "14.2.21",
     "react": "^18",
-    "react-dom": "^18",
-    "lucide-react": "^0.400.0",
-    "recharts": "^2.8.0"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "autoprefixer": "^10.0.1",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
     "eslint": "^8",
-    "eslint-config-next": "14.2.30",
+    "eslint-config-next": "14.2.21",
     "postcss": "^8",
-    "tailwindcss": "^3.3.0"
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
 }
