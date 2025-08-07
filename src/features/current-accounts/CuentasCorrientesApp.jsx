@@ -36,6 +36,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
             debeUsuario: 0,
             debeProveedor: 0,
             movimientosCount: 0,
+            comisionesGeneradas: 0, // Agregar comisiones
           });
         });
       }
@@ -57,6 +58,17 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
           } else if (mov.subOperacion === 'EGRESO') {
             account.egresos += amount;
             account.saldo -= amount;
+          }
+
+          // Agregar comisiones si existen
+          if (mov.comision && mov.monedaComision) {
+            const comisionAmount = safeParseFloat(mov.comision);
+            // La comisión se agrega a la cuenta en la moneda de la comisión
+            const comisionKey = `${mov.proveedorCC}-${mov.monedaComision}`;
+            const comisionAccount = accountsMap.get(comisionKey);
+            if (comisionAccount) {
+              comisionAccount.comisionesGeneradas += comisionAmount;
+            }
           }
         }
       }
@@ -95,6 +107,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
           cantidadMonedas: 0,
           monedas: new Set(),
           movimientosCount: 0,
+          comisionesGeneradas: 0, // Agregar comisiones totales
         });
       }
       
@@ -107,6 +120,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
       providerTotal.monedas.add(account.moneda);
       providerTotal.cantidadMonedas = providerTotal.monedas.size;
       providerTotal.movimientosCount += account.movimientosCount;
+      providerTotal.comisionesGeneradas += account.comisionesGeneradas; // Sumar comisiones
     });
 
     return Array.from(totalsByProvider.values()).sort((a, b) => 
@@ -131,8 +145,9 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
       debeUsuario: 0,
       debeProveedor: 0,
       movimientosCount: 0,
+      comisionesGeneradas: 0, // Agregar comisiones
     };
-
+    
     detailedAccounts.forEach(account => {
       totals.ingresos += account.ingresos;
       totals.egresos += account.egresos;
@@ -140,6 +155,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
       totals.debeUsuario += account.debeUsuario;
       totals.debeProveedor += account.debeProveedor;
       totals.movimientosCount += account.movimientosCount;
+      totals.comisionesGeneradas += account.comisionesGeneradas; // Sumar comisiones
     });
     
     return totals;
@@ -272,6 +288,16 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                           </div>
                         )}
 
+                        {/* Comisiones generadas */}
+                        {providerSummary.comisionesGeneradas > 0 && (
+                          <div className="bg-gray-100 rounded-lg p-2 sm:p-3 text-center">
+                            <p className="text-xs text-gray-700">Comisiones generadas</p>
+                            <p className="font-semibold text-gray-800 text-xs sm:text-sm">
+                              {formatAmountWithCurrency(providerSummary.comisionesGeneradas, 'PESO', { showSymbol: false, decimals: 0 })}
+                            </p>
+                          </div>
+                        )}
+
                         {/* Contador de movimientos */}
                         <div className="text-center pt-2 border-t border-gray-200">
                           <p className="text-xs text-gray-800">
@@ -365,6 +391,9 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                             Saldo
                           </th>
                           <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                            Comisiones
+                          </th>
+                          <th className="px-2 py-2 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
                             Estado
                           </th>
                         </tr>
@@ -387,6 +416,9 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                               account.saldo < 0 ? 'text-error-600' : 'text-success-600'
                             }`}>
                               {formatAmountWithCurrency(account.saldo, account.moneda)}
+                            </td>
+                            <td className="px-2 py-3 whitespace-nowrap text-right text-sm">
+                              {formatAmountWithCurrency(account.comisionesGeneradas, account.moneda)}
                             </td>
                             <td className="px-2 py-3 whitespace-nowrap text-right text-sm">
                               {account.debeUsuario > 0 ? (
@@ -421,6 +453,9 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                             detailedViewTotals.saldo < 0 ? 'text-error-600' : 'text-success-600'
                           }`}>
                             {formatAmountWithCurrency(detailedViewTotals.saldo, 'PESO', { showSymbol: false })}
+                          </td>
+                          <td className="px-2 py-3 whitespace-nowrap text-right text-sm">
+                            {formatAmountWithCurrency(detailedViewTotals.comisionesGeneradas, 'PESO', { showSymbol: false })}
                           </td>
                           <td className="px-2 py-3 whitespace-nowrap text-right text-sm">
                             {detailedViewTotals.debeUsuario > 0 ? (
@@ -478,6 +513,14 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
                                 {formatAmountWithCurrency(account.saldo, account.moneda)}
                               </span>
                             </div>
+                            {account.comisionesGeneradas > 0 && (
+                              <div className="flex items-center justify-between mt-1">
+                                <span className="text-xs text-gray-700">Comisiones</span>
+                                <span className="font-medium text-gray-800">
+                                  {formatAmountWithCurrency(account.comisionesGeneradas, account.moneda)}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
