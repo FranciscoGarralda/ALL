@@ -203,8 +203,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate }) => {
         toggleSidebar={toggleSidebar}
         currentPage={currentPage}
         showMenuButton={true}
-        currentUser={currentUser}
-        onLogout={onLogout}
+
+
       />
 
       {/* Layout principal con altura fija */}

@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Calendar, Clock, DollarSign, User, LogOut } from 'lucide-react';
+import { Menu, X, Calendar, Clock, DollarSign } from 'lucide-react';
 
 const FixedHeader = ({ 
   isSidebarOpen, 
   toggleSidebar, 
   currentPage, 
-  showMenuButton = true,
-  currentUser,
-  onLogout
+  showMenuButton = true
 }) => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-  const [showUserMenu, setShowUserMenu] = useState(false);
 
   // Actualizar fecha y hora cada minuto
   useEffect(() => {
@@ -21,19 +18,7 @@ const FixedHeader = ({
     return () => clearInterval(timer);
   }, []);
 
-  // Cerrar menú de usuario al hacer clic fuera
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!e.target.closest('.user-menu-container')) {
-        setShowUserMenu(false);
-      }
-    };
 
-    if (showUserMenu) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
-  }, [showUserMenu]);
 
   // Formatear fecha y día de la semana
   const formatDate = (date) => {
@@ -153,43 +138,7 @@ const FixedHeader = ({
             <div className="text-gray-300 font-medium">{currentTime}</div>
           </div>
 
-          {/* Menú de usuario */}
-          {currentUser && (
-            <div className="relative user-menu-container">
-              <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-2 bg-gray-800 hover:bg-gray-700 px-3 py-2 rounded-xl transition-all duration-200 border border-gray-700"
-              >
-                <User size={18} className="text-gray-300" />
-                <span className="hidden sm:block text-sm font-medium text-gray-100">
-                  {currentUser.name}
-                </span>
-                <span className="text-xs text-gray-400 hidden lg:block">
-                  ({currentUser.role === 'admin' ? 'Admin' : 'Usuario'})
-                </span>
-              </button>
 
-              {/* Dropdown menu */}
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-xl shadow-xl border border-gray-700 py-1 z-50">
-                  <div className="px-4 py-2 border-b border-gray-700">
-                    <p className="text-sm font-medium text-gray-100">{currentUser.name}</p>
-                    <p className="text-xs text-gray-400">{currentUser.email}</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setShowUserMenu(false);
-                      onLogout();
-                    }}
-                    className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-gray-100 transition-colors"
-                  >
-                    <LogOut size={16} />
-                    <span>Cerrar Sesión</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Indicador de estado (opcional) */}
           <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg" title="Sistema activo"></div>

@@ -260,7 +260,7 @@ export default function MainApp() {
     }
   }, []);
 
-  // Guardar temporalmente hasta que Railway funcione
+  // Save data to localStorage when state changes
   useEffect(() => {
     if (movements.length > 0) {
       const result = safeLocalStorage.setItem('financial-movements', movements);
