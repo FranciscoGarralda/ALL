@@ -475,7 +475,7 @@ export default function MainApp() {
       case 'saldos':
         return (
           <Suspense fallback={<LoadingSpinner />}>
-            <SaldosApp movements={movements} />
+            <SaldosApp />
           </Suspense>
         );
       

@@ -108,8 +108,27 @@ class ApiService {
   // ===== MÉTODOS DE MOVIMIENTOS =====
   
   async getMovements(filters = {}) {
+    // TEMPORAL: Usar endpoint público
     const query = new URLSearchParams(filters).toString();
-    return this.request(`/movements?${query}`);
+    const url = `/public/movements?${query}`;
+    
+    try {
+      const response = await fetch(`${this.baseURL}${url}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al cargar movimientos');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
   }
 
   async getMovement(id) {

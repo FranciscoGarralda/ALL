@@ -2,18 +2,16 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Wallet, TrendingUp, TrendingDown, DollarSign, CreditCard, Banknote } from 'lucide-react';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
-// import { apiService } from '../../shared/services'; // TEMPORAL: Desactivado hasta que Railway actualice
+import { apiService } from '../../shared/services';
 import { monedas } from '../../shared/constants';
 
-function SaldosApp({ movements = [] }) { // TEMPORAL: Recibe movements como prop
+function SaldosApp() {
   const [filterSocio, setFilterSocio] = useState('all'); // 'all', 'socio1', 'socio2', 'all_wallet'
   const [filterTipo, setFilterTipo] = useState('all'); // 'all', 'digital', 'efectivo'
-  // const [movements, setMovements] = useState([]);
-  const [loading, setLoading] = useState(false); // TEMPORAL: false
+  const [movements, setMovements] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // TEMPORAL: Desactivado hasta que Railway actualice
-  /*
   // Cargar movimientos desde la API
   useEffect(() => {
     loadMovements();
@@ -34,7 +32,6 @@ function SaldosApp({ movements = [] }) { // TEMPORAL: Recibe movements como prop
       setLoading(false);
     }
   };
-  */
 
   // Calcular saldos por socio, tipo y moneda
   const saldos = useMemo(() => {

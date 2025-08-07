@@ -56,13 +56,97 @@ app.use('/api/users', userRoutes);
 app.use('/api/movements', movementRoutes);
 app.use('/api/clients', clientRoutes);
 
-// Health check
+// Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV
+  res.json({
+    status: 'ok',
+    timestamp: new Date(),
+    environment: process.env.NODE_ENV || 'development'
   });
+});
+
+// TEMPORAL: Endpoint público para crear datos de prueba
+app.post('/api/public/test-data', async (req, res) => {
+  try {
+    const { Movement } = require('./models');
+    
+    // Crear algunos movimientos de prueba
+    const testMovements = [
+      {
+        fecha: new Date(),
+        operacion: 'TRANSACCIONES',
+        subOperacion: 'COMPRA',
+        cliente: 'Cliente Test 1',
+        moneda: 'USD',
+        monto: 1000,
+        montoTC: 950000,
+        monedaTC: 'PESO',
+        comision: 50,
+        montoTotal: 950000,
+        estado: 'completado',
+        socio: 'socio1',
+        tipoEgreso: 'digital',
+        tipoIngreso: 'efectivo',
+        userId: 1
+      },
+      {
+        fecha: new Date(),
+        operacion: 'TRANSACCIONES',
+        subOperacion: 'VENTA',
+        cliente: 'Cliente Test 2',
+        moneda: 'USD',
+        monto: 500,
+        montoTC: 475000,
+        monedaTC: 'PESO',
+        comision: 25,
+        montoTotal: 475000,
+        estado: 'completado',
+        socio: 'socio2',
+        tipoEgreso: 'efectivo',
+        tipoIngreso: 'digital',
+        userId: 1
+      }
+    ];
+    
+    const created = await Movement.bulkCreate(testMovements);
+    
+    res.json({
+      success: true,
+      message: 'Datos de prueba creados',
+      count: created.length
+    });
+  } catch (error) {
+    console.error('Error creando datos de prueba:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al crear datos de prueba',
+      error: error.message
+    });
+  }
+});
+
+// TEMPORAL: Endpoint público para obtener movimientos
+app.get('/api/public/movements', async (req, res) => {
+  try {
+    const { Movement } = require('./models');
+    const movements = await Movement.findAll({
+      order: [['fecha', 'DESC']],
+      limit: 100
+    });
+    
+    res.json({
+      success: true,
+      data: movements,
+      total: movements.length
+    });
+  } catch (error) {
+    console.error('Error obteniendo movimientos:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener movimientos',
+      error: error.message
+    });
+  }
 });
 
 // Root route
