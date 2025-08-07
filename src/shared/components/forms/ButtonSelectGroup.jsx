@@ -21,7 +21,7 @@ const ButtonSelectGroup = ({
   const getButtonClasses = (optionValue) => {
     const isActive = value === optionValue;
     const baseClasses = isMoneda
-      ? 'px-2 py-1 text-xs font-medium flex items-center justify-center rounded-md border transition-all min-w-[50px]'
+      ? 'px-1 sm:px-2 py-1 text-xs font-medium flex items-center justify-center rounded-md border transition-all min-w-[45px] sm:min-w-[50px]'
       : isOperacion
         ? 'px-2 py-3 text-sm font-medium flex items-center justify-center rounded-lg border transition-all min-h-[80px]'
         : 'px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all';
@@ -44,12 +44,12 @@ const ButtonSelectGroup = ({
   // Si hay más de 6 opciones, usar grid de 3 columnas
   const getGridCols = () => {
     if (isMoneda) {
-      // Para monedas, siempre en una línea horizontal
-      if (options.length === 8) return 'grid-cols-8 gap-1';
-      if (options.length === 7) return 'grid-cols-7 gap-1';
-      if (options.length === 6) return 'grid-cols-6 gap-1';
-      if (options.length === 5) return 'grid-cols-5 gap-1';
-      return 'grid-cols-4 gap-1';
+      // Para monedas, usar diseño responsivo
+      if (options.length === 8) return 'grid-cols-4 sm:grid-cols-8 gap-1';
+      if (options.length === 7) return 'grid-cols-4 sm:grid-cols-7 gap-1';
+      if (options.length === 6) return 'grid-cols-3 sm:grid-cols-6 gap-1';
+      if (options.length === 5) return 'grid-cols-3 sm:grid-cols-5 gap-1';
+      return 'grid-cols-2 sm:grid-cols-4 gap-1';
     }
     // Para operaciones principales (6 opciones), usar 3x2
     if (isOperacion && options.length === 6) return 'grid-cols-3 gap-2';
