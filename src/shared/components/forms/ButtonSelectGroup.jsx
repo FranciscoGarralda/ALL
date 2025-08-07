@@ -21,7 +21,7 @@ const ButtonSelectGroup = ({
   const getButtonClasses = (optionValue) => {
     const isActive = value === optionValue;
     const baseClasses = isMoneda
-      ? 'px-1 py-1 text-xs font-medium flex items-center justify-center rounded-md border transition-all min-w-[40px]'
+      ? 'px-2 py-1 text-xs font-medium flex items-center justify-center rounded-md border transition-all min-w-[50px]'
       : isOperacion
         ? 'px-2 py-3 text-sm font-medium flex items-center justify-center rounded-lg border transition-all min-h-[80px]'
         : 'px-4 py-2.5 text-sm font-medium flex items-center justify-center rounded-lg border transition-all';
@@ -88,9 +88,9 @@ const ButtonSelectGroup = ({
                   const emoji = parts[0];
                   const code = parts[1];
                   return (
-                    <div className="flex flex-col items-center gap-0">
+                    <div className="flex flex-row items-center gap-1">
                       <span className="text-sm leading-none">{emoji}</span>
-                      <span className="text-[8px] leading-none">{code}</span>
+                      <span className="text-[10px] leading-none">{code}</span>
                     </div>
                   );
                 })()
