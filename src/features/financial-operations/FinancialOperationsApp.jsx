@@ -250,7 +250,9 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
 
       // Cálculo automático para ARBITRAJE - VERSIÓN SEGURA
-      if (['monto', 'moneda', 'monedaTC', 'tc', 'montoVenta', 'tcVenta'].includes(field) && newState.subOperacion === 'ARBITRAJE') {
+      if (['monto', 'moneda', 'monedaTC', 'tc', 'montoVenta', 'tcVenta'].includes(field) && 
+          (newState.subOperacion === 'ARBITRAJE' || 
+           (newState.operacion === 'CUENTAS_CORRIENTES' && newState.subOperacion === 'ARBITRAJE'))) {
         // Auto-completar monto y moneda de venta cuando cambia compra
         if (field === 'monto') {
           newState.montoVenta = newState.monto;
@@ -446,11 +448,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           formData.costoPromedio = resultado.costoPromedio;
         }
       } else if (formData.subOperacion === 'ARBITRAJE') {
-        const tcCompra = safeParseFloat(formData.tcCompra);
+        // Ahora usa los mismos campos que ARBITRAJE normal
+        const tcCompra = safeParseFloat(formData.tc);
         const tcVenta = safeParseFloat(formData.tcVenta);
         
         if (tcCompra > 0) {
-          stockService.registrarCompra(formData.monedaCompra, formData.montoCompra, tcCompra);
+          stockService.registrarCompra(formData.moneda, formData.monto, tcCompra);
         }
         if (tcVenta > 0) {
           const resultado = stockService.registrarVenta(formData.monedaVenta, formData.montoVenta, tcVenta);

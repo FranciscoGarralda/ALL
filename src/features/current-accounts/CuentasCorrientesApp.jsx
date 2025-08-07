@@ -109,10 +109,10 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
             }
           }
         } else if (mov.subOperacion === 'ARBITRAJE') {
-          // En ARBITRAJE: procesamos ambas operaciones
-          // COMPRA: pagamos monedaTCCompra, recibimos monedaCompra
-          if (mov.monedaTCCompra && mov.totalCompra) {
-            const keyPagoCompra = `${mov.proveedorCC}-${mov.monedaTCCompra}`;
+          // ARBITRAJE: Ahora usa los mismos campos que ARBITRAJE normal
+          // COMPRA: pagamos monedaTC, recibimos moneda
+          if (mov.monedaTC && mov.totalCompra) {
+            const keyPagoCompra = `${mov.proveedorCC}-${mov.monedaTC}`;
             const accountPagoCompra = accountsMap.get(keyPagoCompra);
             if (accountPagoCompra) {
               const totalPagoCompra = safeParseFloat(mov.totalCompra);
@@ -121,17 +121,17 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
               accountPagoCompra.saldo -= totalPagoCompra;
             }
           }
-          if (mov.monedaCompra && mov.montoCompra) {
-            const keyReciboCompra = `${mov.proveedorCC}-${mov.monedaCompra}`;
+          if (mov.moneda && mov.monto) {
+            const keyReciboCompra = `${mov.proveedorCC}-${mov.moneda}`;
             const accountReciboCompra = accountsMap.get(keyReciboCompra);
             if (accountReciboCompra) {
-              const montoReciboCompra = safeParseFloat(mov.montoCompra);
+              const montoReciboCompra = safeParseFloat(mov.monto);
               accountReciboCompra.movimientosCount++;
               accountReciboCompra.ingresos += montoReciboCompra;
               accountReciboCompra.saldo += montoReciboCompra;
             }
           }
-          // VENTA: entregamos monedaVenta, recibimos monedaTCVenta
+          // VENTA: entregamos monedaVenta (que es monedaTC), recibimos monedaTCVenta (que es moneda)
           if (mov.monedaVenta && mov.montoVenta) {
             const keyEntregaVenta = `${mov.proveedorCC}-${mov.monedaVenta}`;
             const accountEntregaVenta = accountsMap.get(keyEntregaVenta);

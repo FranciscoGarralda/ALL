@@ -307,87 +307,86 @@ export const specificFieldsConfig = {
         [
           { label: 'Proveedor', name: 'proveedorCC', type: 'select', options: proveedoresCC, required: true, gridCols: 'col-span-2' }
         ],
+        // Monto compra
         [
-          { label: 'Monto Compra', name: 'montoCompra', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+          { label: 'Monto compra', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
         ],
+        // Moneda
         [
-          { label: 'Moneda Compra', name: 'monedaCompra', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
+          { label: 'Moneda', name: 'moneda', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
         ],
+        // TC compra
         [
-          { label: 'Cuenta Compra', name: 'walletCompraCmpra', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
+          { label: 'TC compra', name: 'tc', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
         ],
+        // Moneda TC
         [
-          { label: 'TC Compra', name: 'tcCompra', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+          { label: 'Moneda', name: 'monedaTC', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
         ],
+        // Total
         [
-          { label: 'Moneda TC Compra', name: 'monedaTCCompra', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
+          { label: 'Total compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
         ],
+        // Monto venta / Moneda venta
         [
-          { label: 'Cuenta TC Compra', name: 'walletTCCmpra', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
+          { label: 'Monto venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' },
+          { label: 'Moneda', name: 'monedaVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
         ],
+        // TC venta / Moneda TC
         [
-          { label: 'Total Compra', name: 'totalCompra', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
+          { label: 'TC venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
+          { label: 'Moneda TC', name: 'monedaTCVenta', type: 'text', required: true, readOnly: true, calculated: true, gridCols: 'col-span-1' }
         ],
-        [],
+        // Total
         [
-          { label: 'Monto Venta', name: 'montoVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+          { label: 'Total venta', name: 'totalVenta', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
         ],
+        // Profit / Moneda
         [
-          { label: 'Moneda Venta', name: 'monedaVenta', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
+          { label: 'Profit', name: 'profit', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-1' },
+          { label: 'Moneda', name: 'monedaProfit', type: 'text', readOnly: true, calculated: true, gridCols: 'col-span-1' }
         ],
+        // Cuenta
         [
-          { label: 'Cuenta Venta', name: 'walletCompraVenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
-        ],
-        [
-          { label: 'TC Venta', name: 'tcVenta', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
-        ],
-        [
-          { label: 'Moneda TC Venta', name: 'monedaTCVenta', type: 'select', options: availableMonedas, required: true, gridCols: 'col-span-2' }
-        ],
-        [
-          { label: 'Cuenta TC Venta', name: 'walletTCVenta', type: 'wallet-tc-buttons', required: true, gridCols: 'col-span-2' }
-        ],
-        [
-          { label: 'Total Venta', name: 'totalVenta', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
-        ],
-        [],
-        [
-          { label: 'Comisión', name: 'comisionPorcentaje', type: 'commission', placeholder: '0.00', gridCols: 'col-span-1' },
-          { label: 'Monto Comisión', name: 'montoComision', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-1' }
-        ],
-        [
-          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: availableMonedas, gridCols: 'col-span-2' }
-        ],
-        [
-          { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'wallet-buttons', gridCols: 'col-span-2', required: true }
-        ],
-        [
-          { label: 'Utilidad', name: 'utilidad', type: 'number', readOnly: true, calculated: true, gridCols: 'col-span-2' }
+          { label: 'Cuenta Ingreso', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
         ]
       ];
     },
+    // Configuración especial para mantener campos lado a lado en móvil
+    mobileLayout: 'keep-columns',
     includesEstadoYPor: true,
     includesPagoMixto: false,
     calculations: {
       totalCompra: (formData) => {
-        const monto = safeParseFloat(formData.montoCompra, 0);
-        const tc = safeParseFloat(formData.tcCompra, 0);
+        const monto = safeParseFloat(formData.monto, 0);
+        const tc = safeParseFloat(formData.tc, 0);
         return monto * tc;
+      },
+      montoVenta: (formData) => {
+        return formData.monto || '0.00';
+      },
+      monedaVenta: (formData) => {
+        return formData.monedaTC || '';
+      },
+      monedaTCVenta: (formData) => {
+        return formData.moneda || '';
       },
       totalVenta: (formData) => {
-        const monto = safeParseFloat(formData.montoVenta, 0);
-        const tc = safeParseFloat(formData.tcVenta, 0);
-        return monto * tc;
+        const montoVenta = safeParseFloat(formData.montoVenta, 0);
+        const tcVenta = safeParseFloat(formData.tcVenta, 0);
+        return montoVenta * tcVenta;
       },
-      utilidad: (formData) => {
+      profit: (formData) => {
         const totalVenta = safeParseFloat(formData.totalVenta, 0);
         const totalCompra = safeParseFloat(formData.totalCompra, 0);
-        const comision = safeParseFloat(formData.montoComision, 0);
         
-        if (formData.monedaTCVenta === formData.monedaTCCompra) {
-          return totalVenta - totalCompra + comision;
+        if (formData.monedaTCVenta === formData.monedaTC) {
+          return totalVenta - totalCompra;
         }
         return 0;
+      },
+      monedaProfit: (formData) => {
+        return formData.monedaTC || '';
       }
     }
   },
