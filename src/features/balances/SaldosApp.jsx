@@ -2,14 +2,14 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Wallet, TrendingUp, TrendingDown, DollarSign, CreditCard, Banknote } from 'lucide-react';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
-import { apiService } from '../../shared/services';
+// import { apiService } from '../../shared/services'; // TEMPORAL: Desactivado
 import { monedas } from '../../shared/constants';
 
-function SaldosApp() {
+function SaldosApp({ movements = [] }) { // TEMPORAL: Datos locales
   const [filterSocio, setFilterSocio] = useState('all'); // 'all', 'socio1', 'socio2', 'all_wallet'
   const [filterTipo, setFilterTipo] = useState('all'); // 'all', 'digital', 'efectivo'
-  const [movements, setMovements] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [movements, setMovements] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Cargar movimientos desde la API
