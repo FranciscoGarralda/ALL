@@ -1,7 +1,16 @@
 const { Sequelize } = require('sequelize');
 
+// Railway proporciona DATABASE_URL automáticamente cuando agregas PostgreSQL
+const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+
+if (!databaseUrl) {
+  console.error('❌ ERROR: No se encontró DATABASE_URL');
+  console.log('Asegúrate de haber agregado PostgreSQL a tu proyecto en Railway');
+  process.exit(1);
+}
+
 // Crear conexión con PostgreSQL
-const sequelize = new Sequelize(process.env.DATABASE_URL || process.env.POSTGRES_URL, {
+const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   dialectOptions: {
