@@ -583,8 +583,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
   return (
     <div className="min-h-screen bg-gray-50 p-2 sm:p-3 lg:p-4 safe-top safe-bottom pt-24">
-      <div className="w-full">
-        <div className="bg-white">
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-lg shadow-sm">
             {/* Header */}
             <div className="p-1 sm:p-2 lg:p-3 border-b border-gray-200">
               <div className="flex items-center gap-3">
