@@ -323,4 +323,4 @@ export default new ApiService();
 Si tienes problemas con el despliegue, revisa:
 1. Los logs en Railway/Render
 2. La consola de MongoDB Atlas
-3. Las variables de entorno estén correctamente configuradas
+3. Las variables de entorno estén correctamente configuradas# Force redeploy Thu Aug  7 02:26:44 AM UTC 2025
