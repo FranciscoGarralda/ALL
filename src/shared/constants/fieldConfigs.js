@@ -426,8 +426,10 @@ export const specificFieldsConfig = {
   AJUSTE: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -447,8 +449,10 @@ export const specificFieldsConfig = {
   GASTO: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -468,8 +472,10 @@ export const specificFieldsConfig = {
   PRESTAMISTAS_PRESTAMO: {
     groups: (prestamistaClients = prestamistaClientsDefault) => [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: '% Interés Anual', name: 'interes', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
@@ -503,8 +509,10 @@ export const specificFieldsConfig = {
   PRESTAMISTAS_RETIRO: {
     groups: (prestamistaClients = prestamistaClientsDefault) => [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Cuenta', name: 'cuenta', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -521,8 +529,10 @@ export const specificFieldsConfig = {
   MOV_ENTRE_CUENTAS: {
     groups: [
       [
-        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-1' },
-        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-1' }
+        { label: 'Monto', name: 'monto', type: 'number', placeholder: '0.00', required: true, gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda', name: 'moneda', type: 'select', options: monedas, required: true, gridCols: 'col-span-2' }
       ],
       [
         { label: 'Cuenta de Salida', name: 'cuentaSalida', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
@@ -530,10 +540,12 @@ export const specificFieldsConfig = {
       [
         { label: 'Cuenta de Ingreso', name: 'cuentaIngreso', type: 'wallet-buttons', required: true, gridCols: 'col-span-2' }
       ],
-              [
-          { label: 'Comisión', name: 'comision', type: 'commission', placeholder: '0.00', gridCols: 'col-span-1' },
-          { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-1' }
-        ],
+      [
+        { label: 'Comisión', name: 'comision', type: 'commission', placeholder: '0.00', gridCols: 'col-span-2' }
+      ],
+      [
+        { label: 'Moneda Comisión', name: 'monedaComision', type: 'select', options: monedas, readOnly: true, calculated: true, gridCols: 'col-span-2' }
+      ],
       [
         { label: 'Cuenta Comisión', name: 'cuentaComision', type: 'wallet-buttons', gridCols: 'col-span-2' }
       ]
