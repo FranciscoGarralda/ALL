@@ -10,6 +10,44 @@ function RentabilidadApp({ movements = [] }) {
     end: new Date().toISOString().split('T')[0]
   });
   const [selectedMoneda, setSelectedMoneda] = useState('all');
+  const [selectedPeriod, setSelectedPeriod] = useState('mensual');
+
+  // Función para calcular rangos de fecha según el período
+  const calculateDateRange = (period) => {
+    const today = new Date();
+    const endDate = today.toISOString().split('T')[0];
+    let startDate;
+
+    switch (period) {
+      case 'diario':
+        startDate = endDate;
+        break;
+      case 'semanal':
+        const weekAgo = new Date(today);
+        weekAgo.setDate(today.getDate() - 7);
+        startDate = weekAgo.toISOString().split('T')[0];
+        break;
+      case 'mensual':
+        startDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+        break;
+      case 'anual':
+        startDate = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0];
+        break;
+      default:
+        return { start: dateRange.start, end: dateRange.end };
+    }
+
+    return { start: startDate, end: endDate };
+  };
+
+  // Manejar cambio de período
+  const handlePeriodChange = (period) => {
+    setSelectedPeriod(period);
+    if (period !== 'personalizado') {
+      const newRange = calculateDateRange(period);
+      setDateRange(newRange);
+    }
+  };
 
   // Filtrar movimientos por fecha
   const filteredMovements = useMemo(() => {
@@ -19,8 +57,26 @@ function RentabilidadApp({ movements = [] }) {
     });
   }, [movements, dateRange]);
 
-  // Calcular rentabilidad por operación
-  const profitabilityData = useMemo(() => {
+  // Calcular movimientos del período anterior para comparación
+  const previousPeriodMovements = useMemo(() => {
+    const start = new Date(dateRange.start);
+    const end = new Date(dateRange.end);
+    const daysDiff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    
+    const prevEnd = new Date(start);
+    prevEnd.setDate(prevEnd.getDate() - 1);
+    const prevStart = new Date(prevEnd);
+    prevStart.setDate(prevStart.getDate() - daysDiff);
+    
+    return movements.filter(mov => {
+      const movDate = new Date(mov.fecha).toISOString().split('T')[0];
+      return movDate >= prevStart.toISOString().split('T')[0] && 
+             movDate <= prevEnd.toISOString().split('T')[0];
+    });
+  }, [movements, dateRange]);
+
+  // Función para calcular rentabilidad de un conjunto de movimientos
+  const calculateProfitability = (movementsList) => {
     const data = {
       porTipo: {},
       porMoneda: {},
@@ -34,7 +90,7 @@ function RentabilidadApp({ movements = [] }) {
     };
 
     // Analizar operaciones de arbitraje
-    const arbitrajes = filteredMovements.filter(mov => 
+    const arbitrajes = movementsList.filter(mov => 
       mov.operacion === 'TRANSACCIONES' && mov.subOperacion === 'ARBITRAJE'
     );
 
@@ -48,7 +104,6 @@ function RentabilidadApp({ movements = [] }) {
       const totalCompra = montoCompra * tcCompra;
       const totalVenta = montoVenta * tcVenta;
       const ganancia = totalVenta - totalCompra;
-      const margen = totalCompra > 0 ? (ganancia / totalCompra) * 100 : 0;
 
       // Actualizar estadísticas generales
       data.general.totalOperaciones++;
@@ -85,7 +140,7 @@ function RentabilidadApp({ movements = [] }) {
     });
 
     // Analizar operaciones de CUENTAS_CORRIENTES
-    const operacionesCC = filteredMovements.filter(mov => 
+    const operacionesCC = movementsList.filter(mov => 
       mov.operacion === 'CUENTAS_CORRIENTES' && 
       ['COMPRA', 'VENTA', 'ARBITRAJE'].includes(mov.subOperacion)
     );
@@ -96,27 +151,20 @@ function RentabilidadApp({ movements = [] }) {
       let monedaKey = 'PESO';
 
       if (op.subOperacion === 'COMPRA') {
-        // En compra: compramos al proveedor y vendemos al cliente
-        // La ganancia real vendría de la diferencia entre el TC que nos da el proveedor
-        // y el TC que le cobramos al cliente final
         const monto = safeParseFloat(op.monto);
         const tc = safeParseFloat(op.tc);
         volumen = monto * tc;
         
-        // Si tenemos comisión registrada, esa es parte de nuestra ganancia
         if (op.comision) {
           const comision = safeParseFloat(op.comision);
           ganancia = op.tipoComision === 'percentage' 
             ? (monto * comision / 100)
             : comision;
         } else {
-          // Si no hay comisión explícita, estimamos un margen del 1.5%
           ganancia = volumen * 0.015;
         }
         monedaKey = op.monedaTC || 'PESO';
       } else if (op.subOperacion === 'VENTA') {
-        // En venta: compramos del cliente y vendemos al proveedor
-        // Similar lógica pero invertida
         const monto = safeParseFloat(op.monto);
         const tc = safeParseFloat(op.tc);
         volumen = monto * tc;
@@ -131,7 +179,6 @@ function RentabilidadApp({ movements = [] }) {
         }
         monedaKey = op.monedaTC || 'PESO';
       } else if (op.subOperacion === 'ARBITRAJE') {
-        // Arbitraje con CC
         const montoCompra = safeParseFloat(op.montoCompra);
         const tcCompra = safeParseFloat(op.tcCompra);
         const montoVenta = safeParseFloat(op.montoVenta || 0);
@@ -144,13 +191,11 @@ function RentabilidadApp({ movements = [] }) {
         monedaKey = op.monedaTCCompra || 'PESO';
       }
 
-      // Actualizar estadísticas generales
       if (ganancia !== 0) {
         data.general.totalOperaciones++;
         if (ganancia > 0) data.general.operacionesRentables++;
         data.general.gananciaTotal += ganancia;
 
-        // Por moneda
         if (!data.porMoneda[monedaKey]) {
           data.porMoneda[monedaKey] = {
             operaciones: 0,
@@ -163,7 +208,6 @@ function RentabilidadApp({ movements = [] }) {
         data.porMoneda[monedaKey].gananciaTotal += ganancia;
         data.porMoneda[monedaKey].volumen += volumen;
 
-        // Por proveedor CC (en lugar de cliente)
         if (op.proveedorCC) {
           const proveedorKey = `CC-${op.proveedorCC}`;
           if (!data.porCliente[proveedorKey]) {
@@ -181,19 +225,17 @@ function RentabilidadApp({ movements = [] }) {
     });
 
     // Analizar comisiones de otras operaciones
-    filteredMovements.forEach(mov => {
+    movementsList.forEach(mov => {
       if (mov.comision && safeParseFloat(mov.comision) > 0) {
         const comision = safeParseFloat(mov.comision);
         const monto = safeParseFloat(mov.monto);
         
-        // Si es porcentaje, calcular el monto
         const gananciaComision = mov.tipoComision === 'percentage' 
           ? (monto * comision / 100)
           : comision;
 
         data.general.gananciaTotal += gananciaComision;
         
-        // Por tipo de operación
         if (!data.porTipo[mov.operacion]) {
           data.porTipo[mov.operacion] = {
             operaciones: 0,
@@ -220,7 +262,17 @@ function RentabilidadApp({ movements = [] }) {
     });
 
     return data;
+  };
+
+  // Calcular rentabilidad del período actual
+  const profitabilityData = useMemo(() => {
+    return calculateProfitability(filteredMovements);
   }, [filteredMovements]);
+
+  // Calcular rentabilidad del período anterior
+  const previousProfitabilityData = useMemo(() => {
+    return calculateProfitability(previousPeriodMovements);
+  }, [previousPeriodMovements]);
 
   // Top clientes por rentabilidad
   const topClientes = useMemo(() => {
@@ -249,8 +301,63 @@ function RentabilidadApp({ movements = [] }) {
 
           {/* Filtros */}
           <div className="p-3 sm:p-4 space-y-4">
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2">
+            {/* Botones de período */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => handlePeriodChange('diario')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  selectedPeriod === 'diario'
+                    ? 'bg-gray-800 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Hoy
+              </button>
+              <button
+                onClick={() => handlePeriodChange('semanal')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  selectedPeriod === 'semanal'
+                    ? 'bg-gray-800 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Semana
+              </button>
+              <button
+                onClick={() => handlePeriodChange('mensual')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  selectedPeriod === 'mensual'
+                    ? 'bg-gray-800 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Mes
+              </button>
+              <button
+                onClick={() => handlePeriodChange('anual')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  selectedPeriod === 'anual'
+                    ? 'bg-gray-800 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Año
+              </button>
+              <button
+                onClick={() => handlePeriodChange('personalizado')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  selectedPeriod === 'personalizado'
+                    ? 'bg-gray-800 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Personalizado
+              </button>
+            </div>
+
+            {/* Selector de fechas personalizado */}
+            {selectedPeriod === 'personalizado' && (
+              <div className="flex flex-wrap items-center gap-2">
                 <Calendar size={20} className="text-gray-500" />
                 <input
                   type="date"
@@ -266,6 +373,11 @@ function RentabilidadApp({ movements = [] }) {
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
                 />
               </div>
+            )}
+
+            {/* Información del período */}
+            <div className="text-sm text-gray-600">
+              Mostrando datos desde <span className="font-medium">{new Date(dateRange.start).toLocaleDateString('es-AR')}</span> hasta <span className="font-medium">{new Date(dateRange.end).toLocaleDateString('es-AR')}</span>
             </div>
           </div>
         </div>
@@ -280,6 +392,26 @@ function RentabilidadApp({ movements = [] }) {
             <p className="text-2xl font-bold text-gray-900">
               {formatAmountWithCurrency(profitabilityData.general.gananciaTotal, 'PESO')}
             </p>
+            {previousProfitabilityData.general.gananciaTotal > 0 && (
+              <div className="flex items-center gap-1 mt-1">
+                {profitabilityData.general.gananciaTotal > previousProfitabilityData.general.gananciaTotal ? (
+                  <>
+                    <ArrowUpRight size={16} className="text-green-600" />
+                    <span className="text-xs text-green-600">
+                      +{((profitabilityData.general.gananciaTotal - previousProfitabilityData.general.gananciaTotal) / previousProfitabilityData.general.gananciaTotal * 100).toFixed(1)}%
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <ArrowDownRight size={16} className="text-red-600" />
+                    <span className="text-xs text-red-600">
+                      {((profitabilityData.general.gananciaTotal - previousProfitabilityData.general.gananciaTotal) / previousProfitabilityData.general.gananciaTotal * 100).toFixed(1)}%
+                    </span>
+                  </>
+                )}
+                <span className="text-xs text-gray-500">vs período anterior</span>
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-4">
@@ -289,8 +421,9 @@ function RentabilidadApp({ movements = [] }) {
             </div>
             <p className="text-2xl font-bold text-gray-900">
               {profitabilityData.general.totalOperaciones > 0 
-                ? Math.round((profitabilityData.general.operacionesRentables / profitabilityData.general.totalOperaciones) * 100)
-                : 0}%
+                ? `${((profitabilityData.general.operacionesRentables / profitabilityData.general.totalOperaciones) * 100).toFixed(1)}%`
+                : '0%'
+              }
             </p>
             <p className="text-xs text-gray-500">
               {profitabilityData.general.operacionesRentables} de {profitabilityData.general.totalOperaciones}
