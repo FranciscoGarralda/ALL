@@ -63,6 +63,10 @@ class CCInitialBalanceService {
   getAllBalancesByProveedor() {
     const grouped = {};
     
+    if (!this.balances || typeof this.balances !== 'object') {
+      return grouped;
+    }
+    
     Object.entries(this.balances).forEach(([key, monto]) => {
       const [proveedor, moneda] = key.split('-');
       if (!grouped[proveedor]) {

@@ -76,14 +76,18 @@ function SaldosInicialesApp() {
 
   // Calcular total por moneda
   const totalesPorMoneda = {};
-  Object.values(balances).forEach(cuentaMonedas => {
-    Object.entries(cuentaMonedas || {}).forEach(([moneda, monto]) => {
-      if (!totalesPorMoneda[moneda]) {
-        totalesPorMoneda[moneda] = 0;
+  if (balances && typeof balances === 'object') {
+    Object.values(balances).forEach(cuentaMonedas => {
+      if (cuentaMonedas && typeof cuentaMonedas === 'object') {
+        Object.entries(cuentaMonedas).forEach(([moneda, monto]) => {
+          if (!totalesPorMoneda[moneda]) {
+            totalesPorMoneda[moneda] = 0;
+          }
+          totalesPorMoneda[moneda] += safeParseFloat(monto, 0);
+        });
       }
-      totalesPorMoneda[moneda] += safeParseFloat(monto, 0);
     });
-  });
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-1 sm:p-2 lg:p-3 safe-top safe-bottom pt-24">

@@ -114,7 +114,7 @@ class StockService {
    * Obtiene todo el stock actual
    */
   getAllStock() {
-    return this.stock;
+    return this.stock || {};
   }
 
   /**

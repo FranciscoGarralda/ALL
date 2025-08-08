@@ -46,10 +46,14 @@ class InitialBalanceService {
   }
 
   /**
-   * Obtiene todos los saldos iniciales agrupados por cuenta
+   * Obtiene todos los saldos agrupados por cuenta
    */
   getAllBalancesByCuenta() {
     const result = {};
+    
+    if (!this.balances || typeof this.balances !== 'object') {
+      return result;
+    }
     
     Object.entries(this.balances).forEach(([key, value]) => {
       const [cuenta, moneda] = key.split('-');
@@ -66,7 +70,7 @@ class InitialBalanceService {
    * Obtiene todos los saldos iniciales
    */
   getAllBalances() {
-    return this.balances;
+    return this.balances || {};
   }
 
   /**
