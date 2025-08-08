@@ -5,3 +5,4 @@ export { safeLocalStorage, safeParseFloat, safeArrayFind, validateDate, safeCalc
 export { default as stockService } from './stockService';
 export { default as initialBalanceService } from './initialBalanceService';
 export { default as cajaService } from './cajaService';
+export { default as ccInitialBalanceService } from './ccInitialBalanceService';

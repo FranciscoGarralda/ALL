@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { formatAmountWithCurrency, proveedoresCC } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
+import { ccInitialBalanceService } from '../../shared/services';
 
 /** COMPONENTE PRINCIPAL DE CUENTAS CORRIENTES */
 function CuentasCorrientesApp({ movements, onNavigate }) {
@@ -26,17 +27,19 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
       if (p.value !== '') {
         p.allowedCurrencies.forEach(currency => {
           const key = `${p.value}-${currency}`;
+          const saldoInicial = ccInitialBalanceService.getBalance(p.value, currency);
+          
           accountsMap.set(key, {
             proveedor: p.value,
             proveedorLabel: p.label,
             moneda: currency,
             ingresos: 0,
             egresos: 0,
-            saldo: 0,
+            saldo: saldoInicial, // Empezar con el saldo inicial
             debeUsuario: 0,
             debeProveedor: 0,
             movimientosCount: 0,
-            comisionesGeneradas: 0, // Agregar comisiones
+            comisionesGeneradas: 0,
           });
         });
       }
