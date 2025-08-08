@@ -29,7 +29,10 @@ function SaldosInicialesApp() {
   };
 
   // Obtener todas las cuentas disponibles
-  const allWallets = [...new Set([...walletTypes, ...walletTypesTC])];
+  const allWallets = [...new Set([
+    ...walletTypes.map(w => w.value),
+    ...walletTypesTC.map(w => w.value)
+  ])].filter(w => w !== 'pago_mixto'); // Excluir pago_mixto que no es una cuenta real
 
   // Manejar cambio de saldo
   const handleBalanceChange = (cuenta, moneda, value) => {
@@ -186,6 +189,11 @@ function SaldosInicialesApp() {
               <div className="p-3 sm:p-4">
                 <div className="space-y-3">
                   {allWallets.map(wallet => {
+                    // Validar que wallet es string y tiene el formato correcto
+                    if (typeof wallet !== 'string' || !wallet.includes('_')) {
+                      return null;
+                    }
+                    
                     const [socio, tipo] = wallet.split('_');
                     const balance = balances[wallet]?.[selectedMoneda] || '';
                     
