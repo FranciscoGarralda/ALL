@@ -94,7 +94,11 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin'
-          }
+          },
+          {
+            key: 'Cache-Control',
+            value: 'no-store, must-revalidate',
+          },
         ]
       }
     ];
@@ -110,6 +114,15 @@ const nextConfig = {
     'lucide-react': {
       transform: 'lucide-react/dist/esm/icons/{{member}}',
     },
+  },
+  // Forzar rebuild
+  generateBuildId: async () => {
+    return Date.now().toString()
+  },
+  // Deshabilitar caché en desarrollo
+  onDemandEntries: {
+    maxInactiveAge: 1000 * 60 * 60,
+    pagesBufferLength: 2,
   },
 }
 
