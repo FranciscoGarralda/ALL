@@ -44,6 +44,9 @@ function SaldosApp({ movements = [] }) {
     movements.forEach(mov => {
       if (!mov.cuenta || !mov.moneda || !mov.monto) return;
       
+      // Validar que cuenta es string
+      if (typeof mov.cuenta !== 'string' || !mov.cuenta.includes('_')) return;
+      
       // Extraer socio y tipo de la cuenta
       const cuentaParts = mov.cuenta.split('_');
       if (cuentaParts.length !== 2) return;
@@ -71,7 +74,7 @@ function SaldosApp({ movements = [] }) {
             } else if (mov.subOperacion === 'ARBITRAJE') {
               // ARBITRAJE: Procesar las 4 cuentas involucradas
               // 1. Cuenta donde recibimos (walletCompra) - INGRESO de moneda
-              if (mov.walletCompra) {
+              if (mov.walletCompra && typeof mov.walletCompra === 'string') {
                 const cuentaRecibeParts = mov.walletCompra.split('_');
                 if (cuentaRecibeParts.length === 2) {
                   const [socioRecibe, tipoRecibe] = cuentaRecibeParts;
@@ -86,7 +89,7 @@ function SaldosApp({ movements = [] }) {
               }
               
               // 2. Cuenta desde donde pagamos (walletTC) - EGRESO de monedaTC
-              if (mov.walletTC && mov.totalCompra) {
+              if (mov.walletTC && mov.totalCompra && typeof mov.walletTC === 'string') {
                 const cuentaPagaParts = mov.walletTC.split('_');
                 if (cuentaPagaParts.length === 2) {
                   const [socioPaga, tipoPaga] = cuentaPagaParts;
@@ -102,7 +105,7 @@ function SaldosApp({ movements = [] }) {
               }
               
               // 3. Cuenta desde donde entregamos (walletCompraVenta) - EGRESO de monedaVenta
-              if (mov.walletCompraVenta && mov.montoVenta) {
+              if (mov.walletCompraVenta && mov.montoVenta && typeof mov.walletCompraVenta === 'string') {
                 const cuentaEntregaParts = mov.walletCompraVenta.split('_');
                 if (cuentaEntregaParts.length === 2) {
                   const [socioEntrega, tipoEntrega] = cuentaEntregaParts;
@@ -119,7 +122,7 @@ function SaldosApp({ movements = [] }) {
               }
               
               // 4. Cuenta donde cobramos (walletTCVenta) - INGRESO de monedaTCVenta
-              if (mov.walletTCVenta && mov.totalVenta) {
+              if (mov.walletTCVenta && mov.totalVenta && typeof mov.walletTCVenta === 'string') {
                 const cuentaCobraParts = mov.walletTCVenta.split('_');
                 if (cuentaCobraParts.length === 2) {
                   const [socioCobra, tipoCobra] = cuentaCobraParts;
@@ -158,7 +161,7 @@ function SaldosApp({ movements = [] }) {
             // Para movimientos internos, es egreso de una cuenta
             esIngreso = false;
             // También procesar la cuenta destino como ingreso
-            if (mov.cuentaDestino) {
+            if (mov.cuentaDestino && typeof mov.cuentaDestino === 'string') {
               const cuentaDestParts = mov.cuentaDestino.split('_');
               if (cuentaDestParts.length === 2) {
                 const [socioDest, tipoDest] = cuentaDestParts;
@@ -187,10 +190,15 @@ function SaldosApp({ movements = [] }) {
     // Agregar saldos iniciales
     const saldosIniciales = initialBalanceService.getAllBalances();
     Object.entries(saldosIniciales).forEach(([key, monto]) => {
+      // Validar que key es string
+      if (typeof key !== 'string' || !key.includes('-')) return;
+      
       const [cuenta, moneda] = key.split('-');
       if (!cuenta || !moneda) return;
       
       // Extraer socio y tipo de la cuenta
+      if (typeof cuenta !== 'string' || !cuenta.includes('_')) return;
+      
       const cuentaParts = cuenta.split('_');
       if (cuentaParts.length !== 2) return;
       
