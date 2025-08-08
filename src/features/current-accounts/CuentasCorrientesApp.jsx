@@ -53,7 +53,8 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
             const amount = safeParseFloat(mov.monto);
             account.movimientosCount++;
             account.ingresos += amount;
-            account.saldo += amount;
+            // INGRESO: Ellos nos dan dinero, les debemos MÁS (saldo más negativo)
+            account.saldo -= amount;
           }
         } else if (mov.subOperacion === 'EGRESO' && mov.moneda && mov.monto) {
           const key = `${mov.proveedorCC}-${mov.moneda}`;
@@ -62,10 +63,12 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
             const amount = safeParseFloat(mov.monto);
             account.movimientosCount++;
             account.egresos += amount;
-            account.saldo -= amount;
+            // EGRESO: Les pagamos, les debemos MENOS (saldo menos negativo)
+            account.saldo += amount;
           }
         } else if (mov.subOperacion === 'COMPRA') {
-          // En COMPRA: pagamos monedaTC, recibimos moneda
+          // En COMPRA: Les compramos moneda
+          // Pagamos monedaTC (les debemos MENOS en esa moneda)
           if (mov.monedaTC && mov.total) {
             const keyPago = `${mov.proveedorCC}-${mov.monedaTC}`;
             const accountPago = accountsMap.get(keyPago);
@@ -73,9 +76,10 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
               const totalPago = safeParseFloat(mov.total);
               accountPago.movimientosCount++;
               accountPago.egresos += totalPago;
-              accountPago.saldo -= totalPago;
+              accountPago.saldo += totalPago; // Pagamos, debemos MENOS
             }
           }
+          // Recibimos moneda (les debemos MÁS en esa moneda)
           if (mov.moneda && mov.monto) {
             const keyRecibo = `${mov.proveedorCC}-${mov.moneda}`;
             const accountRecibo = accountsMap.get(keyRecibo);
@@ -83,11 +87,12 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
               const montoRecibo = safeParseFloat(mov.monto);
               accountRecibo.movimientosCount++;
               accountRecibo.ingresos += montoRecibo;
-              accountRecibo.saldo += montoRecibo;
+              accountRecibo.saldo -= montoRecibo; // Recibimos, debemos MÁS
             }
           }
         } else if (mov.subOperacion === 'VENTA') {
-          // En VENTA: entregamos moneda, recibimos monedaTC
+          // En VENTA: Les vendemos moneda
+          // Entregamos moneda (les debemos MENOS en esa moneda)
           if (mov.moneda && mov.monto) {
             const keyEntrega = `${mov.proveedorCC}-${mov.moneda}`;
             const accountEntrega = accountsMap.get(keyEntrega);
@@ -95,17 +100,18 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
               const montoEntrega = safeParseFloat(mov.monto);
               accountEntrega.movimientosCount++;
               accountEntrega.egresos += montoEntrega;
-              accountEntrega.saldo -= montoEntrega;
+              accountEntrega.saldo += montoEntrega; // Entregamos, debemos MENOS
             }
           }
+          // Recibimos monedaTC (les debemos MÁS en esa moneda)
           if (mov.monedaTC && mov.total) {
-            const keyCobro = `${mov.proveedorCC}-${mov.monedaTC}`;
-            const accountCobro = accountsMap.get(keyCobro);
-            if (accountCobro) {
-              const totalCobro = safeParseFloat(mov.total);
-              accountCobro.movimientosCount++;
-              accountCobro.ingresos += totalCobro;
-              accountCobro.saldo += totalCobro;
+            const keyRecibo = `${mov.proveedorCC}-${mov.monedaTC}`;
+            const accountRecibo = accountsMap.get(keyRecibo);
+            if (accountRecibo) {
+              const totalRecibo = safeParseFloat(mov.total);
+              accountRecibo.movimientosCount++;
+              accountRecibo.ingresos += totalRecibo;
+              accountRecibo.saldo -= totalRecibo; // Recibimos, debemos MÁS
             }
           }
         } else if (mov.subOperacion === 'ARBITRAJE') {
@@ -118,7 +124,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
               const totalPagoCompra = safeParseFloat(mov.totalCompra);
               accountPagoCompra.movimientosCount++;
               accountPagoCompra.egresos += totalPagoCompra;
-              accountPagoCompra.saldo -= totalPagoCompra;
+              accountPagoCompra.saldo += totalPagoCompra; // Pagamos, debemos MENOS
             }
           }
           if (mov.moneda && mov.monto) {
@@ -128,7 +134,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
               const montoReciboCompra = safeParseFloat(mov.monto);
               accountReciboCompra.movimientosCount++;
               accountReciboCompra.ingresos += montoReciboCompra;
-              accountReciboCompra.saldo += montoReciboCompra;
+              accountReciboCompra.saldo -= montoReciboCompra; // Recibimos, debemos MÁS
             }
           }
           // VENTA: entregamos monedaVenta (que es monedaTC), recibimos monedaTCVenta (que es moneda)
@@ -139,7 +145,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
               const montoEntregaVenta = safeParseFloat(mov.montoVenta);
               accountEntregaVenta.movimientosCount++;
               accountEntregaVenta.egresos += montoEntregaVenta;
-              accountEntregaVenta.saldo -= montoEntregaVenta;
+              accountEntregaVenta.saldo += montoEntregaVenta; // Entregamos, debemos MENOS
             }
           }
           if (mov.monedaTCVenta && mov.totalVenta) {
@@ -149,7 +155,7 @@ function CuentasCorrientesApp({ movements, onNavigate }) {
               const totalCobroVenta = safeParseFloat(mov.totalVenta);
               accountCobroVenta.movimientosCount++;
               accountCobroVenta.ingresos += totalCobroVenta;
-              accountCobroVenta.saldo += totalCobroVenta;
+              accountCobroVenta.saldo -= totalCobroVenta; // Recibimos, debemos MÁS
             }
           }
         }
