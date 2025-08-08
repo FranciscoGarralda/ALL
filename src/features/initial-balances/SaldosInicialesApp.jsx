@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Wallet, Save, RefreshCw, AlertCircle, Building2, Users } from 'lucide-react';
 import { formatAmountWithCurrency, proveedoresCC } from '../../shared/components/forms';
-import { initialBalanceService } from '../../shared/services/initialBalanceService';
-import { ccInitialBalanceService } from '../../shared/services/ccInitialBalanceService';
+import { initialBalanceService, ccInitialBalanceService } from '../../shared/services';
 import { walletTypes, walletTypesTC, monedas } from '../../shared/constants';
 import { safeParseFloat } from '../../shared/services/safeOperations';
 

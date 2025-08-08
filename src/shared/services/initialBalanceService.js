@@ -84,4 +84,5 @@ class InitialBalanceService {
 }
 
 // Exportar instancia única
-export const initialBalanceService = new InitialBalanceService();
+const initialBalanceService = new InitialBalanceService();
+export default initialBalanceService;

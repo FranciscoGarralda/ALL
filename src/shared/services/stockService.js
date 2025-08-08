@@ -132,4 +132,5 @@ class StockService {
 }
 
 // Exportar instancia única
-export const stockService = new StockService();
+const stockService = new StockService();
+export default stockService;

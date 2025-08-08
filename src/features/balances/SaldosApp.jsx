@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Wallet, TrendingUp, TrendingDown, DollarSign, CreditCard, Banknote } from 'lucide-react';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
-import { initialBalanceService } from '../../shared/services/initialBalanceService';
+import { initialBalanceService } from '../../shared/services';
 import { monedas } from '../../shared/constants';
 
 function SaldosApp({ movements = [] }) {

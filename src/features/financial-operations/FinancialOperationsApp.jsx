@@ -7,7 +7,7 @@ import {
   safeCalculation,
   safeArray 
 } from '../../shared/services/safeOperations';
-import { stockService } from '../../shared/services/stockService';
+import { stockService } from '../../shared/services';
 import { getTodayLocalDate, getDayName } from '../../shared/utils/dateUtils';
 import {
   FormInput,

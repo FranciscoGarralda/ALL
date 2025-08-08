@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Package, TrendingUp, RefreshCw } from 'lucide-react';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
-import { stockService } from '../../shared/services/stockService';
+import { stockService } from '../../shared/services';
 import { monedas } from '../../shared/constants';
 
 function StockApp() {
