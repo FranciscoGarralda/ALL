@@ -281,18 +281,19 @@ export const safeLocalStorage = {
   getItem: (key, defaultValue = null) => {
     try {
       if (typeof window === 'undefined') {
-        return defaultValue;
+        return { success: false, data: defaultValue };
       }
       
       const item = localStorage.getItem(key);
       if (item === null) {
-        return defaultValue;
+        return { success: true, data: defaultValue };
       }
       
-      return JSON.parse(item);
+      const parsed = JSON.parse(item);
+      return { success: true, data: parsed };
     } catch (error) {
       console.warn(`Error reading from localStorage (${key}):`, error);
-      return defaultValue;
+      return { success: false, data: defaultValue, error: error.message };
     }
   },
   
