@@ -7,7 +7,10 @@ class InitialBalanceService {
   constructor() {
     this.BALANCE_KEY = 'financial-initial-balances';
     this.balances = {};
-    this.loadBalances();
+    // Solo cargar datos si estamos en el cliente
+    if (typeof window !== 'undefined') {
+      this.loadBalances();
+    }
   }
 
   /**

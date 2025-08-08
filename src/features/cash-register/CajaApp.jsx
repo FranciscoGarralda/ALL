@@ -13,8 +13,13 @@ function CajaApp({ movements = [] }) {
 
   // Cargar apertura cuando cambia la fecha
   useEffect(() => {
+    // Asegurarse de que el servicio esté inicializado
+    if (!cajaService || typeof cajaService.getApertura !== 'function') {
+      return;
+    }
+    
     const apertura = cajaService.getApertura(selectedDate);
-    setCashCounts(apertura);
+    setCashCounts(apertura || {});
     
     // Verificar si ya hay cierre para esta fecha
     setHayCierreHoy(cajaService.hayCierre(selectedDate));

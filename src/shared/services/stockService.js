@@ -7,7 +7,10 @@ class StockService {
   constructor() {
     this.STOCK_KEY = 'financial-stock';
     this.stock = {};
-    this.loadStock();
+    // Solo cargar datos si estamos en el cliente
+    if (typeof window !== 'undefined') {
+      this.loadStock();
+    }
   }
 
   /**

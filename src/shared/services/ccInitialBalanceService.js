@@ -8,7 +8,10 @@ class CCInitialBalanceService {
   constructor() {
     this.STORAGE_KEY = 'financial-cc-initial-balances';
     this.balances = {};
-    this.loadBalances();
+    // Solo cargar datos si estamos en el cliente
+    if (typeof window !== 'undefined') {
+      this.loadBalances();
+    }
   }
 
   /**

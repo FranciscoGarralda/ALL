@@ -7,7 +7,10 @@ class CajaService {
   constructor() {
     this.STORAGE_KEY = 'financial-caja-cierres';
     this.cierres = {};
-    this.loadCierres();
+    // Solo cargar datos si estamos en el cliente
+    if (typeof window !== 'undefined') {
+      this.loadCierres();
+    }
   }
 
   /**
@@ -29,9 +32,19 @@ class CajaService {
   }
 
   /**
+   * Asegurar que los datos estén cargados
+   */
+  ensureLoaded() {
+    if (typeof window !== 'undefined' && (!this.cierres || Object.keys(this.cierres).length === 0)) {
+      this.loadCierres();
+    }
+  }
+
+  /**
    * Obtener el cierre de una fecha específica
    */
   getCierre(fecha) {
+    this.ensureLoaded();
     if (!this.cierres || typeof this.cierres !== 'object') {
       return null;
     }
