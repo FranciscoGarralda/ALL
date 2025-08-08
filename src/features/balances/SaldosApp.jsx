@@ -5,9 +5,6 @@ import { safeParseFloat } from '../../shared/services/safeOperations';
 import { initialBalanceService } from '../../shared/services';
 import { monedas } from '../../shared/constants';
 
-// FORCE REBUILD - Version 2.0
-console.log('SaldosApp v2.0 - All splits validated');
-
 function SaldosApp({ movements = [] }) {
   const [filterSocio, setFilterSocio] = useState('all'); // 'all', 'socio1', 'socio2', 'all_wallet'
   const [filterTipo, setFilterTipo] = useState('all'); // 'all', 'digital', 'efectivo'

@@ -13,7 +13,8 @@ export const CuentaButtonGroup = React.forwardRef(({
   readOnly = false
 }, ref) => {
   // Parseamos el valor para obtener socio y tipo
-  const [socio, tipo] = (value || '').split('_');
+  const valueStr = String(value || '');
+  const [socio, tipo] = valueStr.includes('_') ? valueStr.split('_') : [valueStr, ''];
   
   const handleSocioClick = (socioValue) => {
     if (onChange && !readOnly) {

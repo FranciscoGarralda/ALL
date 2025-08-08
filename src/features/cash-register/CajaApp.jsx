@@ -63,6 +63,9 @@ function CajaApp({ movements = [] }) {
     dailyMovements.forEach(mov => {
       if (!mov.cuenta || !mov.moneda || !mov.monto) return;
       
+      // Validar que cuenta es string
+      if (typeof mov.cuenta !== 'string' || !mov.cuenta.includes('_')) return;
+      
       const cuentaParts = mov.cuenta.split('_');
       if (cuentaParts.length !== 2) return;
       
