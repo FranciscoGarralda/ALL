@@ -13,7 +13,7 @@ class MovementService {
    */
   getMovements() {
     const result = safeLocalStorage.getItem(this.STORAGE_KEY);
-    return result.success ? result.data : [];
+    return (result && result.success) ? result.data : [];
   }
 
   /**

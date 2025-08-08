@@ -1,35 +1,30 @@
-import { safeParseFloat } from './safeOperations';
+import { safeLocalStorage, safeParseFloat } from './safeOperations';
 
 /**
- * Servicio para manejar stock y costo promedio ponderado (CPP)
+ * Servicio para manejar el stock global de monedas y su costo promedio ponderado
  */
 class StockService {
   constructor() {
-    this.STOCK_KEY = 'stock_monedas';
+    this.STOCK_KEY = 'financial-stock';
+    this.stock = {};
     this.loadStock();
   }
 
   /**
-   * Carga el stock desde localStorage
+   * Cargar stock desde localStorage
    */
   loadStock() {
-    try {
-      const saved = localStorage.getItem(this.STOCK_KEY);
-      this.stock = saved ? JSON.parse(saved) : {};
-    } catch (error) {
-      console.error('Error loading stock:', error);
-      this.stock = {};
-    }
+    const result = safeLocalStorage.getItem(this.STOCK_KEY);
+    this.stock = (result && result.success) ? result.data : {};
   }
 
   /**
-   * Guarda el stock en localStorage
+   * Guardar stock en localStorage
    */
   saveStock() {
-    try {
-      localStorage.setItem(this.STOCK_KEY, JSON.stringify(this.stock));
-    } catch (error) {
-      console.error('Error saving stock:', error);
+    const result = safeLocalStorage.setItem(this.STOCK_KEY, this.stock);
+    if (!result.success) {
+      console.error('Error saving stock:', result.error);
     }
   }
 

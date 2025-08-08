@@ -1,35 +1,30 @@
-import { safeParseFloat } from './safeOperations';
+import { safeLocalStorage, safeParseFloat } from './safeOperations';
 
 /**
  * Servicio para manejar saldos iniciales por cuenta
  */
 class InitialBalanceService {
   constructor() {
-    this.BALANCE_KEY = 'saldos_iniciales';
+    this.BALANCE_KEY = 'financial-initial-balances';
+    this.balances = {};
     this.loadBalances();
   }
 
   /**
-   * Carga los saldos iniciales desde localStorage
+   * Cargar saldos desde localStorage
    */
   loadBalances() {
-    try {
-      const saved = localStorage.getItem(this.BALANCE_KEY);
-      this.balances = saved ? JSON.parse(saved) : {};
-    } catch (error) {
-      console.error('Error loading initial balances:', error);
-      this.balances = {};
-    }
+    const result = safeLocalStorage.getItem(this.BALANCE_KEY);
+    this.balances = (result && result.success) ? result.data : {};
   }
 
   /**
-   * Guarda los saldos en localStorage
+   * Guardar saldos en localStorage
    */
   saveBalances() {
-    try {
-      localStorage.setItem(this.BALANCE_KEY, JSON.stringify(this.balances));
-    } catch (error) {
-      console.error('Error saving initial balances:', error);
+    const result = safeLocalStorage.setItem(this.BALANCE_KEY, this.balances);
+    if (!result.success) {
+      console.error('Error saving initial balances:', result.error);
     }
   }
 
