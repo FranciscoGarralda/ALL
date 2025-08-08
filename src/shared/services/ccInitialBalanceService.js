@@ -7,7 +7,8 @@ import { safeLocalStorage, safeParseFloat } from './safeOperations';
 class CCInitialBalanceService {
   constructor() {
     this.STORAGE_KEY = 'financial-cc-initial-balances';
-    this.balances = this.loadBalances();
+    this.balances = {};
+    this.loadBalances();
   }
 
   /**
@@ -15,7 +16,7 @@ class CCInitialBalanceService {
    */
   loadBalances() {
     const result = safeLocalStorage.getItem(this.STORAGE_KEY);
-    return (result && result.success) ? result.data : {};
+    this.balances = (result && result.success) ? result.data : {};
   }
 
   /**
@@ -32,6 +33,9 @@ class CCInitialBalanceService {
    * Obtener saldo inicial de un proveedor y moneda
    */
   getBalance(proveedor, moneda) {
+    if (!this.balances || typeof this.balances !== 'object') {
+      return 0;
+    }
     const key = `${proveedor}-${moneda}`;
     return safeParseFloat(this.balances[key], 0);
   }

@@ -6,7 +6,8 @@ import { safeLocalStorage } from './safeOperations';
 class CajaService {
   constructor() {
     this.STORAGE_KEY = 'financial-caja-cierres';
-    this.cierres = this.loadCierres();
+    this.cierres = {};
+    this.loadCierres();
   }
 
   /**
@@ -14,7 +15,7 @@ class CajaService {
    */
   loadCierres() {
     const result = safeLocalStorage.getItem(this.STORAGE_KEY);
-    return (result && result.success) ? result.data : {};
+    this.cierres = (result && result.success) ? result.data : {};
   }
 
   /**
