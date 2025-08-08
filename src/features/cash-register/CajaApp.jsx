@@ -111,6 +111,32 @@ function CajaApp({ movements = [] }) {
           monto
         });
       }
+      
+      // Procesar pagos mixtos si existen
+      if (mov.walletTC === 'pago_mixto' && mov.mixedPayments && Array.isArray(mov.mixedPayments)) {
+        mov.mixedPayments.forEach(payment => {
+          if (!payment.socio || !payment.tipo || !payment.monto) return;
+          
+          const montoMixto = safeParseFloat(payment.monto);
+          if (montoMixto <= 0) return;
+          
+          const keyMixto = `${mov.monedaTC || mov.moneda}-${payment.tipo}`;
+          const cajaMixto = summary.get(keyMixto);
+          
+          if (cajaMixto) {
+            // Para pago mixto, siempre es egreso (estamos pagando)
+            cajaMixto.egresos += montoMixto;
+            cajaMixto.movimientos.push({
+              ...mov,
+              esIngreso: false,
+              monto: montoMixto,
+              esPagoMixto: true,
+              socio: payment.socio,
+              tipo: payment.tipo
+            });
+          }
+        });
+      }
     });
 
     // Calcular esperado

@@ -185,6 +185,26 @@ function SaldosApp({ movements = [] }) {
           saldo.saldo -= monto;
         }
       }
+      
+      // Procesar pagos mixtos si existen
+      if (mov.walletTC === 'pago_mixto' && mov.mixedPayments && Array.isArray(mov.mixedPayments)) {
+        mov.mixedPayments.forEach(payment => {
+          if (!payment.socio || !payment.tipo || !payment.monto) return;
+          
+          const montoMixto = safeParseFloat(payment.monto);
+          if (montoMixto <= 0) return;
+          
+          const keyMixto = `${payment.socio}-${payment.tipo}-${mov.monedaTC || mov.moneda}`;
+          const saldoMixto = saldosMap.get(keyMixto);
+          
+          if (saldoMixto) {
+            // Para pago mixto, siempre es egreso (estamos pagando)
+            saldoMixto.egresos += montoMixto;
+            saldoMixto.saldo -= montoMixto;
+            saldoMixto.movimientosCount++;
+          }
+        });
+      }
     });
 
     // Agregar saldos iniciales
