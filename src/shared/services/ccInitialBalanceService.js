@@ -48,6 +48,12 @@ class CCInitialBalanceService {
    * Negativo = les debemos, Positivo = nos deben
    */
   setBalance(proveedor, moneda, monto) {
+    // Validar parámetros
+    if (!proveedor || !moneda || typeof proveedor !== 'string' || typeof moneda !== 'string') {
+      console.warn('setBalance: parámetros inválidos', { proveedor, moneda });
+      return;
+    }
+    
     const key = `${proveedor}-${moneda}`;
     const amount = safeParseFloat(monto, 0);
     
@@ -71,6 +77,11 @@ class CCInitialBalanceService {
     }
     
     Object.entries(this.balances).forEach(([key, monto]) => {
+      // Asegurar que key es string
+      if (typeof key !== 'string' || !key.includes('-')) {
+        return;
+      }
+      
       const [proveedor, moneda] = key.split('-');
       if (!grouped[proveedor]) {
         grouped[proveedor] = {};

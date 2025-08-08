@@ -40,11 +40,24 @@ class InitialBalanceService {
   }
 
   /**
-   * Establece el saldo inicial de una cuenta
+   * Establece el saldo inicial para una cuenta y moneda específica
    */
   setBalance(cuenta, moneda, monto) {
+    // Validar parámetros
+    if (!cuenta || !moneda || typeof cuenta !== 'string' || typeof moneda !== 'string') {
+      console.warn('setBalance: parámetros inválidos', { cuenta, moneda });
+      return;
+    }
+    
     const key = `${cuenta}-${moneda}`;
-    this.balances[key] = safeParseFloat(monto, 0);
+    const numericMonto = safeParseFloat(monto, 0);
+    
+    if (numericMonto === 0) {
+      delete this.balances[key];
+    } else {
+      this.balances[key] = numericMonto;
+    }
+    
     this.saveBalances();
   }
 
@@ -59,6 +72,11 @@ class InitialBalanceService {
     }
     
     Object.entries(this.balances).forEach(([key, value]) => {
+      // Asegurar que key es string
+      if (typeof key !== 'string' || !key.includes('-')) {
+        return;
+      }
+      
       const [cuenta, moneda] = key.split('-');
       if (!result[cuenta]) {
         result[cuenta] = {};
