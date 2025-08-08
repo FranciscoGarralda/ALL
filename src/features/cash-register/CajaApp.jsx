@@ -1,13 +1,24 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Calculator, Calendar, DollarSign, TrendingUp, TrendingDown, Check, X, Printer } from 'lucide-react';
+import { Calculator, Calendar, DollarSign, TrendingUp, TrendingDown, Check, X, Printer, Save, RefreshCw } from 'lucide-react';
 import { formatAmountWithCurrency } from '../../shared/components/forms';
 import { safeParseFloat } from '../../shared/services/safeOperations';
+import { cajaService } from '../../shared/services';
 import { monedas } from '../../shared/constants';
 
 function CajaApp({ movements = [] }) {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [cashCounts, setCashCounts] = useState({});
   const [showDetails, setShowDetails] = useState(false);
+  const [hayCierreHoy, setHayCierreHoy] = useState(false);
+
+  // Cargar apertura cuando cambia la fecha
+  useEffect(() => {
+    const apertura = cajaService.getApertura(selectedDate);
+    setCashCounts(apertura);
+    
+    // Verificar si ya hay cierre para esta fecha
+    setHayCierreHoy(cajaService.hayCierre(selectedDate));
+  }, [selectedDate]);
 
   // Filtrar movimientos del día seleccionado
   const dailyMovements = useMemo(() => {
@@ -20,6 +31,7 @@ function CajaApp({ movements = [] }) {
   // Calcular totales por moneda y tipo
   const dailySummary = useMemo(() => {
     const summary = new Map();
+    const apertura = cajaService.getApertura(selectedDate);
 
     // Inicializar todas las combinaciones
     monedas.forEach(moneda => {
@@ -31,7 +43,7 @@ function CajaApp({ movements = [] }) {
           moneda: moneda.value,
           monedaLabel: moneda.label,
           tipo,
-          apertura: 0, // Por ahora 0, idealmente vendría del cierre anterior
+          apertura: apertura[key] || 0, // Usar apertura del cierre anterior
           ingresos: 0,
           egresos: 0,
           esperado: 0,
@@ -100,10 +112,8 @@ function CajaApp({ movements = [] }) {
       caja.diferencia = caja.contado - caja.esperado;
     });
 
-    return Array.from(summary.values()).filter(caja => 
-      caja.apertura > 0 || caja.ingresos > 0 || caja.egresos > 0 || caja.contado > 0
-    );
-  }, [dailyMovements, cashCounts]);
+    return [...summary.values()];
+  }, [dailyMovements, cashCounts, selectedDate]);
 
   // Manejar cambio en conteo de efectivo
   const handleCashCountChange = (key, value) => {
@@ -111,6 +121,36 @@ function CajaApp({ movements = [] }) {
       ...prev,
       [key]: value
     }));
+  };
+
+  // Guardar cierre de caja
+  const handleGuardarCierre = () => {
+    // Preparar resumen para guardar
+    const resumen = {};
+    dailySummary.forEach((caja, key) => {
+      if (caja.tipo === 'efectivo' && (caja.esperado !== 0 || cashCounts[key])) {
+        resumen[key] = {
+          apertura: caja.apertura,
+          ingresos: caja.ingresos,
+          egresos: caja.egresos,
+          esperado: caja.esperado,
+          contado: safeParseFloat(cashCounts[key]) || 0,
+          diferencia: caja.diferencia
+        };
+      }
+    });
+
+    // Guardar cierre
+    cajaService.guardarCierre(selectedDate, cashCounts, resumen);
+    setHayCierreHoy(true);
+    
+    alert('Cierre de caja guardado exitosamente');
+  };
+
+  // Recargar apertura
+  const handleRecargarApertura = () => {
+    const apertura = cajaService.getApertura(selectedDate);
+    setCashCounts(apertura);
   };
 
   // Generar reporte
@@ -153,19 +193,46 @@ function CajaApp({ movements = [] }) {
             </div>
           </div>
 
-          {/* Selector de fecha */}
+          {/* Controles */}
           <div className="p-3 sm:p-4 border-b border-gray-200">
-            <div className="flex items-center gap-4">
-              <Calendar className="text-gray-500" size={20} />
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-              />
-              <span className="text-sm text-gray-600">
-                {dailyMovements.length} movimientos
-              </span>
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Calendar className="text-gray-500" size={20} />
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                />
+                <span className="text-sm text-gray-600">
+                  {dailyMovements.length} movimientos
+                </span>
+              </div>
+              
+              <div className="flex gap-2">
+                <button
+                  onClick={handleRecargarApertura}
+                  className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center gap-1"
+                  title="Recargar apertura del día anterior"
+                >
+                  <RefreshCw size={14} />
+                  Apertura
+                </button>
+                
+                <button
+                  onClick={handleGuardarCierre}
+                  disabled={hayCierreHoy}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+                    hayCierreHoy 
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                      : 'bg-gray-800 text-white hover:bg-gray-700'
+                  }`}
+                  title={hayCierreHoy ? 'Ya existe un cierre para esta fecha' : 'Guardar cierre del día'}
+                >
+                  <Save size={14} />
+                  {hayCierreHoy ? 'Guardado' : 'Guardar Cierre'}
+                </button>
+              </div>
             </div>
           </div>
 
