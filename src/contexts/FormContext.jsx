@@ -235,7 +235,9 @@ export const FormProvider = ({ children, initialData = {}, onSave, onCancel, cli
     isDirty: formState.isDirty,
     isValid: formState.isValid,
     isSubmitting: formState.isSubmitting,
-    hasErrors: Object.keys(formState.errors).length > 0
+    hasErrors: formState.errors && typeof formState.errors === 'object' 
+      ? Object.keys(formState.errors).length > 0 
+      : false
   };
   
   return (

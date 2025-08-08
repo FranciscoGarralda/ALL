@@ -33,6 +33,9 @@ export const getCurrentYearMonth = () => {
 export const parseLocalDate = (dateString) => {
   if (!dateString || typeof dateString !== 'string') return null;
   
+  // Validar formato antes de split
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return null;
+  
   const [year, month, day] = dateString.split('-').map(Number);
   if (!year || !month || !day) return null;
   
