@@ -32,6 +32,9 @@ class CajaService {
    * Obtener el cierre de una fecha específica
    */
   getCierre(fecha) {
+    if (!this.cierres || typeof this.cierres !== 'object') {
+      return null;
+    }
     return this.cierres[fecha] || null;
   }
 
@@ -57,17 +60,19 @@ class CajaService {
    * Guardar un cierre de caja
    */
   guardarCierre(fecha, conteos, resumen, usuario = 'Sistema') {
+    if (!this.cierres || typeof this.cierres !== 'object') {
+      this.cierres = {};
+    }
+    
     this.cierres[fecha] = {
       fecha,
       conteos, // { "USD-efectivo": 1500, "PESO-efectivo": 50000, etc }
-      resumen, // Resumen calculado del día
+      resumen,  // { totalEfectivo, totalDigital, diferencias, etc }
       usuario,
-      fechaHora: new Date().toISOString(),
-      timestamp: Date.now()
+      timestamp: new Date().toISOString()
     };
     
     this.saveCierres();
-    return this.cierres[fecha];
   }
 
   /**
@@ -83,6 +88,9 @@ class CajaService {
    * Obtener últimos N cierres
    */
   getUltimosCierres(cantidad = 7) {
+    if (!this.cierres || typeof this.cierres !== 'object') {
+      return [];
+    }
     const fechas = Object.keys(this.cierres).sort().reverse();
     return fechas.slice(0, cantidad).map(fecha => this.cierres[fecha]);
   }
@@ -91,6 +99,9 @@ class CajaService {
    * Verificar si hay cierre para una fecha
    */
   hayCierre(fecha) {
+    if (!this.cierres || typeof this.cierres !== 'object') {
+      return false;
+    }
     return !!this.cierres[fecha];
   }
 
@@ -98,6 +109,9 @@ class CajaService {
    * Eliminar un cierre (solo para casos especiales)
    */
   eliminarCierre(fecha) {
+    if (!this.cierres || typeof this.cierres !== 'object') {
+      return;
+    }
     delete this.cierres[fecha];
     this.saveCierres();
   }
