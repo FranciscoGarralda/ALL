@@ -41,11 +41,13 @@ export default function LoginPage({ onLoginSuccess }) {
         setError('');
       }
       
-      const response = await apiService.login(formData.username, formData.password);
-      
-      if (response.success) {
-        onLoginSuccess(response.user);
-      } else {
+              const response = await apiService.login(formData.username, formData.password);
+        
+        if (response.success) {
+          console.log('Login exitoso, usuario:', response.user);
+          console.log('Permisos recibidos:', response.user.permissions);
+          onLoginSuccess(response.user);
+        } else {
         // Mensajes de error más específicos
         if (response.message?.includes('credentials')) {
           setError('Usuario o contraseña incorrectos');

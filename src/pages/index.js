@@ -77,6 +77,8 @@ export default function Home() {
     try {
       const response = await apiService.getMe();
       if (response.success && response.user) {
+        console.log('Usuario autenticado:', response.user);
+        console.log('Permisos del usuario:', response.user.permissions);
         setIsAuthenticated(true);
         setCurrentUser(response.user);
         // Load data from backend after authentication
@@ -328,6 +330,54 @@ export default function Home() {
     // Show welcome page for inicio
     if (currentPage === 'inicio') {
       return <WelcomePage onNavigate={navigateTo} />;
+    }
+    
+    // Verificar permisos del usuario
+    if (currentUser && currentUser.role !== 'admin') {
+      // Mapear páginas a permisos
+      const permissionMap = {
+        'operaciones': 'operaciones',
+        'pendientes': 'pendientes',
+        'cuentas-corrientes': 'cuentas-corrientes',
+        'saldos-iniciales': 'saldos-iniciales',
+        'movimientos': 'movimientos',
+        'saldos': 'saldos',
+        'clientes': 'clientes',
+        'prestamistas': 'prestamistas',
+        'gastos': 'gastos',
+        'comisiones': 'comisiones',
+        'utilidad': 'utilidad',
+        'arbitraje': 'arbitraje',
+        'caja': 'caja',
+        'rentabilidad': 'rentabilidad',
+        'stock': 'stock'
+      };
+      
+      const requiredPermission = permissionMap[currentPage];
+      
+      // Si el usuario tiene permisos definidos y no tiene acceso a esta página
+      if (requiredPermission && currentUser.permissions && 
+          Array.isArray(currentUser.permissions) && 
+          currentUser.permissions.length > 0 &&
+          !currentUser.permissions.includes(requiredPermission)) {
+        return (
+          <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4">
+            <div className="text-center max-w-md mx-auto">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-2xl">🚫</span>
+              </div>
+              <h2 className="text-xl font-bold mb-4 text-gray-800">Acceso Denegado</h2>
+              <p className="mb-6 text-gray-600">No tienes permisos para acceder a este módulo.</p>
+              <button 
+                onClick={() => navigateTo('inicio')} 
+                className="btn-primary"
+              >
+                Volver al inicio
+              </button>
+            </div>
+          </div>
+        );
+      }
     }
     
     const Component = componentMap[currentPage];
