@@ -71,12 +71,11 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
     { id: 'inicio', icon: Home, title: 'Inicio', category: 'main' },
     { id: 'nuevoMovimiento', icon: Plus, title: 'Nuevo Movimiento', category: 'main' },
     { id: 'pendientesRetiro', icon: Clock, title: 'Pendientes', category: 'main' },
+    { id: 'movimientos', icon: List, title: 'Movimientos', category: 'main' },
     
     // OPERACIONES (acciones que modifican datos)
-    { id: 'arbitraje', icon: ArrowUpDown, title: 'Arbitraje', category: 'operations' },
     { id: 'caja', icon: Calculator, title: 'Caja Diaria', category: 'operations' },
     { id: 'gastos', icon: Receipt, title: 'Gastos', category: 'operations' },
-    { id: 'stock', icon: Package, title: 'Stock', category: 'operations' },
     
     // GESTIÓN (administración de entidades)
     { id: 'clientes', icon: UserCheck, title: 'Clientes', category: 'management' },
@@ -84,9 +83,10 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
     { id: 'cuentas', icon: Building2, title: 'Cuentas Corrientes', category: 'management' },
     
     // REPORTES E INFORMACIÓN (solo consulta - abajo)
-    { id: 'movimientos', icon: List, title: 'Movimientos', category: 'reports' },
     { id: 'saldos', icon: Wallet, title: 'Saldos', category: 'reports' },
     { id: 'utilidad', icon: TrendingUp, title: 'Utilidad', category: 'reports' },
+    { id: 'arbitraje', icon: ArrowUpDown, title: 'Arbitraje', category: 'reports' },
+    { id: 'stock', icon: Package, title: 'Stock', category: 'reports' },
     { id: 'comisiones', icon: DollarSign, title: 'Comisiones', category: 'reports' },
     { id: 'rentabilidad', icon: BarChart3, title: 'Rentabilidad', category: 'reports' },
     
@@ -109,9 +109,11 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
 
   const handleItemClick = useCallback((itemId) => {
     onNavigate(itemId);
-    // En móvil, cerrar el menú después de navegar
+    // Siempre cerrar el menú en móvil después de navegar
     if (isMobile && toggleSidebar) {
-      toggleSidebar();
+      setTimeout(() => {
+        toggleSidebar();
+      }, 100); // Pequeño delay para asegurar que la navegación se procese primero
     }
   }, [onNavigate, isMobile, toggleSidebar]);
 
@@ -128,8 +130,8 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
         return false;
       }
       
-      // Si el usuario no es admin, verificar permisos
-      if (currentUser && currentUser.role !== 'admin' && currentUser.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.length > 0) {
+      // Si el usuario no es admin, SIEMPRE verificar permisos
+      if (currentUser && currentUser.role !== 'admin') {
         // Mapear IDs de menú a IDs de permisos
         const permissionMap = {
           'nuevoMovimiento': 'operaciones',
@@ -140,8 +142,8 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
         
         const permissionId = permissionMap[item.id] || item.id;
         
-        // Si el usuario tiene permisos definidos, verificar si tiene acceso a este módulo
-        if (!currentUser.permissions.includes(permissionId)) {
+        // Si no tiene permisos o no incluye este permiso, no mostrar
+        if (!currentUser.permissions || !Array.isArray(currentUser.permissions) || !currentUser.permissions.includes(permissionId)) {
           return false;
         }
       }

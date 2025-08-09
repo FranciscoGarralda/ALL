@@ -77,8 +77,6 @@ export default function Home() {
     try {
       const response = await apiService.getMe();
       if (response.success && response.user) {
-        console.log('Usuario autenticado:', response.user);
-        console.log('Permisos del usuario:', response.user.permissions);
         setIsAuthenticated(true);
         setCurrentUser(response.user);
         // Load data from backend after authentication
@@ -355,11 +353,10 @@ export default function Home() {
       
       const requiredPermission = permissionMap[currentPage];
       
-      // Si el usuario tiene permisos definidos y no tiene acceso a esta página
-      if (requiredPermission && currentUser.permissions && 
-          Array.isArray(currentUser.permissions) && 
-          currentUser.permissions.length > 0 &&
-          !currentUser.permissions.includes(requiredPermission)) {
+      // Si el usuario no tiene permisos o no tiene acceso a esta página
+      if (requiredPermission && (!currentUser.permissions || 
+          !Array.isArray(currentUser.permissions) || 
+          !currentUser.permissions.includes(requiredPermission))) {
         return (
           <div className="flex flex-col items-center justify-center min-h-screen text-gray-600 p-4">
             <div className="text-center max-w-md mx-auto">

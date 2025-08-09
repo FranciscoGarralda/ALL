@@ -44,8 +44,6 @@ export default function LoginPage({ onLoginSuccess }) {
               const response = await apiService.login(formData.username, formData.password);
         
         if (response.success) {
-          console.log('Login exitoso, usuario:', response.user);
-          console.log('Permisos recibidos:', response.user.permissions);
           onLoginSuccess(response.user);
         } else {
         // Mensajes de error más específicos
