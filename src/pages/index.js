@@ -98,8 +98,8 @@ export default function Home() {
         apiService.getClients().catch(() => [])
       ]);
       
-      setMovements(backendMovements);
-      setClients(backendClients);
+      setMovements(Array.isArray(backendMovements) ? backendMovements : []);
+      setClients(Array.isArray(backendClients) ? backendClients : []);
     } catch (error) {
       console.error('Error loading data from backend:', error);
       // Fallback to localStorage

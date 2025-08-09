@@ -151,8 +151,6 @@ function UserManagementApp() {
   };
 
   const handleEdit = (user) => {
-    console.log('Editando usuario:', user);
-    console.log('Permisos del usuario:', user.permissions);
     
     // Asegurarse de que permissions sea un array
     let userPermissions = user.permissions || [];
@@ -534,11 +532,11 @@ function UserManagementApp() {
                         )}
                       </div>
                       
-                      {user.role !== 'admin' && user.permissions && user.permissions.length > 0 && (
+                      {user.role !== 'admin' && user.permissions && Array.isArray(user.permissions) && user.permissions.length > 0 && (
                         <div>
                           <span className="text-sm text-gray-500">Permisos:</span>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {user.permissions?.map(perm => {
+                            {user.permissions.map(perm => {
                               const module = SYSTEM_MODULES.find(m => m.id === perm);
                               return module ? (
                                 <span
@@ -627,7 +625,7 @@ function UserManagementApp() {
                                 </span>
                               ) : null;
                             })}
-                            {user.permissions?.length > 3 && (
+                            {user.permissions && Array.isArray(user.permissions) && user.permissions.length > 3 && (
                               <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700">
                                 +{user.permissions.length - 3}
                               </span>
