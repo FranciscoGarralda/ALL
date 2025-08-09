@@ -159,11 +159,18 @@ app.post('/api/auth/login', async (req, res) => {
     }
     
     // Generar token
-            // Parsear permisos si vienen como string
+            // Parsear permisos si vienen como string de PostgreSQL
         let userPermissions = user.permissions || [];
-        if (typeof userPermissions === 'string') {
+        if (typeof userPermissions === 'string' && userPermissions.startsWith('{')) {
+          // Formato PostgreSQL: {operaciones,clientes,movimientos}
+          userPermissions = userPermissions
+            .replace(/^{/, '')
+            .replace(/}$/, '')
+            .split(',')
+            .filter(p => p && p.trim());
+        } else if (typeof userPermissions === 'string') {
           try {
-            userPermissions = JSON.parse(userPermissions.replace(/^{/, '[').replace(/}$/, ']').replace(/,/g, '","').replace(/^/, '"').replace(/$/, '"'));
+            userPermissions = JSON.parse(userPermissions);
           } catch (e) {
             userPermissions = [];
           }

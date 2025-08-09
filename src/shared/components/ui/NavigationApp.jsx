@@ -113,14 +113,23 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
 
   // Filtrar items según el rol del usuario y permisos
   const visibleMenuItems = useMemo(() => {
+    // Debug temporal
+    console.log('MainMenu - currentUser:', currentUser);
+    console.log('MainMenu - permissions:', currentUser?.permissions);
+    
     return menuItems.filter(item => {
+      // Inicio siempre es visible para todos
+      if (item.id === 'inicio') {
+        return true;
+      }
+      
       // Si el item es solo para admin y el usuario no es admin, no mostrarlo
       if (item.adminOnly && (!currentUser || currentUser.role !== 'admin')) {
         return false;
       }
       
       // Si el usuario no es admin, verificar permisos
-      if (currentUser && currentUser.role !== 'admin') {
+      if (currentUser && currentUser.role !== 'admin' && currentUser.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.length > 0) {
         // Mapear IDs de menú a IDs de permisos
         const permissionMap = {
           'nuevoMovimiento': 'operaciones',
@@ -132,7 +141,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
         const permissionId = permissionMap[item.id] || item.id;
         
         // Si el usuario tiene permisos definidos, verificar si tiene acceso a este módulo
-        if (currentUser.permissions && !currentUser.permissions.includes(permissionId)) {
+        if (!currentUser.permissions.includes(permissionId)) {
           return false;
         }
       }
