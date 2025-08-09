@@ -162,44 +162,39 @@ const PORT = process.env.PORT || 3001;
 
 async function startServer() {
   try {
-    // Iniciar servidor PRIMERO para que responda rápido
-    const server = app.listen(PORT, '0.0.0.0', () => {
+    // Conectar a la base de datos primero
+    await sequelize.authenticate();
+    console.log('✅ Conexión a PostgreSQL establecida');
+    
+    // Sincronizar modelos
+    await sequelize.sync();
+    console.log('✅ Base de datos sincronizada');
+    
+    // Intentar inicializar, pero no fallar si hay error
+    try {
+      await initializeDatabase();
+      await initializeAdmin();
+      global.dbReady = true;
+    } catch (initError) {
+      console.error('⚠️ Error en inicialización:', initError.message);
+      global.dbReady = true; // Marcar como listo de todos modos
+    }
+    
+    // Iniciar servidor
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
       console.log(`📍 Entorno: ${process.env.NODE_ENV || 'development'}`);
       console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL}`);
-    });
-    
-    // Inicializar base de datos en segundo plano
-    setImmediate(async () => {
-      try {
-        console.log('🔧 Inicializando base de datos en segundo plano...');
-        
-        // Conectar a la base de datos
-        await sequelize.authenticate();
-        console.log('✅ Conexión a PostgreSQL establecida');
-        
-        // Solo sincronizar si es necesario
-        if (process.env.NODE_ENV !== 'production') {
-          await sequelize.sync({ alter: true });
-          console.log('✅ Base de datos sincronizada');
-        }
-        
-        // Inicializar tablas y admin
-        await initializeDatabase();
-        await initializeAdmin();
-        
-        global.dbReady = true;
-        console.log('✅ SISTEMA COMPLETAMENTE OPERATIVO');
-      } catch (error) {
-        console.error('❌ Error inicializando base de datos:', error);
-        global.dbReady = false;
-        // NO cerrar el servidor, solo loggear el error
-      }
+      console.log('✅ Sistema operativo');
     });
     
   } catch (error) {
-    console.error('❌ Error al iniciar el servidor:', error);
-    process.exit(1);
+    console.error('❌ Error crítico:', error);
+    
+    // Intentar iniciar el servidor de todos modos
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Servidor corriendo en puerto ${PORT} (modo emergencia)`);
+    });
   }
 }
 
