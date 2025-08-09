@@ -363,10 +363,17 @@ const ClientAutocomplete = forwardRef(({
       <ClientModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        onClientCreated={(newClient) => {
-          setShowModal(false);
-          if (onClientCreated) {
-            onClientCreated(newClient);
+        onClientCreated={async (newClient) => {
+          try {
+            // Primero guardar el cliente
+            if (onClientCreated) {
+              await onClientCreated(newClient);
+            }
+            // Luego cerrar el modal
+            setShowModal(false);
+          } catch (error) {
+            console.error('Error al crear cliente:', error);
+            // No cerrar el modal si hay error
           }
         }}
       />

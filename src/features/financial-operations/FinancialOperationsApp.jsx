@@ -750,13 +750,24 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                   required={true}
                   placeholder="Buscar o seleccionar cliente"
                   onClientCreated={async (newClient) => {
-                    // Guardar el cliente en la base de datos
-                    if (onSaveClient) {
-                      const savedClient = await onSaveClient(newClient);
-                      // Auto-seleccionar el cliente recién creado
-                      if (savedClient) {
-                        handleInputChange('cliente', savedClient.id || savedClient.nombre);
+                    console.log('onClientCreated called with:', newClient);
+                    try {
+                      // Guardar el cliente en la base de datos
+                      if (onSaveClient) {
+                        const savedClient = await onSaveClient(newClient);
+                        console.log('Client saved successfully:', savedClient);
+                        
+                        // Auto-seleccionar el cliente recién creado
+                        if (savedClient && savedClient.id) {
+                          // Usar setTimeout para evitar problemas de timing
+                          setTimeout(() => {
+                            handleInputChange('cliente', savedClient.id);
+                          }, 100);
+                        }
                       }
+                    } catch (error) {
+                      console.error('Error saving client:', error);
+                      throw error; // Re-throw para que el modal no se cierre
                     }
                   }}
                 />

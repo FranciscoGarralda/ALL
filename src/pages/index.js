@@ -221,6 +221,7 @@ export default function Home() {
 
   // Client management functions
   const handleSaveClient = async (clientData) => {
+    console.log('handleSaveClient called with:', clientData);
     try {
       if (isAuthenticated) {
         // Save to backend
@@ -240,9 +241,26 @@ export default function Home() {
           savedClient = await apiService.createClient(clientData);
         }
         
-        // Solo actualizar la lista de clientes, no recargar todo
-        const updatedClients = await apiService.getClients();
-        setClients(Array.isArray(updatedClients) ? updatedClients : []);
+        console.log('Client saved:', savedClient);
+        
+        // Solo actualizar la lista de clientes si realmente se guardó
+        if (savedClient) {
+          // En lugar de recargar todos los clientes, solo agregar/actualizar el nuevo
+          setClients(prevClients => {
+            const updatedClients = [...prevClients];
+            const existingIndex = updatedClients.findIndex(c => c.id === savedClient.id);
+            
+            if (existingIndex >= 0) {
+              // Actualizar cliente existente
+              updatedClients[existingIndex] = savedClient;
+            } else {
+              // Agregar nuevo cliente
+              updatedClients.push(savedClient);
+            }
+            
+            return updatedClients;
+          });
+        }
         
         // Retornar el cliente guardado para que se pueda seleccionar
         return savedClient;
