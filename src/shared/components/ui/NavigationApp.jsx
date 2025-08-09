@@ -183,19 +183,35 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
         </div>
       )}
       
-      {/* Toggle button for desktop */}
-      {!isMobile && (
-        <div className={`${isSidebarOpen ? 'p-3 border-b border-gray-200' : 'p-2'}`}>
+      {/* Header para desktop con Inicio y toggle en la misma línea */}
+      {!isMobile && isSidebarOpen && (
+        <div className="flex items-center justify-between px-3 py-3 border-b border-gray-200">
+          <button
+            onClick={() => handleItemClick('inicio')}
+            className="flex items-center gap-3 flex-1 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Home size={20} className="text-gray-600" />
+            <span className="text-sm font-medium text-gray-900">Inicio</span>
+          </button>
           <button
             onClick={toggleSidebar}
-            className={`${isSidebarOpen ? 'ml-auto' : 'mx-auto'} p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400/20 flex items-center justify-center`}
-            aria-label={isSidebarOpen ? 'Cerrar menú' : 'Abrir menú'}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Cerrar menú"
           >
-            {isSidebarOpen ? (
-              <ChevronLeft size={18} className="text-gray-500" />
-            ) : (
-              <ChevronRight size={18} className="text-gray-500" />
-            )}
+            <ChevronLeft size={18} className="text-gray-500" />
+          </button>
+        </div>
+      )}
+      
+      {/* Toggle button for desktop cuando está cerrado */}
+      {!isMobile && !isSidebarOpen && (
+        <div className="p-2">
+          <button
+            onClick={toggleSidebar}
+            className="mx-auto p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400/20 flex items-center justify-center"
+            aria-label="Abrir menú"
+          >
+            <ChevronRight size={18} className="text-gray-500" />
           </button>
         </div>
       )}
@@ -204,9 +220,9 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'px-3 py-4' : 'p-2'} overflow-y-auto ${isMobile ? '' : 'pt-4'}`}>
         {/* Renderizar items por categoría */}
         {visibleMenuItems && visibleMenuItems.length > 0 && ['main', 'operations', 'management', 'reports', 'config'].map((category, categoryIndex) => {
-          // En móvil, filtrar "inicio" ya que está en el header
+          // Filtrar "inicio" cuando está en el header (móvil y desktop)
           const categoryItems = visibleMenuItems.filter(item => {
-            if (isMobile && isSidebarOpen && item.id === 'inicio') return false;
+            if (isSidebarOpen && item.id === 'inicio') return false;
             return item.category === category;
           });
           if (!categoryItems || categoryItems.length === 0) return null;
