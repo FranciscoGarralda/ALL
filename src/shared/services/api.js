@@ -1,4 +1,6 @@
 // API Service para conectar con el backend
+import { cacheService } from './cache';
+
 class ApiService {
   constructor() {
     this.baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://all-production-31a3.up.railway.app';

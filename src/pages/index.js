@@ -2,6 +2,7 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import Head from 'next/head';
 import { clientService, movementService, apiService } from '../shared/services';
 import { safeLocalStorage } from '../shared/services/safeOperations';
+import { preloadService } from '../shared/services/preload';
 import LoginPage from '../features/auth/LoginPage';
 
 // Lazy load components for better performance
@@ -91,12 +92,13 @@ export default function Home() {
 
   const loadDataFromBackend = async () => {
     try {
-      // Load movements from backend
-      const backendMovements = await apiService.getMovements();
-      setMovements(backendMovements);
+      // Cargar datos en paralelo para mejor rendimiento
+      const [backendMovements, backendClients] = await Promise.all([
+        apiService.getMovements().catch(() => []),
+        apiService.getClients().catch(() => [])
+      ]);
       
-      // Load clients from backend
-      const backendClients = await apiService.getClients();
+      setMovements(backendMovements);
       setClients(backendClients);
     } catch (error) {
       console.error('Error loading data from backend:', error);
@@ -414,7 +416,11 @@ export default function Home() {
   if (checkingAuth) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Cargando...</div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-gray-900 mx-auto"></div>
+          <p className="mt-4 text-lg text-gray-700 font-medium">Iniciando sistema...</p>
+          <p className="mt-2 text-sm text-gray-500">Verificando autenticación</p>
+        </div>
       </div>
     );
   }
