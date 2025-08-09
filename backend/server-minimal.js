@@ -22,6 +22,22 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date() });
 });
 
+// Debug - Ver usuarios
+app.get('/api/debug-users', async (req, res) => {
+  try {
+    const users = await pool.query(
+      'SELECT id, name, username, email, role FROM users'
+    );
+    res.json({ 
+      success: true, 
+      count: users.rows.length,
+      users: users.rows 
+    });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
+});
+
 // Fix username endpoint
 app.get('/api/fix-username', async (req, res) => {
   try {
@@ -47,33 +63,42 @@ app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     
-    // Buscar usuario
-    const result = await pool.query(
-      'SELECT * FROM users WHERE username = $1 OR email = $1',
-      [username]
-    );
+    console.log('Login attempt:', { username });
+    
+    // Buscar usuario por username O email
+    const result = await pool.query(`
+      SELECT * FROM users 
+      WHERE username = $1 
+         OR email = $1 
+         OR (username IS NULL AND email = 'admin@sistema.com' AND $1 = 'admin')
+    `, [username]);
+    
+    console.log('Users found:', result.rows.length);
     
     if (result.rows.length === 0) {
       return res.status(401).json({ 
         success: false, 
-        message: 'Usuario no encontrado' 
+        message: 'Usuario no encontrado. Intenta con: admin' 
       });
     }
     
     const user = result.rows[0];
+    console.log('User found:', { id: user.id, username: user.username, email: user.email });
     
     // Verificar contraseña
     const validPassword = await bcrypt.compare(password, user.password);
+    console.log('Password valid:', validPassword);
+    
     if (!validPassword) {
       return res.status(401).json({ 
         success: false, 
-        message: 'Contraseña incorrecta' 
+        message: 'Contraseña incorrecta. Usa: admin123' 
       });
     }
     
     // Generar token
     const token = jwt.sign(
-      { id: user.id, username: user.username || user.email },
+      { id: user.id, username: user.username || user.email, role: user.role },
       process.env.JWT_SECRET || 'secret-key',
       { expiresIn: '30d' }
     );
@@ -86,7 +111,8 @@ app.post('/api/auth/login', async (req, res) => {
         name: user.name,
         username: user.username || user.email,
         email: user.email,
-        role: user.role
+        role: user.role,
+        permissions: user.permissions || []
       }
     });
     
@@ -94,10 +120,47 @@ app.post('/api/auth/login', async (req, res) => {
     console.error('Login error:', error);
     res.status(500).json({ 
       success: false, 
-      message: 'Error en el servidor' 
+      message: 'Error: ' + error.message 
     });
   }
 });
+
+// GET /api/me - Obtener usuario actual
+app.get('/api/auth/me', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ success: false, message: 'No autorizado' });
+    }
+    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret-key');
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+    
+    const user = result.rows[0];
+    res.json({
+      success: true,
+      user: {
+        id: user.id,
+        name: user.name,
+        username: user.username || user.email,
+        email: user.email,
+        role: user.role,
+        permissions: user.permissions || []
+      }
+    });
+  } catch (error) {
+    res.status(401).json({ success: false, message: 'Token inválido' });
+  }
+});
+
+// Rutas básicas para que funcione el sistema
+app.get('/api/movements', (req, res) => res.json({ success: true, data: [] }));
+app.get('/api/clients', (req, res) => res.json({ success: true, data: [] }));
+app.get('/api/users', (req, res) => res.json({ success: true, data: [] }));
 
 // Iniciar servidor
 app.listen(PORT, () => {
