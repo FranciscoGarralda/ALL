@@ -169,6 +169,46 @@ class ApiService {
     
     return this.handleResponse(response);
   }
+
+  // USER MANAGEMENT ENDPOINTS
+  async getUsers() {
+    const response = await fetch(`${this.baseURL}/api/users`, {
+      method: 'GET',
+      headers: this.getHeaders()
+    });
+    
+    const data = await this.handleResponse(response);
+    return data.data || [];
+  }
+
+  async createUser(userData) {
+    const response = await fetch(`${this.baseURL}/api/users`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(userData)
+    });
+    
+    return this.handleResponse(response);
+  }
+
+  async updateUser(id, userData) {
+    const response = await fetch(`${this.baseURL}/api/users/${id}`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(userData)
+    });
+    
+    return this.handleResponse(response);
+  }
+
+  async deleteUser(id) {
+    const response = await fetch(`${this.baseURL}/api/users/${id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders()
+    });
+    
+    return this.handleResponse(response);
+  }
 }
 
 // Exportar instancia única

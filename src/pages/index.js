@@ -30,6 +30,7 @@ const CajaApp = lazy(() => import('../features/cash-register/CajaApp'));
 const RentabilidadApp = lazy(() => import('../features/profitability/RentabilidadApp'));
 const StockApp = lazy(() => import('../features/stock/StockApp'));
 const SaldosInicialesApp = lazy(() => import('../features/initial-balances/SaldosInicialesApp'));
+const UserManagementApp = lazy(() => import('../features/user-management/UserManagementApp'));
 
 // Component map for dynamic rendering
 const componentMap = {
@@ -47,7 +48,8 @@ const componentMap = {
   'caja': CajaApp,
   'rentabilidad': RentabilidadApp,
   'stock': StockApp,
-  'saldos-iniciales': SaldosInicialesApp
+  'saldos-iniciales': SaldosInicialesApp,
+  'usuarios': UserManagementApp
 };
 
 export default function Home() {

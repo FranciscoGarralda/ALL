@@ -18,7 +18,8 @@ import {
   Calculator,
   BarChart3,
   Package,
-  Settings
+  Settings,
+  Shield
 } from 'lucide-react';
 import FixedHeader from './FixedHeader';
 import Footer from './Footer';
@@ -73,7 +74,7 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
 MenuItem.displayName = 'MenuItem';
 
 /** COMPONENTE DEL MENÚ PRINCIPAL OPTIMIZADO */
-const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, isMobile = false }) => {
+const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, isMobile = false, currentUser }) => {
   const menuItems = useMemo(() => [
     { id: 'inicio', icon: Home, title: 'Inicio' },
     { id: 'nuevoMovimiento', icon: Plus, title: 'Nuevo Movimiento' },
@@ -90,7 +91,8 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
     { id: 'gastos', icon: Receipt, title: 'Gastos' },
     { id: 'clientes', icon: UserCheck, title: 'Clientes' },
     { id: 'stock', icon: Package, title: 'Stock' },
-    { id: 'saldosIniciales', icon: Settings, title: 'Saldos Iniciales' }
+    { id: 'saldosIniciales', icon: Settings, title: 'Saldos Iniciales' },
+    { id: 'usuarios', icon: Users, title: 'Gestión de Usuarios', adminOnly: true }
   ], []);
 
   // Mapeo inverso para determinar qué item está activo
@@ -108,6 +110,36 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
   const handleItemClick = useCallback((itemId) => {
     onNavigate(itemId);
   }, [onNavigate]);
+
+  // Filtrar items según el rol del usuario y permisos
+  const visibleMenuItems = useMemo(() => {
+    return menuItems.filter(item => {
+      // Si el item es solo para admin y el usuario no es admin, no mostrarlo
+      if (item.adminOnly && (!currentUser || currentUser.role !== 'admin')) {
+        return false;
+      }
+      
+      // Si el usuario no es admin, verificar permisos
+      if (currentUser && currentUser.role !== 'admin') {
+        // Mapear IDs de menú a IDs de permisos
+        const permissionMap = {
+          'nuevoMovimiento': 'operaciones',
+          'pendientesRetiro': 'pendientes',
+          'cuentas': 'cuentas-corrientes',
+          'saldosIniciales': 'saldos-iniciales'
+        };
+        
+        const permissionId = permissionMap[item.id] || item.id;
+        
+        // Si el usuario tiene permisos definidos, verificar si tiene acceso a este módulo
+        if (currentUser.permissions && !currentUser.permissions.includes(permissionId)) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  }, [menuItems, currentUser]);
 
   return (
     <div className={`
@@ -142,7 +174,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       
       {/* Menú de navegación - ocupa todo el espacio */}
       <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto ${isMobile ? 'pt-20' : 'pt-4'}`}>
-        {menuItems.map((item) => (
+        {visibleMenuItems.map((item) => (
           <MenuItem
             key={item.id}
             icon={item.icon}
@@ -271,6 +303,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
             isSidebarOpen={isSidebarOpen} 
             toggleSidebar={toggleSidebar}
             isMobile={false}
+            currentUser={currentUser}
           />
         </div>
         
@@ -282,6 +315,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
             isSidebarOpen={isSidebarOpen} 
             toggleSidebar={toggleSidebar}
             isMobile={true}
+            currentUser={currentUser}
           />
         )}
         
