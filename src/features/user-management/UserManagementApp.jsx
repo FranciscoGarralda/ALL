@@ -455,8 +455,97 @@ function UserManagementApp() {
               No hay usuarios registrados
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <>
+              {/* Vista móvil */}
+              <div className="lg:hidden">
+                {users.map(user => (
+                  <div key={user.id} className="p-4 border-b border-gray-200 last:border-b-0">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-medium text-gray-600">
+                            {user.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-gray-900">{user.name}</h3>
+                          <p className="text-sm text-gray-600">{user.email}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(user)}
+                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Editar"
+                        >
+                          <Edit3 size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(user.id)}
+                          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Eliminar"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-500">Rol:</span>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          user.role === 'admin' 
+                            ? 'bg-purple-100 text-purple-800'
+                            : user.role === 'operator'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          <Shield size={12} className="mr-1" />
+                          {ROLES.find(r => r.id === user.role)?.name || user.role}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-500">Estado:</span>
+                        {user.active !== false ? (
+                          <span className="inline-flex items-center gap-1 text-green-600 text-sm">
+                            <Check size={14} />
+                            Activo
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-red-600 text-sm">
+                            <X size={14} />
+                            Inactivo
+                          </span>
+                        )}
+                      </div>
+                      
+                      {user.role !== 'admin' && user.permissions && user.permissions.length > 0 && (
+                        <div>
+                          <span className="text-sm text-gray-500">Permisos:</span>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {user.permissions?.map(perm => {
+                              const module = SYSTEM_MODULES.find(m => m.id === perm);
+                              return module ? (
+                                <span
+                                  key={perm}
+                                  className="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-700"
+                                >
+                                  {module.icon} {module.name}
+                                </span>
+                              ) : null;
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Vista desktop */}
+              <div className="hidden lg:block overflow-x-auto">
+                <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -568,6 +657,7 @@ function UserManagementApp() {
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </div>
       </div>

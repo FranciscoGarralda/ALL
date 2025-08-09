@@ -67,28 +67,28 @@ MenuItem.displayName = 'MenuItem';
 /** COMPONENTE DEL MENÚ PRINCIPAL OPTIMIZADO */
 const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, isMobile = false, currentUser }) => {
   const menuItems = useMemo(() => [
-    // OPERACIONES PRINCIPALES (arriba)
+    // OPERACIONES PRINCIPALES (arriba - más usadas)
     { id: 'inicio', icon: Home, title: 'Inicio', category: 'main' },
     { id: 'nuevoMovimiento', icon: Plus, title: 'Nuevo Movimiento', category: 'main' },
     { id: 'pendientesRetiro', icon: Clock, title: 'Pendientes', category: 'main' },
     
-    // OPERACIONES SECUNDARIAS
+    // OPERACIONES (acciones que modifican datos)
     { id: 'arbitraje', icon: ArrowUpDown, title: 'Arbitraje', category: 'operations' },
     { id: 'caja', icon: Calculator, title: 'Caja Diaria', category: 'operations' },
     { id: 'gastos', icon: Receipt, title: 'Gastos', category: 'operations' },
+    { id: 'stock', icon: Package, title: 'Stock', category: 'operations' },
     
-    // GESTIÓN
+    // GESTIÓN (administración de entidades)
     { id: 'clientes', icon: UserCheck, title: 'Clientes', category: 'management' },
     { id: 'prestamistas', icon: CreditCard, title: 'Prestamistas', category: 'management' },
     { id: 'cuentas', icon: Building2, title: 'Cuentas Corrientes', category: 'management' },
-    { id: 'stock', icon: Package, title: 'Stock', category: 'management' },
     
-    // INFORMACIÓN Y REPORTES (abajo)
-    { id: 'saldos', icon: Wallet, title: 'Saldos', category: 'info' },
-    { id: 'movimientos', icon: List, title: 'Movimientos', category: 'info' },
-    { id: 'utilidad', icon: TrendingUp, title: 'Utilidad', category: 'info' },
-    { id: 'comisiones', icon: DollarSign, title: 'Comisiones', category: 'info' },
-    { id: 'rentabilidad', icon: BarChart3, title: 'Rentabilidad', category: 'info' },
+    // REPORTES E INFORMACIÓN (solo consulta - abajo)
+    { id: 'movimientos', icon: List, title: 'Movimientos', category: 'reports' },
+    { id: 'saldos', icon: Wallet, title: 'Saldos', category: 'reports' },
+    { id: 'utilidad', icon: TrendingUp, title: 'Utilidad', category: 'reports' },
+    { id: 'comisiones', icon: DollarSign, title: 'Comisiones', category: 'reports' },
+    { id: 'rentabilidad', icon: BarChart3, title: 'Rentabilidad', category: 'reports' },
     
     // CONFIGURACIÓN
     { id: 'saldosIniciales', icon: Settings, title: 'Saldos Iniciales', category: 'config' },
@@ -109,7 +109,11 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
 
   const handleItemClick = useCallback((itemId) => {
     onNavigate(itemId);
-  }, [onNavigate]);
+    // En móvil, cerrar el menú después de navegar
+    if (isMobile && toggleSidebar) {
+      toggleSidebar();
+    }
+  }, [onNavigate, isMobile, toggleSidebar]);
 
   // Filtrar items según el rol del usuario y permisos
   const visibleMenuItems = useMemo(() => {
@@ -175,7 +179,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       {/* Menú de navegación - ocupa todo el espacio */}
       <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'px-3 py-4' : 'p-2'} overflow-y-auto ${isMobile ? 'pt-20' : 'pt-4'}`}>
         {/* Renderizar items por categoría */}
-        {['main', 'operations', 'management', 'info', 'config'].map((category, categoryIndex) => {
+        {['main', 'operations', 'management', 'reports', 'config'].map((category, categoryIndex) => {
           const categoryItems = visibleMenuItems.filter(item => item.category === category);
           if (categoryItems.length === 0) return null;
           
