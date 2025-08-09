@@ -158,4 +158,57 @@ router.get('/status', protect, authorize('admin'), async (req, res) => {
   }
 });
 
+// Endpoint TEMPORAL para arreglar username
+router.get('/fix-username', async (req, res) => {
+  try {
+    console.log('Ejecutando fix de username...');
+    
+    // Verificar si existe la columna
+    const columnCheck = await pool.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'users' 
+      AND column_name = 'username'
+    `);
+    
+    if (columnCheck.rows.length === 0) {
+      // Agregar columna
+      await pool.query(`ALTER TABLE users ADD COLUMN username VARCHAR(255)`);
+      
+      // Actualizar admin
+      await pool.query(`
+        UPDATE users 
+        SET username = 'admin' 
+        WHERE email = 'admin@sistema.com'
+      `);
+      
+      // Actualizar otros
+      await pool.query(`
+        UPDATE users 
+        SET username = SPLIT_PART(email, '@', 1) 
+        WHERE username IS NULL
+      `);
+      
+      // Aplicar restricciones
+      await pool.query(`ALTER TABLE users ALTER COLUMN username SET NOT NULL`);
+      
+      res.json({
+        success: true,
+        message: 'Columna username agregada. Ahora puedes entrar con username: admin, password: admin123'
+      });
+    } else {
+      res.json({
+        success: true,
+        message: 'La columna username ya existe'
+      });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;
