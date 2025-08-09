@@ -5,6 +5,17 @@ const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
+// @route   GET /api/auth/test
+// @desc    Test endpoint
+// @access  Public
+router.get('/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Auth routes working',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // @route   POST /api/auth/register
 // @desc    Registrar nuevo usuario
 // @access  Public
