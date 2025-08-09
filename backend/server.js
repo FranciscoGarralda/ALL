@@ -8,6 +8,7 @@ require('dotenv').config();
 // Importar configuración de base de datos
 const sequelize = require('./config/database');
 const { User, Movement, Client } = require('./models');
+const { initializeDatabase } = require('./config/database-init');
 
 // Importar rutas
 const authRoutes = require('./routes/auth');
