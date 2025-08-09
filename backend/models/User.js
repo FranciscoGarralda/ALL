@@ -39,12 +39,25 @@ const User = sequelize.define('User', {
     }
   },
   role: {
-    type: DataTypes.ENUM('admin', 'user'),
-    defaultValue: 'user'
+    type: DataTypes.ENUM('admin', 'operator', 'viewer'),
+    defaultValue: 'operator'
+  },
+  permissions: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
+    defaultValue: []
   },
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
+  },
+  active: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      return this.isActive;
+    },
+    set(value) {
+      this.setDataValue('isActive', value);
+    }
   }
 }, {
   timestamps: true,

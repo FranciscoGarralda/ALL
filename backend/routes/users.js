@@ -1,30 +1,22 @@
 const express = require('express');
-const { User } = require('../models');
-const { protect, authorize } = require('../middleware/auth');
-
 const router = express.Router();
+const bcrypt = require('bcryptjs');
+const { protect, authorize } = require('../middleware/auth');
+const pool = require('../config/database');
 
-// Todas las rutas requieren autenticación y rol admin
-router.use(protect);
-router.use(authorize('admin'));
-
-// @route   GET /api/users
-// @desc    Obtener todos los usuarios
-// @access  Private/Admin
-router.get('/', async (req, res) => {
+// GET all users (admin only)
+router.get('/', protect, authorize('admin'), async (req, res) => {
   try {
-    const users = await User.findAll({
-      attributes: { exclude: ['password'] },
-      order: [['createdAt', 'DESC']]
-    });
-
+    const result = await pool.query(
+      'SELECT id, name, email, role, permissions, active, created_at FROM users ORDER BY created_at DESC'
+    );
+    
     res.json({
       success: true,
-      count: users.length,
-      data: users
+      data: result.rows
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
       message: 'Error al obtener usuarios'
@@ -32,101 +24,121 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   GET /api/users/:id
-// @desc    Obtener un usuario por ID
-// @access  Private/Admin
-router.get('/:id', async (req, res) => {
+// CREATE new user (admin only)
+router.post('/', protect, authorize('admin'), async (req, res) => {
+  const { name, email, password, role, permissions, active } = req.body;
+  
   try {
-    const user = await User.findByPk(req.params.id, {
-      attributes: { exclude: ['password'] }
-    });
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'Usuario no encontrado'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: user
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: 'Error al obtener usuario'
-    });
-  }
-});
-
-// @route   POST /api/users
-// @desc    Crear nuevo usuario
-// @access  Private/Admin
-router.post('/', async (req, res) => {
-  try {
-    const { name, username, email, password, role } = req.body;
-
-    // Verificar si el usuario ya existe
-    const existingUser = await User.findOne({ 
-      where: { username } 
-    });
-
-    if (existingUser) {
+    // Check if user already exists
+    const existingUser = await pool.query(
+      'SELECT id FROM users WHERE email = $1',
+      [email]
+    );
+    
+    if (existingUser.rows.length > 0) {
       return res.status(400).json({
         success: false,
-        message: 'El nombre de usuario ya está en uso'
+        message: 'El email ya está registrado'
       });
     }
-
-    const user = await User.create({
-      name,
-      username,
-      email,
-      password,
-      role: role || 'user'
-    });
-
+    
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Insert new user
+    const result = await pool.query(
+      `INSERT INTO users (name, email, password, role, permissions, active) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
+       RETURNING id, name, email, role, permissions, active, created_at`,
+      [name, email, hashedPassword, role || 'operator', permissions || [], active !== false]
+    );
+    
     res.status(201).json({
       success: true,
-      data: user
+      data: result.rows[0]
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error creating user:', error);
     res.status(500).json({
       success: false,
-      message: 'Error al crear usuario',
-      error: error.message
+      message: 'Error al crear usuario'
     });
   }
 });
 
-// @route   PUT /api/users/:id
-// @desc    Actualizar usuario
-// @access  Private/Admin
-router.put('/:id', async (req, res) => {
+// UPDATE user (admin only)
+router.put('/:id', protect, authorize('admin'), async (req, res) => {
+  const { id } = req.params;
+  const { name, email, password, role, permissions, active } = req.body;
+  
   try {
-    const user = await User.findByPk(req.params.id);
-
-    if (!user) {
+    // Build update query dynamically
+    const updates = [];
+    const values = [];
+    let paramCount = 1;
+    
+    if (name !== undefined) {
+      updates.push(`name = $${paramCount}`);
+      values.push(name);
+      paramCount++;
+    }
+    
+    if (email !== undefined) {
+      updates.push(`email = $${paramCount}`);
+      values.push(email);
+      paramCount++;
+    }
+    
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updates.push(`password = $${paramCount}`);
+      values.push(hashedPassword);
+      paramCount++;
+    }
+    
+    if (role !== undefined) {
+      updates.push(`role = $${paramCount}`);
+      values.push(role);
+      paramCount++;
+    }
+    
+    if (permissions !== undefined) {
+      updates.push(`permissions = $${paramCount}`);
+      values.push(permissions);
+      paramCount++;
+    }
+    
+    if (active !== undefined) {
+      updates.push(`active = $${paramCount}`);
+      values.push(active);
+      paramCount++;
+    }
+    
+    updates.push(`updated_at = CURRENT_TIMESTAMP`);
+    
+    values.push(id);
+    
+    const result = await pool.query(
+      `UPDATE users 
+       SET ${updates.join(', ')} 
+       WHERE id = $${paramCount}
+       RETURNING id, name, email, role, permissions, active, created_at`,
+      values
+    );
+    
+    if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'Usuario no encontrado'
       });
     }
-
-    // No permitir cambiar el password por esta ruta
-    delete req.body.password;
-
-    await user.update(req.body);
-
+    
     res.json({
       success: true,
-      data: user
+      data: result.rows[0]
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error updating user:', error);
     res.status(500).json({
       success: false,
       message: 'Error al actualizar usuario'
@@ -134,75 +146,47 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// @route   PUT /api/users/:id/activate
-// @desc    Activar/Desactivar usuario
-// @access  Private/Admin
-router.put('/:id/activate', async (req, res) => {
+// DELETE user (admin only)
+router.delete('/:id', protect, authorize('admin'), async (req, res) => {
+  const { id } = req.params;
+  
   try {
-    const user = await User.findByPk(req.params.id);
-
-    if (!user) {
+    // Don't allow deleting the last admin
+    const adminCount = await pool.query(
+      'SELECT COUNT(*) FROM users WHERE role = $1 AND id != $2',
+      ['admin', id]
+    );
+    
+    const userToDelete = await pool.query(
+      'SELECT role FROM users WHERE id = $1',
+      [id]
+    );
+    
+    if (userToDelete.rows[0]?.role === 'admin' && parseInt(adminCount.rows[0].count) === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No se puede eliminar el último administrador'
+      });
+    }
+    
+    const result = await pool.query(
+      'DELETE FROM users WHERE id = $1 RETURNING id',
+      [id]
+    );
+    
+    if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'Usuario no encontrado'
       });
     }
-
-    // No permitir desactivarse a sí mismo
-    if (user.id === req.user.id) {
-      return res.status(400).json({
-        success: false,
-        message: 'No puedes desactivar tu propia cuenta'
-      });
-    }
-
-    user.isActive = !user.isActive;
-    await user.save();
-
+    
     res.json({
       success: true,
-      message: `Usuario ${user.isActive ? 'activado' : 'desactivado'} exitosamente`,
-      data: user
+      message: 'Usuario eliminado correctamente'
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: 'Error al cambiar estado del usuario'
-    });
-  }
-});
-
-// @route   DELETE /api/users/:id
-// @desc    Eliminar usuario
-// @access  Private/Admin
-router.delete('/:id', async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'Usuario no encontrado'
-      });
-    }
-
-    // No permitir eliminarse a sí mismo
-    if (user.id === req.user.id) {
-      return res.status(400).json({
-        success: false,
-        message: 'No puedes eliminar tu propia cuenta'
-      });
-    }
-
-    await user.destroy();
-
-    res.json({
-      success: true,
-      message: 'Usuario eliminado exitosamente'
-    });
-  } catch (error) {
-    console.error(error);
+    console.error('Error deleting user:', error);
     res.status(500).json({
       success: false,
       message: 'Error al eliminar usuario'
