@@ -516,39 +516,39 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   };
 
   const handleGuardar = () => {
-    console.log('=== INICIANDO GUARDADO ===');
-    console.log('FormData completo:', formData);
+    // console.log('=== INICIANDO GUARDADO ===');
+    // console.log('FormData completo:', formData);
     
     // Validaciones básicas
     if (!formData.cliente || formData.cliente.trim() === '') {
-      console.error('Validación fallida: Cliente vacío');
+      // console.error('Validación fallida: Cliente vacío');
       alert('Por favor selecciona un cliente');
       return;
     }
     
     if (!formData.operacion) {
-      console.error('Validación fallida: Operación vacía');
+      // console.error('Validación fallida: Operación vacía');
       alert('Por favor selecciona una operación');
       return;
     }
     
     if (!formData.subOperacion) {
-      console.error('Validación fallida: SubOperación vacía');
+      // console.error('Validación fallida: SubOperación vacía');
       alert('Por favor selecciona el detalle de la operación');
       return;
     }
     
-    console.log('Validaciones básicas pasadas');
+    // console.log('Validaciones básicas pasadas');
     
     // Validate mixed payments using hook
     const validation = validateMixedPayments();
     if (!validation.isValid) {
-      console.error('Validación de pagos mixtos fallida:', validation.error);
+      // console.error('Validación de pagos mixtos fallida:', validation.error);
       alert(validation.error);
       return;
     }
     
-    console.log('Validación de pagos mixtos pasada');
+    // console.log('Validación de pagos mixtos pasada');
     
     // Actualizar stock según el tipo de operación
     if (formData.operacion === 'TRANSACCIONES') {
@@ -620,12 +620,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
     }
     
-    console.log('Stock actualizado (si aplica)');
-    console.log('Llamando a onSaveMovement con:', formData);
+    // console.log('Stock actualizado (si aplica)');
+    // console.log('Llamando a onSaveMovement con:', formData);
     
     onSaveMovement(formData);
     
-    console.log('onSaveMovement llamado exitosamente');
+    // console.log('onSaveMovement llamado exitosamente');
     
     // Show success message
     alert('Movimiento guardado exitosamente');
@@ -766,12 +766,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                   required={true}
                   placeholder="Buscar o seleccionar cliente"
                   onClientCreated={async (newClient) => {
-                    console.log('onClientCreated called with:', newClient);
+                    // console.log('onClientCreated called with:', newClient);
                     try {
                       // Guardar el cliente en la base de datos
                       if (onSaveClient) {
                         const savedClient = await onSaveClient(newClient);
-                        console.log('Client saved successfully:', savedClient);
+                        // console.log('Client saved successfully:', savedClient);
                         
                         // Auto-seleccionar el cliente recién creado
                         if (savedClient && savedClient.id) {

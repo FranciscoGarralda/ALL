@@ -155,28 +155,28 @@ export default function Home() {
 
   // Movement management functions
   const handleSaveMovement = async (movementData) => {
-    console.log('=== handleSaveMovement llamado ===');
-    console.log('isAuthenticated:', isAuthenticated);
-    console.log('movementData:', movementData);
+    // console.log('=== handleSaveMovement llamado ===');
+    // console.log('isAuthenticated:', isAuthenticated);
+    // console.log('movementData:', movementData);
     
     try {
       if (isAuthenticated) {
-        console.log('Guardando en backend...');
+        // console.log('Guardando en backend...');
         // Save to backend
         let savedMovement;
         if (editingMovement) {
-          console.log('Actualizando movimiento existente:', editingMovement.id);
+          // console.log('Actualizando movimiento existente:', editingMovement.id);
           savedMovement = await apiService.updateMovement(editingMovement.id, movementData);
         } else {
-          console.log('Creando nuevo movimiento...');
+          // console.log('Creando nuevo movimiento...');
           savedMovement = await apiService.createMovement(movementData);
         }
         
-        console.log('Movimiento guardado:', savedMovement);
+        // console.log('Movimiento guardado:', savedMovement);
         
         // Reload movements from backend
         await loadDataFromBackend();
-        console.log('Datos recargados del backend');
+        // console.log('Datos recargados del backend');
       } else {
         // Save to localStorage
         const newMovement = {
@@ -231,7 +231,7 @@ export default function Home() {
 
   // Client management functions
   const handleSaveClient = async (clientData) => {
-    console.log('handleSaveClient called with:', clientData);
+    // console.log('handleSaveClient called with:', clientData);
     try {
       if (isAuthenticated) {
         // Save to backend
@@ -251,7 +251,7 @@ export default function Home() {
           savedClient = await apiService.createClient(clientData);
         }
         
-        console.log('Client saved:', savedClient);
+        // console.log('Client saved:', savedClient);
         
         // Solo actualizar la lista de clientes si realmente se guardó
         if (savedClient) {

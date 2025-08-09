@@ -27,6 +27,58 @@ async function initDatabase() {
   try {
     console.log('🚀 Verificando estructura de base de datos...');
     
+    // Crear tabla movements si no existe
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS movements (
+        id SERIAL PRIMARY KEY,
+        cliente VARCHAR(255),
+        fecha DATE NOT NULL,
+        nombreDia VARCHAR(20),
+        detalle TEXT,
+        operacion VARCHAR(100),
+        subOperacion VARCHAR(100),
+        proveedorCC VARCHAR(255),
+        monto DECIMAL(15,2),
+        moneda VARCHAR(20),
+        cuenta VARCHAR(100),
+        total DECIMAL(15,2),
+        estado VARCHAR(50),
+        por VARCHAR(100),
+        nombreOtro VARCHAR(255),
+        tc DECIMAL(15,4),
+        monedaTC VARCHAR(20),
+        monedaTCCmpra VARCHAR(20),
+        monedaTCVenta VARCHAR(20),
+        monedaVenta VARCHAR(20),
+        tcVenta DECIMAL(15,4),
+        comision DECIMAL(15,2),
+        comisionPorcentaje DECIMAL(5,2),
+        montoComision DECIMAL(15,2),
+        montoReal DECIMAL(15,2),
+        monedaComision VARCHAR(20),
+        cuentaComision VARCHAR(100),
+        interes DECIMAL(5,2),
+        lapso VARCHAR(50),
+        fechaLimite DATE,
+        socioSeleccionado VARCHAR(100),
+        totalCompra DECIMAL(15,2),
+        totalVenta DECIMAL(15,2),
+        montoVenta DECIMAL(15,2),
+        cuentaSalida VARCHAR(100),
+        cuentaIngreso VARCHAR(100),
+        profit DECIMAL(15,2),
+        monedaProfit VARCHAR(20),
+        walletTC VARCHAR(50),
+        mixedPayments JSONB,
+        expectedTotalForMixedPayments DECIMAL(15,2),
+        utilidadCalculada DECIMAL(15,2),
+        utilidadPorcentaje DECIMAL(5,2),
+        costoPromedio DECIMAL(15,4),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
     // Crear tabla clients con estructura correcta si no existe
     await pool.query(`
       CREATE TABLE IF NOT EXISTS clients (
@@ -41,7 +93,23 @@ async function initDatabase() {
       )
     `);
     
-    // Agregar columnas faltantes si es necesario
+    // Crear tabla users si no existe
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
+        permissions TEXT[] DEFAULT '{}',
+        active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Agregar columnas faltantes si es necesario (para clients)
     const alterQueries = [
       'ALTER TABLE clients ADD COLUMN IF NOT EXISTS nombre VARCHAR(255)',
       'ALTER TABLE clients ADD COLUMN IF NOT EXISTS telefono VARCHAR(100)',
@@ -58,6 +126,15 @@ async function initDatabase() {
       } catch (err) {
         // Ignorar errores (columna ya existe)
       }
+    }
+    
+    // Crear índices importantes
+    try {
+      await pool.query('CREATE INDEX IF NOT EXISTS idx_movements_fecha ON movements(fecha)');
+      await pool.query('CREATE INDEX IF NOT EXISTS idx_movements_cliente ON movements(cliente)');
+      await pool.query('CREATE INDEX IF NOT EXISTS idx_clients_nombre ON clients(nombre)');
+    } catch (err) {
+      // Ignorar errores de índices duplicados
     }
     
     console.log('✅ Base de datos lista');
