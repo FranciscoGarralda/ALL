@@ -8,7 +8,64 @@ router.post('/fix-users', protect, authorize('admin'), async (req, res) => {
   try {
     console.log('Ejecutando verificación del sistema de usuarios...');
     
-    // Verificar columnas
+    // Primero verificar si la tabla existe
+    const tableCheck = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_name = 'users'
+      );
+    `);
+    
+    if (!tableCheck.rows[0].exists) {
+      console.log('La tabla users no existe. Creándola...');
+      
+      // Crear la tabla
+      await pool.query(`
+        CREATE TABLE users (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) UNIQUE NOT NULL,
+          password VARCHAR(255) NOT NULL,
+          role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
+          permissions TEXT[] DEFAULT '{}',
+          active BOOLEAN DEFAULT true,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      
+      // Crear índices
+      await pool.query('CREATE INDEX idx_users_email ON users(email)');
+      await pool.query('CREATE INDEX idx_users_role ON users(role)');
+      
+      // Crear usuario admin por defecto
+      const bcrypt = require('bcryptjs');
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+      
+      await pool.query(`
+        INSERT INTO users (name, email, password, role, permissions, active)
+        VALUES ($1, $2, $3, $4, $5, $6)
+      `, [
+        'Administrador',
+        'admin@sistema.com',
+        hashedPassword,
+        'admin',
+        [
+          'operaciones', 'clientes', 'movimientos', 'pendientes',
+          'gastos', 'cuentas-corrientes', 'prestamistas', 'comisiones',
+          'utilidad', 'arbitraje', 'saldos', 'caja', 'rentabilidad',
+          'stock', 'saldos-iniciales', 'usuarios'
+        ],
+        true
+      ]);
+      
+      return res.json({
+        success: true,
+        message: 'Tabla users creada exitosamente. Usuario admin creado (email: admin@sistema.com, password: admin123)'
+      });
+    }
+    
+    // Si la tabla existe, verificar columnas
     const columnsCheck = await pool.query(`
       SELECT column_name 
       FROM information_schema.columns 
@@ -39,7 +96,7 @@ router.post('/fix-users', protect, authorize('admin'), async (req, res) => {
         'operaciones', 'clientes', 'movimientos', 'pendientes',
         'gastos', 'cuentas-corrientes', 'prestamistas', 'comisiones',
         'utilidad', 'arbitraje', 'saldos', 'caja', 'rentabilidad',
-        'stock', 'saldos-iniciales'
+        'stock', 'saldos-iniciales', 'usuarios'
       ]
       WHERE role = 'admin' AND (permissions IS NULL OR permissions = '{}');
     `);
