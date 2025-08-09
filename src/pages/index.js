@@ -7,7 +7,11 @@ import LoginPage from '../features/auth/LoginPage';
 // Force rebuild Wed Jul 31 2024 18:00:00 GMT-0300 (Argentina Standard Time)
 
 // Lazy load components for better performance
-const NavigationApp = lazy(() => import('../shared/components/ui/NavigationApp'));
+const NavigationApp = lazy(() => 
+  import('../shared/components/ui/NavigationApp').then(module => ({
+    default: module.NavigationApp
+  }))
+);
 const FinancialOperationsApp = lazy(() => import('../features/financial-operations/FinancialOperationsApp'));
 const ClientesApp = lazy(() => import('../features/clients/ClientesApp'));
 const MovimientosApp = lazy(() => import('../features/movements/MovimientosApp'));
