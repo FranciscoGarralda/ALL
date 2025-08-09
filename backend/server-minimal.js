@@ -937,18 +937,29 @@ app.get('/api/init-db-emergency', async (req, res) => {
     
     // 6. Crear usuario admin si no existe
     const hashedPassword = await bcrypt.hash('admin123', 10);
-    await pool.query(`
-      INSERT INTO users (name, username, email, password, role, permissions)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      ON CONFLICT (username) DO NOTHING
-    `, [
-      'Administrador',
-      'admin',
-      'admin@sistema.com',
-      hashedPassword,
-      'admin',
-      '{operaciones,clientes,movimientos,pendientes,gastos,cuentas-corrientes,prestamistas,comisiones,utilidad,arbitraje,saldos,caja,rentabilidad,stock,saldos-iniciales,usuarios}'
-    ]);
+    
+    // Primero verificar si el usuario ya existe
+    const existingAdmin = await pool.query(
+      'SELECT id FROM users WHERE username = $1',
+      ['admin']
+    );
+    
+    if (existingAdmin.rows.length === 0) {
+      await pool.query(`
+        INSERT INTO users (name, username, email, password, role, permissions)
+        VALUES ($1, $2, $3, $4, $5, $6)
+      `, [
+        'Administrador',
+        'admin',
+        'admin@sistema.com',
+        hashedPassword,
+        'admin',
+        '{operaciones,clientes,movimientos,pendientes,gastos,cuentas-corrientes,prestamistas,comisiones,utilidad,arbitraje,saldos,caja,rentabilidad,stock,saldos-iniciales,usuarios}'
+      ]);
+      console.log('Usuario admin creado');
+    } else {
+      console.log('Usuario admin ya existe');
+    }
     
     // 7. Verificar qué tablas se crearon
     const tables = await pool.query(`
