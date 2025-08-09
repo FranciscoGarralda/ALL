@@ -10,6 +10,11 @@ const NavigationApp = lazy(() =>
     default: module.NavigationApp
   }))
 );
+const WelcomePage = lazy(() => 
+  import('../shared/components/ui/NavigationApp').then(module => ({
+    default: module.WelcomePage
+  }))
+);
 const FinancialOperationsApp = lazy(() => import('../features/financial-operations/FinancialOperationsApp'));
 const ClientesApp = lazy(() => import('../features/clients/ClientesApp'));
 const MovimientosApp = lazy(() => import('../features/movements/MovimientosApp'));
@@ -47,7 +52,7 @@ const componentMap = {
 
 export default function Home() {
   // Navigation state
-  const [currentPage, setCurrentPage] = useState('operaciones');
+  const [currentPage, setCurrentPage] = useState('inicio');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   // Data state
@@ -294,7 +299,7 @@ export default function Home() {
   const navigateTo = (page) => {
     // Map navigation IDs to component IDs
     const pageMap = {
-      'inicio': 'operaciones',
+      'inicio': 'inicio',  // Mostrar la página de bienvenida
       'nuevoMovimiento': 'operaciones',
       'pendientesRetiro': 'pendientes',
       'cuentas': 'cuentas-corrientes',
@@ -316,6 +321,11 @@ export default function Home() {
 
   // Render current page component
   const renderCurrentPage = () => {
+    // Show welcome page for inicio
+    if (currentPage === 'inicio') {
+      return <WelcomePage onNavigate={navigateTo} />;
+    }
+    
     const Component = componentMap[currentPage];
     
     if (!Component) {
