@@ -34,37 +34,28 @@ const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) 
     <SidebarTooltip content={title} disabled={isSidebarOpen}>
       <button
         className={`
-          w-full flex items-center gap-3 p-3.5 rounded-xl transition-all duration-200
-          transform origin-left group relative overflow-hidden
+          w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200
           ${!isSidebarOpen ? 'justify-center' : ''}
           ${isActive 
-            ? 'bg-gray-900 text-white shadow-xl scale-105' 
-            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 hover:scale-102 hover:shadow-md'
+            ? 'bg-gray-900 text-white' 
+            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
           }
-          ${!isActive && 'hover:translate-x-1'}
           touch-manipulation select-none
-          focus:outline-none focus:ring-1 focus:ring-gray-400/30 focus:ring-offset-2
+          focus:outline-none focus:ring-2 focus:ring-gray-400/20
         `}
         onClick={onClick}
         aria-current={isActive ? 'page' : undefined}
       >
-        {/* Efecto de onda */}
-        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
-        
-        <Icon size={22} className={`
-          flex-shrink-0 transition-all duration-200 relative z-10
-          ${!isActive && 'group-hover:rotate-12'}
-          ${isActive ? 'drop-shadow-md' : ''}
-        `} />
+        <Icon size={20} className="flex-shrink-0" />
         {isSidebarOpen && (
-          <span className={`text-sm font-semibold truncate relative z-10 ${isActive ? 'text-white' : ''}`}>
+          <span className={`text-sm font-medium truncate ${isActive ? 'text-white' : ''}`}>
             {title}
           </span>
         )}
         
-        {/* Indicador activo */}
+        {/* Indicador activo más sutil */}
         {isActive && isSidebarOpen && (
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-l-full animate-pulse shadow-lg"></div>
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gray-900 rounded-r-full"></div>
         )}
       </button>
     </SidebarTooltip>
@@ -76,23 +67,32 @@ MenuItem.displayName = 'MenuItem';
 /** COMPONENTE DEL MENÚ PRINCIPAL OPTIMIZADO */
 const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, isMobile = false, currentUser }) => {
   const menuItems = useMemo(() => [
-    { id: 'inicio', icon: Home, title: 'Inicio' },
-    { id: 'nuevoMovimiento', icon: Plus, title: 'Nuevo Movimiento' },
-    { id: 'saldos', icon: Wallet, title: 'Saldos' },
-    { id: 'movimientos', icon: List, title: 'Movimientos' },
-    { id: 'pendientesRetiro', icon: Clock, title: 'Pendientes' },
-    { id: 'cuentas', icon: Building2, title: 'Cuentas Corrientes' },
-    { id: 'arbitraje', icon: ArrowUpDown, title: 'Arbitraje' },
-    { id: 'utilidad', icon: TrendingUp, title: 'Utilidad' },
-    { id: 'comisiones', icon: DollarSign, title: 'Comisiones' },
-    { id: 'caja', icon: Calculator, title: 'Caja Diaria' },
-    { id: 'rentabilidad', icon: BarChart3, title: 'Rentabilidad' },
-    { id: 'prestamistas', icon: CreditCard, title: 'Prestamistas' },
-    { id: 'gastos', icon: Receipt, title: 'Gastos' },
-    { id: 'clientes', icon: UserCheck, title: 'Clientes' },
-    { id: 'stock', icon: Package, title: 'Stock' },
-    { id: 'saldosIniciales', icon: Settings, title: 'Saldos Iniciales' },
-    { id: 'usuarios', icon: Users, title: 'Gestión de Usuarios', adminOnly: true }
+    // OPERACIONES PRINCIPALES (arriba)
+    { id: 'inicio', icon: Home, title: 'Inicio', category: 'main' },
+    { id: 'nuevoMovimiento', icon: Plus, title: 'Nuevo Movimiento', category: 'main' },
+    { id: 'pendientesRetiro', icon: Clock, title: 'Pendientes', category: 'main' },
+    
+    // OPERACIONES SECUNDARIAS
+    { id: 'arbitraje', icon: ArrowUpDown, title: 'Arbitraje', category: 'operations' },
+    { id: 'caja', icon: Calculator, title: 'Caja Diaria', category: 'operations' },
+    { id: 'gastos', icon: Receipt, title: 'Gastos', category: 'operations' },
+    
+    // GESTIÓN
+    { id: 'clientes', icon: UserCheck, title: 'Clientes', category: 'management' },
+    { id: 'prestamistas', icon: CreditCard, title: 'Prestamistas', category: 'management' },
+    { id: 'cuentas', icon: Building2, title: 'Cuentas Corrientes', category: 'management' },
+    { id: 'stock', icon: Package, title: 'Stock', category: 'management' },
+    
+    // INFORMACIÓN Y REPORTES (abajo)
+    { id: 'saldos', icon: Wallet, title: 'Saldos', category: 'info' },
+    { id: 'movimientos', icon: List, title: 'Movimientos', category: 'info' },
+    { id: 'utilidad', icon: TrendingUp, title: 'Utilidad', category: 'info' },
+    { id: 'comisiones', icon: DollarSign, title: 'Comisiones', category: 'info' },
+    { id: 'rentabilidad', icon: BarChart3, title: 'Rentabilidad', category: 'info' },
+    
+    // CONFIGURACIÓN
+    { id: 'saldosIniciales', icon: Settings, title: 'Saldos Iniciales', category: 'config' },
+    { id: 'usuarios', icon: Users, title: 'Gestión de Usuarios', adminOnly: true, category: 'config' }
   ], []);
 
   // Mapeo inverso para determinar qué item está activo
@@ -113,10 +113,6 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
 
   // Filtrar items según el rol del usuario y permisos
   const visibleMenuItems = useMemo(() => {
-    // Debug temporal
-    console.log('MainMenu - currentUser:', currentUser);
-    console.log('MainMenu - permissions:', currentUser?.permissions);
-    
     return menuItems.filter(item => {
       // Inicio siempre es visible para todos
       if (item.id === 'inicio') {
@@ -164,35 +160,48 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
         <div className={`flex ${isSidebarOpen ? 'justify-end p-3' : 'justify-center p-2'}`}>
           <button
             onClick={toggleSidebar}
-            className={`
-              p-2.5 rounded-xl transition-all duration-200
-              hover:bg-gray-100 hover:shadow-md
-              focus:outline-none focus:ring-1 focus:ring-gray-400/30 focus:ring-offset-2
-              ${!isSidebarOpen && 'hover:scale-110'}
-            `}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400/20"
             aria-label={isSidebarOpen ? 'Cerrar menú' : 'Abrir menú'}
           >
             {isSidebarOpen ? (
-              <ChevronLeft size={20} className="text-gray-600" />
+              <ChevronLeft size={18} className="text-gray-500" />
             ) : (
-              <ChevronRight size={20} className="text-gray-600" />
+              <ChevronRight size={18} className="text-gray-500" />
             )}
           </button>
         </div>
       )}
       
       {/* Menú de navegación - ocupa todo el espacio */}
-      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto ${isMobile ? 'pt-20' : 'pt-4'}`}>
-        {visibleMenuItems.map((item) => (
-          <MenuItem
-            key={item.id}
-            icon={item.icon}
-            title={item.title}
-            isActive={getActiveItemId(activeItem) === item.id}
-            onClick={() => handleItemClick(item.id)}
-            isSidebarOpen={isSidebarOpen}
-          />
-        ))}
+      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'px-3 py-4' : 'p-2'} overflow-y-auto ${isMobile ? 'pt-20' : 'pt-4'}`}>
+        {/* Renderizar items por categoría */}
+        {['main', 'operations', 'management', 'info', 'config'].map((category, categoryIndex) => {
+          const categoryItems = visibleMenuItems.filter(item => item.category === category);
+          if (categoryItems.length === 0) return null;
+          
+          return (
+            <div key={category} className={categoryIndex > 0 ? 'mt-6' : ''}>
+              {/* Separador entre categorías */}
+              {categoryIndex > 0 && isSidebarOpen && (
+                <div className="mx-3 mb-3 border-t border-gray-200"></div>
+              )}
+              
+              {/* Items de la categoría */}
+              <div className="space-y-1">
+                {categoryItems.map((item) => (
+                  <MenuItem
+                    key={item.id}
+                    icon={item.icon}
+                    title={item.title}
+                    isActive={getActiveItemId(activeItem) === item.id}
+                    onClick={() => handleItemClick(item.id)}
+                    isSidebarOpen={isSidebarOpen}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </nav>
     </div>
   );
