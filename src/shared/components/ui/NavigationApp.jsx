@@ -93,6 +93,18 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
     { id: 'saldosIniciales', icon: Settings, title: 'Saldos Iniciales' }
   ], []);
 
+  // Mapeo inverso para determinar qué item está activo
+  const reversePageMap = useMemo(() => ({
+    'operaciones': 'nuevoMovimiento',
+    'pendientes': 'pendientesRetiro',
+    'cuentas-corrientes': 'cuentas',
+    'saldos-iniciales': 'saldosIniciales'
+  }), []);
+
+  const getActiveItemId = useCallback((currentPage) => {
+    return reversePageMap[currentPage] || currentPage;
+  }, [reversePageMap]);
+
   const handleItemClick = useCallback((itemId) => {
     onNavigate(itemId);
   }, [onNavigate]);
@@ -135,7 +147,7 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
             key={item.id}
             icon={item.icon}
             title={item.title}
-            isActive={activeItem === item.id}
+            isActive={getActiveItemId(activeItem) === item.id}
             onClick={() => handleItemClick(item.id)}
             isSidebarOpen={isSidebarOpen}
           />
