@@ -137,189 +137,91 @@ async function initDatabase() {
 // Inicializar base de datos al arrancar
 initDatabase().catch(console.error);
 
+// ==========================================
+// RUTAS DE API
+// ==========================================
+
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', time: new Date() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    database: pool ? 'connected' : 'disconnected'
+  });
 });
 
-// Debug - Ver usuarios
-app.get('/api/debug-users', async (req, res) => {
-  try {
-    const users = await pool.query(
-      'SELECT id, name, username, email, role FROM users'
-    );
-    res.json({ 
-      success: true, 
-      count: users.rows.length,
-      users: users.rows 
-    });
-  } catch (error) {
-    res.json({ success: false, error: error.message });
-  }
-});
+// ==========================================
+// AUTENTICACIÓN
+// ==========================================
 
-// Fix username endpoint
-app.get('/api/fix-username', async (req, res) => {
-  try {
-    // Intentar agregar columna
-    try {
-      await pool.query('ALTER TABLE users ADD COLUMN username VARCHAR(255)');
-    } catch (e) {}
-    
-    // Actualizar admin
-    await pool.query(`
-      UPDATE users SET username = 'admin' 
-      WHERE email = 'admin@sistema.com'
-    `);
-    
-    res.json({ success: true, message: 'Username agregado' });
-  } catch (error) {
-    res.json({ success: false, error: error.message });
-  }
-});
-
-// Crear usuario admin
-app.get('/api/create-admin', async (req, res) => {
-  try {
-    // Verificar si ya existe
-    const existing = await pool.query(
-      "SELECT id FROM users WHERE email = 'admin@sistema.com' OR username = 'admin'"
-    );
-    
-    if (existing.rows.length > 0) {
-      return res.json({ success: true, message: 'Admin ya existe' });
-    }
-    
-    // Crear contraseña hasheada
-    const hashedPassword = await bcrypt.hash('admin123', 10);
-    
-    // Insertar admin - intentar con active, si falla sin active
-    let result;
-    try {
-      result = await pool.query(`
-        INSERT INTO users (name, username, email, password, role, permissions, active)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING id, username, email
-      `, [
-        'Administrador',
-        'admin',
-        'admin@sistema.com',
-        hashedPassword,
-        'admin',
-        ['operaciones', 'clientes', 'movimientos', 'pendientes', 'gastos', 'usuarios'],
-        true
-      ]);
-    } catch (err) {
-      // Si falla, intentar sin active
-      result = await pool.query(`
-        INSERT INTO users (name, username, email, password, role)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING id, username, email
-      `, [
-        'Administrador',
-        'admin',
-        'admin@sistema.com',
-        hashedPassword,
-        'admin'
-      ]);
-    }
-    
-    res.json({ 
-      success: true, 
-      message: 'Usuario admin creado exitosamente',
-      user: result.rows[0]
-    });
-    
-  } catch (error) {
-    console.error('Error creando admin:', error);
-    res.json({ 
-      success: false, 
-      error: error.message,
-      detail: error.detail 
-    });
-  }
-});
-
-// Login simple
+// Login
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
     
-    console.log('Login attempt:', { username });
+    // Buscar usuario por username o email
+    const userQuery = username 
+      ? 'SELECT * FROM users WHERE username = $1'
+      : 'SELECT * FROM users WHERE email = $1';
     
-    // Buscar usuario por username O email
-    const result = await pool.query(`
-      SELECT * FROM users 
-      WHERE username = $1 
-         OR email = $1 
-         OR (username IS NULL AND email = 'admin@sistema.com' AND $1 = 'admin')
-    `, [username]);
-    
-    console.log('Users found:', result.rows.length);
+    const result = await pool.query(userQuery, [username || email]);
     
     if (result.rows.length === 0) {
       return res.status(401).json({ 
         success: false, 
-        message: 'Usuario no encontrado. Intenta con: admin' 
+        message: 'Usuario o contraseña incorrectos' 
       });
     }
     
     const user = result.rows[0];
-    console.log('User found:', { id: user.id, username: user.username, email: user.email });
     
     // Verificar contraseña
     const validPassword = await bcrypt.compare(password, user.password);
-    console.log('Password valid:', validPassword);
     
     if (!validPassword) {
       return res.status(401).json({ 
         success: false, 
-        message: 'Contraseña incorrecta. Usa: admin123' 
+        message: 'Usuario o contraseña incorrectos' 
       });
     }
     
     // Generar token
-            // Parsear permisos si vienen como string de PostgreSQL
-        let userPermissions = user.permissions || [];
-        if (typeof userPermissions === 'string' && userPermissions.startsWith('{')) {
-          // Formato PostgreSQL: {operaciones,clientes,movimientos}
-          userPermissions = userPermissions
-            .replace(/^{/, '')
-            .replace(/}$/, '')
-            .split(',')
-            .filter(p => p && p.trim());
-        } else if (typeof userPermissions === 'string') {
-          try {
-            userPermissions = JSON.parse(userPermissions);
-          } catch (e) {
-            userPermissions = [];
-          }
-        }
-        
-        const token = jwt.sign(
-          { id: user.id, username: user.username || user.email, role: user.role },
-          process.env.JWT_SECRET || 'secret-key',
-          { expiresIn: '30d' }
-        );
-        
-        res.json({
-          success: true,
-          token,
-          user: {
-            id: user.id,
-            name: user.name,
-            username: user.username || user.email,
-            email: user.email,
-            role: user.role,
-            permissions: userPermissions
-          }
-        });
+    const token = jwt.sign(
+      { 
+        id: user.id, 
+        username: user.username,
+        role: user.role 
+      },
+      process.env.JWT_SECRET || 'secret-key',
+      { expiresIn: '30d' }
+    );
+    
+    // Parsear permisos si vienen como string de PostgreSQL
+    if (user.permissions && typeof user.permissions === 'string') {
+      user.permissions = user.permissions
+        .replace(/[{}]/g, '')
+        .split(',')
+        .filter(p => p);
+    }
+    
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        permissions: user.permissions || []
+      }
+    });
     
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Error en login:', error);
     res.status(500).json({ 
       success: false, 
-      message: 'Error: ' + error.message 
+      message: 'Error al iniciar sesión' 
     });
   }
 });
@@ -781,495 +683,6 @@ app.delete('/api/clients/:id', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Error deleting client:', error);
     res.status(500).json({ success: false, message: error.message });
-  }
-});
-
-// TEMPORAL: Endpoint para inicializar la base de datos
-app.get('/api/init-db-emergency', async (req, res) => {
-  try {
-    console.log('🚨 Inicialización de emergencia de la base de datos...');
-    
-    // 1. Hacer backup y recrear tabla movements si existe con estructura incorrecta
-    try {
-      // Verificar si la tabla movements existe
-      const tableExists = await pool.query(`
-        SELECT EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_name = 'movements'
-        )
-      `);
-      
-      if (tableExists.rows[0].exists) {
-        console.log('Tabla movements existe, haciendo backup...');
-        // Renombrar tabla existente
-        await pool.query('ALTER TABLE movements RENAME TO movements_backup_old');
-      }
-    } catch (err) {
-      console.log('Error verificando movements:', err.message);
-    }
-    
-    // 2. Crear tabla movements con estructura correcta
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS movements (
-        id SERIAL PRIMARY KEY,
-        cliente VARCHAR(255),
-        fecha DATE NOT NULL,
-        nombreDia VARCHAR(20),
-        detalle TEXT,
-        operacion VARCHAR(100),
-        subOperacion VARCHAR(100),
-        proveedorCC VARCHAR(255),
-        monto DECIMAL(15,2),
-        moneda VARCHAR(20),
-        cuenta VARCHAR(100),
-        total DECIMAL(15,2),
-        estado VARCHAR(50),
-        por VARCHAR(100),
-        nombreOtro VARCHAR(255),
-        tc DECIMAL(15,4),
-        monedaTC VARCHAR(20),
-        monedaTCCmpra VARCHAR(20),
-        monedaTCVenta VARCHAR(20),
-        monedaVenta VARCHAR(20),
-        tcVenta DECIMAL(15,4),
-        comision DECIMAL(15,2),
-        comisionPorcentaje DECIMAL(5,2),
-        montoComision DECIMAL(15,2),
-        montoReal DECIMAL(15,2),
-        monedaComision VARCHAR(20),
-        cuentaComision VARCHAR(100),
-        interes DECIMAL(5,2),
-        lapso VARCHAR(50),
-        fechaLimite DATE,
-        socioSeleccionado VARCHAR(100),
-        totalCompra DECIMAL(15,2),
-        totalVenta DECIMAL(15,2),
-        montoVenta DECIMAL(15,2),
-        cuentaSalida VARCHAR(100),
-        cuentaIngreso VARCHAR(100),
-        profit DECIMAL(15,2),
-        monedaProfit VARCHAR(20),
-        walletTC VARCHAR(50),
-        mixedPayments JSONB,
-        expectedTotalForMixedPayments DECIMAL(15,2),
-        utilidadCalculada DECIMAL(15,2),
-        utilidadPorcentaje DECIMAL(5,2),
-        costoPromedio DECIMAL(15,4),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    // 3. Verificar y crear tabla clients
-    try {
-      const clientsExists = await pool.query(`
-        SELECT EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_name = 'clients'
-        )
-      `);
-      
-      if (clientsExists.rows[0].exists) {
-        // Verificar si tiene la columna 'nombre'
-        const hasNombre = await pool.query(`
-          SELECT EXISTS (
-            SELECT FROM information_schema.columns 
-            WHERE table_name = 'clients' AND column_name = 'nombre'
-          )
-        `);
-        
-        if (!hasNombre.rows[0].exists) {
-          console.log('Tabla clients existe pero sin columna nombre, recreando...');
-          await pool.query('ALTER TABLE clients RENAME TO clients_backup_old');
-        }
-      }
-    } catch (err) {
-      console.log('Error verificando clients:', err.message);
-    }
-    
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS clients (
-        id SERIAL PRIMARY KEY,
-        nombre VARCHAR(255) NOT NULL,
-        telefono VARCHAR(100),
-        email VARCHAR(255),
-        direccion TEXT,
-        notas TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    // 4. Crear tabla users
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        username VARCHAR(255) UNIQUE NOT NULL,
-        email VARCHAR(255) UNIQUE,
-        password VARCHAR(255) NOT NULL,
-        role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
-        permissions TEXT[] DEFAULT '{}',
-        active BOOLEAN DEFAULT true,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    // 5. Crear índices
-    try {
-      await pool.query('CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)');
-      await pool.query('CREATE INDEX IF NOT EXISTS idx_movements_fecha ON movements(fecha)');
-      await pool.query('CREATE INDEX IF NOT EXISTS idx_clients_nombre ON clients(nombre)');
-    } catch (err) {
-      console.log('Algunos índices ya existen:', err.message);
-    }
-    
-    // 6. Crear usuario admin si no existe
-    const hashedPassword = await bcrypt.hash('admin123', 10);
-    
-    // Primero verificar si el usuario ya existe
-    const existingAdmin = await pool.query(
-      'SELECT id FROM users WHERE username = $1',
-      ['admin']
-    );
-    
-    if (existingAdmin.rows.length === 0) {
-      await pool.query(`
-        INSERT INTO users (name, username, email, password, role, permissions)
-        VALUES ($1, $2, $3, $4, $5, $6)
-      `, [
-        'Administrador',
-        'admin',
-        'admin@sistema.com',
-        hashedPassword,
-        'admin',
-        '{operaciones,clientes,movimientos,pendientes,gastos,cuentas-corrientes,prestamistas,comisiones,utilidad,arbitraje,saldos,caja,rentabilidad,stock,saldos-iniciales,usuarios}'
-      ]);
-      console.log('Usuario admin creado');
-    } else {
-      console.log('Usuario admin ya existe');
-    }
-    
-    // 7. Verificar qué tablas se crearon
-    const tables = await pool.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      AND table_type = 'BASE TABLE'
-      ORDER BY table_name
-    `);
-    
-    res.json({ 
-      success: true, 
-      message: 'Base de datos inicializada correctamente',
-      tablesCreated: ['users', 'clients', 'movements'],
-      allTables: tables.rows.map(t => t.table_name),
-      note: 'Las tablas con estructura incorrecta fueron respaldadas con sufijo _backup_old'
-    });
-  } catch (error) {
-    console.error('Error inicializando BD:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message,
-      detail: error.detail || 'Error al crear las tablas'
-    });
-  }
-});
-
-// Endpoint para limpiar y unificar la base de datos
-app.get('/api/clean-database-final', async (req, res) => {
-  console.log('🧹 LIMPIEZA FINAL DE BASE DE DATOS...');
-  
-  try {
-    // 1. Eliminar TODAS las tablas con mayúsculas (duplicadas)
-    await pool.query(`DROP TABLE IF EXISTS "Clients" CASCADE`);
-    await pool.query(`DROP TABLE IF EXISTS "Movements" CASCADE`);
-    await pool.query(`DROP TABLE IF EXISTS "Users" CASCADE`);
-    
-    // 2. Eliminar tablas de backup viejas
-    await pool.query(`DROP TABLE IF EXISTS movements_backup_old CASCADE`);
-    await pool.query(`DROP TABLE IF EXISTS clients_backup_old CASCADE`);
-    await pool.query(`DROP TABLE IF EXISTS users_backup_old CASCADE`);
-    await pool.query(`DROP TABLE IF EXISTS movements_backup_broken CASCADE`);
-    await pool.query(`DROP TABLE IF EXISTS clients_backup_broken CASCADE`);
-    await pool.query(`DROP TABLE IF EXISTS users_backup_broken CASCADE`);
-    
-    // 3. Verificar que las tablas correctas existen
-    const result = await pool.query(`
-      SELECT table_name FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      AND table_name IN ('users', 'clients', 'movements')
-    `);
-    
-    const existingTables = result.rows.map(r => r.table_name);
-    
-    // 4. Si faltan tablas, crearlas
-    if (!existingTables.includes('users')) {
-      await pool.query(`
-        CREATE TABLE users (
-          id SERIAL PRIMARY KEY,
-          name VARCHAR(255) NOT NULL,
-          username VARCHAR(255) UNIQUE NOT NULL,
-          email VARCHAR(255) UNIQUE,
-          password VARCHAR(255) NOT NULL,
-          role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
-          permissions TEXT[] DEFAULT '{}',
-          active BOOLEAN DEFAULT true,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-    }
-    
-    if (!existingTables.includes('clients')) {
-      await pool.query(`
-        CREATE TABLE clients (
-          id SERIAL PRIMARY KEY,
-          nombre VARCHAR(255) NOT NULL,
-          telefono VARCHAR(100),
-          email VARCHAR(255),
-          direccion TEXT,
-          notas TEXT,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-    }
-    
-    if (!existingTables.includes('movements')) {
-      await pool.query(`
-        CREATE TABLE movements (
-          id SERIAL PRIMARY KEY,
-          cliente VARCHAR(255),
-          fecha DATE NOT NULL,
-          nombreDia VARCHAR(20),
-          detalle TEXT,
-          operacion VARCHAR(100),
-          subOperacion VARCHAR(100),
-          proveedorCC VARCHAR(255),
-          monto DECIMAL(15,2),
-          moneda VARCHAR(20),
-          cuenta VARCHAR(100),
-          total DECIMAL(15,2),
-          estado VARCHAR(50),
-          por VARCHAR(100),
-          nombreOtro VARCHAR(255),
-          tc DECIMAL(15,4),
-          monedaTC VARCHAR(20),
-          monedaTCCmpra VARCHAR(20),
-          monedaTCVenta VARCHAR(20),
-          monedaVenta VARCHAR(20),
-          tcVenta DECIMAL(15,4),
-          comision DECIMAL(15,2),
-          comisionPorcentaje DECIMAL(5,2),
-          montoComision DECIMAL(15,2),
-          montoReal DECIMAL(15,2),
-          monedaComision VARCHAR(20),
-          cuentaComision VARCHAR(100),
-          interes DECIMAL(5,2),
-          lapso VARCHAR(50),
-          fechaLimite DATE,
-          socioSeleccionado VARCHAR(100),
-          totalCompra DECIMAL(15,2),
-          totalVenta DECIMAL(15,2),
-          montoVenta DECIMAL(15,2),
-          cuentaSalida VARCHAR(100),
-          cuentaIngreso VARCHAR(100),
-          profit DECIMAL(15,2),
-          monedaProfit VARCHAR(20),
-          walletTC VARCHAR(50),
-          mixedPayments JSONB,
-          expectedTotalForMixedPayments DECIMAL(15,2),
-          utilidadCalculada DECIMAL(15,2),
-          utilidadPorcentaje DECIMAL(5,2),
-          costoPromedio DECIMAL(15,4),
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-    }
-    
-    // 5. Verificar usuario admin
-    const adminCheck = await pool.query(`SELECT id FROM users WHERE username = 'admin'`);
-    
-    if (adminCheck.rows.length === 0) {
-      const hashedPassword = await bcrypt.hash('admin123', 10);
-      await pool.query(`
-        INSERT INTO users (name, username, email, password, role, permissions)
-        VALUES ($1, $2, $3, $4, $5, $6)
-      `, [
-        'Administrador',
-        'admin',
-        'admin@sistema.com',
-        hashedPassword,
-        'admin',
-        '{operaciones,clientes,movimientos,pendientes,gastos,cuentas-corrientes,prestamistas,comisiones,utilidad,arbitraje,saldos,caja,rentabilidad,stock,saldos-iniciales,usuarios}'
-      ]);
-    }
-    
-    // 6. Listar TODAS las tablas finales
-    const allTables = await pool.query(`
-      SELECT table_name FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      ORDER BY table_name
-    `);
-    
-    res.json({
-      success: true,
-      message: 'BASE DE DATOS LIMPIA Y UNIFICADA',
-      tablesInDatabase: allTables.rows.map(r => r.table_name),
-      expectedTables: ['users', 'clients', 'movements'],
-      adminExists: adminCheck.rows.length > 0 || 'created'
-    });
-    
-  } catch (error) {
-    console.error('Error en limpieza final:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
-  }
-});
-
-// Endpoint temporal para arreglar la base de datos
-app.get('/api/fix-database-nuclear', async (req, res) => {
-  console.log('🚨 EJECUTANDO FIX NUCLEAR DE BASE DE DATOS...');
-  
-  try {
-    // 1. Renombrar tablas existentes
-    await pool.query(`ALTER TABLE IF EXISTS movements RENAME TO movements_backup_broken`).catch(e => console.log('movements no existe o ya fue renombrada'));
-    await pool.query(`ALTER TABLE IF EXISTS clients RENAME TO clients_backup_broken`).catch(e => console.log('clients no existe o ya fue renombrada'));
-    await pool.query(`ALTER TABLE IF EXISTS users RENAME TO users_backup_broken`).catch(e => console.log('users no existe o ya fue renombrada'));
-    
-    // 2. Crear tabla users
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        username VARCHAR(255) UNIQUE NOT NULL,
-        email VARCHAR(255) UNIQUE,
-        password VARCHAR(255) NOT NULL,
-        role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
-        permissions TEXT[] DEFAULT '{}',
-        active BOOLEAN DEFAULT true,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    // 3. Crear tabla clients
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS clients (
-        id SERIAL PRIMARY KEY,
-        nombre VARCHAR(255) NOT NULL,
-        telefono VARCHAR(100),
-        email VARCHAR(255),
-        direccion TEXT,
-        notas TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    // 4. Crear tabla movements con TODAS las columnas
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS movements (
-        id SERIAL PRIMARY KEY,
-        cliente VARCHAR(255),
-        fecha DATE NOT NULL,
-        nombreDia VARCHAR(20),
-        detalle TEXT,
-        operacion VARCHAR(100),
-        subOperacion VARCHAR(100),
-        proveedorCC VARCHAR(255),
-        monto DECIMAL(15,2),
-        moneda VARCHAR(20),
-        cuenta VARCHAR(100),
-        total DECIMAL(15,2),
-        estado VARCHAR(50),
-        por VARCHAR(100),
-        nombreOtro VARCHAR(255),
-        tc DECIMAL(15,4),
-        monedaTC VARCHAR(20),
-        monedaTCCmpra VARCHAR(20),
-        monedaTCVenta VARCHAR(20),
-        monedaVenta VARCHAR(20),
-        tcVenta DECIMAL(15,4),
-        comision DECIMAL(15,2),
-        comisionPorcentaje DECIMAL(5,2),
-        montoComision DECIMAL(15,2),
-        montoReal DECIMAL(15,2),
-        monedaComision VARCHAR(20),
-        cuentaComision VARCHAR(100),
-        interes DECIMAL(5,2),
-        lapso VARCHAR(50),
-        fechaLimite DATE,
-        socioSeleccionado VARCHAR(100),
-        totalCompra DECIMAL(15,2),
-        totalVenta DECIMAL(15,2),
-        montoVenta DECIMAL(15,2),
-        cuentaSalida VARCHAR(100),
-        cuentaIngreso VARCHAR(100),
-        profit DECIMAL(15,2),
-        monedaProfit VARCHAR(20),
-        walletTC VARCHAR(50),
-        mixedPayments JSONB,
-        expectedTotalForMixedPayments DECIMAL(15,2),
-        utilidadCalculada DECIMAL(15,2),
-        utilidadPorcentaje DECIMAL(5,2),
-        costoPromedio DECIMAL(15,4),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    // 5. Crear índices
-    await pool.query(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`).catch(e => console.log('Índice ya existe'));
-    await pool.query(`CREATE INDEX IF NOT EXISTS idx_movements_fecha ON movements(fecha)`).catch(e => console.log('Índice ya existe'));
-    await pool.query(`CREATE INDEX IF NOT EXISTS idx_clients_nombre ON clients(nombre)`).catch(e => console.log('Índice ya existe'));
-    
-    // 6. Crear usuario admin
-    const hashedPassword = await bcrypt.hash('admin123', 10);
-    await pool.query(`
-      INSERT INTO users (name, username, email, password, role, permissions)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      ON CONFLICT (username) DO NOTHING
-    `, [
-      'Administrador',
-      'admin',
-      'admin@sistema.com',
-      hashedPassword,
-      'admin',
-      '{operaciones,clientes,movimientos,pendientes,gastos,cuentas-corrientes,prestamistas,comisiones,utilidad,arbitraje,saldos,caja,rentabilidad,stock,saldos-iniciales,usuarios}'
-    ]);
-    
-    // 7. Verificar resultado
-    const tables = await pool.query(`
-      SELECT table_name FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      AND table_name IN ('users', 'clients', 'movements')
-    `);
-    
-    const adminUser = await pool.query(`
-      SELECT id, username, email FROM users WHERE username = 'admin'
-    `);
-    
-    res.json({
-      success: true,
-      message: 'BASE DE DATOS ARREGLADA COMPLETAMENTE',
-      tablesCreated: tables.rows.map(r => r.table_name),
-      adminUser: adminUser.rows[0],
-      note: 'Las tablas rotas fueron renombradas con sufijo _backup_broken'
-    });
-    
-  } catch (error) {
-    console.error('Error en fix nuclear:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message,
-      detail: error.detail 
-    });
   }
 });
 
