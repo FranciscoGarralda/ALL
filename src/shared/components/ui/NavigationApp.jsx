@@ -154,10 +154,15 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
     });
   }, [menuItems, currentUser]);
 
+  // Si es móvil y no está abierto, no renderizar nada
+  if (isMobile && !isSidebarOpen) {
+    return null;
+  }
+
   return (
     <div className={`
       ${isMobile 
-        ? `fixed top-0 left-0 h-screen z-[60] w-64 ${!isSidebarOpen ? '-translate-x-full' : ''}`
+        ? 'fixed top-0 left-0 h-screen z-[60] w-64'
         : `h-full z-30 ${isSidebarOpen ? 'w-64' : 'w-16'}`
       }
       bg-white shadow-xl flex flex-col border-r border-gray-200
@@ -220,8 +225,13 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'px-3 py-4' : 'p-2'} overflow-y-auto ${isMobile ? '' : 'pt-4'}`}>
         {/* Renderizar items por categoría */}
         {visibleMenuItems && visibleMenuItems.length > 0 && ['main', 'operations', 'management', 'reports', 'config'].map((category, categoryIndex) => {
-          // Filtrar "inicio" cuando está en el header (móvil y desktop)
+          // Filtrar "inicio" solo cuando está abierto (ya está en el header)
           const categoryItems = visibleMenuItems.filter(item => {
+            // En desktop cerrado, mostrar todos los items incluido inicio como ícono
+            if (!isSidebarOpen && !isMobile) {
+              return item.category === category;
+            }
+            // En móvil o desktop abierto, no mostrar inicio (está en el header)
             if (isSidebarOpen && item.id === 'inicio') return false;
             return item.category === category;
           });
@@ -374,7 +384,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
         </div>
         
         {/* Sidebar móvil - Solo cuando está abierto */}
-        {isMobile && isSidebarOpen && (
+        {isMobile && (
           <MainMenu 
             onNavigate={handleNavigate} 
             activeItem={currentPage} 
