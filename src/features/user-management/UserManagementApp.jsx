@@ -151,13 +151,27 @@ function UserManagementApp() {
   };
 
   const handleEdit = (user) => {
+    console.log('Editando usuario:', user);
+    console.log('Permisos del usuario:', user.permissions);
+    
+    // Asegurarse de que permissions sea un array
+    let userPermissions = user.permissions || [];
+    if (typeof userPermissions === 'string') {
+      // Si viene como string de PostgreSQL, parsearlo
+      userPermissions = userPermissions
+        .replace(/^{/, '')
+        .replace(/}$/, '')
+        .split(',')
+        .filter(p => p && p.trim());
+    }
+    
     setEditingUser(user);
     setFormData({
       name: user.name,
       email: user.email,
       password: '', // Don't show existing password
       role: user.role,
-      permissions: user.permissions || [],
+      permissions: userPermissions,
       active: user.active !== false
     });
     setShowForm(true);

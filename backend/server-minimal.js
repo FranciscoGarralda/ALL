@@ -253,10 +253,27 @@ const authMiddleware = (req, res, next) => {
 // GET usuarios
 app.get('/api/users', authMiddleware, async (req, res) => {
   try {
-    const users = await pool.query(
-      'SELECT id, name, username, email, role, permissions FROM users ORDER BY created_at DESC'
+    const result = await pool.query(
+      'SELECT id, name, username, email, role, permissions, active FROM users ORDER BY created_at DESC'
     );
-    res.json({ success: true, data: users.rows });
+    
+    // Parsear permisos para cada usuario
+    const users = result.rows.map(user => {
+      let permissions = user.permissions || [];
+      if (typeof permissions === 'string' && permissions.startsWith('{')) {
+        permissions = permissions
+          .replace(/^{/, '')
+          .replace(/}$/, '')
+          .split(',')
+          .filter(p => p && p.trim());
+      }
+      return {
+        ...user,
+        permissions
+      };
+    });
+    
+    res.json({ success: true, data: users });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -300,18 +317,18 @@ app.post('/api/users', authMiddleware, async (req, res) => {
 app.put('/api/users/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, password, role, active } = req.body;
+    const { name, email, password, role, permissions, active } = req.body;
     
     let query = 'UPDATE users SET ';
     const values = [];
     const updates = [];
     let paramCount = 1;
     
-    if (name) {
+    if (name !== undefined) {
       updates.push(`name = $${paramCount++}`);
       values.push(name);
     }
-    if (email) {
+    if (email !== undefined) {
       updates.push(`email = $${paramCount++}`);
       values.push(email);
     }
@@ -320,20 +337,42 @@ app.put('/api/users/:id', authMiddleware, async (req, res) => {
       updates.push(`password = $${paramCount++}`);
       values.push(hashedPassword);
     }
-    if (role) {
+    if (role !== undefined) {
       updates.push(`role = $${paramCount++}`);
       values.push(role);
     }
+    if (permissions !== undefined) {
+      // Formatear permisos para PostgreSQL
+      const formattedPermissions = Array.isArray(permissions) 
+        ? `{${permissions.join(',')}}` 
+        : permissions;
+      updates.push(`permissions = $${paramCount++}`);
+      values.push(formattedPermissions);
+    }
+    if (active !== undefined) {
+      updates.push(`active = $${paramCount++}`);
+      values.push(active);
+    }
     
     query += updates.join(', ');
-    query += ` WHERE id = $${paramCount} RETURNING id, name, username, email, role`;
+    query += ` WHERE id = $${paramCount} RETURNING id, name, username, email, role, permissions, active`;
     values.push(id);
     
     const result = await pool.query(query, values);
     
+    // Parsear permisos en la respuesta
+    const user = result.rows[0];
+    if (user && typeof user.permissions === 'string' && user.permissions.startsWith('{')) {
+      user.permissions = user.permissions
+        .replace(/^{/, '')
+        .replace(/}$/, '')
+        .split(',')
+        .filter(p => p && p.trim());
+    }
+    
     res.json({ 
       success: true, 
-      data: result.rows[0] 
+      data: user 
     });
   } catch (error) {
     res.status(500).json({ 
