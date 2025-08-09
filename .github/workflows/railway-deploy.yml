@@ -1,0 +1,23 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'railway.json'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Deploy to Railway
+        run: |
+          echo "🚀 Deployment triggered on Railway"
+          echo "Railway auto-deploys from GitHub webhook"
+          echo "Check Railway dashboard for deployment status"
