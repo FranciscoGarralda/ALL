@@ -113,6 +113,10 @@ function UserManagementApp() {
       // Mejor manejo de errores del backend
       if (error.response?.data?.message) {
         setError(error.response.data.message);
+        // Si el error indica que necesita reparación
+        if (error.response?.data?.requiresFix) {
+          setShowFixButton(true);
+        }
       } else if (error.message) {
         setError(error.message);
       } else {
@@ -239,7 +243,7 @@ function UserManagementApp() {
                   <Plus size={18} />
                   Nuevo Usuario
                 </button>
-                {error && error.includes('500') && (
+                {(error && (error.includes('500') || error.includes('columna no existe') || error.includes('Reparar Sistema'))) && (
                   <button
                     onClick={fixUserSystem}
                     className="btn-secondary flex items-center gap-2"

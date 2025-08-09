@@ -28,6 +28,8 @@ router.get('/', protect, authorize('admin'), async (req, res) => {
 router.post('/', protect, authorize('admin'), async (req, res) => {
   const { name, email, password, role, permissions, active } = req.body;
   
+  console.log('Creating user with data:', { name, email, role, permissions, active });
+  
   try {
     // Check if user already exists
     const existingUser = await pool.query(
@@ -59,9 +61,33 @@ router.post('/', protect, authorize('admin'), async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating user:', error);
+    
+    // Manejo específico de errores de PostgreSQL
+    if (error.code === '23505') { // Duplicate key
+      return res.status(400).json({
+        success: false,
+        message: 'El email ya está registrado'
+      });
+    }
+    
+    if (error.code === '23502') { // Not null violation
+      return res.status(400).json({
+        success: false,
+        message: 'Faltan campos requeridos'
+      });
+    }
+    
+    if (error.code === '42703') { // Column does not exist
+      return res.status(500).json({
+        success: false,
+        message: 'Error de base de datos: columna no existe. Use el botón "Reparar Sistema"',
+        requiresFix: true
+      });
+    }
+    
     res.status(500).json({
       success: false,
-      message: 'Error al crear usuario'
+      message: 'Error al crear usuario: ' + error.message
     });
   }
 });
