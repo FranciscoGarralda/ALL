@@ -100,14 +100,36 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
   return (
     <div className={`
       ${isMobile 
-        ? `fixed top-0 left-0 h-screen z-40 w-64 ${!isSidebarOpen ? '-translate-x-full' : ''}`
+        ? `fixed top-0 left-0 h-screen z-[60] w-64 ${!isSidebarOpen ? '-translate-x-full' : ''}`
         : `h-full z-30 ${isSidebarOpen ? 'w-64' : 'w-16'}`
       }
-      bg-gray-50 shadow-xl flex flex-col border-r border-gray-200
+      bg-white shadow-xl flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out
     `}>
+      {/* Toggle button for desktop */}
+      {!isMobile && (
+        <div className={`flex ${isSidebarOpen ? 'justify-end p-3' : 'justify-center p-2'}`}>
+          <button
+            onClick={toggleSidebar}
+            className={`
+              p-2.5 rounded-xl transition-all duration-200
+              hover:bg-gray-100 hover:shadow-md
+              focus:outline-none focus:ring-1 focus:ring-gray-400/30 focus:ring-offset-2
+              ${!isSidebarOpen && 'hover:scale-110'}
+            `}
+            aria-label={isSidebarOpen ? 'Cerrar menú' : 'Abrir menú'}
+          >
+            {isSidebarOpen ? (
+              <ChevronLeft size={20} className="text-gray-600" />
+            ) : (
+              <ChevronRight size={20} className="text-gray-600" />
+            )}
+          </button>
+        </div>
+      )}
+      
       {/* Menú de navegación - ocupa todo el espacio */}
-      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto pt-4`}>
+      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'p-4' : 'p-2'} space-y-1 overflow-y-auto ${isMobile ? 'pt-20' : 'pt-4'}`}>
         {menuItems.map((item) => (
           <MenuItem
             key={item.id}
@@ -256,11 +278,10 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
           {/* Overlay para móvil cuando el sidebar está abierto */}
           {isSidebarOpen && isMobile && (
             <div 
-              className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+              className="fixed inset-0 bg-black bg-opacity-50 z-[55] lg:hidden"
               onClick={toggleSidebar}
               role="button"
               tabIndex={0}
-
               aria-label="Cerrar menú"
             />
           )}

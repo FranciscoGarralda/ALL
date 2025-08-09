@@ -73,7 +73,7 @@ const FixedHeader = ({ toggleSidebar, currentPage, showMenuButton, currentUser, 
         </div>
 
         {/* Date and Time - Center */}
-        <div className="hidden md:flex items-center gap-4 text-sm text-gray-600">
+        <div className="hidden lg:flex items-center gap-4 text-sm text-gray-600 absolute left-1/2 transform -translate-x-1/2">
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
             <span>{formatDate(currentTime)}</span>
@@ -98,7 +98,7 @@ const FixedHeader = ({ toggleSidebar, currentPage, showMenuButton, currentUser, 
             </button>
 
             {showUserMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[100]">
                 <div className="px-4 py-2 border-b border-gray-100">
                   <p className="text-sm font-medium text-gray-900">{currentUser.name}</p>
                   <p className="text-xs text-gray-500">{currentUser.role === 'admin' ? 'Administrador' : 'Usuario'}</p>
