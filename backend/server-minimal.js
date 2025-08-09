@@ -22,12 +22,23 @@ pool.on('error', (err) => {
   console.error('Error inesperado en el pool de PostgreSQL:', err);
 });
 
-// Función simple para inicializar la base de datos
+// Función simplificada de inicialización de base de datos
 async function initDatabase() {
   try {
-    console.log('🚀 Verificando estructura de base de datos...');
-    
-    // Crear tabla movements si no existe
+    // 1. Crear tablas si no existen (SOLO EN MINÚSCULAS)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS clients (
+        id SERIAL PRIMARY KEY,
+        nombre VARCHAR(255) NOT NULL,
+        telefono VARCHAR(100),
+        email VARCHAR(255),
+        direccion TEXT,
+        notas TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS movements (
         id SERIAL PRIMARY KEY,
@@ -78,22 +89,7 @@ async function initDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    
-    // Crear tabla clients con estructura correcta si no existe
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS clients (
-        id SERIAL PRIMARY KEY,
-        nombre VARCHAR(255) NOT NULL,
-        telefono VARCHAR(100),
-        email VARCHAR(255),
-        direccion TEXT,
-        notas TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    // Crear tabla users si no existe
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -108,39 +104,33 @@ async function initDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    
-    // Agregar columnas faltantes si es necesario (para clients)
-    const alterQueries = [
-      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS nombre VARCHAR(255)',
-      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS telefono VARCHAR(100)',
-      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS email VARCHAR(255)',
-      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS direccion TEXT',
-      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS notas TEXT',
-      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
-      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
+
+    // 2. Agregar columnas faltantes a clients si es necesario
+    const columnsToAdd = [
+      { name: 'telefono', type: 'VARCHAR(100)' },
+      { name: 'email', type: 'VARCHAR(255)' },
+      { name: 'direccion', type: 'TEXT' },
+      { name: 'notas', type: 'TEXT' },
+      { name: 'created_at', type: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' },
+      { name: 'updated_at', type: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' }
     ];
-    
-    for (const query of alterQueries) {
-      try {
-        await pool.query(query);
-      } catch (err) {
-        // Ignorar errores (columna ya existe)
-      }
+
+    for (const column of columnsToAdd) {
+      await pool.query(
+        `ALTER TABLE clients ADD COLUMN IF NOT EXISTS ${column.name} ${column.type}`
+      ).catch(err => {
+        console.log(`Columna ${column.name} ya existe o error:`, err.message);
+      });
     }
-    
-    // Crear índices importantes
-    try {
-      await pool.query('CREATE INDEX IF NOT EXISTS idx_movements_fecha ON movements(fecha)');
-      await pool.query('CREATE INDEX IF NOT EXISTS idx_movements_cliente ON movements(cliente)');
-      await pool.query('CREATE INDEX IF NOT EXISTS idx_clients_nombre ON clients(nombre)');
-    } catch (err) {
-      // Ignorar errores de índices duplicados
-    }
-    
+
+    // 3. Crear índices básicos
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`).catch(() => {});
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_movements_fecha ON movements(fecha)`).catch(() => {});
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_clients_nombre ON clients(nombre)`).catch(() => {});
+
     console.log('✅ Base de datos lista');
   } catch (error) {
-    console.error('⚠️ Error inicializando base de datos:', error.message);
-    // No lanzar el error para que el servidor pueda continuar
+    console.error('Error inicializando BD:', error);
   }
 }
 
@@ -983,6 +973,161 @@ app.get('/api/init-db-emergency', async (req, res) => {
       success: false, 
       error: error.message,
       detail: error.detail || 'Error al crear las tablas'
+    });
+  }
+});
+
+// Endpoint para limpiar y unificar la base de datos
+app.get('/api/clean-database-final', async (req, res) => {
+  console.log('🧹 LIMPIEZA FINAL DE BASE DE DATOS...');
+  
+  try {
+    // 1. Eliminar TODAS las tablas con mayúsculas (duplicadas)
+    await pool.query(`DROP TABLE IF EXISTS "Clients" CASCADE`);
+    await pool.query(`DROP TABLE IF EXISTS "Movements" CASCADE`);
+    await pool.query(`DROP TABLE IF EXISTS "Users" CASCADE`);
+    
+    // 2. Eliminar tablas de backup viejas
+    await pool.query(`DROP TABLE IF EXISTS movements_backup_old CASCADE`);
+    await pool.query(`DROP TABLE IF EXISTS clients_backup_old CASCADE`);
+    await pool.query(`DROP TABLE IF EXISTS users_backup_old CASCADE`);
+    await pool.query(`DROP TABLE IF EXISTS movements_backup_broken CASCADE`);
+    await pool.query(`DROP TABLE IF EXISTS clients_backup_broken CASCADE`);
+    await pool.query(`DROP TABLE IF EXISTS users_backup_broken CASCADE`);
+    
+    // 3. Verificar que las tablas correctas existen
+    const result = await pool.query(`
+      SELECT table_name FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      AND table_name IN ('users', 'clients', 'movements')
+    `);
+    
+    const existingTables = result.rows.map(r => r.table_name);
+    
+    // 4. Si faltan tablas, crearlas
+    if (!existingTables.includes('users')) {
+      await pool.query(`
+        CREATE TABLE users (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          username VARCHAR(255) UNIQUE NOT NULL,
+          email VARCHAR(255) UNIQUE,
+          password VARCHAR(255) NOT NULL,
+          role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
+          permissions TEXT[] DEFAULT '{}',
+          active BOOLEAN DEFAULT true,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+    }
+    
+    if (!existingTables.includes('clients')) {
+      await pool.query(`
+        CREATE TABLE clients (
+          id SERIAL PRIMARY KEY,
+          nombre VARCHAR(255) NOT NULL,
+          telefono VARCHAR(100),
+          email VARCHAR(255),
+          direccion TEXT,
+          notas TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+    }
+    
+    if (!existingTables.includes('movements')) {
+      await pool.query(`
+        CREATE TABLE movements (
+          id SERIAL PRIMARY KEY,
+          cliente VARCHAR(255),
+          fecha DATE NOT NULL,
+          nombreDia VARCHAR(20),
+          detalle TEXT,
+          operacion VARCHAR(100),
+          subOperacion VARCHAR(100),
+          proveedorCC VARCHAR(255),
+          monto DECIMAL(15,2),
+          moneda VARCHAR(20),
+          cuenta VARCHAR(100),
+          total DECIMAL(15,2),
+          estado VARCHAR(50),
+          por VARCHAR(100),
+          nombreOtro VARCHAR(255),
+          tc DECIMAL(15,4),
+          monedaTC VARCHAR(20),
+          monedaTCCmpra VARCHAR(20),
+          monedaTCVenta VARCHAR(20),
+          monedaVenta VARCHAR(20),
+          tcVenta DECIMAL(15,4),
+          comision DECIMAL(15,2),
+          comisionPorcentaje DECIMAL(5,2),
+          montoComision DECIMAL(15,2),
+          montoReal DECIMAL(15,2),
+          monedaComision VARCHAR(20),
+          cuentaComision VARCHAR(100),
+          interes DECIMAL(5,2),
+          lapso VARCHAR(50),
+          fechaLimite DATE,
+          socioSeleccionado VARCHAR(100),
+          totalCompra DECIMAL(15,2),
+          totalVenta DECIMAL(15,2),
+          montoVenta DECIMAL(15,2),
+          cuentaSalida VARCHAR(100),
+          cuentaIngreso VARCHAR(100),
+          profit DECIMAL(15,2),
+          monedaProfit VARCHAR(20),
+          walletTC VARCHAR(50),
+          mixedPayments JSONB,
+          expectedTotalForMixedPayments DECIMAL(15,2),
+          utilidadCalculada DECIMAL(15,2),
+          utilidadPorcentaje DECIMAL(5,2),
+          costoPromedio DECIMAL(15,4),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+    }
+    
+    // 5. Verificar usuario admin
+    const adminCheck = await pool.query(`SELECT id FROM users WHERE username = 'admin'`);
+    
+    if (adminCheck.rows.length === 0) {
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+      await pool.query(`
+        INSERT INTO users (name, username, email, password, role, permissions)
+        VALUES ($1, $2, $3, $4, $5, $6)
+      `, [
+        'Administrador',
+        'admin',
+        'admin@sistema.com',
+        hashedPassword,
+        'admin',
+        '{operaciones,clientes,movimientos,pendientes,gastos,cuentas-corrientes,prestamistas,comisiones,utilidad,arbitraje,saldos,caja,rentabilidad,stock,saldos-iniciales,usuarios}'
+      ]);
+    }
+    
+    // 6. Listar TODAS las tablas finales
+    const allTables = await pool.query(`
+      SELECT table_name FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      ORDER BY table_name
+    `);
+    
+    res.json({
+      success: true,
+      message: 'BASE DE DATOS LIMPIA Y UNIFICADA',
+      tablesInDatabase: allTables.rows.map(r => r.table_name),
+      expectedTables: ['users', 'clients', 'movements'],
+      adminExists: adminCheck.rows.length > 0 || 'created'
+    });
+    
+  } catch (error) {
+    console.error('Error en limpieza final:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
     });
   }
 });
