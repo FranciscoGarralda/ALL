@@ -241,11 +241,11 @@ export default function Home() {
 
         if (existingClient) {
           alert('Ya existe un cliente con ese nombre');
-          return;
+          return null; // Retornar null en lugar de undefined
         }
 
         let savedClient;
-        if (clientData.id) {
+        if (clientData.id && typeof clientData.id === 'number') {
           savedClient = await apiService.updateClient(clientData.id, clientData);
         } else {
           savedClient = await apiService.createClient(clientData);
@@ -254,9 +254,11 @@ export default function Home() {
         // console.log('Client saved:', savedClient);
         
         // Solo actualizar la lista de clientes si realmente se guardó
-        if (savedClient) {
+        if (savedClient && savedClient.id) {
           // En lugar de recargar todos los clientes, solo agregar/actualizar el nuevo
           setClients(prevClients => {
+            if (!Array.isArray(prevClients)) return [savedClient];
+            
             const updatedClients = [...prevClients];
             const existingIndex = updatedClients.findIndex(c => c.id === savedClient.id);
             
@@ -270,10 +272,12 @@ export default function Home() {
             
             return updatedClients;
           });
+          
+          // Retornar el cliente guardado para que se pueda seleccionar
+          return savedClient;
         }
         
-        // Retornar el cliente guardado para que se pueda seleccionar
-        return savedClient;
+        return null;
       } else {
         // Save to localStorage
         const existingClient = clients.find(c => 

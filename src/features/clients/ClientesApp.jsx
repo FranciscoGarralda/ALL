@@ -44,10 +44,18 @@ function ClientesApp({ clientes, onSaveClient, onDeleteClient }) {
     }
   };
 
-  const guardarCliente = (clienteData) => {
-    onSaveClient(clienteData);
-    setVista('lista');
-    setClienteEditando(null);
+  const guardarCliente = async (clienteData) => {
+    try {
+      const result = await onSaveClient(clienteData);
+      if (result) {
+        // Solo cambiar la vista si se guardó exitosamente
+        setVista('lista');
+        setClienteEditando(null);
+      }
+    } catch (error) {
+      console.error('Error al guardar cliente:', error);
+      // No cambiar la vista si hay error
+    }
   };
 
   const verAnalytics = (cliente) => {
@@ -345,6 +353,7 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
   });
 
   const [errores, setErrores] = useState({});
+  const [guardando, setGuardando] = useState(false);
 
   const validarFormulario = () => {
     const nuevosErrores = {};
@@ -360,22 +369,32 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validarFormulario()) {
       return;
     }
     
-    onSave({ 
-      ...cliente, 
-      ...formData, 
-      id: cliente?.id || Date.now(),
-      operaciones: cliente?.operaciones || [],
-      ultimaOperacion: cliente?.ultimaOperacion || null,
-      totalOperaciones: cliente?.totalOperaciones || 0,
-      volumenTotal: cliente?.volumenTotal || 0,
-      createdAt: cliente?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    });
+    // Deshabilitar el botón mientras se guarda
+    setGuardando(true);
+    
+    try {
+      await onSave({ 
+        ...cliente, 
+        ...formData, 
+        id: cliente?.id || Date.now(),
+        operaciones: cliente?.operaciones || [],
+        ultimaOperacion: cliente?.ultimaOperacion || null,
+        totalOperaciones: cliente?.totalOperaciones || 0,
+        volumenTotal: cliente?.volumenTotal || 0,
+        createdAt: cliente?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error al guardar:', error);
+      setErrores({ general: 'Error al guardar el cliente' });
+    } finally {
+      setGuardando(false);
+    }
   };
 
   const handleInputChange = (field, value) => {
@@ -502,8 +521,9 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
                 <button 
                   onClick={handleSubmit} 
                   className="btn-primary flex-1 touch-target"
+                  disabled={guardando}
                 >
-                  {cliente ? 'Actualizar Cliente' : 'Crear Cliente'}
+                  {guardando ? 'Guardando...' : (cliente ? 'Actualizar Cliente' : 'Crear Cliente')}
                 </button>
               </div>
             </div>
