@@ -22,6 +22,9 @@ const databaseCheckMiddleware = require('./middleware/database-check');
 
 const app = express();
 
+// Estado global de la aplicación
+global.dbReady = false;
+
 // Configuración de seguridad
 app.use(helmet());
 app.use(compression());
@@ -89,12 +92,14 @@ app.use('/api/clients', clientRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/system', systemRoutes);
 
-// Ruta de salud
+// Ruta de salud - Responde INMEDIATAMENTE
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    dbReady: global.dbReady,
+    uptime: process.uptime()
   });
 });
 
@@ -157,28 +162,41 @@ const PORT = process.env.PORT || 3001;
 
 async function startServer() {
   try {
-    // PRIMERO: Inicializar base de datos con todas las tablas
-    console.log('🔧 Inicializando sistema completo...');
-    await initializeDatabase();
-    
-    // Conectar a la base de datos
-    await sequelize.authenticate();
-    console.log('✅ Conexión a PostgreSQL establecida exitosamente');
-    
-    // Sincronizar modelos
-    await sequelize.sync({ alter: true });
-    console.log('✅ Base de datos sincronizada');
-    
-    // Crear usuario admin si no existe
-    await initializeAdmin();
-    
-    // Iniciar servidor
-    app.listen(PORT, '0.0.0.0', () => {
+    // Iniciar servidor PRIMERO para que responda rápido
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
       console.log(`📍 Entorno: ${process.env.NODE_ENV || 'development'}`);
       console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL}`);
-      console.log('✅ SISTEMA COMPLETAMENTE OPERATIVO');
     });
+    
+    // Inicializar base de datos en segundo plano
+    setImmediate(async () => {
+      try {
+        console.log('🔧 Inicializando base de datos en segundo plano...');
+        
+        // Conectar a la base de datos
+        await sequelize.authenticate();
+        console.log('✅ Conexión a PostgreSQL establecida');
+        
+        // Solo sincronizar si es necesario
+        if (process.env.NODE_ENV !== 'production') {
+          await sequelize.sync({ alter: true });
+          console.log('✅ Base de datos sincronizada');
+        }
+        
+        // Inicializar tablas y admin
+        await initializeDatabase();
+        await initializeAdmin();
+        
+        global.dbReady = true;
+        console.log('✅ SISTEMA COMPLETAMENTE OPERATIVO');
+      } catch (error) {
+        console.error('❌ Error inicializando base de datos:', error);
+        global.dbReady = false;
+        // NO cerrar el servidor, solo loggear el error
+      }
+    });
+    
   } catch (error) {
     console.error('❌ Error al iniciar el servidor:', error);
     process.exit(1);

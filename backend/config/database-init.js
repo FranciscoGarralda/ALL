@@ -1,4 +1,4 @@
-const pool = require('./database');
+const pool = require('./pool'); // Usar pool optimizado
 const bcrypt = require('bcryptjs');
 
 const TABLES_SCHEMA = {

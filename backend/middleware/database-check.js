@@ -5,41 +5,33 @@ let lastCheck = 0;
 const CHECK_INTERVAL = 60000; // Verificar cada minuto
 
 const databaseCheckMiddleware = async (req, res, next) => {
-  try {
-    // Solo verificar periódicamente, no en cada request
-    const now = Date.now();
-    if (now - lastCheck > CHECK_INTERVAL) {
-      lastCheck = now;
-      const health = await checkDatabaseHealth();
-      isHealthy = health.healthy;
-      
-      if (!isHealthy) {
-        console.log('⚠️ Base de datos no saludable, intentando reparar...');
-        try {
-          await initializeDatabase();
-          isHealthy = true;
-          console.log('✅ Base de datos reparada automáticamente');
-        } catch (error) {
-          console.error('❌ No se pudo reparar la base de datos:', error);
-        }
-      }
-    }
-    
-    // Si la base de datos no está saludable, intentar repararla
-    if (!isHealthy) {
-      // Para endpoints críticos, intentar reparar inmediatamente
-      if (req.path.includes('/users') || req.path.includes('/auth')) {
-        console.log('🔧 Intentando reparación de emergencia...');
-        await initializeDatabase();
-        isHealthy = true;
-      }
-    }
-    
-    next();
-  } catch (error) {
-    console.error('Error en middleware de verificación:', error);
-    next(); // Continuar aunque falle la verificación
+  // Para Railway pago, simplificar el middleware
+  if (global.dbReady) {
+    return next();
   }
+  
+  // Si es health check, dejar pasar siempre
+  if (req.path === '/api/health') {
+    return next();
+  }
+  
+  // Si la DB no está lista, esperar un poco
+  if (!global.dbReady) {
+    // Dar 5 segundos para que la DB se inicialice
+    const startTime = Date.now();
+    while (!global.dbReady && (Date.now() - startTime) < 5000) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    if (!global.dbReady) {
+      return res.status(503).json({
+        success: false,
+        message: 'Base de datos iniciándose. Por favor intenta en unos segundos.'
+      });
+    }
+  }
+  
+  next();
 };
 
 module.exports = databaseCheckMiddleware;
