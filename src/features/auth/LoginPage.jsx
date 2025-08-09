@@ -17,9 +17,7 @@ export default function LoginPage({ onLoginSuccess }) {
     setLoading(true);
 
     try {
-      console.log('Attempting login with:', formData.username);
       const response = await apiService.login(formData.username, formData.password);
-      console.log('Login response:', response);
       
       if (response.success) {
         onLoginSuccess(response.user);
@@ -27,7 +25,6 @@ export default function LoginPage({ onLoginSuccess }) {
         setError(response.message || 'Error al iniciar sesión');
       }
     } catch (err) {
-      console.error('Login error:', err);
       setError(err.message || 'Error al iniciar sesión');
     } finally {
       setLoading(false);

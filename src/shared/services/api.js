@@ -56,16 +56,11 @@ class ApiService {
   // AUTH ENDPOINTS
   async login(username, password) {
     try {
-      console.log('Login attempt:', { username, baseURL: this.baseURL });
-      
       const response = await fetch(`${this.baseURL}/api/auth/login`, {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify({ username, password })
       });
-      
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
       
       const data = await this.handleResponse(response);
       
@@ -75,7 +70,6 @@ class ApiService {
       
       return data;
     } catch (error) {
-      console.error('Login error in API service:', error);
       throw error;
     }
   }

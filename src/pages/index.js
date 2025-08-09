@@ -4,8 +4,6 @@ import { clientService, movementService, apiService } from '../shared/services';
 import { safeLocalStorage } from '../shared/services/safeOperations';
 import LoginPage from '../features/auth/LoginPage';
 
-// Force rebuild Wed Jul 31 2024 18:00:00 GMT-0300 (Argentina Standard Time)
-
 // Lazy load components for better performance
 const NavigationApp = lazy(() => 
   import('../shared/components/ui/NavigationApp').then(module => ({
@@ -63,21 +61,6 @@ export default function Home() {
 
   // Check authentication status on mount
   useEffect(() => {
-    // TEMPORAL: Bypass auth para debug
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('bypass') === 'true') {
-      setIsAuthenticated(true);
-      setCurrentUser({
-        id: 1,
-        name: 'Francisco Garralda',
-        username: 'FranciscoGarralda',
-        role: 'admin'
-      });
-      setCheckingAuth(false);
-      loadLocalData();
-      return;
-    }
-    
     checkAuthStatus();
   }, []);
 
@@ -91,8 +74,7 @@ export default function Home() {
         loadDataFromBackend();
       }
     } catch (error) {
-      console.log('No authenticated session');
-      // Load data from localStorage for now
+      // No authenticated session - load local data
       loadLocalData();
     } finally {
       setCheckingAuth(false);
@@ -403,5 +385,3 @@ export default function Home() {
 }
 
 
-
-// Force rebuild Fri Aug  8 01:55:15 AM UTC 2025
