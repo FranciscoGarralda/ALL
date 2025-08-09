@@ -333,7 +333,8 @@ export default function Home() {
         onSaveMovement: handleSaveMovement,
         clients,
         initialMovementData: editingMovement,
-        onCancelEdit: handleCancelEdit
+        onCancelEdit: handleCancelEdit,
+        onSaveClient: handleSaveClient
       },
       'clientes': {
         clientes: clients,
@@ -353,12 +354,27 @@ export default function Home() {
         onEditMovement: handleEditMovement,
         onDeleteMovement: handleDeleteMovement
       },
+      'gastos': {
+        ...commonProps,
+        onEditMovement: handleEditMovement,
+        onDeleteMovement: handleDeleteMovement,
+        onViewMovementDetail: null // Add if needed
+      },
       'cuentas-corrientes': {
         ...commonProps
       },
       'prestamistas': {
         ...commonProps,
         clients
+      },
+      'comisiones': {
+        ...commonProps
+      },
+      'utilidad': {
+        ...commonProps
+      },
+      'arbitraje': {
+        ...commonProps
       },
       'saldos': {
         movements
@@ -368,6 +384,12 @@ export default function Home() {
       },
       'rentabilidad': {
         movements
+      },
+      'stock': {
+        // StockApp no necesita props
+      },
+      'saldos-iniciales': {
+        // SaldosInicialesApp no necesita props
       }
     };
 
