@@ -17,6 +17,9 @@ const clientRoutes = require('./routes/clients');
 const userRoutes = require('./routes/users');
 const systemRoutes = require('./routes/system');
 
+// Middleware personalizado
+const databaseCheckMiddleware = require('./middleware/database-check');
+
 const app = express();
 
 // Configuración de seguridad
@@ -72,6 +75,9 @@ app.use('/api/', limiter);
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Verificación automática de base de datos
+app.use(databaseCheckMiddleware);
 
 // Configurar trust proxy para Railway
 app.set('trust proxy', 1);
@@ -151,6 +157,10 @@ const PORT = process.env.PORT || 3001;
 
 async function startServer() {
   try {
+    // PRIMERO: Inicializar base de datos con todas las tablas
+    console.log('🔧 Inicializando sistema completo...');
+    await initializeDatabase();
+    
     // Conectar a la base de datos
     await sequelize.authenticate();
     console.log('✅ Conexión a PostgreSQL establecida exitosamente');
@@ -167,6 +177,7 @@ async function startServer() {
       console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
       console.log(`📍 Entorno: ${process.env.NODE_ENV || 'development'}`);
       console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL}`);
+      console.log('✅ SISTEMA COMPLETAMENTE OPERATIVO');
     });
   } catch (error) {
     console.error('❌ Error al iniciar el servidor:', error);

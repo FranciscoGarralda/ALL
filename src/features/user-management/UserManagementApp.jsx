@@ -61,6 +61,16 @@ function UserManagementApp() {
   useEffect(() => {
     loadUsers();
   }, []);
+  
+  // Auto-reparar si hay error de base de datos
+  useEffect(() => {
+    if (error && (error.includes('relation') || error.includes('does not exist') || error.includes('500'))) {
+      console.log('🔧 Error detectado, intentando auto-reparación...');
+      setTimeout(() => {
+        fixUserSystem();
+      }, 1000);
+    }
+  }, [error]);
 
   const loadUsers = async () => {
     try {
@@ -243,11 +253,11 @@ function UserManagementApp() {
                   <Plus size={18} />
                   Nuevo Usuario
                 </button>
-                {(error && (error.includes('500') || error.includes('columna no existe') || error.includes('Reparar Sistema'))) && (
+                {error && (
                   <button
                     onClick={fixUserSystem}
-                    className="btn-secondary flex items-center gap-2"
-                    title="Ejecutar verificación del sistema"
+                    className="btn-secondary flex items-center gap-2 animate-pulse"
+                    title="Reparar sistema automáticamente"
                   >
                     <Shield size={18} />
                     Reparar Sistema
