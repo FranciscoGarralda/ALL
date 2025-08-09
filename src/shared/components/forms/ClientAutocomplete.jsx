@@ -227,7 +227,7 @@ const ClientAutocomplete = forwardRef(({
               onFocus={handleInputFocus}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
-              className={`w-full px-3 py-2 text-base border rounded-lg transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-transparent placeholder:text-gray-800 sm:px-4 sm:py-2.5 sm:text-sm ${
+              className={`w-full px-3 py-2 pr-12 text-base border rounded-lg transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-transparent placeholder:text-gray-800 sm:px-4 sm:py-2.5 sm:text-sm ${
                 error 
                   ? 'border-error-500 focus:ring-error-500' 
                   : 'bg-white text-gray-900 border-gray-300 hover:border-gray-400'
@@ -240,7 +240,7 @@ const ClientAutocomplete = forwardRef(({
               <button
                 type="button"
                 onClick={clearSelection}
-                className="absolute right-8 top-1/2 -translate-y-1/2 p-1 text-gray-800 hover:text-gray-600"
+                className="absolute right-8 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
               >
                 <X size={16} />
               </button>
@@ -250,7 +250,7 @@ const ClientAutocomplete = forwardRef(({
             <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
               <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
                 isOpen ? 'rotate-180' : ''
-              } text-gray-700`} />
+              } text-gray-500`} />
             </div>
           </div>
 

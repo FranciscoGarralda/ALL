@@ -146,18 +146,9 @@ const ClientModal = ({
     setIsLoading(true);
 
     try {
-      // Simular creación del cliente
-      const newClient = {
-        id: Date.now(), // ID numérico para coincidir con handleSaveClient
-        ...formData,
-        fechaCreacion: new Date().toISOString()
-      };
-
-      // Simular delay de API
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Notificar al componente padre
-      onClientCreated(newClient);
+      // Llamar a la función onClientCreated que se conecta con onSaveClient
+      // Esto guardará el cliente en la base de datos
+      await onClientCreated(formData);
 
       // Resetear formulario
       setFormData({
@@ -171,9 +162,9 @@ const ClientModal = ({
       });
       setErrors({});
 
-          } catch (error) {
-        console.error('Error creating client:', error);
-        setErrors({ general: 'Error al crear el cliente. Verifica los datos ingresados.' });
+    } catch (error) {
+      console.error('Error creating client:', error);
+      setErrors({ general: 'Error al crear el cliente. Verifica los datos ingresados.' });
     } finally {
       setIsLoading(false);
     }
