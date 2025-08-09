@@ -64,11 +64,18 @@ class ApiService {
   // AUTH ENDPOINTS
   async login(username, password) {
     try {
+      // Agregar timeout de 10 segundos
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      
       const response = await fetch(`${this.baseURL}/api/auth/login`, {
         method: 'POST',
         headers: this.getHeaders(),
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password }),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
       
       const data = await this.handleResponse(response);
       
@@ -78,6 +85,9 @@ class ApiService {
       
       return data;
     } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Tiempo de espera agotado. Intenta nuevamente.');
+      }
       throw error;
     }
   }

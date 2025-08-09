@@ -14,6 +14,13 @@ export default function LoginPage({ onLoginSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    // Validación básica
+    if (!formData.username || !formData.password) {
+      setError('Por favor ingresa usuario y contraseña');
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -22,10 +29,26 @@ export default function LoginPage({ onLoginSuccess }) {
       if (response.success) {
         onLoginSuccess(response.user);
       } else {
-        setError(response.message || 'Error al iniciar sesión');
+        // Mensajes de error más específicos
+        if (response.message?.includes('credentials')) {
+          setError('Usuario o contraseña incorrectos');
+        } else if (response.message?.includes('not found')) {
+          setError('Usuario no encontrado');
+        } else {
+          setError(response.message || 'Error al iniciar sesión. Intenta nuevamente.');
+        }
       }
     } catch (err) {
-      setError(err.message || 'Error al iniciar sesión');
+      console.error('Error de login:', err);
+      
+      // Manejo específico de errores
+      if (err.message?.includes('Failed to fetch')) {
+        setError('Error de conexión. Verifica tu internet.');
+      } else if (err.message?.includes('credentials')) {
+        setError('Usuario o contraseña incorrectos');
+      } else {
+        setError('Error al iniciar sesión. Intenta nuevamente.');
+      }
     } finally {
       setLoading(false);
     }
@@ -48,8 +71,15 @@ export default function LoginPage({ onLoginSuccess }) {
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
-                {error}
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex items-center justify-between">
+                <span>{error}</span>
+                <button
+                  type="button"
+                  onClick={() => setError('')}
+                  className="text-red-400 hover:text-red-600"
+                >
+                  ✕
+                </button>
               </div>
             )}
             
@@ -63,10 +93,12 @@ export default function LoginPage({ onLoginSuccess }) {
                 type="text"
                 autoComplete="username"
                 required
+                autoFocus
                 value={formData.username}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
                 placeholder="Ingresa tu usuario"
+                disabled={loading}
               />
             </div>
             
@@ -85,6 +117,12 @@ export default function LoginPage({ onLoginSuccess }) {
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 pr-10"
                   placeholder="Ingresa tu contraseña"
+                  disabled={loading}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !loading) {
+                      handleSubmit(e);
+                    }
+                  }}
                 />
                 <button
                   type="button"

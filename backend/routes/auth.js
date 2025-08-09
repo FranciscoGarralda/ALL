@@ -92,7 +92,7 @@ router.post('/login', [
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Credenciales inválidas'
+        message: 'Usuario no encontrado'
       });
     }
 
@@ -102,7 +102,7 @@ router.post('/login', [
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Credenciales inválidas'
+        message: 'Contraseña incorrecta'
       });
     }
 
