@@ -14,6 +14,7 @@ const authRoutes = require('./routes/auth');
 const movementRoutes = require('./routes/movements');
 const clientRoutes = require('./routes/clients');
 const userRoutes = require('./routes/users');
+const systemRoutes = require('./routes/system');
 
 const app = express();
 
@@ -79,6 +80,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/movements', movementRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/system', systemRoutes);
 
 // Ruta de salud
 app.get('/api/health', (req, res) => {

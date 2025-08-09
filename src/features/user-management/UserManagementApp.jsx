@@ -185,6 +185,36 @@ function UserManagementApp() {
     }));
   };
 
+  const fixUserSystem = async () => {
+    try {
+      setError('');
+      setSuccess('Ejecutando verificación del sistema...');
+      
+      // Usar el método interno de apiService para obtener headers
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://all-production-31a3.up.railway.app/api/system/fix-users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setSuccess('Sistema reparado correctamente. Recargando usuarios...');
+        await loadUsers();
+        setError('');
+      } else {
+        setError(data.message || 'Error al reparar el sistema');
+      }
+    } catch (error) {
+      console.error('Error fixing system:', error);
+      setError('Error al ejecutar la reparación del sistema');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
@@ -201,13 +231,25 @@ function UserManagementApp() {
               </div>
             </div>
             {!showForm && (
-              <button
-                onClick={() => setShowForm(true)}
-                className="btn-primary flex items-center gap-2"
-              >
-                <Plus size={18} />
-                Nuevo Usuario
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  <Plus size={18} />
+                  Nuevo Usuario
+                </button>
+                {error && error.includes('500') && (
+                  <button
+                    onClick={fixUserSystem}
+                    className="btn-secondary flex items-center gap-2"
+                    title="Ejecutar verificación del sistema"
+                  >
+                    <Shield size={18} />
+                    Reparar Sistema
+                  </button>
+                )}
+              </div>
             )}
           </div>
         </div>
