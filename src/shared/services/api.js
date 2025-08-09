@@ -74,7 +74,7 @@ class ApiService {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
       
-      console.log('Intentando login con:', { username, baseURL: this.baseURL });
+      // console.log('Intentando login con:', { username, baseURL: this.baseURL });
       
       const response = await fetch(`${this.baseURL}/api/auth/login`, {
         method: 'POST',
