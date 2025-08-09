@@ -520,7 +520,35 @@ app.delete('/api/movements/:id', authMiddleware, async (req, res) => {
 app.get('/api/clients', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM clients ORDER BY nombre');
-    res.json({ success: true, data: result.rows });
+    
+    // Parsear los campos adicionales desde las notas
+    const clients = result.rows.map(client => {
+      const parts = client.nombre.split(' ');
+      const nombre = parts[0] || '';
+      const apellido = parts.slice(1).join(' ') || '';
+      
+      // Extraer DNI y tipo de las notas
+      let dni = '';
+      let tipoCliente = '';
+      
+      if (client.notas) {
+        const dniMatch = client.notas.match(/DNI:\s*([^|]+)/);
+        const tipoMatch = client.notas.match(/Tipo:\s*([^|]+)/);
+        
+        if (dniMatch) dni = dniMatch[1].trim();
+        if (tipoMatch) tipoCliente = tipoMatch[1].trim();
+      }
+      
+      return {
+        ...client,
+        nombre,
+        apellido,
+        dni,
+        tipoCliente
+      };
+    });
+    
+    res.json({ success: true, data: clients });
   } catch (error) {
     console.error('Error getting clients:', error);
     res.json({ success: true, data: [] }); // Fallback para no romper el frontend
@@ -529,15 +557,44 @@ app.get('/api/clients', async (req, res) => {
 
 app.post('/api/clients', authMiddleware, async (req, res) => {
   try {
-    const { nombre, telefono = '', email = '', direccion = '', notas = '' } = req.body;
+    const { 
+      nombre, 
+      apellido = '', 
+      telefono = '', 
+      email = '', 
+      direccion = '', 
+      dni = '',
+      tipoCliente = '',
+      notas = '' 
+    } = req.body;
+    
+    // Combinar nombre y apellido para el campo nombre en la BD
+    const nombreCompleto = apellido ? `${nombre} ${apellido}`.trim() : nombre;
+    
+    // Crear notas con información adicional
+    const notasCompletas = [
+      dni ? `DNI: ${dni}` : '',
+      tipoCliente ? `Tipo: ${tipoCliente}` : '',
+      notas
+    ].filter(Boolean).join(' | ');
     
     const result = await pool.query(`
       INSERT INTO clients (nombre, telefono, email, direccion, notas, created_at, updated_at)
       VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
       RETURNING *
-    `, [nombre, telefono, email, direccion, notas]);
+    `, [nombreCompleto, telefono, email, direccion, notasCompletas]);
     
-    res.status(201).json({ success: true, data: result.rows[0] });
+    // Devolver el cliente con los campos separados para el frontend
+    const client = result.rows[0];
+    res.status(201).json({ 
+      success: true, 
+      data: {
+        ...client,
+        apellido,
+        dni,
+        tipoCliente
+      }
+    });
   } catch (error) {
     console.error('Error creating client:', error);
     res.status(500).json({ success: false, message: error.message });
@@ -547,20 +604,49 @@ app.post('/api/clients', authMiddleware, async (req, res) => {
 app.put('/api/clients/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, telefono, email, direccion, notas } = req.body;
+    const { 
+      nombre, 
+      apellido = '', 
+      telefono, 
+      email, 
+      direccion, 
+      dni = '',
+      tipoCliente = '',
+      notas 
+    } = req.body;
+    
+    // Combinar nombre y apellido para el campo nombre en la BD
+    const nombreCompleto = apellido ? `${nombre} ${apellido}`.trim() : nombre;
+    
+    // Crear notas con información adicional
+    const notasCompletas = [
+      dni ? `DNI: ${dni}` : '',
+      tipoCliente ? `Tipo: ${tipoCliente}` : '',
+      notas
+    ].filter(Boolean).join(' | ');
     
     const result = await pool.query(`
       UPDATE clients 
-      SET nombre = $2, telefono = $3, email = $4, direccion = $5, notas = $6, updated_at = NOW()
-      WHERE id = $1
+      SET nombre = $1, telefono = $2, email = $3, direccion = $4, notas = $5, updated_at = NOW()
+      WHERE id = $6
       RETURNING *
-    `, [id, nombre, telefono, email, direccion, notas]);
+    `, [nombreCompleto, telefono, email, direccion, notasCompletas, id]);
     
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
     }
     
-    res.json({ success: true, data: result.rows[0] });
+    // Devolver el cliente con los campos separados para el frontend
+    const client = result.rows[0];
+    res.json({ 
+      success: true, 
+      data: {
+        ...client,
+        apellido,
+        dni,
+        tipoCliente
+      }
+    });
   } catch (error) {
     console.error('Error updating client:', error);
     res.status(500).json({ success: false, message: error.message });
