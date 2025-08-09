@@ -316,7 +316,7 @@ export default function Home() {
         onCancelEdit: handleCancelEdit
       },
       'clientes': {
-        clients,
+        clientes: clients,
         onSaveClient: handleSaveClient,
         onDeleteClient: handleDeleteClient,
         movements
@@ -325,6 +325,19 @@ export default function Home() {
         ...commonProps,
         onEdit: handleEditMovement,
         onDelete: handleDeleteMovement,
+        clients
+      },
+      'pendientes': {
+        ...commonProps,
+        clients,
+        onEditMovement: handleEditMovement,
+        onDeleteMovement: handleDeleteMovement
+      },
+      'cuentas-corrientes': {
+        ...commonProps
+      },
+      'prestamistas': {
+        ...commonProps,
         clients
       },
       'saldos': {
