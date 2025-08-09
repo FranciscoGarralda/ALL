@@ -1,7 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../config/database');
+const { Pool } = require('pg');
 const { protect, authorize } = require('../middleware/auth');
+
+// Crear pool directamente aquí
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? {
+    rejectUnauthorized: false
+  } : false
+});
 
 // Endpoint para verificar y arreglar el sistema de usuarios
 router.post('/fix-users', protect, authorize('admin'), async (req, res) => {
@@ -158,55 +166,60 @@ router.get('/status', protect, authorize('admin'), async (req, res) => {
   }
 });
 
-// Endpoint TEMPORAL para arreglar username
+// Endpoint TEMPORAL para arreglar username - SIN AUTENTICACIÓN
 router.get('/fix-username', async (req, res) => {
   try {
     console.log('Ejecutando fix de username...');
     
-    // Verificar si existe la columna
-    const columnCheck = await pool.query(`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'users' 
-      AND column_name = 'username'
-    `);
-    
-    if (columnCheck.rows.length === 0) {
-      // Agregar columna
+    // Primero intentar agregar la columna
+    try {
       await pool.query(`ALTER TABLE users ADD COLUMN username VARCHAR(255)`);
-      
-      // Actualizar admin
+      console.log('Columna username agregada');
+    } catch (err) {
+      console.log('La columna ya existe o error:', err.message);
+    }
+    
+    // Actualizar usuarios
+    try {
+      // Actualizar admin específicamente
       await pool.query(`
         UPDATE users 
         SET username = 'admin' 
-        WHERE email = 'admin@sistema.com'
+        WHERE email = 'admin@sistema.com' AND username IS NULL
       `);
       
-      // Actualizar otros
+      // Actualizar otros usuarios
       await pool.query(`
         UPDATE users 
         SET username = SPLIT_PART(email, '@', 1) 
-        WHERE username IS NULL
+        WHERE username IS NULL AND email IS NOT NULL
       `);
       
-      // Aplicar restricciones
-      await pool.query(`ALTER TABLE users ALTER COLUMN username SET NOT NULL`);
-      
-      res.json({
-        success: true,
-        message: 'Columna username agregada. Ahora puedes entrar con username: admin, password: admin123'
-      });
-    } else {
-      res.json({
-        success: true,
-        message: 'La columna username ya existe'
-      });
+      console.log('Usuarios actualizados');
+    } catch (err) {
+      console.log('Error actualizando usuarios:', err.message);
     }
+    
+    // Verificar resultado
+    const users = await pool.query(`
+      SELECT id, name, username, email, role 
+      FROM users 
+      WHERE role = 'admin'
+      LIMIT 5
+    `);
+    
+    res.json({
+      success: true,
+      message: 'Fix ejecutado. Usuarios admin:',
+      users: users.rows
+    });
+    
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({
+    console.error('Error general:', error);
+    res.json({
       success: false,
-      message: error.message
+      message: error.message,
+      detail: 'Revisa los logs de Railway para más información'
     });
   }
 });
