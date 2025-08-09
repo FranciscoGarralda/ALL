@@ -48,6 +48,7 @@ const componentMap = {
 export default function Home() {
   // Navigation state
   const [currentPage, setCurrentPage] = useState('operaciones');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   // Data state
   const [movements, setMovements] = useState([]);
@@ -291,7 +292,26 @@ export default function Home() {
 
   // Navigation
   const navigateTo = (page) => {
-    setCurrentPage(page);
+    // Map navigation IDs to component IDs
+    const pageMap = {
+      'inicio': 'operaciones',
+      'nuevoMovimiento': 'operaciones',
+      'pendientesRetiro': 'pendientes',
+      'cuentas': 'cuentas-corrientes',
+      'saldosIniciales': 'saldos-iniciales'
+    };
+    
+    const mappedPage = pageMap[page] || page;
+    setCurrentPage(mappedPage);
+    
+    // Close sidebar on mobile after navigation
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prev => !prev);
   };
 
   // Render current page component
@@ -384,6 +404,8 @@ export default function Home() {
         onNavigate={navigateTo}
         currentUser={currentUser}
         onLogout={handleLogout}
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
       >
         <Suspense fallback={
           <div className="flex items-center justify-center min-h-screen">

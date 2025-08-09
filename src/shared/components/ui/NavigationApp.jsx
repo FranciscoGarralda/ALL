@@ -126,8 +126,10 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
 MainMenu.displayName = 'MainMenu';
 
 /** COMPONENTE PRINCIPAL DE NAVEGACIÓN OPTIMIZADO */
-const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, onLogout }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Iniciar cerrado en móvil
+const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, onLogout, isSidebarOpen: propIsSidebarOpen, toggleSidebar: propToggleSidebar }) => {
+  // Use props if provided, otherwise use internal state
+  const [internalIsSidebarOpen, setInternalIsSidebarOpen] = useState(false);
+  const isSidebarOpen = propIsSidebarOpen !== undefined ? propIsSidebarOpen : internalIsSidebarOpen;
   const [isMobile, setIsMobile] = useState(false);
 
   // Optimized mobile detection with cleanup
@@ -157,23 +159,35 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
 
   // Optimized toggle function with useCallback
   const toggleSidebar = useCallback(() => {
-    setIsSidebarOpen(prev => !prev);
-  }, []);
+    if (propToggleSidebar) {
+      propToggleSidebar();
+    } else {
+      setInternalIsSidebarOpen(prev => !prev);
+    }
+  }, [propToggleSidebar]);
 
   // Optimized navigation handler with useCallback
   const handleNavigate = useCallback((page) => {
     onNavigate(page);
     // En móvil, cerrar el sidebar después de navegar
     if (isMobile) {
-      setIsSidebarOpen(false);
+      if (propToggleSidebar && propIsSidebarOpen) {
+        propToggleSidebar();
+      } else {
+        setInternalIsSidebarOpen(false);
+      }
     }
-  }, [onNavigate, isMobile]);
+  }, [onNavigate, isMobile, propToggleSidebar, propIsSidebarOpen]);
 
   // Close sidebar on escape key
   useEffect(() => {
     const handleEscapeKey = (event) => {
       if (event.key === 'Escape' && isSidebarOpen) {
-        setIsSidebarOpen(false);
+        if (propToggleSidebar) {
+          propToggleSidebar();
+        } else {
+          setInternalIsSidebarOpen(false);
+        }
       }
     };
 
