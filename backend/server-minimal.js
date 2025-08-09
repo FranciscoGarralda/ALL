@@ -58,6 +58,68 @@ app.get('/api/fix-username', async (req, res) => {
   }
 });
 
+// Crear usuario admin
+app.get('/api/create-admin', async (req, res) => {
+  try {
+    // Verificar si ya existe
+    const existing = await pool.query(
+      "SELECT id FROM users WHERE email = 'admin@sistema.com' OR username = 'admin'"
+    );
+    
+    if (existing.rows.length > 0) {
+      return res.json({ success: true, message: 'Admin ya existe' });
+    }
+    
+    // Crear contraseña hasheada
+    const hashedPassword = await bcrypt.hash('admin123', 10);
+    
+    // Insertar admin - intentar con active, si falla sin active
+    let result;
+    try {
+      result = await pool.query(`
+        INSERT INTO users (name, username, email, password, role, permissions, active)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING id, username, email
+      `, [
+        'Administrador',
+        'admin',
+        'admin@sistema.com',
+        hashedPassword,
+        'admin',
+        ['operaciones', 'clientes', 'movimientos', 'pendientes', 'gastos', 'usuarios'],
+        true
+      ]);
+    } catch (err) {
+      // Si falla, intentar sin active
+      result = await pool.query(`
+        INSERT INTO users (name, username, email, password, role)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id, username, email
+      `, [
+        'Administrador',
+        'admin',
+        'admin@sistema.com',
+        hashedPassword,
+        'admin'
+      ]);
+    }
+    
+    res.json({ 
+      success: true, 
+      message: 'Usuario admin creado exitosamente',
+      user: result.rows[0]
+    });
+    
+  } catch (error) {
+    console.error('Error creando admin:', error);
+    res.json({ 
+      success: false, 
+      error: error.message,
+      detail: error.detail 
+    });
+  }
+});
+
 // Login simple
 app.post('/api/auth/login', async (req, res) => {
   try {
