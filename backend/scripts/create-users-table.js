@@ -16,7 +16,8 @@ async function createUsersTable() {
       CREATE TABLE users (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) UNIQUE NOT NULL,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE,
         password VARCHAR(255) NOT NULL,
         role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
         permissions TEXT[] DEFAULT '{}',
@@ -38,11 +39,12 @@ async function createUsersTable() {
     const hashedPassword = await bcrypt.hash('admin123', 10);
     
     const adminUser = await pool.query(`
-      INSERT INTO users (name, email, password, role, permissions, active)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING id, name, email, role
+      INSERT INTO users (name, username, email, password, role, permissions, active)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING id, name, username, email, role
     `, [
       'Administrador',
+      'admin',
       'admin@sistema.com',
       hashedPassword,
       'admin',
@@ -56,6 +58,7 @@ async function createUsersTable() {
     ]);
     
     console.log('✅ Usuario administrador creado:');
+    console.log('   Username: admin');
     console.log('   Email: admin@sistema.com');
     console.log('   Password: admin123');
     console.log('   ID:', adminUser.rows[0].id);

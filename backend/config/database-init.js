@@ -6,7 +6,8 @@ const TABLES_SCHEMA = {
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) UNIQUE NOT NULL,
+      username VARCHAR(255) UNIQUE NOT NULL,
+      email VARCHAR(255) UNIQUE,
       password VARCHAR(255) NOT NULL,
       role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
       permissions TEXT[] DEFAULT '{}',
@@ -82,10 +83,11 @@ async function initializeDatabase() {
       const hashedPassword = await bcrypt.hash('admin123', 10);
       
       await pool.query(`
-        INSERT INTO users (name, email, password, role, permissions, active)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO users (name, username, email, password, role, permissions, active)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
       `, [
         'Administrador',
+        'admin',  // username
         'admin@sistema.com',
         hashedPassword,
         'admin',
@@ -141,6 +143,27 @@ async function runMigrations() {
             IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
                           WHERE table_name = 'users' AND column_name = 'active') THEN
               ALTER TABLE users ADD COLUMN active BOOLEAN DEFAULT true;
+            END IF;
+          END $$;
+        `
+      },
+      {
+        name: 'add_username_column',
+        query: `
+          DO $$
+          BEGIN
+            IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                          WHERE table_name = 'users' AND column_name = 'username') THEN
+              ALTER TABLE users ADD COLUMN username VARCHAR(255);
+              
+              -- Actualizar usuarios existentes para que username = email sin el dominio
+              UPDATE users 
+              SET username = SPLIT_PART(email, '@', 1)
+              WHERE username IS NULL;
+              
+              -- Hacer username NOT NULL y UNIQUE
+              ALTER TABLE users ALTER COLUMN username SET NOT NULL;
+              ALTER TABLE users ADD CONSTRAINT users_username_unique UNIQUE (username);
             END IF;
           END $$;
         `

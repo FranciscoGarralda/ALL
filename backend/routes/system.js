@@ -43,10 +43,11 @@ router.post('/fix-users', protect, authorize('admin'), async (req, res) => {
       const hashedPassword = await bcrypt.hash('admin123', 10);
       
       await pool.query(`
-        INSERT INTO users (name, email, password, role, permissions, active)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO users (name, username, email, password, role, permissions, active)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
       `, [
         'Administrador',
+        'admin',
         'admin@sistema.com',
         hashedPassword,
         'admin',

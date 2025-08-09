@@ -120,7 +120,7 @@ export default function LoginPage({ onLoginSuccess }) {
             
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                Usuario
+                Usuario (no email)
               </label>
               <input
                 id="username"
