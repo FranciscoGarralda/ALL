@@ -43,21 +43,24 @@ const ButtonSelectGroup = ({
   
   // Si hay más de 6 opciones, usar grid de 3 columnas
   const getGridCols = () => {
+    if (!options || !Array.isArray(options)) return 'grid-cols-1';
+    const optLength = options.length || 0;
+    
     if (isMoneda) {
       // Para monedas, siempre en una línea horizontal
-      if (options.length === 8) return 'grid-cols-8 gap-1';
-      if (options.length === 7) return 'grid-cols-7 gap-1';
-      if (options.length === 6) return 'grid-cols-6 gap-1';
-      if (options.length === 5) return 'grid-cols-5 gap-1';
+      if (optLength === 8) return 'grid-cols-8 gap-1';
+      if (optLength === 7) return 'grid-cols-7 gap-1';
+      if (optLength === 6) return 'grid-cols-6 gap-1';
+      if (optLength === 5) return 'grid-cols-5 gap-1';
       return 'grid-cols-4 gap-1';
     }
     // Para operaciones principales (6 opciones), usar 3x2
-    if (isOperacion && options.length === 6) return 'grid-cols-3 gap-2';
+    if (isOperacion && optLength === 6) return 'grid-cols-3 gap-2';
     // Para operaciones normales (6 opciones), usar 3 columnas
-    if (options.length === 6) return 'grid-cols-2 sm:grid-cols-3';
+    if (optLength === 6) return 'grid-cols-2 sm:grid-cols-3';
     // Para 2 opciones, mostrar lado a lado
-    if (options.length === 2) return 'grid-cols-2';
-    return options.length > 6 ? 'grid-cols-3' : options.length > 3 ? 'grid-cols-2' : 'grid-cols-1';
+    if (optLength === 2) return 'grid-cols-2';
+    return optLength > 6 ? 'grid-cols-3' : optLength > 3 ? 'grid-cols-2' : 'grid-cols-1';
   };
 
   return (

@@ -135,7 +135,7 @@ export default function Home() {
 
   // Save movements to localStorage when they change (backup)
   useEffect(() => {
-    if (movements.length > 0) {
+    if (movements && Array.isArray(movements) && movements.length > 0) {
       const result = movementService.saveMovements(movements);
       if (!result.success) {
         console.warn('Failed to save movements:', result.error);
@@ -145,7 +145,7 @@ export default function Home() {
 
   // Save clients to localStorage when they change (backup)
   useEffect(() => {
-    if (clients.length > 0) {
+    if (clients && Array.isArray(clients) && clients.length > 0) {
       const result = clientService.saveClients(clients);
       if (!result.success) {
         console.warn('Failed to save clients:', result.error);
@@ -277,9 +277,11 @@ export default function Home() {
     const client = clients.find(c => c.id === id);
     if (!client) return;
 
-    const clientMovements = movements.filter(m => m.cliente === client.nombre);
+    const clientMovements = movements && Array.isArray(movements) 
+      ? movements.filter(m => m.cliente === client.nombre)
+      : [];
     
-    if (clientMovements.length > 0) {
+    if (clientMovements && clientMovements.length > 0) {
       alert(`No se puede eliminar el cliente "${client.nombre}" porque tiene ${clientMovements.length} movimientos asociados.`);
       return;
     }

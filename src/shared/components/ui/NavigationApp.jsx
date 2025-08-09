@@ -303,7 +303,9 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
               <div className="space-y-1">
                 {categoryItems.map((item, itemIndex) => {
                   // Calcular el índice global para la navegación
-                  const globalIndex = visibleMenuItems.findIndex(i => i.id === item.id);
+                  const globalIndex = visibleMenuItems && Array.isArray(visibleMenuItems) 
+                    ? visibleMenuItems.findIndex(i => i.id === item.id)
+                    : -1;
                   return (
                     <MenuItem
                       key={item.id}

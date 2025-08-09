@@ -28,7 +28,7 @@ const ClientAutocomplete = forwardRef(({
 
   // Inicializar inputValue con el cliente seleccionado
   useEffect(() => {
-    if (value && clients.length > 0) {
+    if (value && clients && Array.isArray(clients) && clients.length > 0) {
       const selectedClient = clients.find(client => 
         (client.id || client.nombre) === value
       );
@@ -42,6 +42,11 @@ const ClientAutocomplete = forwardRef(({
 
   // Filtrar clientes basado en el input
   useEffect(() => {
+    if (!clients || !Array.isArray(clients)) {
+      setFilteredClients([]);
+      return;
+    }
+    
     if (!inputValue.trim()) {
       setFilteredClients(clients.slice(0, 10)); // Mostrar primeros 10
     } else {

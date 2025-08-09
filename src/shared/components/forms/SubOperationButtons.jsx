@@ -28,6 +28,7 @@ const SubOperationButtons = ({
 
   // Determinar el número de columnas según la cantidad de opciones
   const getGridCols = () => {
+    if (!options || !Array.isArray(options)) return 'grid-cols-1';
     if (options.length === 1) return 'grid-cols-1';
     if (options.length === 2) return 'grid-cols-2';
     if (options.length === 3) return 'grid-cols-3';
