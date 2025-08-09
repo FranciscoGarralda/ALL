@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { apiService } from '../../shared/services';
 
 export default function LoginPage({ onLoginSuccess }) {
   const [formData, setFormData] = useState({
@@ -16,13 +17,17 @@ export default function LoginPage({ onLoginSuccess }) {
     setLoading(true);
 
     try {
-      const { apiService } = await import('../../shared/services');
+      console.log('Attempting login with:', formData.username);
       const response = await apiService.login(formData.username, formData.password);
+      console.log('Login response:', response);
       
       if (response.success) {
         onLoginSuccess(response.user);
+      } else {
+        setError(response.message || 'Error al iniciar sesión');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.message || 'Error al iniciar sesión');
     } finally {
       setLoading(false);

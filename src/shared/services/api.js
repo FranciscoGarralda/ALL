@@ -55,19 +55,29 @@ class ApiService {
 
   // AUTH ENDPOINTS
   async login(username, password) {
-    const response = await fetch(`${this.baseURL}/api/auth/login`, {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify({ username, password })
-    });
-    
-    const data = await this.handleResponse(response);
-    
-    if (data.token) {
-      this.setToken(data.token);
+    try {
+      console.log('Login attempt:', { username, baseURL: this.baseURL });
+      
+      const response = await fetch(`${this.baseURL}/api/auth/login`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({ username, password })
+      });
+      
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
+      const data = await this.handleResponse(response);
+      
+      if (data.token) {
+        this.setToken(data.token);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Login error in API service:', error);
+      throw error;
     }
-    
-    return data;
   }
 
   async logout() {
