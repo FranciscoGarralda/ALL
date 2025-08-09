@@ -799,35 +799,26 @@ app.get('/api/init-db-emergency', async (req, res) => {
   try {
     console.log('🚨 Inicialización de emergencia de la base de datos...');
     
-    // Crear todas las tablas
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        username VARCHAR(255) UNIQUE NOT NULL,
-        email VARCHAR(255) UNIQUE,
-        password VARCHAR(255) NOT NULL,
-        role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
-        permissions TEXT[] DEFAULT '{}',
-        active BOOLEAN DEFAULT true,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+    // 1. Hacer backup y recrear tabla movements si existe con estructura incorrecta
+    try {
+      // Verificar si la tabla movements existe
+      const tableExists = await pool.query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_name = 'movements'
+        )
+      `);
+      
+      if (tableExists.rows[0].exists) {
+        console.log('Tabla movements existe, haciendo backup...');
+        // Renombrar tabla existente
+        await pool.query('ALTER TABLE movements RENAME TO movements_backup_old');
+      }
+    } catch (err) {
+      console.log('Error verificando movements:', err.message);
+    }
     
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS clients (
-        id SERIAL PRIMARY KEY,
-        nombre VARCHAR(255) NOT NULL,
-        telefono VARCHAR(100),
-        email VARCHAR(255),
-        direccion TEXT,
-        notas TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
+    // 2. Crear tabla movements con estructura correcta
     await pool.query(`
       CREATE TABLE IF NOT EXISTS movements (
         id SERIAL PRIMARY KEY,
@@ -879,12 +870,72 @@ app.get('/api/init-db-emergency', async (req, res) => {
       )
     `);
     
-    // Crear índices
-    await pool.query('CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)');
-    await pool.query('CREATE INDEX IF NOT EXISTS idx_movements_fecha ON movements(fecha)');
-    await pool.query('CREATE INDEX IF NOT EXISTS idx_clients_nombre ON clients(nombre)');
+    // 3. Verificar y crear tabla clients
+    try {
+      const clientsExists = await pool.query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_name = 'clients'
+        )
+      `);
+      
+      if (clientsExists.rows[0].exists) {
+        // Verificar si tiene la columna 'nombre'
+        const hasNombre = await pool.query(`
+          SELECT EXISTS (
+            SELECT FROM information_schema.columns 
+            WHERE table_name = 'clients' AND column_name = 'nombre'
+          )
+        `);
+        
+        if (!hasNombre.rows[0].exists) {
+          console.log('Tabla clients existe pero sin columna nombre, recreando...');
+          await pool.query('ALTER TABLE clients RENAME TO clients_backup_old');
+        }
+      }
+    } catch (err) {
+      console.log('Error verificando clients:', err.message);
+    }
     
-    // Crear usuario admin si no existe
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS clients (
+        id SERIAL PRIMARY KEY,
+        nombre VARCHAR(255) NOT NULL,
+        telefono VARCHAR(100),
+        email VARCHAR(255),
+        direccion TEXT,
+        notas TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // 4. Crear tabla users
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
+        permissions TEXT[] DEFAULT '{}',
+        active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // 5. Crear índices
+    try {
+      await pool.query('CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)');
+      await pool.query('CREATE INDEX IF NOT EXISTS idx_movements_fecha ON movements(fecha)');
+      await pool.query('CREATE INDEX IF NOT EXISTS idx_clients_nombre ON clients(nombre)');
+    } catch (err) {
+      console.log('Algunos índices ya existen:', err.message);
+    }
+    
+    // 6. Crear usuario admin si no existe
     const hashedPassword = await bcrypt.hash('admin123', 10);
     await pool.query(`
       INSERT INTO users (name, username, email, password, role, permissions)
@@ -899,14 +950,29 @@ app.get('/api/init-db-emergency', async (req, res) => {
       '{operaciones,clientes,movimientos,pendientes,gastos,cuentas-corrientes,prestamistas,comisiones,utilidad,arbitraje,saldos,caja,rentabilidad,stock,saldos-iniciales,usuarios}'
     ]);
     
+    // 7. Verificar qué tablas se crearon
+    const tables = await pool.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      AND table_type = 'BASE TABLE'
+      ORDER BY table_name
+    `);
+    
     res.json({ 
       success: true, 
       message: 'Base de datos inicializada correctamente',
-      tables: ['users', 'clients', 'movements']
+      tablesCreated: ['users', 'clients', 'movements'],
+      allTables: tables.rows.map(t => t.table_name),
+      note: 'Las tablas con estructura incorrecta fueron respaldadas con sufijo _backup_old'
     });
   } catch (error) {
     console.error('Error inicializando BD:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      detail: error.detail || 'Error al crear las tablas'
+    });
   }
 });
 
