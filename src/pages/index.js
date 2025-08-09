@@ -59,6 +59,21 @@ export default function Home() {
 
   // Check authentication status on mount
   useEffect(() => {
+    // TEMPORAL: Bypass auth para debug
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('bypass') === 'true') {
+      setIsAuthenticated(true);
+      setCurrentUser({
+        id: 1,
+        name: 'Francisco Garralda',
+        username: 'FranciscoGarralda',
+        role: 'admin'
+      });
+      setCheckingAuth(false);
+      loadLocalData();
+      return;
+    }
+    
     checkAuthStatus();
   }, []);
 
