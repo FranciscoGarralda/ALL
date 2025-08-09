@@ -233,13 +233,19 @@ export default function Home() {
           return;
         }
 
+        let savedClient;
         if (clientData.id) {
-          await apiService.updateClient(clientData.id, clientData);
+          savedClient = await apiService.updateClient(clientData.id, clientData);
         } else {
-          await apiService.createClient(clientData);
+          savedClient = await apiService.createClient(clientData);
         }
         
-        await loadDataFromBackend();
+        // Solo actualizar la lista de clientes, no recargar todo
+        const updatedClients = await apiService.getClients();
+        setClients(Array.isArray(updatedClients) ? updatedClients : []);
+        
+        // Retornar el cliente guardado para que se pueda seleccionar
+        return savedClient;
       } else {
         // Save to localStorage
         const existingClient = clients.find(c => 
@@ -255,6 +261,7 @@ export default function Home() {
           setClients(prev => prev.map(c => 
             c.id === clientData.id ? clientData : c
           ));
+          return clientData;
         } else {
           const newClient = {
             ...clientData,
@@ -265,6 +272,7 @@ export default function Home() {
             estado: 'activo'
           };
           setClients(prev => [...prev, newClient]);
+          return newClient;
         }
       }
     } catch (error) {

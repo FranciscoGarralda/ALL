@@ -136,7 +136,8 @@ class ApiService {
       body: JSON.stringify(movementData)
     });
     
-    return this.handleResponse(response);
+    const result = await this.handleResponse(response);
+    return result.data || result;
   }
 
   async updateMovement(id, movementData) {
@@ -146,7 +147,8 @@ class ApiService {
       body: JSON.stringify(movementData)
     });
     
-    return this.handleResponse(response);
+    const result = await this.handleResponse(response);
+    return result.data || result;
   }
 
   async deleteMovement(id) {
@@ -177,7 +179,8 @@ class ApiService {
       body: JSON.stringify(clientData)
     });
     
-    return this.handleResponse(response);
+    const result = await this.handleResponse(response);
+    return result.data || result;
   }
 
   async updateClient(id, clientData) {
@@ -187,7 +190,8 @@ class ApiService {
       body: JSON.stringify(clientData)
     });
     
-    return this.handleResponse(response);
+    const result = await this.handleResponse(response);
+    return result.data || result;
   }
 
   async deleteClient(id) {

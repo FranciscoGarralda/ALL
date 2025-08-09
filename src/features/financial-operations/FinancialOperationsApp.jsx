@@ -121,23 +121,56 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         return;
       }
 
-      // Navegación con flechas - SOLO SI NO ESTAMOS EN UN TEXTAREA
+      // Navegación con flechas - MEJORADA para todos los elementos
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
         // No interferir si estamos en un textarea o si se está usando con modificadores
         if (document.activeElement.tagName === 'TEXTAREA' || e.ctrlKey || e.metaKey || e.shiftKey) {
           return;
         }
         
+        // Incluir TODOS los elementos focusables, incluyendo botones con tabIndex
         const focusableElements = formElement.querySelectorAll(
-          'input:not([disabled]), select:not([disabled]), button:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          'input:not([disabled]), select:not([disabled]), button:not([disabled]), textarea:not([disabled]), [tabindex="0"]:not([disabled])'
         );
         
         const currentIndex = Array.from(focusableElements).indexOf(document.activeElement);
+        
+        // Si no hay elemento activo, empezar desde el primero
+        if (currentIndex === -1 && focusableElements.length > 0) {
+          e.preventDefault();
+          focusableElements[0]?.focus();
+          return;
+        }
         
         if (currentIndex !== -1) {
           e.preventDefault(); // Solo prevenir default si vamos a cambiar el foco
           let nextIndex = currentIndex;
           
+          // Para botones de operación/sub-operación, usar lógica especial
+          const currentElement = document.activeElement;
+          const isOperationButton = currentElement.closest('.grid');
+          
+          if (isOperationButton) {
+            // Navegación especial para grids de botones
+            const gridButtons = isOperationButton.querySelectorAll('button[tabindex="0"]');
+            const gridIndex = Array.from(gridButtons).indexOf(currentElement);
+            
+            if (gridIndex !== -1) {
+              let newGridIndex = gridIndex;
+              
+              if (e.key === 'ArrowRight') {
+                newGridIndex = (gridIndex + 1) % gridButtons.length;
+                gridButtons[newGridIndex]?.focus();
+                return;
+              } else if (e.key === 'ArrowLeft') {
+                newGridIndex = (gridIndex - 1 + gridButtons.length) % gridButtons.length;
+                gridButtons[newGridIndex]?.focus();
+                return;
+              }
+            }
+          }
+          
+          // Navegación normal para otros elementos
           if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
             nextIndex = (currentIndex + 1) % focusableElements.length;
           } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
@@ -459,6 +492,21 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   };
 
   const handleGuardar = () => {
+    // Validaciones básicas
+    if (!formData.cliente || formData.cliente.trim() === '') {
+      alert('Por favor selecciona un cliente');
+      return;
+    }
+    
+    if (!formData.operacion) {
+      alert('Por favor selecciona una operación');
+      return;
+    }
+    
+    if (!formData.subOperacion) {
+      alert('Por favor selecciona el detalle de la operación');
+      return;
+    }
     
     // Validate mixed payments using hook
     const validation = validateMixedPayments();
@@ -677,12 +725,14 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
                   clients={clients || []}
                   required={true}
                   placeholder="Buscar o seleccionar cliente"
-                  onClientCreated={(newClient) => {
+                  onClientCreated={async (newClient) => {
                     // Guardar el cliente en la base de datos
                     if (onSaveClient) {
-                      onSaveClient(newClient);
+                      const savedClient = await onSaveClient(newClient);
                       // Auto-seleccionar el cliente recién creado
-                      handleInputChange('cliente', newClient.id || newClient.nombre);
+                      if (savedClient) {
+                        handleInputChange('cliente', savedClient.id || savedClient.nombre);
+                      }
                     }
                   }}
                 />

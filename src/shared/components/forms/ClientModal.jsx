@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { X, User, Phone, Mail, MapPin, Save } from 'lucide-react';
 import FormInput from './FormInput';
 import FormSelect from './FormSelect';
@@ -48,6 +48,59 @@ const ClientModal = ({
     { value: 'operaciones', label: 'Operaciones' },
     { value: 'prestamistas', label: 'Prestamistas' }
   ];
+
+  // Manejar navegación con teclado cuando el modal está abierto
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e) => {
+      // Escape cierra el modal
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+
+      // Navegación con flechas solo dentro del modal
+      if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        const modal = document.querySelector('.client-modal-content');
+        if (!modal) return;
+
+        const focusableElements = modal.querySelectorAll(
+          'input:not([disabled]), select:not([disabled]), button:not([disabled]), textarea:not([disabled])'
+        );
+        
+        const currentIndex = Array.from(focusableElements).indexOf(document.activeElement);
+        
+        if (currentIndex !== -1) {
+          e.preventDefault();
+          let nextIndex = currentIndex;
+          
+          if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            nextIndex = (currentIndex + 1) % focusableElements.length;
+          } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            nextIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
+          }
+          
+          focusableElements[nextIndex]?.focus();
+        }
+      }
+    };
+
+    // Agregar listener
+    document.addEventListener('keydown', handleKeyDown);
+    
+    // Focus en el primer campo al abrir
+    setTimeout(() => {
+      const firstInput = document.querySelector('.client-modal-content input');
+      firstInput?.focus();
+    }, 100);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -136,7 +189,7 @@ const ClientModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-large max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-large max-w-md w-full max-h-[90vh] overflow-y-auto client-modal-content">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-2">
