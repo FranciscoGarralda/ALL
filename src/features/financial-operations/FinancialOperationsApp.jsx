@@ -112,7 +112,67 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     autoFocus: true
   });
 
+  // Agregar manejador global de teclado para el formulario
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Solo procesar si estamos dentro del formulario
+      const formElement = document.getElementById('financial-operations-form');
+      if (!formElement || !formElement.contains(document.activeElement)) {
+        return;
+      }
 
+      // Navegación con flechas
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const focusableElements = formElement.querySelectorAll(
+          'input:not([disabled]), select:not([disabled]), button:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        
+        const currentIndex = Array.from(focusableElements).indexOf(document.activeElement);
+        
+        if (currentIndex !== -1) {
+          e.preventDefault();
+          let nextIndex = currentIndex;
+          
+          if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            nextIndex = (currentIndex + 1) % focusableElements.length;
+          } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            nextIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
+          }
+          
+          focusableElements[nextIndex]?.focus();
+        }
+      }
+      
+      // Enter para abrir dropdowns
+      if (e.key === 'Enter' && e.target.tagName === 'SELECT') {
+        e.preventDefault();
+        const event = new MouseEvent('mousedown', {
+          view: window,
+          bubbles: true,
+          cancelable: true
+        });
+        e.target.dispatchEvent(event);
+      }
+      
+      // Escape para cerrar dropdowns o limpiar campos
+      if (e.key === 'Escape') {
+        if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') {
+          e.target.blur();
+          // Volver al campo anterior si es posible
+          const focusableElements = formElement.querySelectorAll(
+            'input:not([disabled]), select:not([disabled]), button:not([disabled]), textarea:not([disabled])'
+          );
+          const currentIndex = Array.from(focusableElements).indexOf(e.target);
+          if (currentIndex > 0) {
+            focusableElements[currentIndex - 1]?.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
 
   useEffect(() => {
@@ -600,7 +660,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               </div>
             </div>
             
-            <div className="p-3 sm:p-4 lg:p-6 space-y-6">
+            <form id="financial-operations-form" className="p-3 sm:p-4 lg:p-6 space-y-6">
               {/* Campo Cliente - Universal con autocompletado */}
               {formData.operacion !== 'PRESTAMISTAS' && (
                 <ClientAutocomplete
@@ -759,10 +819,11 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               </button>
             )}
           </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
   );
 };
 

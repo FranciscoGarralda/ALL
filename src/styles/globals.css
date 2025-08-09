@@ -2,6 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Enhanced Focus Styles for Financial Operations Form */
+#financial-operations-form input:focus,
+#financial-operations-form select:focus,
+#financial-operations-form textarea:focus,
+#financial-operations-form button:focus {
+  @apply ring-2 ring-blue-500 ring-offset-2 outline-none transition-all duration-200;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Visual indicator for keyboard navigation */
+#financial-operations-form *:focus {
+  position: relative;
+  z-index: 10;
+}
+
+/* Better select dropdown interaction */
+#financial-operations-form select:focus {
+  @apply bg-blue-50;
+}
+
+/* Smooth transitions */
+#financial-operations-form input,
+#financial-operations-form select,
+#financial-operations-form textarea,
+#financial-operations-form button {
+  @apply transition-all duration-150;
+}
+
 /* Modern Design System Variables */
 :root {
   /* Modern color palette with better contrast */
