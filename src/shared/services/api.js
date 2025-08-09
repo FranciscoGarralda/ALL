@@ -37,9 +37,13 @@ class ApiService {
       'Content-Type': 'application/json',
     };
     
+    console.log('API: Token actual:', this.token);
+    
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
+    
+    console.log('API: Headers finales:', headers);
     
     return headers;
   }
@@ -130,13 +134,19 @@ class ApiService {
   }
 
   async createMovement(movementData) {
+    console.log('API: Creando movimiento con datos:', movementData);
+    
     const response = await fetch(`${this.baseURL}/api/movements`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify(movementData)
     });
     
+    console.log('API: Response status:', response.status);
+    
     const result = await this.handleResponse(response);
+    console.log('API: Resultado:', result);
+    
     return result.data || result;
   }
 

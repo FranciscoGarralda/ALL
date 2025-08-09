@@ -155,18 +155,28 @@ export default function Home() {
 
   // Movement management functions
   const handleSaveMovement = async (movementData) => {
+    console.log('=== handleSaveMovement llamado ===');
+    console.log('isAuthenticated:', isAuthenticated);
+    console.log('movementData:', movementData);
+    
     try {
       if (isAuthenticated) {
+        console.log('Guardando en backend...');
         // Save to backend
         let savedMovement;
         if (editingMovement) {
+          console.log('Actualizando movimiento existente:', editingMovement.id);
           savedMovement = await apiService.updateMovement(editingMovement.id, movementData);
         } else {
+          console.log('Creando nuevo movimiento...');
           savedMovement = await apiService.createMovement(movementData);
         }
         
+        console.log('Movimiento guardado:', savedMovement);
+        
         // Reload movements from backend
         await loadDataFromBackend();
+        console.log('Datos recargados del backend');
       } else {
         // Save to localStorage
         const newMovement = {
