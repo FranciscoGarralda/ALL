@@ -66,9 +66,11 @@ class ApiService {
   // AUTH ENDPOINTS
   async login(username, password) {
     try {
-      // Agregar timeout de 10 segundos
+      // Aumentar timeout a 30 segundos para Railway
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      
+      console.log('Intentando login con:', { username, baseURL: this.baseURL });
       
       const response = await fetch(`${this.baseURL}/api/auth/login`, {
         method: 'POST',
@@ -87,9 +89,16 @@ class ApiService {
       
       return data;
     } catch (error) {
+      console.error('Error en login:', error);
+      
       if (error.name === 'AbortError') {
-        throw new Error('Tiempo de espera agotado. Intenta nuevamente.');
+        throw new Error('El servidor está tardando en responder. Por favor intenta en unos segundos.');
       }
+      
+      if (error.message?.includes('Failed to fetch')) {
+        throw new Error('No se puede conectar al servidor. Verifica tu conexión.');
+      }
+      
       throw error;
     }
   }

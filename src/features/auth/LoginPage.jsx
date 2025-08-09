@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { apiService } from '../../shared/services';
+import { serverWakeService } from '../../shared/services/server-wake';
 
 export default function LoginPage({ onLoginSuccess }) {
   const [formData, setFormData] = useState({
@@ -10,6 +11,14 @@ export default function LoginPage({ onLoginSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [serverAwake, setServerAwake] = useState(false);
+  
+  // Despertar servidor al cargar la página
+  useEffect(() => {
+    serverWakeService.wakeServer()
+      .then(() => setServerAwake(true))
+      .catch(err => setError('El servidor está iniciándose. Por favor espera unos segundos.'));
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +33,14 @@ export default function LoginPage({ onLoginSuccess }) {
     setLoading(true);
 
     try {
+      // Asegurarse de que el servidor esté despierto
+      if (!serverAwake) {
+        setError('Conectando con el servidor...');
+        await serverWakeService.wakeServer();
+        setServerAwake(true);
+        setError('');
+      }
+      
       const response = await apiService.login(formData.username, formData.password);
       
       if (response.success) {
@@ -65,9 +82,27 @@ export default function LoginPage({ onLoginSuccess }) {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
             Sistema Financiero
           </h2>
+          
+          {!serverAwake && !error && (
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-2 text-sm text-gray-600">
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
+                Conectando con el servidor...
+              </div>
+            </div>
+          )}
+          
+          {serverAwake && (
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-2 text-sm text-green-600">
+                <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                Servidor conectado
+              </div>
+            </div>
+          )}
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
