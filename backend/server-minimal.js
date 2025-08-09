@@ -159,24 +159,34 @@ app.post('/api/auth/login', async (req, res) => {
     }
     
     // Generar token
-    const token = jwt.sign(
-      { id: user.id, username: user.username || user.email, role: user.role },
-      process.env.JWT_SECRET || 'secret-key',
-      { expiresIn: '30d' }
-    );
-    
-    res.json({
-      success: true,
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        username: user.username || user.email,
-        email: user.email,
-        role: user.role,
-        permissions: user.permissions || []
-      }
-    });
+            // Parsear permisos si vienen como string
+        let userPermissions = user.permissions || [];
+        if (typeof userPermissions === 'string') {
+          try {
+            userPermissions = JSON.parse(userPermissions.replace(/^{/, '[').replace(/}$/, ']').replace(/,/g, '","').replace(/^/, '"').replace(/$/, '"'));
+          } catch (e) {
+            userPermissions = [];
+          }
+        }
+        
+        const token = jwt.sign(
+          { id: user.id, username: user.username || user.email, role: user.role },
+          process.env.JWT_SECRET || 'secret-key',
+          { expiresIn: '30d' }
+        );
+        
+        res.json({
+          success: true,
+          token,
+          user: {
+            id: user.id,
+            name: user.name,
+            username: user.username || user.email,
+            email: user.email,
+            role: user.role,
+            permissions: userPermissions
+          }
+        });
     
   } catch (error) {
     console.error('Login error:', error);
@@ -256,12 +266,15 @@ app.post('/api/users', authMiddleware, async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    // Insertar usuario
+    // Formatear permisos para PostgreSQL array
+    const formattedPermissions = `{${permissions.join(',')}}`;
+    
+    // Insertar usuario con permisos
     const result = await pool.query(`
-      INSERT INTO users (name, username, email, password, role)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING id, name, username, email, role
-    `, [name, username, email, hashedPassword, role]);
+      INSERT INTO users (name, username, email, password, role, permissions, active)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING id, name, username, email, role, permissions
+    `, [name, username, email, hashedPassword, role, formattedPermissions, active]);
     
     res.status(201).json({ 
       success: true, 
@@ -347,6 +360,42 @@ app.delete('/api/users/:id', authMiddleware, async (req, res) => {
       success: false, 
       message: error.message 
     });
+  }
+});
+
+// GET /api/auth/me
+app.get('/api/auth/me', authMiddleware, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, name, username, email, role, permissions FROM users WHERE id = $1',
+      [req.user.id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+    
+    const user = result.rows[0];
+    
+    // Parsear permisos si vienen como string de PostgreSQL
+    let userPermissions = user.permissions || [];
+    if (typeof userPermissions === 'string' && userPermissions.startsWith('{')) {
+      userPermissions = userPermissions
+        .replace(/^{/, '')
+        .replace(/}$/, '')
+        .split(',')
+        .filter(p => p);
+    }
+    
+    res.json({
+      success: true,
+      user: {
+        ...user,
+        permissions: userPermissions
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
