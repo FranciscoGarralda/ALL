@@ -28,34 +28,36 @@ import SidebarTooltip from './SidebarTooltip';
 
 
 /** COMPONENTE DE ELEMENTO DEL MENÚ MEJORADO */
-const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen }) => {
+const MenuItem = memo(({ icon: Icon, title, onClick, isActive, isSidebarOpen, onFocus, index }) => {
 
   return (
     <SidebarTooltip content={title} disabled={isSidebarOpen}>
       <button
+        role="menuitem"
+        onFocus={() => onFocus && onFocus(index)}
         className={`
-          w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200
+          w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 relative
           ${!isSidebarOpen ? 'justify-center' : ''}
           ${isActive 
-            ? 'bg-gray-900 text-white' 
-            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            ? 'bg-blue-600 text-white shadow-lg transform scale-105' 
+            : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md hover:transform hover:scale-105'
           }
           touch-manipulation select-none
-          focus:outline-none focus:ring-2 focus:ring-gray-400/20
+          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
         `}
         onClick={onClick}
         aria-current={isActive ? 'page' : undefined}
       >
-        <Icon size={20} className="flex-shrink-0" />
+        <Icon size={20} className={`flex-shrink-0 ${isActive ? 'text-white' : ''}`} />
         {isSidebarOpen && (
           <span className={`text-sm font-medium truncate ${isActive ? 'text-white' : ''}`}>
             {title}
           </span>
         )}
         
-        {/* Indicador activo más sutil */}
-        {isActive && isSidebarOpen && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gray-900 rounded-r-full"></div>
+        {/* Indicador activo más visible */}
+        {isActive && (
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-white rounded-r-full"></div>
         )}
       </button>
     </SidebarTooltip>
@@ -66,6 +68,9 @@ MenuItem.displayName = 'MenuItem';
 
 /** COMPONENTE DEL MENÚ PRINCIPAL OPTIMIZADO */
 const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, isMobile = false, currentUser }) => {
+  const menuRef = useRef(null);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+  
   const menuItems = useMemo(() => [
     // OPERACIONES PRINCIPALES (arriba - más usadas)
     { id: 'inicio', icon: Home, title: 'Inicio', category: 'main' },
@@ -154,20 +159,70 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
     });
   }, [menuItems, currentUser]);
 
+  // Navegación con teclado
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!isSidebarOpen && !isMobile) return; // Solo funciona cuando el menú está visible
+      
+      const menuButtons = menuRef.current?.querySelectorAll('button[role="menuitem"]');
+      if (!menuButtons || menuButtons.length === 0) return;
+      
+      let newIndex = focusedIndex;
+      
+      switch(e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          newIndex = focusedIndex < menuButtons.length - 1 ? focusedIndex + 1 : 0;
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          newIndex = focusedIndex > 0 ? focusedIndex - 1 : menuButtons.length - 1;
+          break;
+        case 'Enter':
+        case ' ':
+          if (focusedIndex >= 0 && menuButtons[focusedIndex]) {
+            e.preventDefault();
+            menuButtons[focusedIndex].click();
+          }
+          break;
+        case 'Escape':
+          if (isMobile && toggleSidebar) {
+            toggleSidebar();
+          }
+          break;
+        default:
+          return;
+      }
+      
+      if (newIndex !== focusedIndex && newIndex >= 0) {
+        setFocusedIndex(newIndex);
+        menuButtons[newIndex]?.focus();
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [focusedIndex, isSidebarOpen, isMobile, toggleSidebar]);
+
   // Si es móvil y no está abierto, no renderizar nada
   if (isMobile && !isSidebarOpen) {
     return null;
   }
 
   return (
-    <div className={`
-      ${isMobile 
-        ? 'fixed top-0 left-0 h-screen z-[60] w-64'
-        : `h-full z-30 ${isSidebarOpen ? 'w-64' : 'w-16'}`
-      }
-      bg-white shadow-xl flex flex-col border-r border-gray-200
-      transition-all duration-300 ease-in-out
-    `}>
+    <div 
+      ref={menuRef}
+      className={`
+        ${isMobile 
+          ? 'fixed top-0 left-0 h-screen z-[60] w-64'
+          : `h-full z-30 ${isSidebarOpen ? 'w-64' : 'w-16'}`
+        }
+        bg-white shadow-xl flex flex-col border-r border-gray-200
+        transition-all duration-300 ease-in-out
+      `}
+      role="navigation"
+      aria-label="Menú principal"
+    >
       {/* Header para móvil con botón cerrar e Inicio en la misma línea */}
       {isMobile && isSidebarOpen && (
         <div className="flex items-center justify-between px-3 py-4 border-b border-gray-200">
@@ -246,16 +301,22 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
               
               {/* Items de la categoría */}
               <div className="space-y-1">
-                {categoryItems.map((item) => (
-                  <MenuItem
-                    key={item.id}
-                    icon={item.icon}
-                    title={item.title}
-                    isActive={getActiveItemId(activeItem) === item.id}
-                    onClick={() => handleItemClick(item.id)}
-                    isSidebarOpen={isSidebarOpen}
-                  />
-                ))}
+                {categoryItems.map((item, itemIndex) => {
+                  // Calcular el índice global para la navegación
+                  const globalIndex = visibleMenuItems.findIndex(i => i.id === item.id);
+                  return (
+                    <MenuItem
+                      key={item.id}
+                      icon={item.icon}
+                      title={item.title}
+                      isActive={getActiveItemId(activeItem) === item.id}
+                      onClick={() => handleItemClick(item.id)}
+                      isSidebarOpen={isSidebarOpen}
+                      onFocus={setFocusedIndex}
+                      index={globalIndex}
+                    />
+                  );
+                })}
               </div>
             </div>
           );
@@ -352,7 +413,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
   }, [isMobile, isSidebarOpen]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
       {/* Header fijo */}
       <FixedHeader 
         isSidebarOpen={isSidebarOpen}
@@ -365,8 +426,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
 
       />
 
-      {/* Layout principal */}
-      <div className="flex flex-1 pt-20">
+      {/* Layout principal con altura calculada */}
+      <div className="flex flex-1 pt-20 overflow-hidden">
         {/* Sidebar - Solo desktop (lg+), siempre fija */}
         <div className="hidden lg:block">
           <MainMenu 
@@ -392,7 +453,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
         )}
         
         {/* Contenido principal */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col overflow-hidden">
           {/* Overlay para móvil cuando el sidebar está abierto */}
           {isSidebarOpen && isMobile && (
             <div 
@@ -404,8 +465,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
             />
           )}
           
-          {/* Contenido de la página */}
-          <main className="flex-1">
+          {/* Contenido de la página - con scroll */}
+          <main className="flex-1 overflow-y-auto overflow-x-hidden">
             <div className="p-0">
               {children}
             </div>
