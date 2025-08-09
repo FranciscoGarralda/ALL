@@ -163,12 +163,32 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       bg-white shadow-xl flex flex-col border-r border-gray-200
       transition-all duration-300 ease-in-out
     `}>
-      {/* Toggle button for desktop */}
-      {!isMobile && (
-        <div className={`flex ${isSidebarOpen ? 'justify-end p-3' : 'justify-center p-2'}`}>
+      {/* Header para móvil con botón cerrar e Inicio en la misma línea */}
+      {isMobile && isSidebarOpen && (
+        <div className="flex items-center justify-between px-3 py-4 border-b border-gray-200">
+          <button
+            onClick={() => handleItemClick('inicio')}
+            className="flex items-center gap-3 flex-1 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Home size={20} className="text-gray-600" />
+            <span className="text-sm font-medium text-gray-900">Inicio</span>
+          </button>
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400/20"
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Cerrar menú"
+          >
+            <ChevronLeft size={20} className="text-gray-500" />
+          </button>
+        </div>
+      )}
+      
+      {/* Toggle button for desktop */}
+      {!isMobile && (
+        <div className={`${isSidebarOpen ? 'p-3 border-b border-gray-200' : 'p-2'}`}>
+          <button
+            onClick={toggleSidebar}
+            className={`${isSidebarOpen ? 'ml-auto' : 'mx-auto'} p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400/20 flex items-center justify-center`}
             aria-label={isSidebarOpen ? 'Cerrar menú' : 'Abrir menú'}
           >
             {isSidebarOpen ? (
@@ -181,10 +201,14 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       )}
       
       {/* Menú de navegación - ocupa todo el espacio */}
-      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'px-3 py-4' : 'p-2'} overflow-y-auto ${isMobile ? 'pt-20' : 'pt-4'}`}>
+      <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'px-3 py-4' : 'p-2'} overflow-y-auto ${isMobile ? '' : 'pt-4'}`}>
         {/* Renderizar items por categoría */}
         {visibleMenuItems && visibleMenuItems.length > 0 && ['main', 'operations', 'management', 'reports', 'config'].map((category, categoryIndex) => {
-          const categoryItems = visibleMenuItems.filter(item => item.category === category);
+          // En móvil, filtrar "inicio" ya que está en el header
+          const categoryItems = visibleMenuItems.filter(item => {
+            if (isMobile && isSidebarOpen && item.id === 'inicio') return false;
+            return item.category === category;
+          });
           if (!categoryItems || categoryItems.length === 0) return null;
           
           return (
