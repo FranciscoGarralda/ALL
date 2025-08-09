@@ -219,10 +219,140 @@ app.get('/api/auth/me', async (req, res) => {
   }
 });
 
+// Middleware de autenticación simple
+const authMiddleware = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ success: false, message: 'No autorizado' });
+  
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret-key');
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ success: false, message: 'Token inválido' });
+  }
+};
+
+// GET usuarios
+app.get('/api/users', authMiddleware, async (req, res) => {
+  try {
+    const users = await pool.query(
+      'SELECT id, name, username, email, role, permissions FROM users ORDER BY created_at DESC'
+    );
+    res.json({ success: true, data: users.rows });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST crear usuario
+app.post('/api/users', authMiddleware, async (req, res) => {
+  try {
+    const { name, email, password, role = 'operator', permissions = [], active = true } = req.body;
+    
+    // Generar username desde email
+    const username = email.split('@')[0];
+    
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Insertar usuario
+    const result = await pool.query(`
+      INSERT INTO users (name, username, email, password, role)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id, name, username, email, role
+    `, [name, username, email, hashedPassword, role]);
+    
+    res.status(201).json({ 
+      success: true, 
+      data: result.rows[0] 
+    });
+  } catch (error) {
+    console.error('Error creando usuario:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: error.detail || error.message 
+    });
+  }
+});
+
+// PUT actualizar usuario
+app.put('/api/users/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, password, role, active } = req.body;
+    
+    let query = 'UPDATE users SET ';
+    const values = [];
+    const updates = [];
+    let paramCount = 1;
+    
+    if (name) {
+      updates.push(`name = $${paramCount++}`);
+      values.push(name);
+    }
+    if (email) {
+      updates.push(`email = $${paramCount++}`);
+      values.push(email);
+    }
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updates.push(`password = $${paramCount++}`);
+      values.push(hashedPassword);
+    }
+    if (role) {
+      updates.push(`role = $${paramCount++}`);
+      values.push(role);
+    }
+    
+    query += updates.join(', ');
+    query += ` WHERE id = $${paramCount} RETURNING id, name, username, email, role`;
+    values.push(id);
+    
+    const result = await pool.query(query, values);
+    
+    res.json({ 
+      success: true, 
+      data: result.rows[0] 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// DELETE usuario
+app.delete('/api/users/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // No permitir borrar el último admin
+    const adminCount = await pool.query("SELECT COUNT(*) FROM users WHERE role = 'admin'");
+    const userToDelete = await pool.query("SELECT role FROM users WHERE id = $1", [id]);
+    
+    if (userToDelete.rows[0]?.role === 'admin' && parseInt(adminCount.rows[0].count) <= 1) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'No se puede eliminar el último administrador' 
+      });
+    }
+    
+    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
 // Rutas básicas para que funcione el sistema
 app.get('/api/movements', (req, res) => res.json({ success: true, data: [] }));
 app.get('/api/clients', (req, res) => res.json({ success: true, data: [] }));
-app.get('/api/users', (req, res) => res.json({ success: true, data: [] }));
 
 // Iniciar servidor
 app.listen(PORT, () => {
