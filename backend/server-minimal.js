@@ -17,6 +17,59 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
+// Manejar errores del pool
+pool.on('error', (err) => {
+  console.error('Error inesperado en el pool de PostgreSQL:', err);
+});
+
+// Función simple para inicializar la base de datos
+async function initDatabase() {
+  try {
+    console.log('🚀 Verificando estructura de base de datos...');
+    
+    // Crear tabla clients con estructura correcta si no existe
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS clients (
+        id SERIAL PRIMARY KEY,
+        nombre VARCHAR(255) NOT NULL,
+        telefono VARCHAR(100),
+        email VARCHAR(255),
+        direccion TEXT,
+        notas TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Agregar columnas faltantes si es necesario
+    const alterQueries = [
+      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS nombre VARCHAR(255)',
+      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS telefono VARCHAR(100)',
+      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS email VARCHAR(255)',
+      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS direccion TEXT',
+      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS notas TEXT',
+      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
+      'ALTER TABLE clients ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
+    ];
+    
+    for (const query of alterQueries) {
+      try {
+        await pool.query(query);
+      } catch (err) {
+        // Ignorar errores (columna ya existe)
+      }
+    }
+    
+    console.log('✅ Base de datos lista');
+  } catch (error) {
+    console.error('⚠️ Error inicializando base de datos:', error.message);
+    // No lanzar el error para que el servidor pueda continuar
+  }
+}
+
+// Inicializar base de datos al arrancar
+initDatabase().catch(console.error);
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date() });
@@ -666,5 +719,16 @@ app.delete('/api/clients/:id', authMiddleware, async (req, res) => {
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor mínimo corriendo en puerto ${PORT}`);
+  console.log(`✅ Servidor corriendo en puerto ${PORT}`);
+});
+
+// Manejar errores no capturados
+process.on('uncaughtException', (error) => {
+  console.error('❌ Error no capturado:', error);
+  // No terminar el proceso
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Promesa rechazada no manejada:', reason);
+  // No terminar el proceso
 });
