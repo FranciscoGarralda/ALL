@@ -119,6 +119,8 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
 
   // Filtrar items según el rol del usuario y permisos
   const visibleMenuItems = useMemo(() => {
+    if (!menuItems || !Array.isArray(menuItems)) return [];
+    
     return menuItems.filter(item => {
       // Inicio siempre es visible para todos
       if (item.id === 'inicio') {
@@ -181,9 +183,9 @@ const MainMenu = memo(({ onNavigate, activeItem, isSidebarOpen, toggleSidebar, i
       {/* Menú de navegación - ocupa todo el espacio */}
       <nav className={`flex-1 ${isSidebarOpen || isMobile ? 'px-3 py-4' : 'p-2'} overflow-y-auto ${isMobile ? 'pt-20' : 'pt-4'}`}>
         {/* Renderizar items por categoría */}
-        {['main', 'operations', 'management', 'reports', 'config'].map((category, categoryIndex) => {
+        {visibleMenuItems && visibleMenuItems.length > 0 && ['main', 'operations', 'management', 'reports', 'config'].map((category, categoryIndex) => {
           const categoryItems = visibleMenuItems.filter(item => item.category === category);
-          if (categoryItems.length === 0) return null;
+          if (!categoryItems || categoryItems.length === 0) return null;
           
           return (
             <div key={category} className={categoryIndex > 0 ? 'mt-6' : ''}>
