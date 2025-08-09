@@ -114,6 +114,25 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
 
   // Agregar manejador global de teclado para el formulario
   useEffect(() => {
+    // Función para actualizar tabIndex en elementos dinámicos
+    const updateTabIndexes = () => {
+      const formElement = document.getElementById('financial-operations-form');
+      if (!formElement) return;
+      
+      // Asegurar que todos los botones de sub-operaciones tengan tabIndex
+      const subOperationButtons = formElement.querySelectorAll('.grid button:not([tabindex])');
+      subOperationButtons.forEach(button => {
+        button.setAttribute('tabindex', '0');
+      });
+    };
+    
+    // Observer para detectar cambios en el DOM
+    const observer = new MutationObserver(updateTabIndexes);
+    const formElement = document.getElementById('financial-operations-form');
+    if (formElement) {
+      observer.observe(formElement, { childList: true, subtree: true });
+    }
+    
     const handleKeyDown = (e) => {
       // Solo procesar si estamos dentro del formulario
       const formElement = document.getElementById('financial-operations-form');
@@ -130,7 +149,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         
         // Incluir TODOS los elementos focusables, incluyendo botones con tabIndex
         const focusableElements = formElement.querySelectorAll(
-          'input:not([disabled]), select:not([disabled]), button:not([disabled]), textarea:not([disabled]), [tabindex="0"]:not([disabled])'
+          'input:not([disabled]), select:not([disabled]), button:not([disabled]):not([type="submit"]), textarea:not([disabled]), [tabindex="0"]:not([disabled])'
         );
         
         const currentIndex = Array.from(focusableElements).indexOf(document.activeElement);
@@ -209,8 +228,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+    
+    // Cleanup
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      observer.disconnect();
+    };
+  }, [formData.operacion]); // Re-ejecutar cuando cambia la operación
 
 
   useEffect(() => {
