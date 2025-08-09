@@ -44,6 +44,7 @@ function UserManagementApp() {
   const [showForm, setShowForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -79,9 +80,26 @@ function UserManagementApp() {
     setError('');
     setSuccess('');
 
+    // Validaciones básicas
+    if (!formData.name || !formData.email) {
+      setError('Nombre y email son requeridos');
+      return;
+    }
+
+    if (!editingUser && !formData.password) {
+      setError('La contraseña es requerida para nuevos usuarios');
+      return;
+    }
+
+    setSaving(true);
     try {
       if (editingUser) {
-        await apiService.updateUser(editingUser.id, formData);
+        const updateData = { ...formData };
+        // No enviar password vacío en actualización
+        if (!updateData.password) {
+          delete updateData.password;
+        }
+        await apiService.updateUser(editingUser.id, updateData);
         setSuccess('Usuario actualizado correctamente');
       } else {
         await apiService.createUser(formData);
@@ -92,7 +110,16 @@ function UserManagementApp() {
       resetForm();
     } catch (error) {
       console.error('Error saving user:', error);
-      setError(error.message || 'Error al guardar usuario');
+      // Mejor manejo de errores del backend
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else if (error.message) {
+        setError(error.message);
+      } else {
+        setError('Error al guardar usuario. Por favor, intente nuevamente.');
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -292,20 +319,20 @@ function UserManagementApp() {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg max-h-96 overflow-y-auto">
                     {SYSTEM_MODULES.map(module => (
                       <label
                         key={module.id}
-                        className="flex items-center gap-2 p-2 hover:bg-white rounded-lg cursor-pointer transition-colors"
+                        className="flex items-center gap-2 p-3 hover:bg-white rounded-lg cursor-pointer transition-colors bg-white border border-gray-200"
                       >
                         <input
                           type="checkbox"
                           checked={formData.permissions.includes(module.id)}
                           onChange={() => togglePermission(module.id)}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
                         />
-                        <span className="text-sm">{module.icon}</span>
-                        <span className="text-sm text-gray-700">{module.name}</span>
+                        <span className="text-sm flex-shrink-0">{module.icon}</span>
+                        <span className="text-sm text-gray-700 truncate">{module.name}</span>
                       </label>
                     ))}
                   </div>
@@ -337,10 +364,20 @@ function UserManagementApp() {
                 </button>
                 <button
                   type="submit"
-                  className="btn-primary flex items-center gap-2"
+                  disabled={saving}
+                  className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Save size={18} />
-                  {editingUser ? 'Actualizar' : 'Crear'} Usuario
+                  {saving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Guardando...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={18} />
+                      {editingUser ? 'Actualizar' : 'Crear'} Usuario
+                    </>
+                  )}
                 </button>
               </div>
             </form>

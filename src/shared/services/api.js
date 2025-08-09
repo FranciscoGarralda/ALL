@@ -44,10 +44,18 @@ class ApiService {
 
   // Manejo de respuestas
   async handleResponse(response) {
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      // Si no hay JSON en la respuesta
+      data = { message: 'Error en el servidor' };
+    }
     
     if (!response.ok) {
-      throw new Error(data.message || 'Error en la petición');
+      const error = new Error(data.message || 'Error en la petición');
+      error.response = { data, status: response.status };
+      throw error;
     }
     
     return data;
