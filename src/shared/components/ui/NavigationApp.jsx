@@ -342,21 +342,17 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
   // Prevent body scroll when mobile sidebar is open
   useEffect(() => {
     if (isMobile && isSidebarOpen) {
+      // Solo bloquear el scroll si el sidebar está abierto en móvil
+      const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       return () => {
-        document.body.style.overflow = 'unset';
-      };
-    } else if (!isSidebarOpen && !isMobile) {
-      // Prevent horizontal scroll
-      document.body.style.overflowX = 'hidden';
-      return () => {
-        document.body.style.overflowX = 'unset';
+        document.body.style.overflow = originalOverflow;
       };
     }
   }, [isMobile, isSidebarOpen]);
 
   return (
-    <div className="layout-fixed flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header fijo */}
       <FixedHeader 
         isSidebarOpen={isSidebarOpen}
@@ -369,8 +365,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
 
       />
 
-      {/* Layout principal con altura fija */}
-      <div className="flex flex-1 overflow-hidden pt-20">
+      {/* Layout principal */}
+      <div className="flex flex-1 pt-20">
         {/* Sidebar - Solo desktop (lg+), siempre fija */}
         <div className="hidden lg:block">
           <MainMenu 
@@ -395,8 +391,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
           />
         )}
         
-        {/* Contenido principal con flex-1 y scroll */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Contenido principal */}
+        <div className="flex-1 flex flex-col">
           {/* Overlay para móvil cuando el sidebar está abierto */}
           {isSidebarOpen && isMobile && (
             <div 
@@ -408,8 +404,8 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
             />
           )}
           
-          {/* Contenido de la página - Solo esta área hace scroll */}
-          <main className="flex-1 content-scrollable main-content-scroll">
+          {/* Contenido de la página */}
+          <main className="flex-1">
             <div className="p-0">
               {children}
             </div>

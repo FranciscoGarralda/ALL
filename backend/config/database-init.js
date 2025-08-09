@@ -27,16 +27,49 @@ const TABLES_SCHEMA = {
   movements: `
     CREATE TABLE IF NOT EXISTS movements (
       id SERIAL PRIMARY KEY,
-      date DATE NOT NULL,
-      concept VARCHAR(255) NOT NULL,
-      amount DECIMAL(15,2) NOT NULL,
-      type VARCHAR(50) NOT NULL,
-      category VARCHAR(100),
-      subcategory VARCHAR(100),
-      client_id INTEGER,
-      payment_method VARCHAR(50),
-      currency VARCHAR(10) DEFAULT 'USD',
-      notes TEXT,
+      cliente VARCHAR(255),
+      fecha DATE NOT NULL,
+      nombreDia VARCHAR(20),
+      detalle TEXT,
+      operacion VARCHAR(100),
+      subOperacion VARCHAR(100),
+      proveedorCC VARCHAR(255),
+      monto DECIMAL(15,2),
+      moneda VARCHAR(20),
+      cuenta VARCHAR(100),
+      total DECIMAL(15,2),
+      estado VARCHAR(50),
+      por VARCHAR(100),
+      nombreOtro VARCHAR(255),
+      tc DECIMAL(15,4),
+      monedaTC VARCHAR(20),
+      monedaTCCmpra VARCHAR(20),
+      monedaTCVenta VARCHAR(20),
+      monedaVenta VARCHAR(20),
+      tcVenta DECIMAL(15,4),
+      comision DECIMAL(15,2),
+      comisionPorcentaje DECIMAL(5,2),
+      montoComision DECIMAL(15,2),
+      montoReal DECIMAL(15,2),
+      monedaComision VARCHAR(20),
+      cuentaComision VARCHAR(100),
+      interes DECIMAL(5,2),
+      lapso VARCHAR(50),
+      fechaLimite DATE,
+      socioSeleccionado VARCHAR(100),
+      totalCompra DECIMAL(15,2),
+      totalVenta DECIMAL(15,2),
+      montoVenta DECIMAL(15,2),
+      cuentaSalida VARCHAR(100),
+      cuentaIngreso VARCHAR(100),
+      profit DECIMAL(15,2),
+      monedaProfit VARCHAR(20),
+      walletTC VARCHAR(50),
+      mixedPayments JSONB,
+      expectedTotalForMixedPayments DECIMAL(15,2),
+      utilidadCalculada DECIMAL(15,2),
+      utilidadPorcentaje DECIMAL(5,2),
+      costoPromedio DECIMAL(15,4),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
@@ -44,11 +77,11 @@ const TABLES_SCHEMA = {
   clients: `
     CREATE TABLE IF NOT EXISTS clients (
       id SERIAL PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      type VARCHAR(50) NOT NULL,
-      balance DECIMAL(15,2) DEFAULT 0,
-      contact VARCHAR(255),
-      notes TEXT,
+      nombre VARCHAR(255) NOT NULL UNIQUE,
+      telefono VARCHAR(100),
+      email VARCHAR(255),
+      direccion TEXT,
+      notas TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
@@ -58,9 +91,10 @@ const TABLES_SCHEMA = {
 const INDEXES = [
   'CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)',
   'CREATE INDEX IF NOT EXISTS idx_users_role ON users(role)',
-  'CREATE INDEX IF NOT EXISTS idx_movements_date ON movements(date)',
-  'CREATE INDEX IF NOT EXISTS idx_movements_client ON movements(client_id)',
-  'CREATE INDEX IF NOT EXISTS idx_clients_type ON clients(type)'
+  'CREATE INDEX IF NOT EXISTS idx_movements_fecha ON movements(fecha)',
+  'CREATE INDEX IF NOT EXISTS idx_movements_cliente ON movements(cliente)',
+  'CREATE INDEX IF NOT EXISTS idx_movements_operacion ON movements(operacion)',
+  'CREATE INDEX IF NOT EXISTS idx_clients_nombre ON clients(nombre)'
 ];
 
 async function initializeDatabase() {
@@ -175,6 +209,98 @@ async function runMigrations() {
               -- Hacer username NOT NULL y UNIQUE
               ALTER TABLE users ALTER COLUMN username SET NOT NULL;
               ALTER TABLE users ADD CONSTRAINT users_username_unique UNIQUE (username);
+            END IF;
+          END $$;
+        `
+      },
+      {
+        name: 'update_movements_clients_structure',
+        query: `
+          DO $$
+          BEGIN
+            -- Solo hacer la migración si las tablas tienen la estructura antigua
+            IF EXISTS (SELECT 1 FROM information_schema.columns 
+                      WHERE table_name = 'movements' AND column_name = 'date') THEN
+              
+              -- Hacer backup
+              ALTER TABLE movements RENAME TO movements_old;
+              ALTER TABLE IF EXISTS clients RENAME TO clients_old;
+              
+              -- Crear nuevas tablas
+              CREATE TABLE movements (
+                id SERIAL PRIMARY KEY,
+                cliente VARCHAR(255),
+                fecha DATE NOT NULL,
+                nombreDia VARCHAR(20),
+                detalle TEXT,
+                operacion VARCHAR(100),
+                subOperacion VARCHAR(100),
+                proveedorCC VARCHAR(255),
+                monto DECIMAL(15,2),
+                moneda VARCHAR(20),
+                cuenta VARCHAR(100),
+                total DECIMAL(15,2),
+                estado VARCHAR(50),
+                por VARCHAR(100),
+                nombreOtro VARCHAR(255),
+                tc DECIMAL(15,4),
+                monedaTC VARCHAR(20),
+                monedaTCCmpra VARCHAR(20),
+                monedaTCVenta VARCHAR(20),
+                monedaVenta VARCHAR(20),
+                tcVenta DECIMAL(15,4),
+                comision DECIMAL(15,2),
+                comisionPorcentaje DECIMAL(5,2),
+                montoComision DECIMAL(15,2),
+                montoReal DECIMAL(15,2),
+                monedaComision VARCHAR(20),
+                cuentaComision VARCHAR(100),
+                interes DECIMAL(5,2),
+                lapso VARCHAR(50),
+                fechaLimite DATE,
+                socioSeleccionado VARCHAR(100),
+                totalCompra DECIMAL(15,2),
+                totalVenta DECIMAL(15,2),
+                montoVenta DECIMAL(15,2),
+                cuentaSalida VARCHAR(100),
+                cuentaIngreso VARCHAR(100),
+                profit DECIMAL(15,2),
+                monedaProfit VARCHAR(20),
+                walletTC VARCHAR(50),
+                mixedPayments JSONB,
+                expectedTotalForMixedPayments DECIMAL(15,2),
+                utilidadCalculada DECIMAL(15,2),
+                utilidadPorcentaje DECIMAL(5,2),
+                costoPromedio DECIMAL(15,4),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+              );
+              
+              CREATE TABLE clients (
+                id SERIAL PRIMARY KEY,
+                nombre VARCHAR(255) NOT NULL UNIQUE,
+                telefono VARCHAR(100),
+                email VARCHAR(255),
+                direccion TEXT,
+                notas TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+              );
+              
+              -- Migrar datos si existen
+              INSERT INTO movements (fecha, detalle, monto, moneda, created_at, updated_at)
+              SELECT date, concept, amount, currency, created_at, updated_at
+              FROM movements_old
+              WHERE EXISTS (SELECT 1 FROM movements_old LIMIT 1);
+              
+              INSERT INTO clients (nombre, telefono, notas, created_at, updated_at)
+              SELECT name, contact, notes, created_at, updated_at
+              FROM clients_old
+              WHERE EXISTS (SELECT 1 FROM clients_old LIMIT 1);
+              
+              -- Eliminar tablas antiguas
+              DROP TABLE IF EXISTS movements_old CASCADE;
+              DROP TABLE IF EXISTS clients_old CASCADE;
             END IF;
           END $$;
         `

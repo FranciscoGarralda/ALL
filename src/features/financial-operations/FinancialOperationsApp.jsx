@@ -121,8 +121,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         return;
       }
 
-      // Navegación con flechas
+      // Navegación con flechas - SOLO SI NO ESTAMOS EN UN TEXTAREA
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        // No interferir si estamos en un textarea o si se está usando con modificadores
+        if (document.activeElement.tagName === 'TEXTAREA' || e.ctrlKey || e.metaKey || e.shiftKey) {
+          return;
+        }
+        
         const focusableElements = formElement.querySelectorAll(
           'input:not([disabled]), select:not([disabled]), button:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
         );
@@ -130,7 +135,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         const currentIndex = Array.from(focusableElements).indexOf(document.activeElement);
         
         if (currentIndex !== -1) {
-          e.preventDefault();
+          e.preventDefault(); // Solo prevenir default si vamos a cambiar el foco
           let nextIndex = currentIndex;
           
           if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
@@ -819,8 +824,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
               </button>
             )}
           </div>
-            </form>
-          </div>
+        </form>
         </div>
       </div>
     </div>

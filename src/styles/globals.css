@@ -198,9 +198,9 @@
     text-rendering: optimizeLegibility;
     /* Prevent horizontal scroll */
     overflow-x: hidden;
-    /* Fixed layout - no body scroll */
-    height: 100vh;
-    overflow: hidden;
+    /* Allow vertical scroll */
+    min-height: 100vh;
+    overflow-y: auto;
   }
   
   html {

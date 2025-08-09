@@ -445,9 +445,138 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
   }
 });
 
-// Rutas básicas para que funcione el sistema
-app.get('/api/movements', (req, res) => res.json({ success: true, data: [] }));
-app.get('/api/clients', (req, res) => res.json({ success: true, data: [] }));
+// Rutas básicas para movements
+app.get('/api/movements', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM movements ORDER BY fecha DESC, created_at DESC');
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error('Error getting movements:', error);
+    res.json({ success: true, data: [] }); // Fallback para no romper el frontend
+  }
+});
+
+app.post('/api/movements', authMiddleware, async (req, res) => {
+  try {
+    const movementData = req.body;
+    const columns = Object.keys(movementData).filter(key => key !== 'id');
+    const values = columns.map(col => movementData[col]);
+    const placeholders = columns.map((_, idx) => `$${idx + 1}`).join(', ');
+    
+    const query = `
+      INSERT INTO movements (${columns.join(', ')}, created_at, updated_at)
+      VALUES (${placeholders}, NOW(), NOW())
+      RETURNING *
+    `;
+    
+    const result = await pool.query(query, values);
+    res.status(201).json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    console.error('Error creating movement:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.put('/api/movements/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const movementData = req.body;
+    const columns = Object.keys(movementData).filter(key => key !== 'id' && key !== 'created_at');
+    const values = columns.map(col => movementData[col]);
+    const setClause = columns.map((col, idx) => `${col} = $${idx + 2}`).join(', ');
+    
+    const query = `
+      UPDATE movements 
+      SET ${setClause}, updated_at = NOW()
+      WHERE id = $1
+      RETURNING *
+    `;
+    
+    const result = await pool.query(query, [id, ...values]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Movimiento no encontrado' });
+    }
+    
+    res.json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    console.error('Error updating movement:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.delete('/api/movements/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('DELETE FROM movements WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting movement:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Rutas básicas para clients
+app.get('/api/clients', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM clients ORDER BY nombre');
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error('Error getting clients:', error);
+    res.json({ success: true, data: [] }); // Fallback para no romper el frontend
+  }
+});
+
+app.post('/api/clients', authMiddleware, async (req, res) => {
+  try {
+    const { nombre, telefono = '', email = '', direccion = '', notas = '' } = req.body;
+    
+    const result = await pool.query(`
+      INSERT INTO clients (nombre, telefono, email, direccion, notas, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+      RETURNING *
+    `, [nombre, telefono, email, direccion, notas]);
+    
+    res.status(201).json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    console.error('Error creating client:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.put('/api/clients/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, telefono, email, direccion, notas } = req.body;
+    
+    const result = await pool.query(`
+      UPDATE clients 
+      SET nombre = $2, telefono = $3, email = $4, direccion = $5, notas = $6, updated_at = NOW()
+      WHERE id = $1
+      RETURNING *
+    `, [id, nombre, telefono, email, direccion, notas]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
+    }
+    
+    res.json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    console.error('Error updating client:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.delete('/api/clients/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('DELETE FROM clients WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting client:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // Iniciar servidor
 app.listen(PORT, () => {
