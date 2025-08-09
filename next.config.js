@@ -3,6 +3,11 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
+  // Deshabilitar eval en producción para seguridad
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  
   // Optimizaciones de rendimiento
   compress: true,
   poweredByHeader: false,
@@ -13,7 +18,7 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   
-  // Headers para mejor rendimiento
+  // Headers de seguridad
   async headers() {
     return [
       {
@@ -24,6 +29,10 @@ const nextConfig = {
             value: 'on'
           },
           {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN'
           },
@@ -32,12 +41,12 @@ const nextConfig = {
             value: 'nosniff'
           },
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400'
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin'
           }
         ]
       }
-    ];
+    ]
   },
   
   // Configuración de webpack para optimización

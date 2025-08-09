@@ -1,8 +1,6 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Head from 'next/head';
-import { clientService, movementService, apiService } from '../shared/services';
-import { safeLocalStorage } from '../shared/services/safeOperations';
-import { preloadService } from '../shared/services/preload';
+import { apiService, preloadService, serverWakeService } from '../shared/services';
 import LoginPage from '../features/auth/LoginPage';
 
 // Lazy load components for better performance
@@ -16,6 +14,8 @@ const WelcomePage = lazy(() =>
     default: module.WelcomePage
   }))
 );
+
+// Lazy load feature components
 const FinancialOperationsApp = lazy(() => import('../features/financial-operations/FinancialOperationsApp'));
 const ClientesApp = lazy(() => import('../features/clients/ClientesApp'));
 const MovimientosApp = lazy(() => import('../features/movements/MovimientosApp'));
@@ -83,8 +83,8 @@ export default function Home() {
         loadDataFromBackend();
       }
     } catch (error) {
-      // No authenticated session - load local data
-      loadLocalData();
+      // Usuario no autenticado - no cargar nada
+      console.log('No hay sesión activa');
     } finally {
       setCheckingAuth(false);
     }
@@ -102,19 +102,7 @@ export default function Home() {
       setClients(Array.isArray(backendClients) ? backendClients : []);
     } catch (error) {
       console.error('Error loading data from backend:', error);
-      // Fallback to localStorage
-      loadLocalData();
     }
-  };
-
-  const loadLocalData = () => {
-    // Load movements from localStorage
-    const savedMovements = movementService.getMovements();
-    setMovements(savedMovements);
-    
-    // Load clients from localStorage
-    const savedClients = clientService.getClients();
-    setClients(savedClients);
   };
 
   // Handle login success
@@ -133,70 +121,21 @@ export default function Home() {
     setClients([]);
   };
 
-  // Save movements to localStorage when they change (backup)
-  useEffect(() => {
-    if (movements && Array.isArray(movements) && movements.length > 0) {
-      const result = movementService.saveMovements(movements);
-      if (!result.success) {
-        console.warn('Failed to save movements:', result.error);
-      }
-    }
-  }, [movements]);
-
-  // Save clients to localStorage when they change (backup)
-  useEffect(() => {
-    if (clients && Array.isArray(clients) && clients.length > 0) {
-      const result = clientService.saveClients(clients);
-      if (!result.success) {
-        console.warn('Failed to save clients:', result.error);
-      }
-    }
-  }, [clients]);
-
   // Movement management functions
   const handleSaveMovement = async (movementData) => {
     try {
       let savedMovement;
       
-      // Siempre intentar guardar en backend primero
-      try {
-        if (editingMovement) {
-          savedMovement = await apiService.updateMovement(editingMovement.id, movementData);
-        } else {
-          savedMovement = await apiService.createMovement(movementData);
-        }
-        
-        // Si se guardó en backend exitosamente, recargar datos
-        if (savedMovement) {
-          await loadDataFromBackend();
-        }
-      } catch (backendError) {
-        console.error('Error guardando en backend:', backendError);
-        
-        // Si falla el backend y NO estamos autenticados, usar localStorage como fallback
-        if (!isAuthenticated) {
-          console.log('Guardando movimiento en localStorage como fallback');
-          
-          const newMovement = {
-            ...movementData,
-            id: editingMovement ? editingMovement.id : Date.now(),
-            createdAt: editingMovement ? editingMovement.createdAt : new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          };
-
-          if (editingMovement) {
-            setMovements(prev => prev.map(m => 
-              m.id === editingMovement.id ? newMovement : m
-            ));
-          } else {
-            setMovements(prev => [...prev, newMovement]);
-          }
-          
-          savedMovement = newMovement;
-        } else {
-          // Si estamos autenticados pero falló el backend, lanzar el error
-          throw backendError;
-        }
+      // Solo guardar en backend
+      if (editingMovement) {
+        savedMovement = await apiService.updateMovement(editingMovement.id, movementData);
+      } else {
+        savedMovement = await apiService.createMovement(movementData);
+      }
+      
+      // Si se guardó en backend exitosamente, recargar datos
+      if (savedMovement) {
+        await loadDataFromBackend();
       }
       
       setEditingMovement(null);
@@ -238,7 +177,7 @@ export default function Home() {
   // Client management functions
   const handleSaveClient = async (clientData) => {
     try {
-      // Siempre intentar guardar en backend primero
+      // Verificar duplicados
       const existingClient = clients.find(c => 
         c.nombre.toLowerCase() === clientData.nombre.toLowerCase() && c.id !== clientData.id
       );
@@ -250,58 +189,31 @@ export default function Home() {
 
       let savedClient;
       
-      // Intentar guardar en backend
-      try {
-        if (clientData.id && typeof clientData.id === 'number') {
-          savedClient = await apiService.updateClient(clientData.id, clientData);
-        } else {
-          savedClient = await apiService.createClient(clientData);
-        }
-        
-        // Si se guardó en backend exitosamente
-        if (savedClient && savedClient.id) {
-          setClients(prevClients => {
-            if (!Array.isArray(prevClients)) return [savedClient];
-            
-            const updatedClients = [...prevClients];
-            const existingIndex = updatedClients.findIndex(c => c.id === savedClient.id);
-            
-            if (existingIndex >= 0) {
-              updatedClients[existingIndex] = savedClient;
-            } else {
-              updatedClients.push(savedClient);
-            }
-            
-            return updatedClients;
-          });
+      // Solo guardar en backend
+      if (clientData.id && typeof clientData.id === 'number') {
+        savedClient = await apiService.updateClient(clientData.id, clientData);
+      } else {
+        savedClient = await apiService.createClient(clientData);
+      }
+      
+      // Si se guardó en backend exitosamente
+      if (savedClient && savedClient.id) {
+        setClients(prevClients => {
+          if (!Array.isArray(prevClients)) return [savedClient];
           
-          return savedClient;
-        }
-      } catch (backendError) {
-        console.error('Error guardando en backend:', backendError);
-        
-        // Si falla el backend y NO estamos autenticados, usar localStorage como fallback
-        if (!isAuthenticated) {
-          console.log('Guardando en localStorage como fallback');
+          const updatedClients = [...prevClients];
+          const existingIndex = updatedClients.findIndex(c => c.id === savedClient.id);
           
-          const newClient = {
-            ...clientData,
-            id: clientData.id || Date.now(),
-            createdAt: clientData.createdAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          };
-
-          if (clientData.id) {
-            setClients(prev => prev.map(c => c.id === clientData.id ? newClient : c));
+          if (existingIndex >= 0) {
+            updatedClients[existingIndex] = savedClient;
           } else {
-            setClients(prev => [...prev, newClient]);
+            updatedClients.push(savedClient);
           }
           
-          return newClient;
-        } else {
-          // Si estamos autenticados pero falló el backend, lanzar el error
-          throw backendError;
-        }
+          return updatedClients;
+        });
+        
+        return savedClient;
       }
       
       return null;
