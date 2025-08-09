@@ -1,5 +1,13 @@
-const pool = require('./pool'); // Usar pool optimizado
+const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
+
+// Crear pool aquí directamente
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? {
+    rejectUnauthorized: false
+  } : false
+});
 
 const TABLES_SCHEMA = {
   users: `
@@ -74,11 +82,18 @@ async function initializeDatabase() {
     console.log('✅ Índices creados');
     
     // 3. Verificar si existe usuario admin
-    const adminCheck = await pool.query(
-      "SELECT COUNT(*) FROM users WHERE role = 'admin'"
-    );
+    let adminCount = 0;
+    try {
+      const adminCheck = await pool.query(
+        "SELECT COUNT(*) FROM users WHERE role = 'admin'"
+      );
+      adminCount = parseInt(adminCheck.rows?.[0]?.count || 0);
+    } catch (error) {
+      console.log('⚠️ No se pudo verificar usuarios admin:', error.message);
+      adminCount = 0;
+    }
     
-    if (parseInt(adminCheck.rows[0].count) === 0) {
+    if (adminCount === 0) {
       console.log('\n👤 Creando usuario administrador por defecto...');
       const hashedPassword = await bcrypt.hash('admin123', 10);
       
