@@ -50,6 +50,13 @@ const SubOperationButtons = ({
               onClick={() => handleButtonClick(optionValue)}
               className={getButtonClasses(optionValue)}
               disabled={readOnly}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleButtonClick(optionValue);
+                }
+              }}
             >
               {optionLabel}
             </button>

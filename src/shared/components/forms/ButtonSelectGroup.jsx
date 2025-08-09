@@ -83,6 +83,13 @@ const ButtonSelectGroup = ({
               onClick={() => handleButtonClick(optionValue)}
               className={getButtonClasses(optionValue)}
               disabled={readOnly}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleButtonClick(optionValue);
+                }
+              }}
             >
               {isMoneda ? (
                 // Para monedas, separar emoji y texto
