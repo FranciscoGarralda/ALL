@@ -3,7 +3,12 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
-  // Deshabilitar eval en producción para seguridad
+  // Generar un nuevo buildId en cada deploy
+  generateBuildId: async () => {
+    return Date.now().toString();
+  },
+  
+  // Optimizaciones de producción
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
@@ -49,9 +54,8 @@ const nextConfig = {
     ]
   },
   
-  // Configuración de webpack para optimización
+  // Configuración de webpack para mejor manejo de chunks
   webpack: (config, { isServer }) => {
-    // Optimizaciones de producción
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
@@ -75,7 +79,6 @@ const nextConfig = {
         }
       };
     }
-    
     return config;
   }
 };
