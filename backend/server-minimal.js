@@ -12,13 +12,26 @@ const PORT = process.env.PORT || 8080;
 // Validar variables de entorno críticas
 if (!process.env.DATABASE_URL) {
   console.error('❌ ERROR: DATABASE_URL no está configurada');
-  process.exit(1);
+  console.error('Variables de entorno disponibles:', Object.keys(process.env).filter(k => !k.includes('SECRET')));
+  // En Railway, DATABASE_URL podría venir de otra variable
+  if (process.env.DATABASE_PRIVATE_URL) {
+    process.env.DATABASE_URL = process.env.DATABASE_PRIVATE_URL;
+    console.log('✅ Usando DATABASE_PRIVATE_URL como DATABASE_URL');
+  } else if (process.env.DATABASE_PUBLIC_URL) {
+    process.env.DATABASE_URL = process.env.DATABASE_PUBLIC_URL;
+    console.log('✅ Usando DATABASE_PUBLIC_URL como DATABASE_URL');
+  } else {
+    console.error('❌ No se encontró ninguna variable de conexión a la base de datos');
+    process.exit(1);
+  }
 }
 
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'secret-key') {
-  console.error('❌ ERROR: JWT_SECRET no está configurada o está usando el valor por defecto');
+  console.error('⚠️ ADVERTENCIA: JWT_SECRET no está configurada o está usando el valor por defecto');
   if (process.env.NODE_ENV === 'production') {
-    process.exit(1);
+    // Generar un JWT_SECRET temporal para no romper el servidor
+    process.env.JWT_SECRET = require('crypto').randomBytes(32).toString('hex');
+    console.log('⚠️ Generando JWT_SECRET temporal. CONFIGURA UNA PERMANENTE EN RAILWAY!');
   }
 }
 
@@ -74,7 +87,29 @@ let serverReady = false;
 pool.on('error', (err, client) => {
   console.error('Error inesperado en el pool de PostgreSQL:', err);
   // No terminar el proceso, intentar reconectar
+  if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
+    console.log('🔄 Intentando reconectar a PostgreSQL en 5 segundos...');
+    setTimeout(() => {
+      pool.connect().then(client => {
+        console.log('✅ Reconectado a PostgreSQL');
+        client.release();
+      }).catch(err => {
+        console.error('❌ Fallo al reconectar:', err.message);
+      });
+    }, 5000);
+  }
 });
+
+// Verificar conexión periódicamente (keep-alive)
+setInterval(() => {
+  if (!isShuttingDown && serverReady) {
+    pool.query('SELECT 1', (err, result) => {
+      if (err) {
+        console.error('❌ Health check de PostgreSQL falló:', err.message);
+      }
+    });
+  }
+}, 30000); // Cada 30 segundos
 
 // NO verificar conexión al inicio - dejar que sea lazy
 console.log('🔧 Pool de PostgreSQL configurado');
@@ -293,7 +328,12 @@ async function initializeDatabaseWithRetry() {
 // NO iniciar la DB inmediatamente, esperar un poco para que PostgreSQL esté listo
 setTimeout(() => {
   if (!isShuttingDown) {
-    initializeDatabaseWithRetry();
+    console.log('🚀 Iniciando proceso de inicialización de base de datos...');
+    initializeDatabaseWithRetry().then(() => {
+      console.log('✅ Proceso de inicialización completado');
+    }).catch(err => {
+      console.error('❌ Error en el proceso de inicialización:', err);
+    });
   }
 }, 5000); // Esperar 5 segundos antes de intentar
 
@@ -977,11 +1017,6 @@ const gracefulShutdown = async (signal) => {
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
-// Railway envía SIGTERM, así que también escuchar eso específicamente
-process.on('SIGTERM', () => {
-  console.log('⚠️ Railway está terminando el contenedor...');
-});
-
 // Manejar errores no capturados (pero no terminar el proceso)
 process.on('uncaughtException', (error) => {
   console.error('❌ Error no capturado:', error);
@@ -998,9 +1033,25 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Agregar un health check específico para Railway
 app.get('/', (req, res) => {
+  const uptime = process.uptime();
+  const hours = Math.floor(uptime / 3600);
+  const minutes = Math.floor((uptime % 3600) / 60);
+  const seconds = Math.floor(uptime % 60);
+  
   res.json({ 
     status: serverReady ? 'ready' : 'starting',
     service: 'financial-system-backend',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    uptime: `${hours}h ${minutes}m ${seconds}s`,
+    environment: {
+      NODE_ENV: process.env.NODE_ENV || 'development',
+      PORT: PORT,
+      DATABASE_CONFIGURED: !!process.env.DATABASE_URL,
+      JWT_CONFIGURED: !!process.env.JWT_SECRET
+    },
+    database: {
+      initialized: dbInitialized,
+      retries: dbInitRetries
+    }
   });
 });
