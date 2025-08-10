@@ -52,7 +52,9 @@ const SubOperationButtons = ({
               disabled={readOnly}
               tabIndex={0}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
+                // Solo manejar Enter para activar el botón
+                // El espacio ya es manejado nativamente por los botones
+                if (e.key === 'Enter') {
                   e.preventDefault();
                   handleButtonClick(optionValue);
                 }

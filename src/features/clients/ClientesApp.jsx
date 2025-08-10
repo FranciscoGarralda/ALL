@@ -381,7 +381,8 @@ function FormularioCliente({ cliente, onSave, onCancel }) {
       await onSave({ 
         ...cliente, 
         ...formData, 
-        id: cliente?.id || Date.now(),
+        // NO generar ID en el frontend - PostgreSQL lo hace automáticamente
+        id: cliente?.id, // Solo pasar ID si es una edición
         operaciones: cliente?.operaciones || [],
         ultimaOperacion: cliente?.ultimaOperacion || null,
         totalOperaciones: cliente?.totalOperaciones || 0,
