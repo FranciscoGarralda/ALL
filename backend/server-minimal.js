@@ -68,12 +68,12 @@ const poolConfig = {
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   max: 5, // reducir conexiones máximas
-  idleTimeoutMillis: 10000, // 10 segundos
-  connectionTimeoutMillis: 10000, // 10 segundos para conectar
+  idleTimeoutMillis: 0, // 0 = nunca cerrar conexiones por inactividad
+  connectionTimeoutMillis: 0, // 0 = sin timeout de conexión
   allowExitOnIdle: false, // NO permitir que el proceso termine
   // Configuración adicional para Railway
-  statement_timeout: 30000, // 30 segundos
-  query_timeout: 30000,
+  statement_timeout: 0, // sin timeout
+  query_timeout: 0, // sin timeout
   keepAlive: true,
   keepAliveInitialDelayMillis: 10000,
   // Configuración específica para evitar desconexiones
@@ -88,6 +88,53 @@ const pool = new Pool(poolConfig);
 // Variable para controlar el estado del servidor
 let isShuttingDown = false;
 let serverReady = false;
+let persistentClient = null;
+
+// Mantener una conexión persistente SIEMPRE
+async function maintainPersistentConnection() {
+  if (isShuttingDown) return;
+  
+  try {
+    // Si no hay cliente o se desconectó, crear uno nuevo
+    if (!persistentClient) {
+      persistentClient = await pool.connect();
+      console.log('📌 Conexión persistente a PostgreSQL establecida');
+      
+      // Manejar errores en el cliente persistente
+      persistentClient.on('error', (err) => {
+        console.error('❌ Error en conexión persistente:', err.message);
+        persistentClient = null;
+        // Reconectar en 2 segundos
+        setTimeout(maintainPersistentConnection, 2000);
+      });
+    }
+    
+    // Hacer una query simple para mantenerla activa
+    await persistentClient.query('SELECT 1');
+  } catch (err) {
+    console.error('❌ Error manteniendo conexión persistente:', err.message);
+    persistentClient = null;
+    // Reintentar en 2 segundos
+    setTimeout(maintainPersistentConnection, 2000);
+  }
+}
+
+// Iniciar la conexión persistente después de 3 segundos
+setTimeout(maintainPersistentConnection, 3000);
+
+// Mantener la conexión activa cada 10 segundos
+setInterval(async () => {
+  if (!isShuttingDown && persistentClient) {
+    try {
+      await persistentClient.query('SELECT 1');
+      // console.log('✓ Conexión persistente activa');
+    } catch (err) {
+      console.error('❌ Error en keep-alive persistente:', err.message);
+      persistentClient = null;
+      maintainPersistentConnection();
+    }
+  }
+}, 10000); // Cada 10 segundos
 
 // Manejo robusto de errores de PostgreSQL
 pool.on('error', (err, client) => {
@@ -1015,7 +1062,18 @@ const gracefulShutdown = async (signal) => {
     console.log('Esperando que las queries activas terminen...');
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // 3. Cerrar pool de PostgreSQL
+    // 3. Cerrar la conexión persistente primero
+    if (persistentClient) {
+      try {
+        await persistentClient.release();
+        console.log('✅ Conexión persistente liberada');
+      } catch (err) {
+        console.error('Error liberando conexión persistente:', err);
+      }
+      persistentClient = null;
+    }
+    
+    // 4. Cerrar pool de PostgreSQL
     try {
       await pool.end();
       console.log('✅ Pool de PostgreSQL cerrado correctamente');
@@ -1023,7 +1081,7 @@ const gracefulShutdown = async (signal) => {
       console.error('Error cerrando pool de PostgreSQL:', err);
     }
     
-    // 4. Limpiar el timeout
+    // 5. Limpiar el timeout
     clearTimeout(shutdownTimeout);
     
     console.log('✅ Cierre graceful completado');
