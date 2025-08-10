@@ -44,15 +44,16 @@ const corsOptions = {
       'http://localhost:3001'
     ];
     
-    // Permitir requests sin origin (como Postman) solo en desarrollo
-    if (!origin && process.env.NODE_ENV !== 'production') {
+    // Permitir requests sin origin (como Postman y HEALTHCHECKS DE RAILWAY)
+    if (!origin) {
       return callback(null, true);
     }
     
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('No permitido por CORS'));
+      // En lugar de lanzar error, solo rechazar silenciosamente
+      callback(null, false);
     }
   },
   credentials: true,
