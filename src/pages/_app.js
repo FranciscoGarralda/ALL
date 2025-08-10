@@ -1,6 +1,6 @@
 import '../styles/globals.css';
 import Head from 'next/head';
-import ErrorBoundary from '../shared/components/ui/ErrorBoundary';
+import ErrorBoundary from '../shared/components/ErrorBoundary';
 
 export default function App({ Component, pageProps }) {
   return (
