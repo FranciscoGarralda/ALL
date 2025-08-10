@@ -17,13 +17,22 @@ app.use(express.json());
 const poolConfig = {
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  max: 10, // máximo de conexiones
-  idleTimeoutMillis: 30000, // 30 segundos
-  connectionTimeoutMillis: 5000, // 5 segundos para conectar
-  allowExitOnIdle: true // permite que el proceso termine si no hay conexiones
+  max: 5, // reducir conexiones máximas
+  idleTimeoutMillis: 10000, // 10 segundos
+  connectionTimeoutMillis: 10000, // 10 segundos para conectar
+  allowExitOnIdle: false, // NO permitir que el proceso termine
+  // Configuración adicional para Railway
+  statement_timeout: 30000, // 30 segundos
+  query_timeout: 30000,
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 10000
 };
 
 const pool = new Pool(poolConfig);
+
+// Variable para controlar el estado del servidor
+let isShuttingDown = false;
+let serverReady = false;
 
 // Manejo robusto de errores de PostgreSQL
 pool.on('error', (err, client) => {
@@ -31,18 +40,16 @@ pool.on('error', (err, client) => {
   // No terminar el proceso, intentar reconectar
 });
 
-// Verificar conexión al inicio
-pool.connect((err, client, release) => {
-  if (err) {
-    console.error('Error conectando a PostgreSQL:', err);
-  } else {
-    console.log('✅ Conectado a PostgreSQL');
-    release();
-  }
-});
+// NO verificar conexión al inicio - dejar que sea lazy
+console.log('🔧 Pool de PostgreSQL configurado');
 
 // Función helper para ejecutar queries con reintentos
 async function executeQuery(query, params = [], retries = 3) {
+  // Si estamos cerrando, no ejecutar queries
+  if (isShuttingDown) {
+    throw new Error('Servidor cerrándose, no se pueden ejecutar queries');
+  }
+  
   for (let i = 0; i < retries; i++) {
     try {
       const result = await pool.query(query, params);
@@ -50,14 +57,16 @@ async function executeQuery(query, params = [], retries = 3) {
     } catch (error) {
       console.error(`Error en query (intento ${i + 1}/${retries}):`, error.message);
       
-      // Si es el último intento, lanzar el error
-      if (i === retries - 1) {
-        throw error;
-      }
-      
-      // Si es un error de conexión, esperar antes de reintentar
+      // Si es un error de conexión y no es el último intento, reintentar
       if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT' || error.code === '57P01') {
-        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+        if (i < retries - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+        } else {
+          throw error;
+        }
+      } else {
+        // Para otros errores, no reintentar
+        throw error;
       }
     }
   }
@@ -67,6 +76,14 @@ async function executeQuery(query, params = [], retries = 3) {
 async function initDatabase() {
   try {
     console.log('🔍 Verificando base de datos...');
+    
+    // Primero verificar si podemos conectar
+    try {
+      await executeQuery('SELECT 1', [], 1); // Solo 1 intento
+    } catch (connError) {
+      console.error('❌ No se puede conectar a la base de datos:', connError.message);
+      throw connError;
+    }
     
     // 1. Verificar si las tablas existen y tienen la estructura correcta
     const tablesCheck = await executeQuery(`
@@ -96,6 +113,10 @@ async function initDatabase() {
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `);
+      
+      // Crear índices
+      await executeQuery('CREATE INDEX idx_users_email ON users(email)');
+      await executeQuery('CREATE INDEX idx_users_username ON users(username)');
     }
     
     if (!existingTables.includes('clients')) {
@@ -104,14 +125,21 @@ async function initDatabase() {
         CREATE TABLE clients (
           id SERIAL PRIMARY KEY,
           nombre VARCHAR(255) NOT NULL,
+          apellido VARCHAR(255),
+          dni VARCHAR(50),
           telefono VARCHAR(100),
           email VARCHAR(255),
           direccion TEXT,
           notas TEXT,
+          tipo_cliente VARCHAR(50),
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `);
+      
+      // Crear índices
+      await executeQuery('CREATE INDEX idx_clients_nombre ON clients(nombre)');
+      await executeQuery('CREATE INDEX idx_clients_dni ON clients(dni)');
     }
     
     if (!existingTables.includes('movements')) {
@@ -148,51 +176,76 @@ async function initDatabase() {
           interes DECIMAL(5,2),
           lapso VARCHAR(50),
           fechaLimite DATE,
-          socioSeleccionado VARCHAR(100),
-          totalCompra DECIMAL(15,2),
-          totalVenta DECIMAL(15,2),
-          montoVenta DECIMAL(15,2),
-          cuentaSalida VARCHAR(100),
-          cuentaIngreso VARCHAR(100),
-          profit DECIMAL(15,2),
-          monedaProfit VARCHAR(20),
-          walletTC VARCHAR(50),
-          mixedPayments JSONB,
-          expectedTotalForMixedPayments DECIMAL(15,2),
-          utilidadCalculada DECIMAL(15,2),
-          utilidadPorcentaje DECIMAL(5,2),
-          costoPromedio DECIMAL(15,4),
+          cuotas INTEGER,
+          utilidad DECIMAL(15,2),
+          monedaUtilidad VARCHAR(20),
+          cuentaUtilidad VARCHAR(100),
+          totalUtilidad DECIMAL(15,2),
+          fechaVencimiento DATE,
+          formData JSONB,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          user_id INTEGER REFERENCES users(id),
+          is_deleted BOOLEAN DEFAULT false,
+          deleted_at TIMESTAMP
         )
       `);
+      
+      // Crear índices
+      await executeQuery('CREATE INDEX idx_movements_fecha ON movements(fecha)');
+      await executeQuery('CREATE INDEX idx_movements_cliente ON movements(cliente)');
+      await executeQuery('CREATE INDEX idx_movements_estado ON movements(estado)');
     }
     
-    console.log('✅ Base de datos verificada');
+    // 3. Verificar si existe el usuario admin
+    const adminCheck = await executeQuery(
+      'SELECT id FROM users WHERE username = $1',
+      ['admin']
+    );
+    
+    if (adminCheck.rows.length === 0) {
+      console.log('Creando usuario admin por defecto...');
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+      await executeQuery(
+        `INSERT INTO users (name, username, email, password, role, permissions) 
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        ['Administrador', 'admin', 'admin@sistema.com', hashedPassword, 'admin', '{}']
+      );
+    }
+    
+    console.log('✅ Base de datos verificada y lista');
+    return true;
   } catch (error) {
-    console.error('⚠️ Error en initDatabase (no crítico):', error.message);
-    // No lanzar el error para que el servidor pueda continuar
+    console.error('❌ Error en initDatabase:', error);
+    throw error;
   }
 }
 
-// Inicializar base de datos al arrancar
+// Variable para controlar el estado de la DB
 let dbInitialized = false;
 let dbInitRetries = 0;
-const MAX_DB_INIT_RETRIES = 5;
+const MAX_DB_INIT_RETRIES = 10; // Aumentar reintentos
 
 async function initializeDatabaseWithRetry() {
-  while (!dbInitialized && dbInitRetries < MAX_DB_INIT_RETRIES) {
+  // Si ya está inicializada o estamos cerrando, no hacer nada
+  if (dbInitialized || isShuttingDown) {
+    return;
+  }
+  
+  while (!dbInitialized && dbInitRetries < MAX_DB_INIT_RETRIES && !isShuttingDown) {
     try {
       await initDatabase();
       dbInitialized = true;
+      serverReady = true;
       console.log('✅ Base de datos inicializada correctamente');
     } catch (error) {
       dbInitRetries++;
       console.error(`❌ Error inicializando DB (intento ${dbInitRetries}/${MAX_DB_INIT_RETRIES}):`, error.message);
       
-      if (dbInitRetries < MAX_DB_INIT_RETRIES) {
-        console.log(`Reintentando en ${dbInitRetries * 2} segundos...`);
-        await new Promise(resolve => setTimeout(resolve, dbInitRetries * 2000));
+      if (dbInitRetries < MAX_DB_INIT_RETRIES && !isShuttingDown) {
+        const waitTime = Math.min(dbInitRetries * 3000, 30000); // Máximo 30 segundos
+        console.log(`Reintentando en ${waitTime/1000} segundos...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
       } else {
         console.error('❌ No se pudo inicializar la base de datos después de varios intentos');
         // El servidor continuará funcionando, pero sin DB
@@ -201,11 +254,23 @@ async function initializeDatabaseWithRetry() {
   }
 }
 
-// Iniciar la inicialización de DB en background
-initializeDatabaseWithRetry();
+// NO iniciar la DB inmediatamente, esperar un poco para que PostgreSQL esté listo
+setTimeout(() => {
+  if (!isShuttingDown) {
+    initializeDatabaseWithRetry();
+  }
+}, 5000); // Esperar 5 segundos antes de intentar
 
 // Middleware para verificar si la DB está lista
 const databaseCheckMiddleware = async (req, res, next) => {
+  // Si estamos cerrando, rechazar requests
+  if (isShuttingDown) {
+    return res.status(503).json({
+      success: false,
+      message: 'Servidor cerrándose'
+    });
+  }
+  
   if (!dbInitialized) {
     // Intentar inicializar si aún no está lista
     await initializeDatabaseWithRetry();
@@ -232,32 +297,66 @@ app.use('/api/clients', databaseCheckMiddleware);
 
 // Health check básico (no depende de DB)
 app.get('/api/health', (req, res) => {
+  // Si estamos cerrando, indicar que no estamos saludables
+  if (isShuttingDown) {
+    return res.status(503).json({ 
+      status: 'shutting_down',
+      timestamp: new Date().toISOString()
+    });
+  }
+  
   res.json({ 
     status: 'ok', 
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    dbInitialized: dbInitialized,
+    serverReady: serverReady
   });
 });
 
 // Health check detallado
 app.get('/api/health/detailed', async (req, res) => {
+  if (isShuttingDown) {
+    return res.status(503).json({ 
+      status: 'shutting_down',
+      timestamp: new Date().toISOString()
+    });
+  }
+  
   try {
-    const dbCheck = await executeQuery('SELECT 1 as check');
+    let dbStatus = 'not_initialized';
+    let dbResponseTime = null;
+    
+    if (dbInitialized) {
+      const start = Date.now();
+      try {
+        await executeQuery('SELECT 1 as check', [], 1);
+        dbResponseTime = Date.now() - start;
+        dbStatus = 'connected';
+      } catch (error) {
+        dbStatus = 'error';
+      }
+    }
+    
     res.json({ 
-      status: 'ok', 
+      status: serverReady ? 'ok' : 'starting', 
       timestamp: new Date().toISOString(),
-      database: dbCheck.rows.length > 0 ? 'connected' : 'error',
-      tables: {
-        users: await checkTableExists('users'),
-        clients: await checkTableExists('clients'),
-        movements: await checkTableExists('movements')
+      database: {
+        status: dbStatus,
+        responseTime: dbResponseTime,
+        initialized: dbInitialized,
+        retries: dbInitRetries
+      },
+      server: {
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        nodeVersion: process.version
       }
     });
   } catch (error) {
-    res.json({ 
-      status: 'degraded', 
-      timestamp: new Date().toISOString(),
-      database: 'error',
-      error: error.message
+    console.error('Error en health check detallado:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      error: error.message 
     });
   }
 });
@@ -820,34 +919,81 @@ const server = app.listen(PORT, () => {
 const gracefulShutdown = async (signal) => {
   console.log(`\n${signal} recibido. Cerrando servidor gracefully...`);
   
-  // Cerrar servidor HTTP
-  server.close(() => {
-    console.log('Servidor HTTP cerrado');
-  });
+  // Marcar que el servidor está cerrando
+  isShuttingDown = true;
+  serverReady = false;
   
-  // Cerrar conexión a PostgreSQL
+  // Dar tiempo a las conexiones activas para terminar
+  const shutdownTimeout = setTimeout(() => {
+    console.error('⚠️ Timeout de cierre alcanzado, forzando salida...');
+    process.exit(1);
+  }, 30000); // 30 segundos máximo
+  
   try {
-    await pool.end();
-    console.log('Conexión a PostgreSQL cerrada');
-  } catch (err) {
-    console.error('Error cerrando PostgreSQL:', err);
+    // 1. Cerrar servidor HTTP primero
+    await new Promise((resolve) => {
+      server.close((err) => {
+        if (err) {
+          console.error('Error cerrando servidor HTTP:', err);
+        } else {
+          console.log('✅ Servidor HTTP cerrado');
+        }
+        resolve();
+      });
+    });
+    
+    // 2. Esperar un poco para que las queries activas terminen
+    console.log('Esperando que las queries activas terminen...');
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // 3. Cerrar pool de PostgreSQL
+    try {
+      await pool.end();
+      console.log('✅ Pool de PostgreSQL cerrado correctamente');
+    } catch (err) {
+      console.error('Error cerrando pool de PostgreSQL:', err);
+    }
+    
+    // 4. Limpiar el timeout
+    clearTimeout(shutdownTimeout);
+    
+    console.log('✅ Cierre graceful completado');
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error durante el cierre graceful:', error);
+    clearTimeout(shutdownTimeout);
+    process.exit(1);
   }
-  
-  // Salir del proceso
-  process.exit(0);
 };
 
 // Escuchar señales de terminación
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
-// Manejar errores no capturados
+// Railway envía SIGTERM, así que también escuchar eso específicamente
+process.on('SIGTERM', () => {
+  console.log('⚠️ Railway está terminando el contenedor...');
+});
+
+// Manejar errores no capturados (pero no terminar el proceso)
 process.on('uncaughtException', (error) => {
   console.error('❌ Error no capturado:', error);
-  // No terminar el proceso
+  // Si estamos en producción y es un error crítico, hacer shutdown
+  if (process.env.NODE_ENV === 'production' && !isShuttingDown) {
+    gracefulShutdown('UNCAUGHT_EXCEPTION');
+  }
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('❌ Promesa rechazada no manejada:', reason);
-  // No terminar el proceso
+  // No terminar el proceso a menos que sea crítico
+});
+
+// Agregar un health check específico para Railway
+app.get('/', (req, res) => {
+  res.json({ 
+    status: serverReady ? 'ready' : 'starting',
+    service: 'financial-system-backend',
+    timestamp: new Date().toISOString()
+  });
 });
