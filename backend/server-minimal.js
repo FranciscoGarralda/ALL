@@ -686,6 +686,185 @@ app.delete('/api/clients/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// Endpoint temporal de emergencia para limpiar la base de datos
+app.get('/api/emergency-clean-db', async (req, res) => {
+  console.log('🚨 LIMPIEZA DE EMERGENCIA DE BASE DE DATOS...');
+  
+  try {
+    // 1. Eliminar TODAS las tablas de backup y duplicadas
+    const dropQueries = [
+      'DROP TABLE IF EXISTS movements_backup_old CASCADE',
+      'DROP TABLE IF EXISTS clients_backup_old CASCADE', 
+      'DROP TABLE IF EXISTS users_backup_old CASCADE',
+      'DROP TABLE IF EXISTS movements_backup_broken CASCADE',
+      'DROP TABLE IF EXISTS clients_backup_broken CASCADE',
+      'DROP TABLE IF EXISTS users_backup_broken CASCADE',
+      'DROP TABLE IF EXISTS "Movements" CASCADE',
+      'DROP TABLE IF EXISTS "Clients" CASCADE',
+      'DROP TABLE IF EXISTS "Users" CASCADE'
+    ];
+    
+    for (const query of dropQueries) {
+      await pool.query(query).catch(e => console.log(`Ignorando: ${e.message}`));
+    }
+    
+    // 2. Verificar y eliminar movements si no tiene fecha
+    const checkMovements = await pool.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.tables WHERE table_name = 'movements'
+      )
+    `);
+    
+    if (checkMovements.rows[0].exists) {
+      const hasDate = await pool.query(`
+        SELECT EXISTS (
+          SELECT 1 FROM information_schema.columns 
+          WHERE table_name = 'movements' AND column_name = 'fecha'
+        )
+      `);
+      
+      if (!hasDate.rows[0].exists) {
+        await pool.query('DROP TABLE movements CASCADE');
+      }
+    }
+    
+    // 3. Crear las 3 tablas con estructura correcta
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS movements (
+        id SERIAL PRIMARY KEY,
+        cliente VARCHAR(255),
+        fecha DATE NOT NULL DEFAULT CURRENT_DATE,
+        nombreDia VARCHAR(20),
+        detalle TEXT,
+        operacion VARCHAR(100),
+        subOperacion VARCHAR(100),
+        proveedorCC VARCHAR(255),
+        monto DECIMAL(15,2),
+        moneda VARCHAR(20),
+        cuenta VARCHAR(100),
+        total DECIMAL(15,2),
+        estado VARCHAR(50),
+        por VARCHAR(100),
+        nombreOtro VARCHAR(255),
+        tc DECIMAL(15,4),
+        monedaTC VARCHAR(20),
+        monedaTCCmpra VARCHAR(20),
+        monedaTCVenta VARCHAR(20),
+        monedaVenta VARCHAR(20),
+        tcVenta DECIMAL(15,4),
+        comision DECIMAL(15,2),
+        comisionPorcentaje DECIMAL(5,2),
+        montoComision DECIMAL(15,2),
+        montoReal DECIMAL(15,2),
+        monedaComision VARCHAR(20),
+        cuentaComision VARCHAR(100),
+        interes DECIMAL(5,2),
+        lapso VARCHAR(50),
+        fechaLimite DATE,
+        socioSeleccionado VARCHAR(100),
+        totalCompra DECIMAL(15,2),
+        totalVenta DECIMAL(15,2),
+        montoVenta DECIMAL(15,2),
+        cuentaSalida VARCHAR(100),
+        cuentaIngreso VARCHAR(100),
+        profit DECIMAL(15,2),
+        monedaProfit VARCHAR(20),
+        walletTC VARCHAR(50),
+        mixedPayments JSONB,
+        expectedTotalForMixedPayments DECIMAL(15,2),
+        utilidadCalculada DECIMAL(15,2),
+        utilidadPorcentaje DECIMAL(5,2),
+        costoPromedio DECIMAL(15,4),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS clients (
+        id SERIAL PRIMARY KEY,
+        nombre VARCHAR(255) NOT NULL,
+        telefono VARCHAR(100),
+        email VARCHAR(255),
+        direccion TEXT,
+        notas TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'operator' CHECK (role IN ('admin', 'operator', 'viewer')),
+        permissions TEXT[] DEFAULT '{}',
+        active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // 4. Crear índices
+    const indexes = [
+      'CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)',
+      'CREATE INDEX IF NOT EXISTS idx_movements_fecha ON movements(fecha)',
+      'CREATE INDEX IF NOT EXISTS idx_clients_nombre ON clients(nombre)'
+    ];
+    
+    for (const idx of indexes) {
+      await pool.query(idx).catch(e => console.log(`Índice ya existe`));
+    }
+    
+    // 5. Crear usuario admin si no existe
+    const adminExists = await pool.query(
+      'SELECT id FROM users WHERE username = $1',
+      ['admin']
+    );
+    
+    if (adminExists.rows.length === 0) {
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+      await pool.query(`
+        INSERT INTO users (name, username, email, password, role, permissions)
+        VALUES ($1, $2, $3, $4, $5, $6)
+      `, [
+        'Administrador',
+        'admin',
+        'admin@sistema.com',
+        hashedPassword,
+        'admin',
+        '{operaciones,clientes,movimientos,pendientes,gastos,cuentas-corrientes,prestamistas,comisiones,utilidad,arbitraje,saldos,caja,rentabilidad,stock,saldos-iniciales,usuarios}'
+      ]);
+    }
+    
+    // 6. Verificar tablas finales
+    const tables = await pool.query(`
+      SELECT table_name FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      ORDER BY table_name
+    `);
+    
+    res.json({
+      success: true,
+      message: 'BASE DE DATOS LIMPIADA Y RECONSTRUIDA',
+      tablesInDatabase: tables.rows.map(r => r.table_name),
+      expectedTables: ['clients', 'movements', 'users'],
+      adminCreated: adminExists.rows.length === 0
+    });
+    
+  } catch (error) {
+    console.error('Error en limpieza de emergencia:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      detail: error.detail 
+    });
+  }
+});
+
 // Iniciar servidor
 app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en puerto ${PORT}`);
