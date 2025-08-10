@@ -75,7 +75,12 @@ const poolConfig = {
   statement_timeout: 30000, // 30 segundos
   query_timeout: 30000,
   keepAlive: true,
-  keepAliveInitialDelayMillis: 10000
+  keepAliveInitialDelayMillis: 10000,
+  // Configuración específica para evitar desconexiones
+  idle_in_transaction_session_timeout: 0, // Sin timeout para transacciones
+  tcp_keepalives_idle: 60, // Enviar keepalive cada 60 segundos
+  tcp_keepalives_interval: 10, // Reintentar cada 10 segundos
+  tcp_keepalives_count: 10 // 10 intentos antes de cerrar
 };
 
 const pool = new Pool(poolConfig);
@@ -102,15 +107,26 @@ pool.on('error', (err, client) => {
 });
 
 // Verificar conexión periódicamente (keep-alive)
-setInterval(() => {
+const keepAliveInterval = setInterval(() => {
   if (!isShuttingDown && serverReady) {
     pool.query('SELECT 1', (err, result) => {
       if (err) {
         console.error('❌ Health check de PostgreSQL falló:', err.message);
+      } else {
+        // Log silencioso para confirmar que está vivo
+        // console.log('✓ PostgreSQL keep-alive');
       }
     });
   }
 }, 30000); // Cada 30 segundos
+
+// Manejar señales de proceso para limpiar el interval
+process.on('SIGTERM', () => {
+  clearInterval(keepAliveInterval);
+});
+process.on('SIGINT', () => {
+  clearInterval(keepAliveInterval);
+});
 
 // NO verificar conexión al inicio - dejar que sea lazy
 console.log('🔧 Pool de PostgreSQL configurado');
@@ -371,6 +387,11 @@ app.use('/api/clients', databaseCheckMiddleware);
 // ==========================================
 // RUTAS DE API
 // ==========================================
+
+// Endpoint simple para mantener el servidor activo
+app.get('/ping', (req, res) => {
+  res.send('pong');
+});
 
 // Health check básico (no depende de DB)
 app.get('/api/health', (req, res) => {
