@@ -687,9 +687,34 @@ app.delete('/api/clients/:id', authMiddleware, async (req, res) => {
   });
 
 // Iniciar servidor
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en puerto ${PORT}`);
 });
+
+// Manejo correcto de cierre para evitar que PostgreSQL se corrompa
+const gracefulShutdown = async (signal) => {
+  console.log(`\n${signal} recibido. Cerrando servidor gracefully...`);
+  
+  // Cerrar servidor HTTP
+  server.close(() => {
+    console.log('Servidor HTTP cerrado');
+  });
+  
+  // Cerrar conexión a PostgreSQL
+  try {
+    await pool.end();
+    console.log('Conexión a PostgreSQL cerrada');
+  } catch (err) {
+    console.error('Error cerrando PostgreSQL:', err);
+  }
+  
+  // Salir del proceso
+  process.exit(0);
+};
+
+// Escuchar señales de terminación
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // Manejar errores no capturados
 process.on('uncaughtException', (error) => {
