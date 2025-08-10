@@ -11,16 +11,55 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-// Pool de PostgreSQL
-const pool = new Pool({
+// Configuración de PostgreSQL con mejor manejo de errores
+const poolConfig = {
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  max: 10, // máximo de conexiones
+  idleTimeoutMillis: 30000, // 30 segundos
+  connectionTimeoutMillis: 5000, // 5 segundos para conectar
+  allowExitOnIdle: true // permite que el proceso termine si no hay conexiones
+};
+
+const pool = new Pool(poolConfig);
+
+// Manejo robusto de errores de PostgreSQL
+pool.on('error', (err, client) => {
+  console.error('Error inesperado en el pool de PostgreSQL:', err);
+  // No terminar el proceso, intentar reconectar
 });
 
-// Manejar errores del pool
-pool.on('error', (err) => {
-  console.error('Error inesperado en el pool de PostgreSQL:', err);
+// Verificar conexión al inicio
+pool.connect((err, client, release) => {
+  if (err) {
+    console.error('Error conectando a PostgreSQL:', err);
+  } else {
+    console.log('✅ Conectado a PostgreSQL');
+    release();
+  }
 });
+
+// Función helper para ejecutar queries con reintentos
+async function executeQuery(query, params = [], retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const result = await executeQuery(query, params);
+      return result;
+    } catch (error) {
+      console.error(`Error en query (intento ${i + 1}/${retries}):`, error.message);
+      
+      // Si es el último intento, lanzar el error
+      if (i === retries - 1) {
+        throw error;
+      }
+      
+      // Si es un error de conexión, esperar antes de reintentar
+      if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT' || error.code === '57P01') {
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+      }
+    }
+  }
+}
 
 // Función simplificada de inicialización de base de datos
 async function initDatabase() {
@@ -28,7 +67,7 @@ async function initDatabase() {
     console.log('🔍 Verificando base de datos...');
     
     // 1. Verificar si las tablas existen y tienen la estructura correcta
-    const tablesCheck = await pool.query(`
+    const tablesCheck = await executeQuery(`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public' 
@@ -41,7 +80,7 @@ async function initDatabase() {
     // 2. Solo crear tablas si NO existen
     if (!existingTables.includes('users')) {
       console.log('Creando tabla users...');
-      await pool.query(`
+      await executeQuery(`
         CREATE TABLE users (
           id SERIAL PRIMARY KEY,
           name VARCHAR(255) NOT NULL,
@@ -59,7 +98,7 @@ async function initDatabase() {
     
     if (!existingTables.includes('clients')) {
       console.log('Creando tabla clients...');
-      await pool.query(`
+      await executeQuery(`
         CREATE TABLE clients (
           id SERIAL PRIMARY KEY,
           nombre VARCHAR(255) NOT NULL,
@@ -75,7 +114,7 @@ async function initDatabase() {
     
     if (!existingTables.includes('movements')) {
       console.log('Creando tabla movements...');
-      await pool.query(`
+      await executeQuery(`
         CREATE TABLE movements (
           id SERIAL PRIMARY KEY,
           cliente VARCHAR(255),
@@ -135,20 +174,104 @@ async function initDatabase() {
 }
 
 // Inicializar base de datos al arrancar
-initDatabase().catch(console.error);
+let dbInitialized = false;
+let dbInitRetries = 0;
+const MAX_DB_INIT_RETRIES = 5;
+
+async function initializeDatabaseWithRetry() {
+  while (!dbInitialized && dbInitRetries < MAX_DB_INIT_RETRIES) {
+    try {
+      await initDatabase();
+      dbInitialized = true;
+      console.log('✅ Base de datos inicializada correctamente');
+    } catch (error) {
+      dbInitRetries++;
+      console.error(`❌ Error inicializando DB (intento ${dbInitRetries}/${MAX_DB_INIT_RETRIES}):`, error.message);
+      
+      if (dbInitRetries < MAX_DB_INIT_RETRIES) {
+        console.log(`Reintentando en ${dbInitRetries * 2} segundos...`);
+        await new Promise(resolve => setTimeout(resolve, dbInitRetries * 2000));
+      } else {
+        console.error('❌ No se pudo inicializar la base de datos después de varios intentos');
+        // El servidor continuará funcionando, pero sin DB
+      }
+    }
+  }
+}
+
+// Iniciar la inicialización de DB en background
+initializeDatabaseWithRetry();
+
+// Middleware para verificar si la DB está lista
+const databaseCheckMiddleware = async (req, res, next) => {
+  if (!dbInitialized) {
+    // Intentar inicializar si aún no está lista
+    await initializeDatabaseWithRetry();
+    
+    if (!dbInitialized) {
+      return res.status(503).json({
+        success: false,
+        message: 'Base de datos no disponible temporalmente. Por favor, intente más tarde.'
+      });
+    }
+  }
+  next();
+};
+
+// Aplicar el middleware a todas las rutas que necesitan DB
+app.use('/api/auth', databaseCheckMiddleware);
+app.use('/api/users', databaseCheckMiddleware);
+app.use('/api/movements', databaseCheckMiddleware);
+app.use('/api/clients', databaseCheckMiddleware);
 
 // ==========================================
 // RUTAS DE API
 // ==========================================
 
-// Health check
+// Health check básico (no depende de DB)
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
-    timestamp: new Date().toISOString(),
-    database: pool ? 'connected' : 'disconnected'
+    timestamp: new Date().toISOString()
   });
 });
+
+// Health check detallado
+app.get('/api/health/detailed', async (req, res) => {
+  try {
+    const dbCheck = await executeQuery('SELECT 1 as check');
+    res.json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      database: dbCheck.rows.length > 0 ? 'connected' : 'error',
+      tables: {
+        users: await checkTableExists('users'),
+        clients: await checkTableExists('clients'),
+        movements: await checkTableExists('movements')
+      }
+    });
+  } catch (error) {
+    res.json({ 
+      status: 'degraded', 
+      timestamp: new Date().toISOString(),
+      database: 'error',
+      error: error.message
+    });
+  }
+});
+
+// Helper para verificar si una tabla existe
+async function checkTableExists(tableName) {
+  try {
+    const result = await executeQuery(
+      'SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = $1)',
+      [tableName]
+    );
+    return result.rows[0].exists;
+  } catch {
+    return false;
+  }
+}
 
 // ==========================================
 // AUTENTICACIÓN
@@ -164,7 +287,7 @@ app.post('/api/auth/login', async (req, res) => {
       ? 'SELECT * FROM users WHERE username = $1'
       : 'SELECT * FROM users WHERE email = $1';
     
-    const result = await pool.query(userQuery, [username || email]);
+    const result = await executeQuery(userQuery, [username || email]);
     
     if (result.rows.length === 0) {
       return res.status(401).json({ 
@@ -235,7 +358,7 @@ app.get('/api/auth/me', async (req, res) => {
     }
     
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret-key');
-    const result = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.id]);
+    const result = await executeQuery('SELECT * FROM users WHERE id = $1', [decoded.id]);
     
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
@@ -275,7 +398,7 @@ const authMiddleware = (req, res, next) => {
 // GET usuarios
 app.get('/api/users', authMiddleware, async (req, res) => {
   try {
-    const result = await pool.query(
+    const result = await executeQuery(
       'SELECT id, name, username, email, role, permissions, active FROM users ORDER BY created_at DESC'
     );
     
@@ -316,7 +439,7 @@ app.post('/api/users', authMiddleware, async (req, res) => {
     const formattedPermissions = `{${permissions.join(',')}}`;
     
     // Insertar usuario con permisos
-    const result = await pool.query(`
+    const result = await executeQuery(`
       INSERT INTO users (name, username, email, password, role, permissions, active)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id, name, username, email, role, permissions
@@ -380,7 +503,7 @@ app.put('/api/users/:id', authMiddleware, async (req, res) => {
     query += ` WHERE id = $${paramCount} RETURNING id, name, username, email, role, permissions, active`;
     values.push(id);
     
-    const result = await pool.query(query, values);
+    const result = await executeQuery(query, values);
     
     // Parsear permisos en la respuesta
     const user = result.rows[0];
@@ -410,8 +533,8 @@ app.delete('/api/users/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
     
     // No permitir borrar el último admin
-    const adminCount = await pool.query("SELECT COUNT(*) FROM users WHERE role = 'admin'");
-    const userToDelete = await pool.query("SELECT role FROM users WHERE id = $1", [id]);
+    const adminCount = await executeQuery("SELECT COUNT(*) FROM users WHERE role = 'admin'");
+    const userToDelete = await executeQuery("SELECT role FROM users WHERE id = $1", [id]);
     
     if (userToDelete.rows[0]?.role === 'admin' && parseInt(adminCount.rows[0].count) <= 1) {
       return res.status(400).json({ 
@@ -420,7 +543,7 @@ app.delete('/api/users/:id', authMiddleware, async (req, res) => {
       });
     }
     
-    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    await executeQuery('DELETE FROM users WHERE id = $1', [id]);
     
     res.json({ success: true });
   } catch (error) {
@@ -434,7 +557,7 @@ app.delete('/api/users/:id', authMiddleware, async (req, res) => {
 // GET /api/auth/me
 app.get('/api/auth/me', authMiddleware, async (req, res) => {
   try {
-    const result = await pool.query(
+    const result = await executeQuery(
       'SELECT id, name, username, email, role, permissions FROM users WHERE id = $1',
       [req.user.id]
     );
@@ -470,7 +593,7 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
 // Rutas básicas para movements
 app.get('/api/movements', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM movements ORDER BY fecha DESC, created_at DESC');
+    const result = await executeQuery('SELECT * FROM movements ORDER BY fecha DESC, created_at DESC');
     res.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('Error getting movements:', error);
@@ -491,7 +614,7 @@ app.post('/api/movements', authMiddleware, async (req, res) => {
       RETURNING *
     `;
     
-    const result = await pool.query(query, values);
+    const result = await executeQuery(query, values);
     res.status(201).json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error('Error creating movement:', error);
@@ -514,7 +637,7 @@ app.put('/api/movements/:id', authMiddleware, async (req, res) => {
       RETURNING *
     `;
     
-    const result = await pool.query(query, [id, ...values]);
+    const result = await executeQuery(query, [id, ...values]);
     
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Movimiento no encontrado' });
@@ -530,7 +653,7 @@ app.put('/api/movements/:id', authMiddleware, async (req, res) => {
 app.delete('/api/movements/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    await pool.query('DELETE FROM movements WHERE id = $1', [id]);
+    await executeQuery('DELETE FROM movements WHERE id = $1', [id]);
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting movement:', error);
@@ -541,7 +664,7 @@ app.delete('/api/movements/:id', authMiddleware, async (req, res) => {
 // Rutas básicas para clients
 app.get('/api/clients', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM clients ORDER BY nombre');
+    const result = await executeQuery('SELECT * FROM clients ORDER BY nombre');
     
     // Parsear los campos adicionales desde las notas
     const clients = result.rows.map(client => {
@@ -600,7 +723,7 @@ app.post('/api/clients', authMiddleware, async (req, res) => {
       notas
     ].filter(Boolean).join(' | ');
     
-    const result = await pool.query(`
+    const result = await executeQuery(`
       INSERT INTO clients (nombre, telefono, email, direccion, notas, created_at, updated_at)
       VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
       RETURNING *
@@ -647,7 +770,7 @@ app.put('/api/clients/:id', authMiddleware, async (req, res) => {
       notas
     ].filter(Boolean).join(' | ');
     
-    const result = await pool.query(`
+    const result = await executeQuery(`
       UPDATE clients 
       SET nombre = $1, telefono = $2, email = $3, direccion = $4, notas = $5, updated_at = NOW()
       WHERE id = $6
@@ -678,7 +801,7 @@ app.put('/api/clients/:id', authMiddleware, async (req, res) => {
 app.delete('/api/clients/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    await pool.query('DELETE FROM clients WHERE id = $1', [id]);
+    await executeQuery('DELETE FROM clients WHERE id = $1', [id]);
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting client:', error);
