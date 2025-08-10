@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -43,7 +45,7 @@ pool.connect((err, client, release) => {
 async function executeQuery(query, params = [], retries = 3) {
   for (let i = 0; i < retries; i++) {
     try {
-      const result = await executeQuery(query, params);
+      const result = await pool.query(query, params);
       return result;
     } catch (error) {
       console.error(`Error en query (intento ${i + 1}/${retries}):`, error.message);
