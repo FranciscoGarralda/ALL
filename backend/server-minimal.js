@@ -9,8 +9,44 @@ const jwt = require('jsonwebtoken');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Validar variables de entorno críticas
+if (!process.env.DATABASE_URL) {
+  console.error('❌ ERROR: DATABASE_URL no está configurada');
+  process.exit(1);
+}
+
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'secret-key') {
+  console.error('❌ ERROR: JWT_SECRET no está configurada o está usando el valor por defecto');
+  if (process.env.NODE_ENV === 'production') {
+    process.exit(1);
+  }
+}
+
 // Middleware básico
-app.use(cors());
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://all-blush.vercel.app',
+      'http://localhost:3000',
+      'http://localhost:3001'
+    ];
+    
+    // Permitir requests sin origin (como Postman) solo en desarrollo
+    if (!origin && process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Configuración de PostgreSQL con mejor manejo de errores
@@ -451,36 +487,7 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // GET /api/me - Obtener usuario actual
-app.get('/api/auth/me', async (req, res) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ success: false, message: 'No autorizado' });
-    }
-    
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret-key');
-    const result = await executeQuery('SELECT * FROM users WHERE id = $1', [decoded.id]);
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
-    }
-    
-    const user = result.rows[0];
-    res.json({
-      success: true,
-      user: {
-        id: user.id,
-        name: user.name,
-        username: user.username || user.email,
-        email: user.email,
-        role: user.role,
-        permissions: user.permissions || []
-      }
-    });
-  } catch (error) {
-    res.status(401).json({ success: false, message: 'Token inválido' });
-  }
-});
+// ELIMINADO - ENDPOINT DUPLICADO
 
 // Middleware de autenticación simple
 const authMiddleware = (req, res, next) => {

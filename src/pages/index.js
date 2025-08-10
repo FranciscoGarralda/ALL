@@ -75,17 +75,33 @@ export default function Home() {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await apiService.getMe();
-      if (response.success && response.user) {
-        setIsAuthenticated(true);
-        setCurrentUser(response.user);
-        // Load data from backend after authentication
-        loadDataFromBackend();
+      // Agregar timeout para evitar que se quede colgado
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+      
+      try {
+        const response = await apiService.getMe();
+        clearTimeout(timeoutId);
+        
+        if (response.success && response.user) {
+          setIsAuthenticated(true);
+          setCurrentUser(response.user);
+          // Load data from backend after authentication
+          loadDataFromBackend();
+        }
+      } catch (error) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+          console.error('Timeout al verificar autenticación');
+        } else {
+          console.error('Error verificando autenticación:', error.message);
+        }
       }
     } catch (error) {
       // Usuario no autenticado - no cargar nada
       console.log('No hay sesión activa');
     } finally {
+      // SIEMPRE setear checkingAuth a false para evitar que se quede colgado
       setCheckingAuth(false);
     }
   };
