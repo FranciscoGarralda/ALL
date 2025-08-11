@@ -653,13 +653,21 @@ app.post('/api/auth/login', async (req, res) => {
     }
     
     // Generar token
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET no configurado');
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error de configuración del servidor' 
+      });
+    }
+    
     const token = jwt.sign(
       { 
         id: user.id, 
         username: user.username,
         role: user.role 
       },
-      process.env.JWT_SECRET || 'secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '30d' }
     );
     
@@ -702,7 +710,11 @@ const authMiddleware = (req, res, next) => {
   if (!token) return res.status(401).json({ success: false, message: 'No autorizado' });
   
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret-key');
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET no configurado');
+      return res.status(500).json({ success: false, message: 'Error de configuración del servidor' });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {

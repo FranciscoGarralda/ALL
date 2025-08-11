@@ -35,8 +35,13 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
     ];
   }, [movements]);
 
-  // Filtrar y ordenar movimientos
+  // Filtrado y ordenamiento
   const filteredAndSortedMovements = useMemo(() => {
+    // Verificar que movements sea un array válido
+    if (!movements || !Array.isArray(movements)) {
+      return [];
+    }
+    
     let filtered = movements;
 
     // Búsqueda por término
@@ -498,8 +503,8 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
               </div>
             </div>
 
-            {/* Pago Mixto */}
-            {movement.walletTC === 'pago_mixto' && movement.mixedPayments && movement.mixedPayments.length > 0 && (
+            {/* Pagos Mixtos */}
+            {movement.mixedPayments && movement.mixedPayments.length > 0 && (
               <div>
                 <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">Detalle de Pago Mixto</h3>
                 <div className="bg-gray-50 rounded-lg p-3 sm:p-4">

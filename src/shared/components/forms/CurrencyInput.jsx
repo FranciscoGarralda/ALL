@@ -34,12 +34,14 @@ const CurrencyInput = forwardRef(({
 
   // Handle input change with real-time formatting
   const handleChange = (e) => {
-    let inputValue = e.target.value;
+    const inputValue = e.target.value;
     
-    // Convert comma to dot for decimal input
-    inputValue = inputValue.replace(',', '.');
+    // Si el valor empieza con signo negativo, no permitirlo
+    if (inputValue.startsWith('-')) {
+      return;
+    }
     
-    // If user clears the input
+    // Allow empty input
     if (inputValue === '') {
       setDisplayValue('');
       onChange('');
@@ -117,11 +119,13 @@ const CurrencyInput = forwardRef(({
         id={name}
         name={name}
         type="text"
+        inputMode="decimal"
+        step="0.01"
+        min="0"
         value={displayValue}
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        inputMode="decimal"
         lang="en-US"
         pattern="[0-9]*[.]?[0-9]*"
         placeholder={placeholder}
