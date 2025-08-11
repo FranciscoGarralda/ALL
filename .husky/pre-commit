@@ -1,0 +1,5 @@
+# Run lint-staged
+npx lint-staged
+
+# Run tests for changed files
+npm test -- --bail --findRelatedTests --passWithNoTests
