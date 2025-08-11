@@ -1,18 +1,34 @@
-# 🚀 Guía de Despliegue - Sistema Financiero
+# Guía de Deployment - Sistema Financiero
 
-## 📦 Despliegue Automático
+## 🚀 Servicios Utilizados
 
-### Frontend (Vercel)
-- **URL**: https://all-blush.vercel.app
-- **Despliegue**: Automático al hacer push a GitHub
-- **Tiempo**: 1-2 minutos
+- **Frontend**: Vercel (Next.js)
+- **Backend**: Railway (Node.js + Express)
+- **Base de Datos**: PostgreSQL (Railway)
+
+## 🔐 Variables de Entorno Requeridas
 
 ### Backend (Railway)
-- **URL**: https://all-production-31a3.up.railway.app
-- **Despliegue**: Automático al hacer push a GitHub
-- **Tiempo**: 3-5 minutos
+```
+DATABASE_URL=<proporcionada automáticamente por Railway>
+JWT_SECRET=<genera un valor seguro y único>
+ADMIN_PASSWORD=<contraseña segura para el admin inicial>
+NODE_ENV=production
+```
 
-## ⚡ Proceso de Despliegue
+### Frontend (Vercel)
+```
+NEXT_PUBLIC_API_URL=https://tu-backend.up.railway.app
+```
+
+## ⚠️ IMPORTANTE: Seguridad
+
+1. **NUNCA** uses contraseñas por defecto
+2. **SIEMPRE** configura JWT_SECRET con un valor único y seguro
+3. **CAMBIA** ADMIN_PASSWORD inmediatamente después del primer login
+4. Las credenciales de acceso se configuran mediante variables de entorno
+
+## 📋 Pasos para Deploy
 
 1. **Haces cambios localmente**
 2. **Git commit y push**:

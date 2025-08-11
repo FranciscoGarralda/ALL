@@ -29,9 +29,13 @@ if (!process.env.DATABASE_URL) {
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'secret-key') {
   console.error('⚠️ ADVERTENCIA: JWT_SECRET no está configurada o está usando el valor por defecto');
   if (process.env.NODE_ENV === 'production') {
-    // Generar un JWT_SECRET temporal para no romper el servidor
+    console.error('❌ ERROR CRÍTICO: JWT_SECRET es obligatoria en producción');
+    console.error('Por favor, configura JWT_SECRET con un valor seguro y único');
+    process.exit(1);
+  } else {
+    // Solo en desarrollo, generar una temporal
     process.env.JWT_SECRET = require('crypto').randomBytes(32).toString('hex');
-    console.log('⚠️ Generando JWT_SECRET temporal. CONFIGURA UNA PERMANENTE EN RAILWAY!');
+    console.log('⚠️ Generando JWT_SECRET temporal para desarrollo');
   }
 }
 
@@ -44,7 +48,12 @@ const corsOptions = {
       'http://localhost:3001'
     ];
     
-    // Permitir requests sin origin (como Postman y HEALTHCHECKS DE RAILWAY)
+    // Agregar origen personalizado desde variable de entorno
+    if (process.env.FRONTEND_URL) {
+      allowedOrigins.push(process.env.FRONTEND_URL);
+    }
+    
+    // Permitir requests sin origin (healthchecks de Railway)
     if (!origin) {
       return callback(null, true);
     }
@@ -52,8 +61,9 @@ const corsOptions = {
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      // En lugar de lanzar error, solo rechazar silenciosamente
-      callback(null, false);
+      // SEGURIDAD: Rechazar orígenes no autorizados
+      console.warn(`⚠️ CORS bloqueó origen no autorizado: ${origin}`);
+      callback(new Error('No autorizado por CORS'));
     }
   },
   credentials: true,
@@ -340,12 +350,22 @@ async function initDatabase() {
     
     if (adminCheck.rows.length === 0) {
       console.log('Creando usuario admin por defecto...');
-      const hashedPassword = await bcrypt.hash('admin123', 10);
+      
+      // SEGURIDAD: Forzar contraseña desde variable de entorno
+      const adminPassword = process.env.ADMIN_PASSWORD;
+      if (!adminPassword) {
+        console.error('❌ ERROR CRÍTICO: ADMIN_PASSWORD no está configurada');
+        console.error('Por favor, configura ADMIN_PASSWORD en las variables de entorno');
+        throw new Error('ADMIN_PASSWORD es requerida para crear el usuario admin');
+      }
+      
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
       await executeQuery(
         `INSERT INTO users (name, username, email, password, role, permissions) 
          VALUES ($1, $2, $3, $4, $5, $6)`,
         ['Administrador', 'admin', 'admin@sistema.com', hashedPassword, 'admin', '{}']
       );
+      console.log('✅ Usuario admin creado (use ADMIN_PASSWORD para login)');
     }
     
     console.log('✅ Base de datos verificada y lista');
