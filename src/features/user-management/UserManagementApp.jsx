@@ -217,8 +217,9 @@ function UserManagementApp() {
       setSuccess('Ejecutando verificación del sistema...');
       
       // Usar el método interno de apiService para obtener headers
-      const token = localStorage.getItem('token');
-      const response = await fetch('https://all-production-31a3.up.railway.app/api/system/fix-users', {
+      const token = localStorage.getItem('authToken');
+      const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${baseURL}/api/system/fix-users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

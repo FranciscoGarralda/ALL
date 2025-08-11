@@ -3,8 +3,9 @@ import { cacheService } from './cache';
 
 class ApiService {
   constructor() {
-    this.baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://all-production-31a3.up.railway.app';
+    this.baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     this.token = null;
+    this.abortController = null;
     this.loadToken();
   }
 

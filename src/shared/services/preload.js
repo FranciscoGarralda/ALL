@@ -1,5 +1,31 @@
-// Servicio de precarga para mejorar el rendimiento inicial
-export const preloadService = {
+// Preload Service - Optimiza la carga inicial
+class PreloadService {
+  constructor() {
+    this.baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    this.preloaded = new Set();
+  }
+
+  // Precargar recursos críticos
+  preloadCriticalResources() {
+    if (typeof window === 'undefined') return;
+
+    // Preconectar al backend
+    const link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.href = this.baseURL;
+    link.crossOrigin = 'anonymous';
+    document.head.appendChild(link);
+
+    // DNS prefetch como fallback
+    const dnsPrefetch = document.createElement('link');
+    dnsPrefetch.rel = 'dns-prefetch';
+    dnsPrefetch.href = this.baseURL;
+    document.head.appendChild(dnsPrefetch);
+
+    // Precargar fuentes críticas
+    this.preloadFonts();
+  }
+
   // Precargar componentes críticos
   preloadComponents() {
     if (typeof window === 'undefined') return;
@@ -17,28 +43,20 @@ export const preloadService = {
         load().catch(() => {}); // Ignorar errores de precarga
       });
     }, 2000);
-  },
+  }
 
-  // Precargar fuentes y recursos
-  preloadResources() {
-    if (typeof window === 'undefined') return;
-    
-    // Preconectar a la API
-    const link = document.createElement('link');
-    link.rel = 'preconnect';
-    link.href = 'https://all-production-31a3.up.railway.app';
-    document.head.appendChild(link);
-    
-    // DNS prefetch
-    const dnsPrefetch = document.createElement('link');
-    dnsPrefetch.rel = 'dns-prefetch';
-    dnsPrefetch.href = 'https://all-production-31a3.up.railway.app';
-    document.head.appendChild(dnsPrefetch);
-  },
+  // Precargar fuentes
+  preloadFonts() {
+    // Aquí se pueden agregar fuentes críticas si se necesitan
+  }
 
   // Inicializar todo
   init() {
-    this.preloadResources();
+    this.preloadCriticalResources();
     this.preloadComponents();
   }
-};
+}
+
+// Exportar instancia única
+const preloadService = new PreloadService();
+export default preloadService;

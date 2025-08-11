@@ -3,9 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
-  // DESACTIVAR ESLINT TEMPORALMENTE
+  // ESLint con configuración relajada
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   
   // Optimizaciones de producción

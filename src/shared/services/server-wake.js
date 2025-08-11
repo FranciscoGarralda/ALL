@@ -1,21 +1,32 @@
-// Servicio para despertar el servidor de Railway
+// Server Wake Service - Mantiene el servidor activo
 class ServerWakeService {
   constructor() {
-    this.baseURL = 'https://all-production-31a3.up.railway.app';
-    this.isAwake = false;
-    this.wakePromise = null;
+    this.baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    this.isWaking = false;
+    this.retryCount = 0;
+    this.maxRetries = 3;
   }
 
   async wakeServer() {
-    // Si ya está despierto, no hacer nada
-    if (this.isAwake) return true;
+    if (this.isWaking) {
+      return this.wakePromise;
+    }
     
-    // Si ya hay un intento en progreso, esperar
-    if (this.wakePromise) return this.wakePromise;
+    this.isWaking = true;
+    this.wakePromise = this._performWake();
     
+    try {
+      const result = await this.wakePromise;
+      return result;
+    } finally {
+      this.isWaking = false;
+      this.wakePromise = null;
+    }
+  }
+
+  async _performWake() {
     // Intentar despertar el servidor
-    this.wakePromise = this._attemptWake();
-    return this.wakePromise;
+    return this._attemptWake();
   }
 
   async _attemptWake() {
@@ -29,7 +40,6 @@ class ServerWakeService {
       });
       
       if (response.ok) {
-        this.isAwake = true;
         console.log('✅ Servidor activo');
         return true;
       }
@@ -53,7 +63,6 @@ class ServerWakeService {
         });
         
         if (response.ok) {
-          this.isAwake = true;
           console.log('✅ Servidor listo después de', attempts * 5, 'segundos');
           return true;
         }
@@ -66,8 +75,7 @@ class ServerWakeService {
   }
 
   reset() {
-    this.isAwake = false;
-    this.wakePromise = null;
+
   }
 }
 

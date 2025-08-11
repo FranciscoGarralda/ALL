@@ -1,6 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Head from 'next/head';
-import { apiService, preloadService, serverWakeService } from '../shared/services';
+import { apiService } from '../shared/services';
 import LoginPage from '../features/auth/LoginPage';
 
 // Lazy load components for better performance
@@ -92,14 +92,13 @@ export default function Home() {
       } catch (error) {
         clearTimeout(timeoutId);
         if (error.name === 'AbortError') {
-          console.error('Timeout al verificar autenticación');
+          // Timeout al verificar autenticación
         } else {
-          console.error('Error verificando autenticación:', error.message);
+          // Error verificando autenticación
         }
       }
     } catch (error) {
       // Usuario no autenticado - no cargar nada
-      console.log('No hay sesión activa');
     } finally {
       // SIEMPRE setear checkingAuth a false para evitar que se quede colgado
       setCheckingAuth(false);
