@@ -235,7 +235,8 @@ export default function Home() {
     } catch (error) {
       console.error('Error saving client:', error);
       alert(`Error al guardar el cliente: ${error.message}`);
-      throw error;
+      // No hacer throw del error para evitar que ErrorBoundary lo capture
+      return null;
     }
   };
 

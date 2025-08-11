@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { X, User, Phone, Mail, MapPin, Save } from 'lucide-react';
 import FormInput from './FormInput';
 import FormSelect from './FormSelect';
+import { lockBodyScroll, unlockBodyScroll } from '../../utils/mobileUtils';
 
 // import { handleValidationError, ERROR_SEVERITY } from '../../services/errorHandler';
 
@@ -49,7 +50,17 @@ const ClientModal = ({
     { value: 'prestamistas', label: 'Prestamistas' }
   ];
 
-  // Manejar navegación con teclado cuando el modal está abierto
+  // Manejar lock del scroll cuando el modal está abierto
+  useEffect(() => {
+    if (isOpen) {
+      lockBodyScroll();
+      return () => {
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen]);
+
+  // Manejar navegación con teclado y Escape
   useEffect(() => {
     if (!isOpen) return;
 

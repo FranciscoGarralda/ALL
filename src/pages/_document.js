@@ -4,6 +4,13 @@ export default function Document() {
   return (
     <Html lang="es">
       <Head>
+        {/* Meta tags para móvil */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+        <meta name="theme-color" content="#111827" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="format-detection" content="telephone=no" />
+        
         {/* Favicon principal */}
         <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/FranciscoGarralda/ALL/main/favicon2.png" />
         <link rel="shortcut icon" type="image/png" href="https://raw.githubusercontent.com/FranciscoGarralda/ALL/main/favicon2.png" />

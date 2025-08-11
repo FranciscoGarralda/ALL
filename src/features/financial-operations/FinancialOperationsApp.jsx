@@ -768,15 +768,31 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
         .map(([field, message]) => `• ${message}`)
         .join('\n');
       
-      alert(`Por favor corrige los siguientes errores:\n\n${errorMessages}`);
+      // En móvil, usar un alert más simple y hacer scroll suave
+      const isMobile = window.innerWidth < 640;
+      
+      if (isMobile) {
+        // Mensaje más corto para móvil
+        const firstError = Object.values(validation.errors)[0];
+        alert(`Error: ${firstError}`);
+      } else {
+        alert(`Por favor corrige los siguientes errores:\n\n${errorMessages}`);
+      }
       
       // Hacer scroll al primer campo con error
-      const firstErrorField = Object.keys(validation.errors)[0];
-      const element = document.querySelector(`[name="${firstErrorField}"]`);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        element.focus();
-      }
+      setTimeout(() => {
+        const firstErrorField = Object.keys(validation.errors)[0];
+        const element = document.querySelector(`[name="${firstErrorField}"]`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.focus();
+          // Agregar clase de error visual
+          element.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+          setTimeout(() => {
+            element.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+          }, 3000);
+        }
+      }, 100);
       
       return;
     }
