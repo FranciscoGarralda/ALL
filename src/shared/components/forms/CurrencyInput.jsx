@@ -76,8 +76,10 @@ const CurrencyInput = forwardRef(({
     setIsFocused(false);
     // When blurred, show formatted value (only if not readOnly)
     if (value && value !== '' && !readOnly) {
-      const { formatted } = formatCurrencyInput(value, currency);
+      const { formatted, raw } = formatCurrencyInput(value, currency);
       setDisplayValue(formatted);
+      // IMPORTANTE: Asegurar que el valor sin formato se mantenga
+      onChange(raw);
     }
   };
 

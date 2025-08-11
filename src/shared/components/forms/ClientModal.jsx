@@ -148,22 +148,25 @@ const ClientModal = ({
     try {
       // Llamar a la función onClientCreated que se conecta con onSaveClient
       // Esto guardará el cliente en la base de datos
-      await onClientCreated(formData);
-
-      // Resetear formulario solo después de guardar exitosamente
-      setFormData({
-        nombre: '',
-        apellido: '',
-        telefono: '',
-        email: '',
-        dni: '',
-        direccion: '',
-        tipo: 'operaciones'
-      });
-      setErrors({});
+      const result = await onClientCreated(formData);
       
-      // El modal se cerrará desde el componente padre después de guardar
-
+      // Si se guardó exitosamente
+      if (result) {
+        // Resetear formulario
+        setFormData({
+          nombre: '',
+          apellido: '',
+          telefono: '',
+          email: '',
+          dni: '',
+          direccion: '',
+          tipo: 'operaciones'
+        });
+        setErrors({});
+        
+        // Cerrar el modal
+        onClose();
+      }
     } catch (error) {
       console.error('Error creating client:', error);
       setErrors({ general: error.message || 'Error al crear el cliente. Verifica los datos ingresados.' });

@@ -132,6 +132,7 @@ const FormFieldGroup = ({
                   // Si se guardó exitosamente, actualizar el valor del campo
                   if (savedClient && savedClient.id) {
                     onFieldChange(name, savedClient.id);
+                    return savedClient; // Retornar el cliente guardado
                   }
                 } catch (error) {
                   console.error('Error al crear cliente:', error);

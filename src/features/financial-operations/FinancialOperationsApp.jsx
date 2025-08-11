@@ -629,10 +629,29 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     // console.log('Stock actualizado (si aplica)');
     // console.log('Llamando a onSaveMovement con:', formData);
     
+    // Limpiar valores numéricos que puedan tener formato de moneda
+    const cleanNumericValue = (value) => {
+      if (!value) return '';
+      // Remover símbolos de moneda y espacios
+      return value.toString().replace(/[$U\s]/g, '').replace(',', '.');
+    };
+    
     // Asegurar que el cliente sea string antes de guardar
     const movementToSave = {
       ...formData,
-      cliente: clienteNombre // Usar el nombre extraído arriba
+      cliente: clienteNombre, // Usar el nombre extraído arriba
+      // Limpiar todos los campos numéricos
+      monto: cleanNumericValue(formData.monto),
+      total: cleanNumericValue(formData.total),
+      montoVenta: cleanNumericValue(formData.montoVenta),
+      totalCompra: cleanNumericValue(formData.totalCompra),
+      totalVenta: cleanNumericValue(formData.totalVenta),
+      tc: cleanNumericValue(formData.tc),
+      tcVenta: cleanNumericValue(formData.tcVenta),
+      comision: cleanNumericValue(formData.comision),
+      montoComision: cleanNumericValue(formData.montoComision),
+      montoReal: cleanNumericValue(formData.montoReal),
+      profit: cleanNumericValue(formData.profit)
     };
     
     onSaveMovement(movementToSave);

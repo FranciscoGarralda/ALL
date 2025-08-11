@@ -383,13 +383,17 @@ const ClientAutocomplete = forwardRef(({
           try {
             // Primero guardar el cliente
             if (onClientCreated) {
-              await onClientCreated(newClient);
+              const result = await onClientCreated(newClient);
+              // Solo cerrar el modal si se retornó un resultado exitoso
+              if (result) {
+                setShowModal(false);
+                return result;
+              }
             }
-            // Luego cerrar el modal
-            setShowModal(false);
           } catch (error) {
             console.error('Error al crear cliente:', error);
-            // No cerrar el modal si hay error
+            // Re-lanzar el error para que el modal lo maneje
+            throw error;
           }
         }}
       />
