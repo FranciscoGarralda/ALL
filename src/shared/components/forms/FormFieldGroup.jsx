@@ -21,6 +21,7 @@ const FormFieldGroup = ({
   fields = [],
   formData = {},
   onFieldChange,
+  onSaveClient,
   errors = {},
   className = '',
   columns = null,
@@ -123,9 +124,20 @@ const FormFieldGroup = ({
             {...commonProps}
             clients={options}
             placeholder={placeholder || 'Buscar cliente...'}
-            onClientCreated={(newClient) => {
-              // Por ahora no manejar creación en prestamistas
-              // Cliente creado exitosamente
+            onClientCreated={async (newClient) => {
+              // Si hay una función onSaveClient disponible, usarla
+              if (onSaveClient) {
+                try {
+                  const savedClient = await onSaveClient(newClient);
+                  // Si se guardó exitosamente, actualizar el valor del campo
+                  if (savedClient && savedClient.id) {
+                    onFieldChange(name, savedClient.id);
+                  }
+                } catch (error) {
+                  console.error('Error al crear cliente:', error);
+                  throw error; // Re-lanzar para que el modal maneje el error
+                }
+              }
             }}
           />
         );

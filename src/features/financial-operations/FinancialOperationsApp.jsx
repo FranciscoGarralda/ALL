@@ -34,7 +34,7 @@ import { useMixedPayments, useFormKeyboardNavigation } from '../../shared/hooks'
 /**
  * Dynamic Form Field Groups Component
  */
-function DynamicFormFieldGroups({ groups, formData, onFieldChange }) {
+function DynamicFormFieldGroups({ groups, formData, onFieldChange, onSaveClient }) {
   return (
     <div className="space-y-6">
       {groups.map((group, groupIndex) => (
@@ -43,6 +43,7 @@ function DynamicFormFieldGroups({ groups, formData, onFieldChange }) {
           fields={group} 
           formData={formData}
           onFieldChange={onFieldChange}
+          onSaveClient={onSaveClient}
         />
       ))}
     </div>
@@ -718,12 +719,14 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
           groups={fieldGroups} 
           formData={formData}
           onFieldChange={handleInputChange}
+          onSaveClient={onSaveClient}
         />
         {conditionalFields.length > 0 && (
           <FormFieldGroup 
             fields={conditionalFields} 
             formData={formData}
             onFieldChange={handleInputChange}
+            onSaveClient={onSaveClient}
           />
         )}
 

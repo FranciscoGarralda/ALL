@@ -76,8 +76,9 @@ const corsOptions = {
     
     // PERMITIR CUALQUIER DOMINIO DE VERCEL.APP
     if (!isAllowed && origin) {
-      // Verificar si es un dominio de Vercel
-      if (origin.includes('.vercel.app') || origin.includes('vercel.app')) {
+      // Verificar si es un dominio de Vercel (más flexible)
+      const vercelDomainRegex = /^https?:\/\/[a-zA-Z0-9-]+(-[a-zA-Z0-9]+)*\.vercel\.app$/;
+      if (vercelDomainRegex.test(origin) || origin.includes('vercel.app')) {
         console.log(`✅ Permitiendo dominio de Vercel: ${origin}`);
         return callback(null, true);
       }
