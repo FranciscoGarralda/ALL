@@ -921,7 +921,6 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     };
     
     if (!onSaveMovement) {
-      console.error('ERROR: onSaveMovement no está definido!');
       alert('Error: No se puede guardar el movimiento. Función no disponible.');
       return;
     }

@@ -159,7 +159,7 @@ export default function Home() {
     } catch (error) {
       console.error('Error saving movement:', error);
       alert(`Error al guardar el movimiento: ${error.message}`);
-      throw error;
+      return null;
     }
   };
 
