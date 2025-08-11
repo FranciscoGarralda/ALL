@@ -23,7 +23,11 @@ const FixedHeader = ({ toggleSidebar, currentPage, showMenuButton, currentUser, 
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, [showUserMenu]);
 
   // Format date and time
@@ -55,7 +59,7 @@ const FixedHeader = ({ toggleSidebar, currentPage, showMenuButton, currentUser, 
           {showMenuButton && (
             <button
               onClick={toggleSidebar}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="lg:hidden p-2.5 min-w-[44px] min-h-[44px] rounded-lg hover:bg-gray-100 active:bg-gray-100 transition-colors flex items-center justify-center"
               aria-label="Toggle menu"
             >
               <Menu className="w-6 h-6 text-gray-700" />
@@ -98,9 +102,9 @@ const FixedHeader = ({ toggleSidebar, currentPage, showMenuButton, currentUser, 
             </button>
 
             {showUserMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[100]">
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[100] sm:w-48 max-w-[calc(100vw-2rem)]">
                 <div className="px-4 py-2 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-900">{currentUser.name}</p>
+                  <p className="text-sm font-medium text-gray-900 truncate">{currentUser.name}</p>
                   <p className="text-xs text-gray-500">{currentUser.role === 'admin' ? 'Administrador' : 'Usuario'}</p>
                 </div>
                 <button
@@ -108,7 +112,7 @@ const FixedHeader = ({ toggleSidebar, currentPage, showMenuButton, currentUser, 
                     setShowUserMenu(false);
                     onLogout();
                   }}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-100 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   Cerrar Sesión

@@ -309,7 +309,7 @@ const ClientModal = ({
               type="button"
               onClick={handleClose}
               disabled={isLoading}
-              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
+              className="px-4 py-2.5 min-h-[44px] text-gray-700 bg-gray-100 hover:bg-gray-200 active:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
             >
               Cancelar
             </button>
@@ -317,7 +317,7 @@ const ClientModal = ({
               ref={(el) => registerField('guardar', el)}
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 bg-gray-900 hover:bg-slate-800 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 flex items-center space-x-2"
+              className="px-4 py-2.5 min-h-[44px] bg-gray-900 hover:bg-slate-800 active:bg-slate-800 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 flex items-center justify-center space-x-2"
             >
               {isLoading ? (
                 <>

@@ -461,6 +461,7 @@ const NavigationApp = memo(({ children, currentPage, onNavigate, currentUser, on
             <div 
               className="fixed inset-0 bg-black bg-opacity-50 z-[55] lg:hidden"
               onClick={toggleSidebar}
+              onTouchStart={toggleSidebar}
               role="button"
               tabIndex={0}
               aria-label="Cerrar menú"
