@@ -47,7 +47,10 @@ const corsOptions = {
     const allowedOrigins = [
       'http://localhost:3000',
       'http://localhost:3001',
-      'https://all-production.up.railway.app'
+      'https://all-production.up.railway.app',
+      'https://all-blush.vercel.app',
+      'https://all-franciscos-projects-deafa96a.vercel.app',
+      'https://all-9086179cm-franciscos-projects-deafa96a.vercel.app'
     ];
     
     // Agregar el FRONTEND_URL si está configurado
@@ -55,8 +58,8 @@ const corsOptions = {
       allowedOrigins.push(process.env.FRONTEND_URL);
     }
     
-    // Permitir solicitudes sin origen (Postman, etc) en desarrollo
-    if (!origin && process.env.NODE_ENV !== 'production') {
+    // Permitir solicitudes sin origen (Postman, healthchecks, etc)
+    if (!origin) {
       return callback(null, true);
     }
     
@@ -71,9 +74,13 @@ const corsOptions = {
       return allowed === origin;
     });
     
-    // También permitir cualquier subdominio de vercel.app
-    if (!isAllowed && origin && origin.endsWith('.vercel.app')) {
-      return callback(null, true);
+    // PERMITIR CUALQUIER DOMINIO DE VERCEL.APP
+    if (!isAllowed && origin) {
+      // Verificar si es un dominio de Vercel
+      if (origin.includes('.vercel.app') || origin.includes('vercel.app')) {
+        console.log(`✅ Permitiendo dominio de Vercel: ${origin}`);
+        return callback(null, true);
+      }
     }
     
     if (isAllowed) {
