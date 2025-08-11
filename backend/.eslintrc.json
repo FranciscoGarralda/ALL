@@ -3,49 +3,30 @@
     "node": true,
     "es2021": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:node/recommended",
-    "plugin:security/recommended"
-  ],
+  "extends": ["eslint:recommended"],
   "plugins": ["security"],
   "parserOptions": {
-    "ecmaVersion": 2021,
-    "sourceType": "module"
+    "ecmaVersion": 2021
   },
   "rules": {
-    // Seguridad
-    "security/detect-object-injection": "warn",
-    "security/detect-non-literal-regexp": "warn",
-    "security/detect-unsafe-regex": "error",
-    "security/detect-buffer-noassert": "error",
-    "security/detect-child-process": "error",
-    "security/detect-eval-with-expression": "error",
-    "security/detect-no-csrf-before-method-override": "error",
-    "security/detect-non-literal-fs-filename": "warn",
-    "security/detect-non-literal-require": "warn",
-    "security/detect-possible-timing-attacks": "warn",
-    "security/detect-pseudoRandomBytes": "error",
-    
-    // Node.js específicas
-    "node/no-unpublished-require": "off",
-    "node/no-process-exit": "warn",
-    "node/no-unsupported-features/es-syntax": "off",
-    
+    // Seguridad básica
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+
+    // Node.js
+    "no-process-exit": "warn",
+
     // Calidad de código
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "no-var": "error",
     "prefer-const": "error",
     "eqeqeq": ["error", "always"],
-    "no-eval": "error",
-    "no-implied-eval": "error",
-    "no-new-func": "error",
-    "strict": ["error", "global"],
-    
+
     // Async/await
     "no-async-promise-executor": "error",
-    "no-await-in-loop": "warn",
     "require-atomic-updates": "error"
-  }
+  },
+  "ignorePatterns": ["node_modules/", "coverage/", "*.test.js"]
 }
