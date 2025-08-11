@@ -1096,9 +1096,10 @@ app.post('/api/clients', authMiddleware, async (req, res) => {
       success: true, 
       data: {
         ...client,
-        apellido,
-        dni,
-        tipoCliente
+        nombre: nombre, // Devolver solo el nombre, sin el apellido
+        apellido: apellido || '',
+        dni: dni || '',
+        tipoCliente: tipoCliente || 'operaciones'
       }
     });
   } catch (error) {
@@ -1118,7 +1119,35 @@ app.get('/api/clients/:id', authMiddleware, async (req, res) => {
       return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
     }
     
-    res.json({ success: true, data: result.rows[0] });
+    const client = result.rows[0];
+    
+    // Parsear los campos adicionales
+    const parts = client.nombre.split(' ');
+    const nombre = parts[0] || '';
+    const apellido = parts.slice(1).join(' ') || '';
+    
+    // Extraer DNI y tipo de las notas
+    let dni = '';
+    let tipoCliente = 'operaciones';
+    
+    if (client.notas) {
+      const dniMatch = client.notas.match(/DNI:\s*([^|]+)/);
+      const tipoMatch = client.notas.match(/Tipo:\s*([^|]+)/);
+      
+      if (dniMatch) dni = dniMatch[1].trim();
+      if (tipoMatch) tipoCliente = tipoMatch[1].trim();
+    }
+    
+    res.json({ 
+      success: true, 
+      data: {
+        ...client,
+        nombre,
+        apellido,
+        dni,
+        tipoCliente
+      }
+    });
   } catch (error) {
     console.error('Error getting client:', error);
     res.status(500).json({ success: false, message: error.message });
@@ -1166,9 +1195,10 @@ app.put('/api/clients/:id', authMiddleware, async (req, res) => {
       success: true, 
       data: {
         ...client,
-        apellido,
-        dni,
-        tipoCliente
+        nombre: nombre, // Devolver solo el nombre, sin el apellido
+        apellido: apellido || '',
+        dni: dni || '',
+        tipoCliente: tipoCliente || 'operaciones'
       }
     });
   } catch (error) {
