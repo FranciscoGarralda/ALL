@@ -41,30 +41,38 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'secret-key') {
   }
 }
 
-// Middleware básico
+// Configuración de CORS más estricta
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
-      'https://all-blush.vercel.app',
       'http://localhost:3000',
-      'http://localhost:3001'
+      'http://localhost:3001',
+      'https://all-production.up.railway.app',
+      'https://all-franciscos-projects-deafa96a.vercel.app',
+      'https://all-9086179cm-franciscos-projects-deafa96a.vercel.app',
+      'https://all.vercel.app',
+      'https://*.vercel.app' // Permitir todos los subdominios de Vercel
     ];
     
-    // Agregar origen personalizado desde variable de entorno
-    if (process.env.FRONTEND_URL) {
-      allowedOrigins.push(process.env.FRONTEND_URL);
-    }
-    
-    // Permitir requests sin origin (healthchecks de Railway)
-    if (!origin) {
+    // Permitir solicitudes sin origen (Postman, etc) en desarrollo
+    if (!origin && process.env.NODE_ENV !== 'production') {
       return callback(null, true);
     }
     
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // Verificar si el origen está permitido o es un subdominio de Vercel
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (allowed.includes('*')) {
+        // Manejo de wildcards
+        const regex = new RegExp(allowed.replace('*', '.*'));
+        return regex.test(origin);
+      }
+      return allowed === origin;
+    });
+    
+    if (isAllowed) {
       callback(null, true);
     } else {
-      // SEGURIDAD: Rechazar orígenes no autorizados
-      console.warn(`⚠️ CORS bloqueó origen no autorizado: ${origin}`);
+      console.error(`⚠️ CORS bloqueó origen no autorizado: ${origin}`);
       callback(new Error('No autorizado por CORS'));
     }
   },

@@ -4,14 +4,18 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "node server-minimal.js",
+    "numReplicas": 1,
     "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 3,
-    "healthcheckPath": "/api/health",
-    "healthcheckTimeout": 30
+    "restartPolicyMaxRetries": 10
   },
-  "envVars": {
-    "NODE_ENV": "production",
-    "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": "30"
+  "services": {
+    "backend": {
+      "build": {
+        "context": "backend"
+      },
+      "deploy": {
+        "startCommand": "node server-minimal.js"
+      }
+    }
   }
 }

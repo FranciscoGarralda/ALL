@@ -156,6 +156,7 @@ export const createLazyComponent = (importFunction, componentName, options = {})
   // Attach preload method
   EnhancedLazyComponent.preload = preload;
   EnhancedLazyComponent.componentName = componentName;
+  EnhancedLazyComponent.displayName = `Lazy(${componentName})`;
 
   return EnhancedLazyComponent;
 };
