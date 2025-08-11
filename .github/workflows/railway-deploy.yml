@@ -27,14 +27,31 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run security audit
-        run: npm audit --audit-level=high
+      - name: Run ESLint
+        run: npm run lint
         continue-on-error: true
+      
+      - name: Run security audit
+        run: |
+          echo "🔍 Running security audit..."
+          npm audit --production
+          if [ $? -ne 0 ]; then
+            echo "⚠️ Security vulnerabilities found!"
+            npm audit --production --json > audit-report.json
+            exit 1
+          fi
       
       - name: Build frontend
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      
+      - name: Upload audit report
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-audit-report
+          path: audit-report.json
 
   # Job para el Backend
   backend:
@@ -57,18 +74,59 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run security audit
-        run: npm audit --audit-level=high
+      - name: Run ESLint
+        run: npm run lint
         continue-on-error: true
+      
+      - name: Run security audit
+        run: |
+          echo "🔍 Running security audit..."
+          npm audit --production
+          if [ $? -ne 0 ]; then
+            echo "⚠️ Security vulnerabilities found!"
+            npm audit --production --json > audit-report.json
+            exit 1
+          fi
       
       - name: Check for hardcoded secrets
         run: |
           echo "Checking for hardcoded secrets..."
-          ! grep -r "admin123\|garralda1\|secret-key" --include="*.js" --include="*.jsx" .
+          ! grep -r "admin123\|garralda1\|secret-key\|garralda2024" --include="*.js" --include="*.jsx" .
+      
+      - name: Upload audit report
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-audit-report
+          path: audit-report.json
+      
+  # Security scan job
+  security:
+    runs-on: ubuntu-latest
+    needs: [frontend, backend]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Run Trivy security scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+      
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
       
   # Notificación de deployment
   notify:
-    needs: [frontend, backend]
+    needs: [frontend, backend, security]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     
@@ -76,5 +134,6 @@ jobs:
       - name: Deployment notification
         run: |
           echo "✅ All checks passed!"
+          echo "🔒 Security scans completed"
           echo "🚀 Railway will auto-deploy from GitHub webhook"
           echo "📊 Check deployment status at: https://railway.app"
