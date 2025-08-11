@@ -911,7 +911,7 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
 });
 
 // Rutas básicas para movements
-app.get('/api/movements', async (req, res) => {
+app.get('/api/movements', authMiddleware, async (req, res) => {
   try {
     const result = await executeQuery('SELECT * FROM movements ORDER BY fecha DESC, created_at DESC');
     res.json({ success: true, data: result.rows });
@@ -982,7 +982,7 @@ app.delete('/api/movements/:id', authMiddleware, async (req, res) => {
 });
 
 // Rutas básicas para clients
-app.get('/api/clients', async (req, res) => {
+app.get('/api/clients', authMiddleware, async (req, res) => {
   try {
     const result = await executeQuery('SELECT * FROM clients ORDER BY nombre');
     
