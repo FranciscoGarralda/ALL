@@ -47,12 +47,13 @@ const corsOptions = {
     const allowedOrigins = [
       'http://localhost:3000',
       'http://localhost:3001',
-      'https://all-production.up.railway.app',
-      'https://all-franciscos-projects-deafa96a.vercel.app',
-      'https://all-9086179cm-franciscos-projects-deafa96a.vercel.app',
-      'https://all.vercel.app',
-      'https://*.vercel.app' // Permitir todos los subdominios de Vercel
+      'https://all-production.up.railway.app'
     ];
+    
+    // Agregar el FRONTEND_URL si está configurado
+    if (process.env.FRONTEND_URL) {
+      allowedOrigins.push(process.env.FRONTEND_URL);
+    }
     
     // Permitir solicitudes sin origen (Postman, etc) en desarrollo
     if (!origin && process.env.NODE_ENV !== 'production') {
