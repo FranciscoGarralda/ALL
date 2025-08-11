@@ -1022,12 +1022,23 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  
-  /* Mejorar legibilidad en móvil */
-  @media (max-width: 640px) {
-    .text-mobile-readable {
-      font-size: 16px;
-      line-height: 1.5;
-    }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
+
+/* 
+ * Z-INDEX HIERARCHY DOCUMENTATION
+ * ================================
+ * z-30: Sidebar (desktop)
+ * z-50: Fixed Header, Notification System
+ * z-[55]: Mobile sidebar overlay
+ * z-[60]: Mobile sidebar
+ * z-[70]: Dropdowns (ClientAutocomplete, etc.)
+ * z-[100]: Modals (ClientModal, etc.), User menu dropdown
+ * 
+ * Rule: Modals should always be on top (z-[100])
+ * Rule: Dropdowns should be above headers (z-[70])
+ * Rule: Mobile navigation should be above desktop elements (z-[55-60])
+ */

@@ -260,7 +260,7 @@ const ClientAutocomplete = forwardRef(({
 
           {/* Dropdown de opciones */}
           {isOpen && (
-            <div className="absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            <div className="absolute z-[70] w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
               {filteredClients.length > 0 ? (
                 <>
                   {filteredClients.map((client, index) => (
