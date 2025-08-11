@@ -571,7 +571,7 @@ async function checkTableExists(tableName) {
 }
 
 // ==========================================
-// AUTENTICACIÓN
+// AUTHENTICATION
 // ==========================================
 
 /**
@@ -700,9 +700,6 @@ app.post('/api/auth/login', async (req, res) => {
     });
   }
 });
-
-// GET /api/me - Obtener usuario actual
-// ELIMINADO - ENDPOINT DUPLICADO
 
 // Middleware de autenticación simple
 const authMiddleware = (req, res, next) => {
