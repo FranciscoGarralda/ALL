@@ -797,13 +797,10 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       return;
     }
     
-    // Validaciones básicas (mantenidas por compatibilidad pero ya cubiertas arriba)
-    // Obtener el nombre del cliente (puede ser string o objeto)
+    // Obtener el nombre del cliente para usar más adelante
     const clienteNombre = typeof formData.cliente === 'object' 
       ? formData.cliente.nombre 
       : formData.cliente;
-    
-    // console.log('Validaciones completas pasadas');
     
     // Validate mixed payments using hook (validación adicional del hook existente)
     const mixedValidation = validateMixedPayments();
