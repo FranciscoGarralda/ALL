@@ -965,6 +965,24 @@ app.post('/api/movements', authMiddleware, async (req, res) => {
   }
 });
 
+// GET movement by ID
+app.get('/api/movements/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = 'SELECT * FROM movements WHERE id = $1';
+    const result = await executeQuery(query, [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Movimiento no encontrado' });
+    }
+    
+    res.json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    console.error('Error getting movement:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 app.put('/api/movements/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
@@ -1085,6 +1103,24 @@ app.post('/api/clients', authMiddleware, async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating client:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET client by ID
+app.get('/api/clients/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = 'SELECT * FROM clients WHERE id = $1';
+    const result = await executeQuery(query, [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
+    }
+    
+    res.json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    console.error('Error getting client:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 });

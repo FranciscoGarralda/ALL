@@ -111,7 +111,7 @@ function RentabilidadApp({ movements = [] }) {
       data.general.gananciaTotal += ganancia;
 
       // Por moneda
-      const monedaKey = arb.monedaTCCmpra || 'PESO';
+      const monedaKey = arb.monedaTCCompra || 'PESO';
       if (!data.porMoneda[monedaKey]) {
         data.porMoneda[monedaKey] = {
           operaciones: 0,
