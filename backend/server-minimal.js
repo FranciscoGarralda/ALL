@@ -59,15 +59,21 @@ const corsOptions = {
       return callback(null, true);
     }
     
-    // Verificar si el origen está permitido o es un subdominio de Vercel
+    // Verificar si el origen está permitido
     const isAllowed = allowedOrigins.some(allowed => {
       if (allowed.includes('*')) {
-        // Manejo de wildcards
-        const regex = new RegExp(allowed.replace('*', '.*'));
+        // Manejo de wildcards para Vercel
+        const pattern = allowed.replace(/\*/g, '.*').replace(/\./g, '\\.');
+        const regex = new RegExp(`^${pattern}$`);
         return regex.test(origin);
       }
       return allowed === origin;
     });
+    
+    // También permitir cualquier subdominio de vercel.app
+    if (!isAllowed && origin && origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
     
     if (isAllowed) {
       callback(null, true);
