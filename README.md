@@ -1,309 +1,193 @@
-# Sistema Financiero - Gestión de Operaciones
+# Alliance F&R - Sistema de Gestión Financiera
 
-Un sistema completo de gestión financiera multiplataforma construido con Next.js, React y Tailwind CSS, optimizado para despliegue en Vercel.
+<div align="center">
+  <img src="public/favicon2.png" alt="Alliance F&R Logo" width="120" height="120">
+  
+  [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/ZweBXA)
+  [![License](https://img.shields.io/badge/license-Private-red.svg)](LICENSE)
+  [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org)
+</div>
+
+## 📋 Descripción
+
+Alliance F&R es un sistema integral de gestión financiera diseñado para operaciones de cambio, préstamos y arbitraje. Proporciona una interfaz intuitiva y segura para gestionar clientes, movimientos financieros y análisis de operaciones.
 
 ## 🚀 Características Principales
 
-### 📱 Multiplataforma y Responsive
-- **Diseño Mobile-First**: Optimizado para dispositivos móviles y tablets
-- **Responsive Design**: Se adapta perfectamente a escritorio y móvil
-- **Touch-Friendly**: Elementos de interfaz optimizados para interacción táctil
-- **Breakpoints Optimizados**: xs, sm, md, lg, xl, 2xl para todas las pantallas
+- **Gestión de Clientes**: CRUD completo con búsqueda y filtrado avanzado
+- **Operaciones Financieras**: Soporte para múltiples tipos de operaciones (cambio, préstamos, arbitraje)
+- **Sistema de Permisos**: Control granular de acceso por módulos
+- **Navegación por Teclado**: Accesibilidad mejorada con atajos de teclado
+- **Diseño Responsivo**: Optimizado para desktop y móvil
+- **PWA**: Instalable como aplicación nativa
+- **Seguridad**: Autenticación JWT, encriptación bcrypt, CORS configurado
 
-### 💰 Operaciones Financieras Completas
-- **6 Tipos de Operaciones Principales**:
-  - 💱 TRANSACCIONES (Compra, Venta, Arbitraje)
-  - 🤝 CUENTAS_CORRIENTES (Ingreso, Egreso)
-  - 👥 SOCIOS (Ingreso, Salida, Préstamo, Devolución)
-  - 🔧 ADMINISTRATIVAS (Ajuste, Gasto)
-  - 🏦 PRESTAMISTAS (Préstamo, Retiro)
-  - 🔄 INTERNAS (Mov entre cuentas)
+## 🛠️ Stack Tecnológico
 
-### 🧮 Funcionalidades Avanzadas
-- **Cálculos Automáticos**: Totales, comisiones e intereses en tiempo real
-- **Múltiples Monedas**: PESO, USD, EURO, USDT, BTC, ETH, y más
-- **Pago Mixto**: Soporte para múltiples formas de pago en una operación
-- **Validación Inteligente**: Validación en tiempo real con mensajes claros
-- **Formateo de Monedas**: Formato localizado para Argentina (es-AR)
+### Frontend
+- **Framework**: Next.js 14.2.31
+- **UI**: React 18.2.0 + Tailwind CSS 3.3.0
+- **Estado**: React Hooks + Context API
+- **HTTP Client**: Fetch API nativo
 
-### 📅 Características de UX
-- **Fechas con Día de Semana**: Muestra automáticamente el día de la semana
-- **Campos Calculados**: Valores de solo lectura calculados automáticamente
-- **Estados Visuales**: Indicadores claros de errores y validaciones
-- **Proveedores con Monedas Permitidas**: Filtrado dinámico de opciones
+### Backend
+- **Runtime**: Node.js 18+
+- **Framework**: Express 4.18.2
+- **Base de Datos**: PostgreSQL 16
+- **Autenticación**: JWT + bcrypt
+- **Documentación**: Swagger/OpenAPI
 
-## 🛠️ Tecnologías Utilizadas
+### DevOps
+- **Hosting Frontend**: Vercel
+- **Hosting Backend**: Railway
+- **CI/CD**: GitHub Actions
+- **Monitoreo**: Railway Metrics
 
-- **Framework**: Next.js 14
-- **Frontend**: React 18 con Hooks
-- **Styling**: Tailwind CSS con configuración personalizada
-- **Icons**: Lucide React
-- **Deployment**: Optimizado para Vercel
-- **Language**: JavaScript (ES6+)
-
-## 📁 Estructura del Proyecto
-
-```
-proyecto-financiero/
-├── src/
-│   ├── components/
-│   │   ├── base/              # Componentes reutilizables
-│   │   │   ├── FormInput.jsx  # Input con soporte para fechas y validación
-│   │   │   ├── FormSelect.jsx # Select con opciones dinámicas
-│   │   │   ├── FormFieldGroup.jsx # Agrupador de campos responsivo
-│   │   │   └── index.js       # Exportaciones
-│   │   ├── forms/             # Formularios específicos
-│   │   └── ui/                # Componentes de interfaz
-│   │       └── Icons.jsx      # Sistema de iconos centralizado
-│   ├── utils/
-│   │   └── formatters.js      # Funciones de formateo de monedas y fechas
-│   ├── config/
-│   │   ├── constants.js       # Configuraciones y constantes
-│   │   └── fieldConfigs.js    # Configuraciones de campos por operación
-│   ├── hooks/
-│   │   └── useFormState.js    # Hook personalizado para manejo de formularios
-│   ├── pages/
-│   │   ├── _app.js           # Configuración de la app
-│   │   └── index.js          # Página principal
-│   └── styles/
-│       └── globals.css       # Estilos globales y utilidades
-├── public/
-│   └── favicon.ico
-├── package.json
-├── next.config.js            # Configuración de Next.js
-├── tailwind.config.js        # Configuración de Tailwind
-├── postcss.config.js         # Configuración de PostCSS
-└── vercel.json              # Configuración de Vercel
-```
-
-## 🚀 Instalación y Configuración
+## 📦 Instalación
 
 ### Prerrequisitos
-- Node.js 18.0.0 o superior
-- npm o yarn
+- Node.js 18 o superior
+- PostgreSQL 14 o superior
+- Git
 
-### Instalación
-
-1. **Clonar el repositorio**
+### Clonar el repositorio
 ```bash
-git clone <repository-url>
-cd financial-operations-system
+git clone https://github.com/FranciscoGarralda/ALL.git
+cd ALL
 ```
 
-2. **Instalar dependencias**
+### Instalar dependencias
 ```bash
+# Frontend
 npm install
-# o
-yarn install
+
+# Backend
+cd backend
+npm install
 ```
 
-3. **Ejecutar en desarrollo**
-```bash
-npm run dev
-# o
-yarn dev
-```
+### Configurar variables de entorno
 
-4. **Construir para producción**
-```bash
-npm run build
-npm run start
-# o
-yarn build
-yarn start
-```
-
-## 🌐 Despliegue en Vercel
-
-### Configuración Automática
-1. Conecta tu repositorio a Vercel
-2. Vercel detectará automáticamente que es un proyecto Next.js
-3. El despliegue se realizará automáticamente
-
-### Variables de Entorno (Opcional)
+#### Frontend (.env.local)
 ```env
-NODE_ENV=production
+NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
 
-### Configuración Manual
-El proyecto incluye `vercel.json` con configuración optimizada:
-- Runtime Node.js 18.x
-- Builds automáticos
-- Rutas configuradas
+#### Backend (.env)
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/alliancefr
+JWT_SECRET=your-secure-secret-key-here
+ADMIN_PASSWORD=your-admin-password
+NODE_ENV=development
+PORT=5000
+FRONTEND_URL=http://localhost:3000
+```
 
-## 📚 Uso del Sistema
+### Iniciar en desarrollo
+```bash
+# Terminal 1 - Frontend
+npm run dev
 
-### 1. Selección de Operación
-- Elige el tipo de operación principal
-- Selecciona la sub-operación específica
-- Los campos se cargan dinámicamente
+# Terminal 2 - Backend
+cd backend
+npm run dev
+```
 
-### 2. Campos Específicos
-Cada tipo de operación tiene campos únicos:
+## 🚀 Despliegue
 
-**COMPRA/VENTA**:
-- Monto y moneda
-- Tipo de cambio
-- Total calculado automáticamente
-- Soporte para pago mixto
+### Frontend (Vercel)
+1. Conecta tu repositorio en [Vercel](https://vercel.com)
+2. Configura la variable de entorno `NEXT_PUBLIC_API_URL`
+3. Deploy automático en cada push a `main`
 
-**ARBITRAJE**:
-- Operación de compra completa
-- Operación de venta completa
-- Cálculo automático de profit/comisión
+### Backend (Railway)
+1. Crea un proyecto en [Railway](https://railway.app)
+2. Conecta tu repositorio
+3. Configura las variables de entorno requeridas
+4. Railway detectará automáticamente el backend
 
-**CUENTAS CORRIENTES**:
-- Proveedor con monedas permitidas
-- Comisiones opcionales
-- Múltiples cuentas
+## 📖 Documentación API
 
-### 3. Validaciones
-- Campos obligatorios marcados con *
-- Validación en tiempo real
-- Mensajes de error claros
-- Prevención de envío con errores
+La documentación completa de la API está disponible en:
+- **Desarrollo**: http://localhost:5000/api-docs
+- **Producción**: https://tu-backend-url.railway.app/api-docs
 
-### 4. Cálculos Automáticos
-- Totales de operaciones
-- Comisiones e impuestos
-- Intereses de préstamos
-- Conversiones de moneda
+## 🔒 Seguridad
 
-## 🎨 Personalización
-
-### Colores y Tema
-Modifica `tailwind.config.js` para personalizar:
-- Colores primarios, secundarios
-- Colores de estado (success, warning, error)
-- Sombras y bordes
-
-### Monedas y Configuraciones
-Edita `src/config/constants.js` para:
-- Agregar nuevas monedas
-- Modificar cuentas disponibles
-- Actualizar proveedores
-- Cambiar configuraciones
-
-### Tipos de Operaciones
-Modifica `src/config/fieldConfigs.js` para:
-- Agregar nuevos tipos de operaciones
-- Personalizar campos por operación
-- Definir cálculos automáticos
-- Configurar validaciones
+- **Autenticación**: JWT con expiración de 30 días
+- **Contraseñas**: Hasheadas con bcrypt (10 rounds)
+- **CORS**: Configurado para orígenes específicos
+- **Headers**: Helmet.js para headers de seguridad
+- **Rate Limiting**: Protección contra ataques de fuerza bruta
+- **Validación**: Entrada sanitizada en todos los endpoints
 
 ## 🧪 Testing
 
-### Testing Manual
-- Prueba todas las operaciones
-- Verifica cálculos automáticos
-- Valida comportamiento responsive
-- Confirma validaciones
-
-### Testing de Responsividad
-- Mobile: 320px - 767px
-- Tablet: 768px - 1023px
-- Desktop: 1024px+
-
-## 🔧 Mantenimiento
-
-### Actualizaciones de Dependencias
 ```bash
-npm update
-# o
-yarn upgrade
+# Ejecutar tests
+npm test
+
+# Tests con coverage
+npm run test:coverage
+
+# Tests en modo watch
+npm run test:watch
 ```
-
-### Limpieza de Cache
-```bash
-npm run build
-# Elimina .next/ si hay problemas
-```
-
-## 📈 Rendimiento
-
-### Optimizaciones Incluidas
-- **Tree Shaking**: Solo código usado se incluye
-- **Code Splitting**: Carga bajo demanda
-- **Image Optimization**: Next.js Image component
-- **CSS Purging**: Tailwind elimina CSS no usado
-- **Bundle Analysis**: Análisis de tamaño incluido
-
-### Métricas Objetivo
-- **First Contentful Paint**: < 1.5s
-- **Largest Contentful Paint**: < 2.5s
-- **Time to Interactive**: < 3.0s
-- **Mobile Lighthouse Score**: > 90
 
 ## 🤝 Contribución
 
-### Flujo de Desarrollo
-1. Fork del repositorio
-2. Crear branch feature
-3. Desarrollar y testear
-4. Pull request con descripción detallada
+Por favor, lee [CONTRIBUTING.md](CONTRIBUTING.md) para detalles sobre nuestro código de conducta y el proceso para enviarnos pull requests.
 
-### Estándares de Código
-- ESLint configurado
-- Prettier para formateo
-- Conventional commits
-- Documentación JSDoc
+## 📝 Scripts Disponibles
+
+### Frontend
+- `npm run dev` - Inicia el servidor de desarrollo
+- `npm run build` - Construye la aplicación para producción
+- `npm run start` - Inicia el servidor de producción
+- `npm run lint` - Ejecuta ESLint
+- `npm test` - Ejecuta los tests
+
+### Backend
+- `npm start` - Inicia el servidor
+- `npm run dev` - Inicia con nodemon para desarrollo
+- `npm run lint` - Ejecuta ESLint
+- `npm test` - Ejecuta los tests
+
+## 📊 Estructura del Proyecto
+
+```
+ALL/
+├── src/                    # Código fuente del frontend
+│   ├── pages/             # Páginas de Next.js
+│   ├── features/          # Módulos de funcionalidades
+│   ├── shared/            # Componentes compartidos
+│   └── styles/            # Estilos globales
+├── backend/               # Código del servidor
+│   ├── server-minimal.js  # Servidor principal
+│   ├── swagger.config.js  # Configuración de Swagger
+│   └── __tests__/         # Tests del backend
+├── public/                # Archivos estáticos
+├── .github/               # GitHub Actions
+└── docs/                  # Documentación adicional
+```
+
+## 👥 Equipo
+
+- **Francisco Garralda** - Desarrollador Principal - [GitHub](https://github.com/FranciscoGarralda)
 
 ## 📄 Licencia
 
-Este proyecto está bajo la licencia MIT. Ver `LICENSE` para más detalles.
+Este proyecto es software privado y propietario. Todos los derechos reservados.
 
-## 🆘 Soporte
+## 🙏 Agradecimientos
 
-### Problemas Comunes
-
-**Error de compilación Tailwind**:
-```bash
-npm run build
-# Verificar tailwind.config.js
-```
-
-**Problemas de dependencias**:
-```bash
-rm -rf node_modules package-lock.json
-npm install
-```
-
-**Errores de despliegue en Vercel**:
-- Verificar Node.js version en `package.json`
-- Revisar `vercel.json` configuración
-- Comprobar variables de entorno
-
-### Contacto
-- Issues: GitHub Issues
-- Documentación: README.md
-- Ejemplos: `/src/pages/index.js`
+- Next.js por el excelente framework
+- Vercel por el hosting gratuito
+- Railway por la infraestructura backend
+- La comunidad open source
 
 ---
 
-## ✨ Características Técnicas Destacadas
-
-### Componentes Reutilizables
-- **FormInput**: Input universal con soporte para fechas, validación y estados
-- **FormSelect**: Select con filtrado dinámico y opciones contextuales
-- **FormFieldGroup**: Organizador responsive de campos con grid inteligente
-
-### Hook Personalizado `useFormState`
-- Manejo centralizado del estado del formulario
-- Validación automática y manual
-- Cálculos en tiempo real
-- Manejo de errores avanzado
-
-### Sistema de Formateo
-- Formateo de monedas localizado
-- Soporte para múltiples símbolos de moneda
-- Cálculo de días de la semana
-- Parseo inteligente de valores
-
-### Configuración Dinámica
-- Campos específicos por tipo de operación
-- Validaciones personalizadas
-- Cálculos automáticos configurables
-- Opciones filtradas por contexto
-
-¡El sistema está listo para producción y optimizado para el mejor rendimiento en Vercel! 🚀# Trigger deployment - Sun Jul 27 01:21:23 PM UTC 2025
-# Force deploy Thu Aug  7 03:07:07 AM UTC 2025
+<div align="center">
+  Hecho con ❤️ por Alliance F&R
+</div>
