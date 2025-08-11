@@ -774,12 +774,8 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   };
 
   const handleGuardar = () => {
-    console.log('=== INICIANDO GUARDADO ===');
-    console.log('FormData completo:', formData);
-    
     // Ejecutar validación completa
     const validation = validateMovement(formData);
-    console.log('Resultado de validación:', validation);
     
     if (!validation.isValid) {
       // Construir mensaje de error detallado
@@ -899,9 +895,6 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
     }
     
-    // console.log('Stock actualizado (si aplica)');
-    // console.log('Llamando a onSaveMovement con:', formData);
-    
     // Limpiar valores numéricos que puedan tener formato de moneda
     const cleanNumericValue = (value) => {
       if (!value) return '';
@@ -927,7 +920,6 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       profit: cleanNumericValue(formData.profit)
     };
     
-    console.log('Llamando a onSaveMovement...');
     if (!onSaveMovement) {
       console.error('ERROR: onSaveMovement no está definido!');
       alert('Error: No se puede guardar el movimiento. Función no disponible.');
@@ -935,8 +927,6 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     }
     
     onSaveMovement(movementToSave);
-    
-    console.log('onSaveMovement llamado exitosamente');
     
     // Show success message
     alert('Movimiento guardado exitosamente');

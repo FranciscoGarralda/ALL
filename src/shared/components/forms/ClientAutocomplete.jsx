@@ -99,9 +99,7 @@ const ClientAutocomplete = forwardRef(({
   }, [onChange]);
 
   const handleCreateClient = useCallback(() => {
-    console.log('Botón crear cliente clickeado');
     setShowModal(true);
-    console.log('showModal debería ser true ahora');
   }, []);
 
   // Handle basic input events

@@ -12,8 +12,6 @@ const ClientModal = ({
   onClientCreated,
   title = "Crear Nuevo Cliente"
 }) => {
-  console.log('ClientModal renderizado, isOpen:', isOpen);
-  
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
