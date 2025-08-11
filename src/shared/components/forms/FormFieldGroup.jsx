@@ -129,9 +129,11 @@ const FormFieldGroup = ({
               if (onSaveClient) {
                 try {
                   const savedClient = await onSaveClient(newClient);
-                  // Si se guardó exitosamente, actualizar el valor del campo
-                  if (savedClient && savedClient.id) {
-                    onFieldChange(name, savedClient.id);
+                  // Si se guardó exitosamente, actualizar el valor del campo con el nombre completo
+                  if (savedClient) {
+                    // Construir el nombre completo del cliente
+                    const clienteNombre = `${savedClient.nombre || ''} ${savedClient.apellido || ''}`.trim();
+                    onFieldChange(name, clienteNombre);
                     return savedClient; // Retornar el cliente guardado
                   }
                 } catch (error) {
