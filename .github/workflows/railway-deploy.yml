@@ -1,23 +1,80 @@
-name: Deploy to Railway
+name: CI/CD Pipeline
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'backend/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'railway.json'
+  pull_request:
+    branches: [main]
 
 jobs:
-  deploy:
+  # Job para el Frontend
+  frontend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       
-      - name: Deploy to Railway
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run security audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+      
+      - name: Build frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
+  # Job para el Backend
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run security audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+      
+      - name: Check for hardcoded secrets
         run: |
-          echo "🚀 Deployment triggered on Railway"
-          echo "Railway auto-deploys from GitHub webhook"
-          echo "Check Railway dashboard for deployment status"
+          echo "Checking for hardcoded secrets..."
+          ! grep -r "admin123\|garralda1\|secret-key" --include="*.js" --include="*.jsx" .
+      
+  # Notificación de deployment
+  notify:
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Deployment notification
+        run: |
+          echo "✅ All checks passed!"
+          echo "🚀 Railway will auto-deploy from GitHub webhook"
+          echo "📊 Check deployment status at: https://railway.app"
