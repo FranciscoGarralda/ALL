@@ -33,7 +33,12 @@ const ClientAutocomplete = forwardRef(({
         (client.id || client.nombre) === value
       );
       if (selectedClient) {
-        setInputValue(`${selectedClient.nombre} ${selectedClient.apellido || ''}`.trim());
+        // Verificar si el nombre ya incluye el apellido
+      let displayName = selectedClient.nombre || '';
+      if (selectedClient.apellido && !displayName.includes(selectedClient.apellido)) {
+        displayName = `${displayName} ${selectedClient.apellido}`.trim();
+      }
+      setInputValue(displayName);
       }
     } else if (!value) {
       setInputValue('');
@@ -87,7 +92,12 @@ const ClientAutocomplete = forwardRef(({
 
   const handleClientSelect = useCallback((client) => {
     const clientValue = client.id || client.nombre;
-    const clientLabel = `${client.nombre} ${client.apellido || ''}`.trim();
+    
+    // Verificar si el nombre ya incluye el apellido
+    let clientLabel = client.nombre || '';
+    if (client.apellido && !clientLabel.includes(client.apellido)) {
+      clientLabel = `${clientLabel} ${client.apellido}`.trim();
+    }
     
     setInputValue(clientLabel);
     onChange(clientValue);
@@ -140,7 +150,13 @@ const ClientAutocomplete = forwardRef(({
     // Preparar items para navegación
     const menuItems = filteredClients.map((client, index) => ({
       element: null, // Se asignará después
-      text: `${client.nombre} ${client.apellido || ''}`.trim(),
+      text: (() => {
+        let displayName = client.nombre || '';
+        if (client.apellido && !displayName.includes(client.apellido)) {
+          displayName = `${displayName} ${client.apellido}`.trim();
+        }
+        return displayName;
+      })(),
       value: client.id || client.nombre,
       client: client,
       onSelect: () => {

@@ -520,7 +520,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     // console.log('FormData completo:', formData);
     
     // Validaciones básicas
-    if (!formData.cliente || formData.cliente.trim() === '') {
+    // Obtener el nombre del cliente (puede ser string o objeto)
+    const clienteNombre = typeof formData.cliente === 'object' 
+      ? formData.cliente.nombre 
+      : formData.cliente;
+    
+    if (!clienteNombre || (typeof clienteNombre === 'string' && clienteNombre.trim() === '')) {
       // console.error('Validación fallida: Cliente vacío');
       alert('Por favor selecciona un cliente');
       return;
@@ -623,7 +628,13 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     // console.log('Stock actualizado (si aplica)');
     // console.log('Llamando a onSaveMovement con:', formData);
     
-    onSaveMovement(formData);
+    // Asegurar que el cliente sea string antes de guardar
+    const movementToSave = {
+      ...formData,
+      cliente: clienteNombre // Usar el nombre extraído arriba
+    };
+    
+    onSaveMovement(movementToSave);
     
     // console.log('onSaveMovement llamado exitosamente');
     
