@@ -99,7 +99,9 @@ const ClientAutocomplete = forwardRef(({
   }, [onChange]);
 
   const handleCreateClient = useCallback(() => {
+    console.log('Botón crear cliente clickeado');
     setShowModal(true);
+    console.log('showModal debería ser true ahora');
   }, []);
 
   // Handle basic input events
@@ -344,7 +346,6 @@ const ClientAutocomplete = forwardRef(({
           ref={(el) => onRegisterCreateButton && onRegisterCreateButton(el)}
           type="button"
           onClick={handleCreateClient}
-
           className="flex-shrink-0 px-3 py-2 sm:px-3.5 sm:py-2.5 bg-gray-900 hover:bg-slate-800 text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-1 focus:ring-gray-500 focus:ring-offset-2"
           title="Crear nuevo cliente"
           aria-label="Crear nuevo cliente"

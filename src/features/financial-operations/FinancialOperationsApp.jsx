@@ -85,6 +85,15 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     montoVenta: '',
     cuentaSalida: '',
     cuentaIngreso: '',
+    // Campos wallet que faltaban
+    walletCompra: '',
+    walletVenta: '',
+    walletTC: '',
+    walletCompraVenta: '',
+    walletTCVenta: '',
+    walletPrestamo: '',
+    walletPagoPrestamo: '',
+    walletAdministrativa: '',
     // Mixed payment system - controlled by walletTC === 'pago_mixto'
     mixedPayments: [],
     expectedTotalForMixedPayments: '',
@@ -510,6 +519,15 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       montoVenta: '',
       cuentaSalida: '',
       cuentaIngreso: '',
+      // Campos wallet
+      walletCompra: '',
+      walletVenta: '',
+      walletTC: '',
+      walletCompraVenta: '',
+      walletTCVenta: '',
+      walletPrestamo: '',
+      walletPagoPrestamo: '',
+      walletAdministrativa: '',
 
       mixedPayments: [],
       expectedTotalForMixedPayments: '',
@@ -756,11 +774,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   };
 
   const handleGuardar = () => {
-    // console.log('=== INICIANDO GUARDADO ===');
-    // console.log('FormData completo:', formData);
+    console.log('=== INICIANDO GUARDADO ===');
+    console.log('FormData completo:', formData);
     
     // Ejecutar validación completa
     const validation = validateMovement(formData);
+    console.log('Resultado de validación:', validation);
     
     if (!validation.isValid) {
       // Construir mensaje de error detallado
@@ -908,9 +927,16 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       profit: cleanNumericValue(formData.profit)
     };
     
+    console.log('Llamando a onSaveMovement...');
+    if (!onSaveMovement) {
+      console.error('ERROR: onSaveMovement no está definido!');
+      alert('Error: No se puede guardar el movimiento. Función no disponible.');
+      return;
+    }
+    
     onSaveMovement(movementToSave);
     
-    // console.log('onSaveMovement llamado exitosamente');
+    console.log('onSaveMovement llamado exitosamente');
     
     // Show success message
     alert('Movimiento guardado exitosamente');
