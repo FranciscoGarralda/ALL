@@ -33,12 +33,9 @@ const ClientAutocomplete = forwardRef(({
         (client.id || client.nombre) === value
       );
       if (selectedClient) {
-        // Verificar si el nombre ya incluye el apellido
-      let displayName = selectedClient.nombre || '';
-      if (selectedClient.apellido && !displayName.includes(selectedClient.apellido)) {
-        displayName = `${displayName} ${selectedClient.apellido}`.trim();
-      }
-      setInputValue(displayName);
+        // Construir el nombre completo del cliente
+        const displayName = `${selectedClient.nombre || ''} ${selectedClient.apellido || ''}`.trim();
+        setInputValue(displayName);
       }
     } else if (!value) {
       setInputValue('');
@@ -75,7 +72,11 @@ const ClientAutocomplete = forwardRef(({
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, []);
 
   const handleInputChange = (e) => {
@@ -93,11 +94,8 @@ const ClientAutocomplete = forwardRef(({
   const handleClientSelect = useCallback((client) => {
     const clientValue = client.id || client.nombre;
     
-    // Verificar si el nombre ya incluye el apellido
-    let clientLabel = client.nombre || '';
-    if (client.apellido && !clientLabel.includes(client.apellido)) {
-      clientLabel = `${clientLabel} ${client.apellido}`.trim();
-    }
+    // Construir el label del cliente
+    let clientLabel = `${client.nombre || ''} ${client.apellido || ''}`.trim();
     
     setInputValue(clientLabel);
     onChange(clientValue);
@@ -150,13 +148,7 @@ const ClientAutocomplete = forwardRef(({
     // Preparar items para navegación
     const menuItems = filteredClients.map((client, index) => ({
       element: null, // Se asignará después
-      text: (() => {
-        let displayName = client.nombre || '';
-        if (client.apellido && !displayName.includes(client.apellido)) {
-          displayName = `${displayName} ${client.apellido}`.trim();
-        }
-        return displayName;
-      })(),
+      text: `${client.nombre || ''} ${client.apellido || ''}`.trim(),
       value: client.id || client.nombre,
       client: client,
       onSelect: () => {
@@ -272,7 +264,7 @@ const ClientAutocomplete = forwardRef(({
 
           {/* Dropdown de opciones */}
           {isOpen && (
-            <div className="absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            <div className="absolute z-[70] w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
               {filteredClients.length > 0 ? (
                 <>
                   {filteredClients.map((client, index) => (
@@ -356,7 +348,6 @@ const ClientAutocomplete = forwardRef(({
           ref={(el) => onRegisterCreateButton && onRegisterCreateButton(el)}
           type="button"
           onClick={handleCreateClient}
-
           className="flex-shrink-0 px-3 py-2 sm:px-3.5 sm:py-2.5 bg-gray-900 hover:bg-slate-800 text-white rounded-lg flex items-center justify-center transition-all duration-200 shadow-soft hover:shadow-medium focus:ring-1 focus:ring-gray-500 focus:ring-offset-2"
           title="Crear nuevo cliente"
           aria-label="Crear nuevo cliente"
@@ -386,6 +377,10 @@ const ClientAutocomplete = forwardRef(({
               const result = await onClientCreated(newClient);
               // Solo cerrar el modal si se retornó un resultado exitoso
               if (result) {
+                // Actualizar el campo con el cliente recién creado
+                const clienteNombre = `${result.nombre || ''} ${result.apellido || ''}`.trim();
+                setInputValue(clienteNombre);
+                onChange(clienteNombre);
                 setShowModal(false);
                 return result;
               }

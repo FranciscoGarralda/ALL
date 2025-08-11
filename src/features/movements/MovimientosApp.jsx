@@ -35,8 +35,13 @@ function MovimientosApp({ movements = [], clients = [], onEditMovement, onDelete
     ];
   }, [movements]);
 
-  // Filtrar y ordenar movimientos
+  // Filtrado y ordenamiento
   const filteredAndSortedMovements = useMemo(() => {
+    // Verificar que movements sea un array válido
+    if (!movements || !Array.isArray(movements)) {
+      return [];
+    }
+    
     let filtered = movements;
 
     // Búsqueda por término
@@ -486,20 +491,20 @@ function MovimientoDetail({ movement, onBack, onEdit, onDelete, clients = [] }) 
                 {movement.monto && formatField('Monto', movement.monto, movement.moneda)}
                 {movement.tc && formatField('Tipo de Cambio (TC)', movement.tc)}
                 {movement.monedaTC && formatField('Moneda TC', movement.monedaTC)}
-                {movement.monedaTCCmpra && formatField('Moneda TC Compra', movement.monedaTCCmpra)}
+                {movement.monedaTCCompra && formatField('Moneda TC Compra', movement.monedaTCCompra)}
                 {movement.monedaVenta && formatField('Moneda Venta', movement.monedaVenta)}
                 {movement.monedaTCVenta && formatField('Moneda TC Venta', movement.monedaTCVenta)}
                 {movement.tcVenta && formatField('TC Venta', movement.tcVenta)}
                 {movement.total && formatField('Total', movement.total, movement.monedaTC || movement.moneda)}
-                {movement.totalCompra && formatField('Total Compra', movement.totalCompra, movement.monedaTCCmpra || movement.moneda)}
+                {movement.totalCompra && formatField('Total Compra', movement.totalCompra, movement.monedaTCCompra || movement.moneda)}
                 {movement.totalVenta && formatField('Total Venta', movement.totalVenta, movement.monedaTCVenta || movement.monedaVenta)}
                 {movement.montoVenta && formatField('Monto Venta', movement.montoVenta, movement.monedaVenta)}
                 {movement.comision && formatField('Comisión', movement.comision, movement.monedaComision || movement.moneda)}
               </div>
             </div>
 
-            {/* Pago Mixto */}
-            {movement.walletTC === 'pago_mixto' && movement.mixedPayments && movement.mixedPayments.length > 0 && (
+            {/* Pagos Mixtos */}
+            {movement.mixedPayments && movement.mixedPayments.length > 0 && (
               <div>
                 <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">Detalle de Pago Mixto</h3>
                 <div className="bg-gray-50 rounded-lg p-3 sm:p-4">

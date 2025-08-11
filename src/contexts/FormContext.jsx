@@ -35,7 +35,7 @@ const initialFormState = {
   // Exchange rates
   tc: '',
   monedaTC: '',
-  monedaTCCmpra: '',
+  monedaTCCompra: '',
   monedaTCVenta: '',
   monedaVenta: '',
   tcVenta: '',

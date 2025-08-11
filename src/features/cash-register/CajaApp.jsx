@@ -347,6 +347,7 @@ function CajaApp({ movements = [] }) {
                       <span className="text-gray-600 font-medium">Contado:</span>
                       <input
                         type="number"
+                        step="0.01"
                         value={cashCounts[`${caja.moneda}-${caja.tipo}`] || ''}
                         onChange={(e) => handleCashCountChange(`${caja.moneda}-${caja.tipo}`, e.target.value)}
                         className="w-32 px-2 py-1 border border-gray-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-gray-500"

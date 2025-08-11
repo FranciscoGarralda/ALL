@@ -159,7 +159,7 @@ export default function Home() {
     } catch (error) {
       console.error('Error saving movement:', error);
       alert(`Error al guardar el movimiento: ${error.message}`);
-      throw error;
+      return null;
     }
   };
 
@@ -192,14 +192,16 @@ export default function Home() {
   // Client management functions
   const handleSaveClient = async (clientData) => {
     try {
-      // Verificar duplicados
-      const existingClient = clients.find(c => 
-        c.nombre.toLowerCase() === clientData.nombre.toLowerCase() && c.id !== clientData.id
-      );
+      // Verificar duplicados solo si estamos editando
+      if (clientData.id) {
+        const existingClient = clients.find(c => 
+          c.nombre.toLowerCase() === clientData.nombre.toLowerCase() && c.id !== clientData.id
+        );
 
-      if (existingClient) {
-        alert('Ya existe un cliente con ese nombre');
-        return null;
+        if (existingClient) {
+          alert('Ya existe un cliente con ese nombre');
+          return null;
+        }
       }
 
       let savedClient;
@@ -235,7 +237,8 @@ export default function Home() {
     } catch (error) {
       console.error('Error saving client:', error);
       alert(`Error al guardar el cliente: ${error.message}`);
-      throw error;
+      // No hacer throw del error para evitar que ErrorBoundary lo capture
+      return null;
     }
   };
 

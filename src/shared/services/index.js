@@ -8,4 +8,4 @@ export { default as cajaService } from './cajaService';
 export { default as ccInitialBalanceService } from './ccInitialBalanceService';
 export { default as apiService } from './api';
 export { default as preloadService } from './preload.js';
-export { default as serverWakeService } from './server-wake';
+export { serverWakeService } from './server-wake';

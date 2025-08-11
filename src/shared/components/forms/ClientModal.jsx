@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { X, User, Phone, Mail, MapPin, Save } from 'lucide-react';
 import FormInput from './FormInput';
 import FormSelect from './FormSelect';
+import { lockBodyScroll, unlockBodyScroll } from '../../utils/mobileUtils';
 
 // import { handleValidationError, ERROR_SEVERITY } from '../../services/errorHandler';
 
@@ -49,7 +50,17 @@ const ClientModal = ({
     { value: 'prestamistas', label: 'Prestamistas' }
   ];
 
-  // Manejar navegación con teclado cuando el modal está abierto
+  // Manejar lock del scroll cuando el modal está abierto
+  useEffect(() => {
+    if (isOpen) {
+      lockBodyScroll();
+      return () => {
+        unlockBodyScroll();
+      };
+    }
+  }, [isOpen]);
+
+  // Manejar navegación con teclado y Escape
   useEffect(() => {
     if (!isOpen) return;
 
@@ -184,8 +195,8 @@ const ClientModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-large max-w-md w-full max-h-[90vh] overflow-y-auto client-modal-content">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4 safe-top safe-bottom overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-large max-w-md w-full my-8 sm:my-12 max-h-[calc(100vh-8rem)] sm:max-h-[85vh] overflow-y-auto client-modal-content relative">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-2">
@@ -298,7 +309,7 @@ const ClientModal = ({
               type="button"
               onClick={handleClose}
               disabled={isLoading}
-              className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
+              className="px-4 py-2.5 min-h-[44px] text-gray-700 bg-gray-100 hover:bg-gray-200 active:bg-gray-200 rounded-lg transition-colors duration-200 disabled:opacity-50"
             >
               Cancelar
             </button>
@@ -306,7 +317,7 @@ const ClientModal = ({
               ref={(el) => registerField('guardar', el)}
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 bg-gray-900 hover:bg-slate-800 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 flex items-center space-x-2"
+              className="px-4 py-2.5 min-h-[44px] bg-gray-900 hover:bg-slate-800 active:bg-slate-800 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 flex items-center justify-center space-x-2"
             >
               {isLoading ? (
                 <>

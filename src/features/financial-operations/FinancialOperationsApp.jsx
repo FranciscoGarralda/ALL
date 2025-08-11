@@ -68,7 +68,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     nombreOtro: '',
     tc: '',
     monedaTC: '',
-    monedaTCCmpra: '',
+    monedaTCCompra: '',
     monedaTCVenta: '',
     monedaVenta: '',
     tcVenta: '',
@@ -85,6 +85,15 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
     montoVenta: '',
     cuentaSalida: '',
     cuentaIngreso: '',
+    // Campos wallet que faltaban
+    walletCompra: '',
+    walletVenta: '',
+    walletTC: '',
+    walletCompraVenta: '',
+    walletTCVenta: '',
+    walletPrestamo: '',
+    walletPagoPrestamo: '',
+    walletAdministrativa: '',
     // Mixed payment system - controlled by walletTC === 'pago_mixto'
     mixedPayments: [],
     expectedTotalForMixedPayments: '',
@@ -491,7 +500,7 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       nombreOtro: '',
       tc: '',
       monedaTC: '',
-      monedaTCCmpra: '',
+      monedaTCCompra: '',
       monedaTCVenta: '',
       monedaVenta: '',
       tcVenta: '',
@@ -510,51 +519,311 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       montoVenta: '',
       cuentaSalida: '',
       cuentaIngreso: '',
+      // Campos wallet
+      walletCompra: '',
+      walletVenta: '',
+      walletTC: '',
+      walletCompraVenta: '',
+      walletTCVenta: '',
+      walletPrestamo: '',
+      walletPagoPrestamo: '',
+      walletAdministrativa: '',
 
       mixedPayments: [],
       expectedTotalForMixedPayments: '',
     });
   };
 
-  const handleGuardar = () => {
-    // console.log('=== INICIANDO GUARDADO ===');
-    // console.log('FormData completo:', formData);
+  // Función de validación completa para movimientos
+  const validateMovement = (formData) => {
+    const errors = {};
     
-    // Validaciones básicas
-    // Obtener el nombre del cliente (puede ser string o objeto)
+    // Validaciones básicas para TODAS las operaciones
     const clienteNombre = typeof formData.cliente === 'object' 
       ? formData.cliente.nombre 
       : formData.cliente;
     
     if (!clienteNombre || (typeof clienteNombre === 'string' && clienteNombre.trim() === '')) {
-      // console.error('Validación fallida: Cliente vacío');
-      alert('Por favor selecciona un cliente');
-      return;
+      errors.cliente = 'El cliente es obligatorio';
     }
     
     if (!formData.operacion) {
-      // console.error('Validación fallida: Operación vacía');
-      alert('Por favor selecciona una operación');
-      return;
+      errors.operacion = 'La operación es obligatoria';
     }
     
     if (!formData.subOperacion) {
-      // console.error('Validación fallida: SubOperación vacía');
-      alert('Por favor selecciona el detalle de la operación');
-      return;
+      errors.subOperacion = 'El detalle de la operación es obligatorio';
     }
     
-    // console.log('Validaciones básicas pasadas');
+    // Validación de detalle si existe
+    if (formData.detalle && formData.detalle.trim()) {
+      if (formData.detalle.trim().length < 3) {
+        errors.detalle = 'El detalle debe tener al menos 3 caracteres';
+      }
+      if (formData.detalle.length > 200) {
+        errors.detalle = 'El detalle no puede exceder 200 caracteres';
+      }
+    }
     
-    // Validate mixed payments using hook
-    const validation = validateMixedPayments();
+    // Validaciones específicas por sub-operación
+    const monto = safeParseFloat(formData.monto);
+    
+    switch(formData.subOperacion) {
+      case 'COMPRA':
+        if (!monto || monto <= 0) {
+          errors.monto = 'El monto es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.moneda) {
+          errors.moneda = 'La moneda es obligatoria';
+        }
+        if (!formData.walletCompra) {
+          errors.walletCompra = 'La wallet de compra es obligatoria';
+        }
+        const tcCompra = safeParseFloat(formData.tc);
+        if (!tcCompra || tcCompra <= 0) {
+          errors.tc = 'El tipo de cambio es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.monedaTC) {
+          errors.monedaTC = 'La moneda TC es obligatoria';
+        }
+        if (!formData.walletTC) {
+          errors.walletTC = 'La wallet TC es obligatoria';
+        }
+        break;
+        
+      case 'VENTA':
+        if (!monto || monto <= 0) {
+          errors.monto = 'El monto es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.moneda) {
+          errors.moneda = 'La moneda es obligatoria';
+        }
+        if (!formData.walletVenta) {
+          errors.walletVenta = 'La wallet de venta es obligatoria';
+        }
+        const tcVenta = safeParseFloat(formData.tc);
+        if (!tcVenta || tcVenta <= 0) {
+          errors.tc = 'El tipo de cambio es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.monedaTC) {
+          errors.monedaTC = 'La moneda TC es obligatoria';
+        }
+        if (!formData.walletTC) {
+          errors.walletTC = 'La wallet TC es obligatoria';
+        }
+        break;
+        
+      case 'ARBITRAJE':
+        const montoCompra = safeParseFloat(formData.monto);
+        if (!montoCompra || montoCompra <= 0) {
+          errors.monto = 'El monto de compra es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.moneda) {
+          errors.moneda = 'La moneda de compra es obligatoria';
+        }
+        if (!formData.walletCompra) {
+          errors.walletCompra = 'La wallet de compra es obligatoria';
+        }
+        const tcArb = safeParseFloat(formData.tc);
+        if (!tcArb || tcArb <= 0) {
+          errors.tc = 'El tipo de cambio de compra es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.monedaTC) {
+          errors.monedaTC = 'La moneda TC es obligatoria';
+        }
+        if (!formData.walletTC) {
+          errors.walletTC = 'La wallet TC es obligatoria';
+        }
+        const tcVentaArb = safeParseFloat(formData.tcVenta);
+        if (!tcVentaArb || tcVentaArb <= 0) {
+          errors.tcVenta = 'El tipo de cambio de venta es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.walletCompraVenta) {
+          errors.walletCompraVenta = 'La wallet de compra/venta es obligatoria';
+        }
+        if (!formData.walletTCVenta) {
+          errors.walletTCVenta = 'La wallet TC de venta es obligatoria';
+        }
+        break;
+        
+      case 'CUENTA_CORRIENTE':
+        if (!monto || monto <= 0) {
+          errors.monto = 'El monto es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.moneda) {
+          errors.moneda = 'La moneda es obligatoria';
+        }
+        if (!formData.cuenta) {
+          errors.cuenta = 'La cuenta es obligatoria';
+        }
+        if (!formData.proveedor) {
+          errors.proveedor = 'El proveedor es obligatorio';
+        }
+        break;
+        
+      case 'MOVIMIENTO_ENTRE_CUENTAS':
+        if (!monto || monto <= 0) {
+          errors.monto = 'El monto es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.moneda) {
+          errors.moneda = 'La moneda es obligatoria';
+        }
+        if (!formData.cuentaSalida) {
+          errors.cuentaSalida = 'La cuenta de salida es obligatoria';
+        }
+        if (!formData.cuentaIngreso) {
+          errors.cuentaIngreso = 'La cuenta de ingreso es obligatoria';
+        }
+        if (formData.cuentaSalida && formData.cuentaIngreso && 
+            formData.cuentaSalida === formData.cuentaIngreso) {
+          errors.cuentaIngreso = 'La cuenta de ingreso debe ser diferente a la cuenta de salida';
+        }
+        break;
+        
+      case 'PRESTAMO':
+        if (!monto || monto <= 0) {
+          errors.monto = 'El monto es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.moneda) {
+          errors.moneda = 'La moneda es obligatoria';
+        }
+        if (!formData.walletPrestamo) {
+          errors.walletPrestamo = 'La wallet de préstamo es obligatoria';
+        }
+        const lapso = safeParseFloat(formData.lapso);
+        if (!lapso || lapso <= 0) {
+          errors.lapso = 'El lapso es obligatorio y debe ser mayor a 0';
+        }
+        const interes = safeParseFloat(formData.interes);
+        if (interes === null || interes === undefined || interes < 0) {
+          errors.interes = 'El interés es obligatorio y debe ser mayor o igual a 0';
+        }
+        break;
+        
+      case 'PAGO_PRESTAMO':
+        if (!monto || monto <= 0) {
+          errors.monto = 'El monto es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.moneda) {
+          errors.moneda = 'La moneda es obligatoria';
+        }
+        if (!formData.walletPagoPrestamo) {
+          errors.walletPagoPrestamo = 'La wallet de pago es obligatoria';
+        }
+        break;
+        
+      case 'PAGO_MIXTO':
+        if (!formData.mixedPayments || formData.mixedPayments.length === 0) {
+          errors.mixedPayments = 'Debe agregar al menos un pago';
+        } else {
+          let totalPagos = 0;
+          formData.mixedPayments.forEach((pago, index) => {
+            if (!pago.socio) {
+              errors[`pago_${index}_socio`] = `El socio del pago ${index + 1} es obligatorio`;
+            }
+            if (!pago.tipo) {
+              errors[`pago_${index}_tipo`] = `El tipo del pago ${index + 1} es obligatorio`;
+            }
+            const montoPago = safeParseFloat(pago.monto);
+            if (!montoPago || montoPago <= 0) {
+              errors[`pago_${index}_monto`] = `El monto del pago ${index + 1} debe ser mayor a 0`;
+            }
+            totalPagos += montoPago;
+          });
+          
+          // Validar que la suma coincida con el monto total
+          const montoTotal = safeParseFloat(formData.expectedTotalForMixedPayments);
+          if (Math.abs(totalPagos - montoTotal) > 0.01) {
+            errors.mixedPayments = `La suma de los pagos (${totalPagos}) no coincide con el monto total (${montoTotal})`;
+          }
+        }
+        break;
+        
+      case 'ADMINISTRATIVAS':
+        if (!monto || monto <= 0) {
+          errors.monto = 'El monto es obligatorio y debe ser mayor a 0';
+        }
+        if (!formData.moneda) {
+          errors.moneda = 'La moneda es obligatoria';
+        }
+        if (!formData.walletAdministrativa) {
+          errors.walletAdministrativa = 'La wallet administrativa es obligatoria';
+        }
+        break;
+    }
+    
+    // Validaciones de estado y responsable si están habilitadas
+    if (formData.includesEstadoYPor) {
+      if (!formData.estado) {
+        errors.estado = 'El estado es obligatorio';
+      }
+      if (!formData.por) {
+        errors.por = 'El responsable es obligatorio';
+      }
+      if (formData.por === 'otro') {
+        if (!formData.nombreOtro || formData.nombreOtro.trim().length < 3) {
+          errors.nombreOtro = 'El nombre del responsable debe tener al menos 3 caracteres';
+        }
+      }
+    }
+    
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors
+    };
+  };
+
+  const handleGuardar = () => {
+    // Ejecutar validación completa
+    const validation = validateMovement(formData);
+    
     if (!validation.isValid) {
-      // console.error('Validación de pagos mixtos fallida:', validation.error);
-      alert(validation.error);
+      // Construir mensaje de error detallado
+      const errorMessages = Object.entries(validation.errors)
+        .map(([field, message]) => `• ${message}`)
+        .join('\n');
+      
+      // En móvil, usar un alert más simple y hacer scroll suave
+      const isMobile = window.innerWidth < 640;
+      
+      if (isMobile) {
+        // Mensaje más corto para móvil
+        const firstError = Object.values(validation.errors)[0];
+        alert(`Error: ${firstError}`);
+      } else {
+        alert(`Por favor corrige los siguientes errores:\n\n${errorMessages}`);
+      }
+      
+      // Hacer scroll al primer campo con error
+      setTimeout(() => {
+        const firstErrorField = Object.keys(validation.errors)[0];
+        const element = document.querySelector(`[name="${firstErrorField}"]`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.focus();
+          // Agregar clase de error visual
+          element.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+          setTimeout(() => {
+            element.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+          }, 3000);
+        }
+      }, 100);
+      
       return;
     }
     
-    // console.log('Validación de pagos mixtos pasada');
+    // Obtener el nombre del cliente para usar más adelante
+    const clienteNombre = typeof formData.cliente === 'object' 
+      ? formData.cliente.nombre 
+      : formData.cliente;
+    
+    // Validate mixed payments using hook (validación adicional del hook existente)
+    const mixedValidation = validateMixedPayments();
+    if (!mixedValidation.isValid) {
+      // console.error('Validación de pagos mixtos fallida:', mixedValidation.error);
+      alert(mixedValidation.error);
+      return;
+    }
     
     // Actualizar stock según el tipo de operación
     if (formData.operacion === 'TRANSACCIONES') {
@@ -626,9 +895,6 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       }
     }
     
-    // console.log('Stock actualizado (si aplica)');
-    // console.log('Llamando a onSaveMovement con:', formData);
-    
     // Limpiar valores numéricos que puedan tener formato de moneda
     const cleanNumericValue = (value) => {
       if (!value) return '';
@@ -654,9 +920,12 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
       profit: cleanNumericValue(formData.profit)
     };
     
-    onSaveMovement(movementToSave);
+    if (!onSaveMovement) {
+      alert('Error: No se puede guardar el movimiento. Función no disponible.');
+      return;
+    }
     
-    // console.log('onSaveMovement llamado exitosamente');
+    onSaveMovement(movementToSave);
     
     // Show success message
     alert('Movimiento guardado exitosamente');

@@ -571,7 +571,7 @@ async function checkTableExists(tableName) {
 }
 
 // ==========================================
-// AUTENTICACIÓN
+// AUTHENTICATION
 // ==========================================
 
 /**
@@ -653,13 +653,21 @@ app.post('/api/auth/login', async (req, res) => {
     }
     
     // Generar token
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET no configurado');
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error de configuración del servidor' 
+      });
+    }
+    
     const token = jwt.sign(
       { 
         id: user.id, 
         username: user.username,
         role: user.role 
       },
-      process.env.JWT_SECRET || 'secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '30d' }
     );
     
@@ -693,16 +701,17 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// GET /api/me - Obtener usuario actual
-// ELIMINADO - ENDPOINT DUPLICADO
-
 // Middleware de autenticación simple
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ success: false, message: 'No autorizado' });
   
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret-key');
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET no configurado');
+      return res.status(500).json({ success: false, message: 'Error de configuración del servidor' });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
@@ -965,6 +974,24 @@ app.post('/api/movements', authMiddleware, async (req, res) => {
   }
 });
 
+// GET movement by ID
+app.get('/api/movements/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = 'SELECT * FROM movements WHERE id = $1';
+    const result = await executeQuery(query, [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Movimiento no encontrado' });
+    }
+    
+    res.json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    console.error('Error getting movement:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 app.put('/api/movements/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
@@ -1078,13 +1105,60 @@ app.post('/api/clients', authMiddleware, async (req, res) => {
       success: true, 
       data: {
         ...client,
+        nombre: nombre, // Devolver solo el nombre, sin el apellido
+        apellido: apellido || '',
+        dni: dni || '',
+        tipoCliente: tipoCliente || 'operaciones'
+      }
+    });
+  } catch (error) {
+    console.error('Error creating client:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// GET client by ID
+app.get('/api/clients/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = 'SELECT * FROM clients WHERE id = $1';
+    const result = await executeQuery(query, [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Cliente no encontrado' });
+    }
+    
+    const client = result.rows[0];
+    
+    // Parsear los campos adicionales
+    const parts = client.nombre.split(' ');
+    const nombre = parts[0] || '';
+    const apellido = parts.slice(1).join(' ') || '';
+    
+    // Extraer DNI y tipo de las notas
+    let dni = '';
+    let tipoCliente = 'operaciones';
+    
+    if (client.notas) {
+      const dniMatch = client.notas.match(/DNI:\s*([^|]+)/);
+      const tipoMatch = client.notas.match(/Tipo:\s*([^|]+)/);
+      
+      if (dniMatch) dni = dniMatch[1].trim();
+      if (tipoMatch) tipoCliente = tipoMatch[1].trim();
+    }
+    
+    res.json({ 
+      success: true, 
+      data: {
+        ...client,
+        nombre,
         apellido,
         dni,
         tipoCliente
       }
     });
   } catch (error) {
-    console.error('Error creating client:', error);
+    console.error('Error getting client:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -1130,9 +1204,10 @@ app.put('/api/clients/:id', authMiddleware, async (req, res) => {
       success: true, 
       data: {
         ...client,
-        apellido,
-        dni,
-        tipoCliente
+        nombre: nombre, // Devolver solo el nombre, sin el apellido
+        apellido: apellido || '',
+        dni: dni || '',
+        tipoCliente: tipoCliente || 'operaciones'
       }
     });
   } catch (error) {

@@ -36,10 +36,15 @@ const CurrencyInput = forwardRef(({
   const handleChange = (e) => {
     let inputValue = e.target.value;
     
-    // Convert comma to dot for decimal input
+    // Convert comma to dot for decimal input (mobile keyboards)
     inputValue = inputValue.replace(',', '.');
     
-    // If user clears the input
+    // Si el valor empieza con signo negativo, no permitirlo
+    if (inputValue.startsWith('-')) {
+      return;
+    }
+    
+    // Allow empty input
     if (inputValue === '') {
       setDisplayValue('');
       onChange('');
@@ -117,11 +122,11 @@ const CurrencyInput = forwardRef(({
         id={name}
         name={name}
         type="text"
+        inputMode="decimal"
         value={displayValue}
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        inputMode="decimal"
         lang="en-US"
         pattern="[0-9]*[.]?[0-9]*"
         placeholder={placeholder}

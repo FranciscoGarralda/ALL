@@ -205,13 +205,14 @@ function SaldosInicialesApp() {
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <input
-                            type="number"
-                            value={balance}
-                            onChange={(e) => handleBalanceChange(wallet, selectedMoneda, e.target.value)}
-                            placeholder="0.00"
-                            className="w-32 px-3 py-1.5 text-right border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-                          />
+                                                  <input
+                          type="number"
+                          step="0.01"
+                          value={balance}
+                          onChange={(e) => handleBalanceChange(wallet, selectedMoneda, e.target.value)}
+                          placeholder="0.00"
+                          className="w-32 px-3 py-1.5 text-right border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        />
                           <span className="text-sm text-gray-600 w-12">{selectedMoneda}</span>
                         </div>
                       </div>
@@ -270,13 +271,14 @@ function SaldosInicialesApp() {
                                 <span className="text-2xl">{monedaObj?.emoji}</span>
                                 <span className="font-medium">{moneda}</span>
                               </div>
-                              <input
-                                type="number"
-                                value={balance}
-                                onChange={(e) => handleCCBalanceChange(proveedor.value, moneda, e.target.value)}
-                                placeholder="0.00"
-                                className="w-32 px-3 py-1.5 text-right border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-                              />
+                                                          <input
+                              type="number"
+                              step="0.01"
+                              value={balance}
+                              onChange={(e) => handleCCBalanceChange(proveedor.value, moneda, e.target.value)}
+                              placeholder="0.00"
+                              className="w-32 px-3 py-1.5 text-right border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            />
                             </div>
                           );
                         })}
