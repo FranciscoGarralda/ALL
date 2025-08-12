@@ -5,15 +5,33 @@ require('dotenv').config();
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
+// Configuración con timeout
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? {
     rejectUnauthorized: false
-  } : false
+  } : false,
+  connectionTimeoutMillis: 10000, // 10 segundos timeout
+  idleTimeoutMillis: 10000,
+  max: 3
 });
 
 async function initDatabase() {
   console.log('🔄 Iniciando configuración de base de datos...');
+  console.log('📡 DATABASE_URL:', process.env.DATABASE_URL ? 'Configurada' : 'NO CONFIGURADA');
+  
+  // Verificar conexión primero
+  try {
+    const testConnection = await pool.query('SELECT NOW()');
+    console.log('✅ Conexión a PostgreSQL exitosa:', testConnection.rows[0].now);
+  } catch (error) {
+    console.error('❌ Error conectando a PostgreSQL:', error.message);
+    // No salir, intentar continuar
+    if (!process.env.DATABASE_URL) {
+      console.log('⚠️ DATABASE_URL no configurada, saltando inicialización de DB');
+      return;
+    }
+  }
   
   try {
     // 1. Crear tabla users
@@ -115,27 +133,30 @@ async function initDatabase() {
     await pool.query('CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)');
     console.log('✅ Índices creados');
     
-    // 5. Crear usuario admin si no existe
-    const checkAdmin = await pool.query('SELECT * FROM users WHERE username = $1', ['admin']);
+    // Verificar si el usuario admin ya existe
+    const adminExists = await pool.query(
+      'SELECT id FROM users WHERE username = $1',
+      ['admin']
+    );
     
-    if (checkAdmin.rows.length === 0) {
-      const hashedPassword = await bcrypt.hash('admin123', 10);
+    if (adminExists.rows.length === 0) {
+      // Crear usuario admin con contraseña 'garralda1'
+      const hashedPassword = await bcrypt.hash('garralda1', 10);
+      
       await pool.query(
-        `INSERT INTO users (name, username, email, password, role, permissions) 
-         VALUES ($1, $2, $3, $4, $5, $6)`,
+        `INSERT INTO users (name, username, email, password, role, permissions, active)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
         [
           'Administrador',
           'admin',
-          'admin@sistema.com',
+          'admin@alliance.com',
           hashedPassword,
           'admin',
-          ['operaciones', 'clientes', 'movimientos', 'pendientes', 'gastos', 
-           'cuentas-corrientes', 'prestamistas', 'comisiones', 'utilidad', 
-           'arbitraje', 'saldos', 'caja', 'rentabilidad', 'stock', 
-           'saldos-iniciales', 'usuarios']
+          ['all'],
+          true
         ]
       );
-      console.log('✅ Usuario admin creado (usuario: admin, contraseña: admin123)');
+      console.log('✅ Usuario admin creado (contraseña: garralda1)');
     } else {
       console.log('ℹ️ Usuario admin ya existe');
     }
@@ -156,11 +177,26 @@ async function initDatabase() {
     console.log('📌 Usuario admin: admin / admin123');
     
   } catch (error) {
-    console.error('❌ Error inicializando base de datos:', error);
-    process.exit(1);
+    console.error('❌ Error inicializando base de datos:', error.message);
+    // No lanzar error, permitir que el servidor arranque
   } finally {
+    // Cerrar pool
     await pool.end();
   }
 }
 
-initDatabase();
+// Ejecutar solo si es llamado directamente
+if (require.main === module) {
+  initDatabase()
+    .then(() => {
+      console.log('✅ Script completado');
+      process.exit(0);
+    })
+    .catch(error => {
+      console.error('❌ Error fatal:', error);
+      process.exit(1);
+    });
+} else {
+  // Si es importado, exportar la función
+  module.exports = { initDatabase };
+}
