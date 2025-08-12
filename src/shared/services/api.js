@@ -3,8 +3,8 @@ import { cacheService } from './cache';
 
 class ApiService {
   constructor() {
-    // HARDCODED temporalmente para que funcione en producción
-    this.baseURL = 'https://all-production-31a3.up.railway.app';
+    // URL del backend nuevo en Railway
+    this.baseURL = 'https://all-production-b1ac.up.railway.app';
     console.log('🔗 API URL configurada:', this.baseURL);
     this.token = null;
     this.abortController = null;
