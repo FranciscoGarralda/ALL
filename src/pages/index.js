@@ -64,41 +64,52 @@ export default function Home() {
 
   const checkAuthStatus = async () => {
     try {
-      // Verificar si hay token guardado localmente
       const token = localStorage.getItem('authToken');
-      
+      const storedUser = localStorage.getItem('currentUser');
+
       if (token) {
-        // Si hay token, intentar validarlo (pero con timeout corto)
+        // Intentar validar con backend con timeout corto
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000); // Solo 2 segundos
-        
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+
         try {
-          const response = await apiService.getMe();
+          const response = await apiService.getMe(controller.signal);
           clearTimeout(timeoutId);
-          
+
           if (response.success && response.user) {
             setIsAuthenticated(true);
             setCurrentUser(response.user);
+            // Persistir
+            try { localStorage.setItem('currentUser', JSON.stringify(response.user)); } catch {}
             loadDataFromBackend();
+            return;
           }
         } catch (error) {
           clearTimeout(timeoutId);
-          // Si falla, limpiar token y mostrar login
+          // Si falla backend pero hay usuario en localStorage, usarlo
+          if (storedUser) {
+            try {
+              const parsed = JSON.parse(storedUser);
+              setIsAuthenticated(true);
+              setCurrentUser(parsed);
+              loadDataFromBackend();
+              return;
+            } catch {}
+          }
+          // Falla total: limpiar token
           localStorage.removeItem('authToken');
+          localStorage.removeItem('currentUser');
           setIsAuthenticated(false);
         }
       } else {
-        // No hay token, ir directo al login
         setIsAuthenticated(false);
       }
     } catch (error) {
-      // Cualquier error, ir al login
       setIsAuthenticated(false);
     } finally {
-      // Reducir tiempo de espera
       setTimeout(() => {
         setCheckingAuth(false);
-      }, 500); // Solo medio segundo
+      }, 500);
     }
   };
 
@@ -125,6 +136,8 @@ export default function Home() {
       if (response.token) {
         apiService.setToken(response.token);
       }
+      // Persistir usuario
+      try { localStorage.setItem('currentUser', JSON.stringify(response.user)); } catch {}
       loadDataFromBackend();
     }
   };
@@ -136,6 +149,10 @@ export default function Home() {
     setCurrentUser(null);
     setMovements([]);
     setClients([]);
+    try {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('currentUser');
+    } catch {}
   };
 
   // Movement management functions
