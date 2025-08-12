@@ -774,48 +774,25 @@ const FinancialOperationsApp = ({ onSaveMovement, initialMovementData, onCancelE
   };
 
   const handleGuardar = () => {
-    // Ejecutar validación completa
-    const validation = validateMovement(formData);
-    
-    if (!validation.isValid) {
-      // Construir mensaje de error detallado
-      const errorMessages = Object.entries(validation.errors)
-        .map(([field, message]) => `• ${message}`)
-        .join('\n');
-      
-      // En móvil, usar un alert más simple y hacer scroll suave
-      const isMobile = window.innerWidth < 640;
-      
-      if (isMobile) {
-        // Mensaje más corto para móvil
-        const firstError = Object.values(validation.errors)[0];
-        alert(`Error: ${firstError}`);
-      } else {
-        alert(`Por favor corrige los siguientes errores:\n\n${errorMessages}`);
-      }
-      
-      // Hacer scroll al primer campo con error
-      setTimeout(() => {
-        const firstErrorField = Object.keys(validation.errors)[0];
-        const element = document.querySelector(`[name="${firstErrorField}"]`);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          element.focus();
-          // Agregar clase de error visual
-          element.classList.add('border-red-500', 'ring-2', 'ring-red-200');
-          setTimeout(() => {
-            element.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
-          }, 3000);
-        }
-      }, 100);
-      
-      return;
-    }
-    
-    // Obtener el nombre del cliente para usar más adelante
+    // Validaciones básicas simplificadas
     const clienteNombre = typeof formData.cliente === 'object' 
       ? formData.cliente.nombre 
       : formData.cliente;
+    
+    if (!clienteNombre || (typeof clienteNombre === 'string' && clienteNombre.trim() === '')) {
+      alert('Por favor selecciona un cliente');
+      return;
+    }
+    
+    if (!formData.operacion) {
+      alert('Por favor selecciona una operación');
+      return;
+    }
+    
+    if (!formData.subOperacion) {
+      alert('Por favor selecciona el detalle de la operación');
+      return;
+    }
     
     // Validate mixed payments using hook (validación adicional del hook existente)
     const mixedValidation = validateMixedPayments();
