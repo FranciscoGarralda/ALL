@@ -3,8 +3,10 @@ import { cacheService } from './cache';
 
 class ApiService {
   constructor() {
-    // URL del backend - TEMPORALMENTE en localhost hasta crear el nuevo
-    this.baseURL = 'http://localhost:5000';
+    // URL del backend - configurable por entorno con fallback a localhost
+    this.baseURL = (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_API_BASE_URL)
+      ? process.env.NEXT_PUBLIC_API_BASE_URL
+      : 'http://localhost:5000';
     this.token = null;
     this.abortController = null;
     this.loadToken();
@@ -114,10 +116,11 @@ class ApiService {
     return { success: true };
   }
 
-  async getMe() {
+  async getMe(signal) {
     const response = await fetch(`${this.baseURL}/api/auth/me`, {
       method: 'GET',
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      signal
     });
     
     return this.handleResponse(response);
