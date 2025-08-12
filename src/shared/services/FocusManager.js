@@ -10,8 +10,11 @@ class FocusManager {
     this.isActive = false;
     this.menuStack = []; // Stack para manejar menús anidados
     
-    // Usar capture: false para no interferir con eventos normales
-    document.addEventListener('keydown', this.handleGlobalKeyDown.bind(this), false);
+    // Solo agregar listener si estamos en el cliente
+    if (typeof document !== 'undefined') {
+      // Usar capture: false para no interferir con eventos normales
+      document.addEventListener('keydown', this.handleGlobalKeyDown.bind(this), false);
+    }
   }
 
   // Registrar un elemento para navegación
@@ -54,7 +57,9 @@ class FocusManager {
     this.isActive = true;
     this.currentIndex = 0;
     this.updateFocus();
-    document.body.classList.add('keyboard-navigation-active');
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.classList.add('keyboard-navigation-active');
+    }
     // console.log('🎮 Navegación activada');
   }
 
@@ -65,7 +70,9 @@ class FocusManager {
     this.menuStack = [];
     this.clearFocus();
     this.closeAllMenus();
-    document.body.classList.remove('keyboard-navigation-active');
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.classList.remove('keyboard-navigation-active');
+    }
     // console.log('🛑 Navegación desactivada');
   }
 
@@ -287,7 +294,9 @@ class FocusManager {
       if (element.element) {
         element.element.focus();
         element.element.classList.add('keyboard-focused');
-        document.body.classList.add('keyboard-navigation-active');
+        if (typeof document !== 'undefined' && document.body) {
+          document.body.classList.add('keyboard-navigation-active');
+        }
         
         // Scroll into view
         element.element.scrollIntoView({
@@ -391,10 +400,14 @@ class FocusManager {
 
   // Limpiar foco visual
   clearFocus() {
-    document.querySelectorAll('.keyboard-focused').forEach(el => {
-      el.classList.remove('keyboard-focused');
-    });
-    document.body.classList.remove('keyboard-navigation-active');
+    if (typeof document !== 'undefined') {
+      document.querySelectorAll('.keyboard-focused').forEach(el => {
+        el.classList.remove('keyboard-focused');
+      });
+      if (document.body) {
+        document.body.classList.remove('keyboard-navigation-active');
+      }
+    }
   }
 
   // Limpiar todos los elementos
@@ -417,7 +430,25 @@ class FocusManager {
   }
 }
 
-// Instancia global del FocusManager
-export const focusManager = new FocusManager();
+// Crear instancia solo en el cliente
+let focusManagerInstance = null;
+
+export const getFocusManager = () => {
+  if (typeof window !== 'undefined' && !focusManagerInstance) {
+    focusManagerInstance = new FocusManager();
+  }
+  return focusManagerInstance;
+};
+
+// Para compatibilidad, exportar una instancia que se crea solo cuando se usa
+export const focusManager = typeof window !== 'undefined' ? new FocusManager() : {
+  registerElement: () => {},
+  unregisterElement: () => {},
+  activateNavigation: () => {},
+  deactivateNavigation: () => {},
+  clearFocus: () => {},
+  clear: () => {},
+  getState: () => ({ elementsCount: 0, isActive: false, currentIndex: -1 })
+};
 
 export default FocusManager;
