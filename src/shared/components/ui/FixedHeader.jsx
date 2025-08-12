@@ -52,21 +52,21 @@ const FixedHeader = ({ toggleSidebar, currentPage, showMenuButton, currentUser, 
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-20 bg-white border-b border-gray-200 z-50">
-      <div className="h-full px-4 lg:px-6 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 h-16 sm:h-20 bg-white border-b border-gray-200 z-50">
+      <div className="h-full px-3 sm:px-4 lg:px-6 flex items-center justify-between">
         {/* Logo y menú hamburguesa */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           {showMenuButton && (
             <button
               onClick={toggleSidebar}
-              className="lg:hidden p-2.5 min-w-[44px] min-h-[44px] rounded-lg hover:bg-gray-100 active:bg-gray-100 transition-colors flex items-center justify-center"
+              className="lg:hidden p-2 sm:p-2.5 min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] rounded-lg hover:bg-gray-100 active:bg-gray-100 transition-colors flex items-center justify-center"
               aria-label="Toggle menu"
             >
-              <Menu className="w-6 h-6 text-gray-700" />
+              <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
             </button>
           )}
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
               Sistema Financiero
             </h1>
             <div className="hidden sm:flex items-center gap-2">
