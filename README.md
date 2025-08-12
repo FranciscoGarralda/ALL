@@ -1,4 +1,4 @@
-# Sistema Financiero - Alliance F&R
+# Sistema Financiero - Alliance F&R (v2.0 - ACTUALIZADO)
 
 Sistema integral de gestión financiera con operaciones de cambio, clientes, movimientos y análisis de rentabilidad.
 
