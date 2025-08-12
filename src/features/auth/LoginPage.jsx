@@ -209,4 +209,6 @@ const LoginPage = ({ onLogin }) => {
       </div>
     </div>
   );
-}
+};
+
+export default LoginPage;
