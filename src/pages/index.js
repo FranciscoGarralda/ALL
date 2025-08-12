@@ -75,33 +75,41 @@ export default function Home() {
 
   const checkAuthStatus = async () => {
     try {
-      // Agregar timeout para evitar que se quede colgado
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+      // Verificar si hay token guardado localmente
+      const token = localStorage.getItem('authToken');
       
-      try {
-        const response = await apiService.getMe();
-        clearTimeout(timeoutId);
+      if (token) {
+        // Si hay token, intentar validarlo (pero con timeout corto)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // Solo 2 segundos
         
-        if (response.success && response.user) {
-          setIsAuthenticated(true);
-          setCurrentUser(response.user);
-          // Load data from backend after authentication
-          loadDataFromBackend();
+        try {
+          const response = await apiService.getMe();
+          clearTimeout(timeoutId);
+          
+          if (response.success && response.user) {
+            setIsAuthenticated(true);
+            setCurrentUser(response.user);
+            loadDataFromBackend();
+          }
+        } catch (error) {
+          clearTimeout(timeoutId);
+          // Si falla, limpiar token y mostrar login
+          localStorage.removeItem('authToken');
+          setIsAuthenticated(false);
         }
-      } catch (error) {
-        clearTimeout(timeoutId);
-        if (error.name === 'AbortError') {
-          // Timeout al verificar autenticación
-        } else {
-          // Error verificando autenticación
-        }
+      } else {
+        // No hay token, ir directo al login
+        setIsAuthenticated(false);
       }
     } catch (error) {
-      // Usuario no autenticado - no cargar nada
+      // Cualquier error, ir al login
+      setIsAuthenticated(false);
     } finally {
-      // SIEMPRE setear checkingAuth a false para evitar que se quede colgado
-      setCheckingAuth(false);
+      // Reducir tiempo de espera
+      setTimeout(() => {
+        setCheckingAuth(false);
+      }, 500); // Solo medio segundo
     }
   };
 
