@@ -15,10 +15,9 @@ Sistema integral de gestión financiera con operaciones de cambio, clientes, mov
 ## 📋 Requisitos
 
 - Node.js 18+
-- PostgreSQL 16+
 - npm o yarn
 
-## 🛠️ Instalación
+## 🛠️ Instalación Rápida
 
 ### 1. Clonar el repositorio
 ```bash
@@ -26,74 +25,97 @@ git clone [tu-repositorio]
 cd [nombre-proyecto]
 ```
 
-### 2. Instalar dependencias
-
-Frontend:
+### 2. Instalar dependencias del Frontend
 ```bash
 npm install
 ```
 
-Backend:
+### 3. Instalar dependencias del Backend
 ```bash
 cd backend
 npm install
+cd ..
 ```
 
-### 3. Configurar variables de entorno
+### 4. Configuración (Opcional)
+El sistema ya viene preconfigurado para desarrollo local. Si necesitas cambiar la configuración:
 
 Frontend (`.env.local`):
 ```bash
-cp .env.example .env.local
-# Editar .env.local con tu configuración
+NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
 
 Backend (`backend/.env`):
 ```bash
-cp backend/.env.example backend/.env
-# Editar backend/.env con tu configuración
+PORT=5000
+JWT_SECRET=alliance-secret-key-2024
 ```
 
-### 4. Configurar base de datos
+## 🚀 Iniciar el Sistema
 
+### Opción 1: Iniciar todo manualmente
+
+**Terminal 1 - Backend:**
 ```bash
-# Crear base de datos
-psql -U postgres -c "CREATE DATABASE sistema_financiero;"
-
-# Ejecutar esquema
-psql -U postgres -d sistema_financiero -f backend/postgresql-schema.sql
+cd backend
+npm start
+# El backend correrá en http://localhost:5000
 ```
 
-### 5. Iniciar en desarrollo
-
-Terminal 1 - Backend:
-```bash
-cd backend && npm start
-```
-
-Terminal 2 - Frontend:
+**Terminal 2 - Frontend:**
 ```bash
 npm run dev
+# El frontend correrá en http://localhost:3000
 ```
 
-## 🌐 Deploy
+### Opción 2: Script de inicio rápido (recomendado)
+
+Próximamente: Script para iniciar ambos servicios con un solo comando.
+
+## 📱 Acceso al Sistema
+
+1. Abre tu navegador en: http://localhost:3000
+2. Inicia sesión con las credenciales por defecto:
+   - **Usuario**: admin
+   - **Contraseña**: garralda1
+
+## 🗄️ Base de Datos
+
+El sistema usa SQLite para desarrollo local. La base de datos se crea automáticamente al iniciar el backend por primera vez en `backend/database.sqlite`.
+
+## 🌐 Deploy en Producción
 
 ### Frontend (Vercel)
-- Conectar repositorio en Vercel
-- Configurar variables de entorno
-- Deploy automático con cada push
+```bash
+npm run build
+# Subir a Vercel y configurar NEXT_PUBLIC_API_URL con la URL del backend en producción
+```
 
-### Backend (Railway)
-- Crear proyecto en Railway
-- Agregar PostgreSQL
-- Configurar variables de entorno
-- Deploy desde GitHub
+### Backend (Railway/Heroku/VPS)
+- Configurar las variables de entorno en producción
+- Cambiar a PostgreSQL para producción (recomendado)
+- Configurar CORS para permitir el dominio del frontend
 
 ## 📱 Tecnologías
 
 - **Frontend**: Next.js 14, React 18, Tailwind CSS
-- **Backend**: Node.js, Express, PostgreSQL
+- **Backend**: Node.js, Express, SQLite (desarrollo) / PostgreSQL (producción)
 - **Auth**: JWT, bcrypt
-- **Deploy**: Vercel, Railway
+- **Deploy**: Vercel (frontend), Railway/Heroku (backend)
+
+## 🔧 Solución de Problemas
+
+### El backend no se conecta
+- Verifica que el puerto 5000 esté disponible
+- Revisa que las dependencias estén instaladas: `cd backend && npm install`
+
+### Error de autenticación
+- Las credenciales por defecto son: admin / garralda1
+- El sistema funciona también sin backend (modo offline)
+
+### La base de datos no se crea
+- Elimina `backend/database.sqlite` si existe y reinicia el backend
+- Verifica permisos de escritura en el directorio backend
 
 ## 📄 Licencia
 
