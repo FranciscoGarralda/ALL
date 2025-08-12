@@ -17,8 +17,13 @@ class StockService {
    * Cargar stock desde localStorage
    */
   loadStock() {
-    const result = safeLocalStorage.getItem(this.STOCK_KEY);
-    this.stock = (result && result.success) ? result.data : {};
+    try {
+      const result = safeLocalStorage.getItem(this.STOCK_KEY);
+      this.stock = (result && result.success && result.data) ? result.data : {};
+    } catch (error) {
+      console.error('Error loading stock:', error);
+      this.stock = {};
+    }
   }
 
   /**
@@ -35,6 +40,11 @@ class StockService {
    * Obtiene el stock actual de una moneda
    */
   getStock(moneda) {
+    // Asegurar que stock existe
+    if (!this.stock) {
+      this.stock = {};
+    }
+    
     if (!this.stock[moneda]) {
       this.stock[moneda] = {
         cantidad: 0,
