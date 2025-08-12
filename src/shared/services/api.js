@@ -3,8 +3,8 @@ import { cacheService } from './cache';
 
 class ApiService {
   constructor() {
-    // URL del backend - TEMPORALMENTE en localhost hasta crear el nuevo
-    this.baseURL = 'http://localhost:5000';
+    // URL del backend - usar variable de entorno o fallback a localhost para desarrollo
+    this.baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     this.token = null;
     this.abortController = null;
     this.loadToken();
