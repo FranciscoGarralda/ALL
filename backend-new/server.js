@@ -12,23 +12,123 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // ==========================================
+// INFORMACIÓN DE CONFIGURACIÓN
+// ==========================================
+console.log('🔧 CONFIGURACIÓN DEL SERVIDOR:');
+console.log('PORT:', PORT);
+console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
+console.log('DATABASE_URL:', process.env.DATABASE_URL ? '✅ Configurada' : '❌ NO CONFIGURADA');
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? '✅ Configurada' : '⚠️ Usando default');
+
+// ==========================================
 // CONFIGURACIÓN DE BASE DE DATOS
 // ==========================================
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? {
-    rejectUnauthorized: false
-  } : false
-});
+let pool = null;
+let dbConnected = false;
 
-// Verificar conexión a la base de datos
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('❌ Error conectando a PostgreSQL:', err);
-  } else {
-    console.log('✅ PostgreSQL conectado:', res.rows[0].now);
+// Solo intentar conectar si DATABASE_URL existe
+if (process.env.DATABASE_URL) {
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? {
+      rejectUnauthorized: false
+    } : false,
+    connectionTimeoutMillis: 5000,
+    max: 3
+  });
+
+  // Verificar conexión a la base de datos
+  pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+      console.error('❌ Error conectando a PostgreSQL:', err.message);
+      dbConnected = false;
+    } else {
+      console.log('✅ PostgreSQL conectado:', res.rows[0].now);
+      dbConnected = true;
+      // Intentar crear las tablas
+      initializeTables();
+    }
+  });
+} else {
+  console.log('⚠️ Servidor arrancando sin base de datos');
+}
+
+// Función para crear tablas si no existen
+async function initializeTables() {
+  if (!pool || !dbConnected) return;
+  
+  try {
+    // Crear tabla users
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'operator',
+        permissions TEXT[] DEFAULT '{}',
+        active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Crear tabla clients
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS clients (
+        id SERIAL PRIMARY KEY,
+        nombre VARCHAR(255) NOT NULL,
+        telefono VARCHAR(100),
+        email VARCHAR(255),
+        direccion TEXT,
+        notas TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Crear tabla movements
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS movements (
+        id SERIAL PRIMARY KEY,
+        fecha DATE DEFAULT CURRENT_DATE,
+        hora TIME DEFAULT CURRENT_TIME,
+        cliente VARCHAR(255),
+        operacion VARCHAR(100),
+        suboperacion VARCHAR(100),
+        moneda_entrada VARCHAR(10),
+        cantidad_entrada DECIMAL(15,2),
+        cotizacion DECIMAL(15,4),
+        moneda_salida VARCHAR(10),
+        cantidad_salida DECIMAL(15,2),
+        metodo_pago VARCHAR(50),
+        referencia_pago VARCHAR(255),
+        notas TEXT,
+        estado VARCHAR(50) DEFAULT 'completado',
+        usuario VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    console.log('✅ Tablas verificadas/creadas');
+    
+    // Crear usuario admin si no existe
+    const adminCheck = await pool.query('SELECT id FROM users WHERE username = $1', ['admin']);
+    if (adminCheck.rows.length === 0) {
+      const hashedPassword = await bcrypt.hash('garralda1', 10);
+      await pool.query(
+        `INSERT INTO users (name, username, email, password, role, permissions)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        ['Administrador', 'admin', 'admin@alliance.com', hashedPassword, 'admin', ['all']]
+      );
+      console.log('✅ Usuario admin creado (contraseña: garralda1)');
+    }
+  } catch (error) {
+    console.error('⚠️ Error creando tablas:', error.message);
   }
-});
+}
 
 // ==========================================
 // CONFIGURACIÓN DE CORS
@@ -62,7 +162,9 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     message: 'Backend funcionando correctamente',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    database: dbConnected ? 'connected' : 'disconnected',
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
@@ -71,6 +173,36 @@ app.get('/api/health', (req, res) => {
 // ==========================================
 app.post('/api/auth/login', async (req, res) => {
   try {
+    // Si no hay DB, usar credenciales hardcodeadas para prueba
+    if (!pool || !dbConnected) {
+      const { username, password } = req.body;
+      if (username === 'admin' && password === 'garralda1') {
+        const token = jwt.sign(
+          { id: 1, username: 'admin', role: 'admin' },
+          process.env.JWT_SECRET || 'secret-key-desarrollo',
+          { expiresIn: '30d' }
+        );
+        
+        return res.json({
+          success: true,
+          token,
+          user: {
+            id: 1,
+            name: 'Administrador',
+            username: 'admin',
+            email: 'admin@alliance.com',
+            role: 'admin',
+            permissions: ['all']
+          }
+        });
+      } else {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Usuario o contraseña incorrectos' 
+        });
+      }
+    }
+    
     const { username, password } = req.body;
     
     // Buscar usuario
