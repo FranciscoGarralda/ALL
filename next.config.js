@@ -1,18 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false, // Deshabilitado temporalmente para evitar problemas
   
   // ESLint con configuración relajada
   eslint: {
     ignoreDuringBuilds: false,
   },
   
-  // Optimizaciones de producción
+  // Optimizaciones de producción - DESHABILITADAS temporalmente para debugging
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
-    } : false,
+    removeConsole: false, // Mantener console.log para debugging
   },
   
   // Optimizaciones de rendimiento
@@ -25,31 +23,15 @@ const nextConfig = {
     unoptimized: true,
   },
   
-  // Headers de seguridad
+  // Headers de seguridad - SIMPLIFICADOS para evitar problemas de CSP
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: [
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          },
-          {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN'
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block'
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin'
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()'
           }
         ],
       },
