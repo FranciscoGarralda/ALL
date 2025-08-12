@@ -5,8 +5,6 @@ class ApiService {
   constructor() {
     // URL del backend - TEMPORALMENTE en localhost hasta crear el nuevo
     this.baseURL = 'http://localhost:5000';
-    console.log('🔗 API URL configurada:', this.baseURL);
-    console.log('⚠️ NOTA: Backend no está corriendo aún');
     this.token = null;
     this.abortController = null;
     this.loadToken();

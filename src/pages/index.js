@@ -53,10 +53,6 @@ const componentMap = {
   'usuarios': UserManagementApp
 };
 
-// VERSION CHECK - v2.0 con validaciones simplificadas
-console.log('🚀 Sistema Alliance F&R v2.0 - Validaciones Simplificadas');
-console.log('📡 Backend URL:', process.env.NEXT_PUBLIC_API_URL || 'NO CONFIGURADO');
-
 export default function Home() {
   // Navigation state
   const [currentPage, setCurrentPage] = useState('inicio');
