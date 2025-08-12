@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { User, Lock, AlertCircle } from 'lucide-react';
+import { User, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { apiService } from '../../shared/services';
-import { wakeUpServer } from '../../shared/services/server-wake';
 
 const LoginPage = ({ onLogin }) => {
   const [formData, setFormData] = useState({
@@ -10,6 +9,7 @@ const LoginPage = ({ onLogin }) => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [serverAwake, setServerAwake] = useState(true); // Cambiar a true por defecto
 
   useEffect(() => {
