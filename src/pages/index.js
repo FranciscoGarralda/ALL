@@ -129,10 +129,15 @@ export default function Home() {
   };
 
   // Handle login success
-  const handleLoginSuccess = (user) => {
-    setIsAuthenticated(true);
-    setCurrentUser(user);
-    loadDataFromBackend();
+  const handleLoginSuccess = (response) => {
+    if (response && response.success) {
+      setIsAuthenticated(true);
+      setCurrentUser(response.user);
+      if (response.token) {
+        apiService.setToken(response.token);
+      }
+      loadDataFromBackend();
+    }
   };
 
   // Handle logout
@@ -453,7 +458,7 @@ export default function Home() {
 
   // Show login if not authenticated
   if (!isAuthenticated) {
-    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+    return <LoginPage onLogin={handleLoginSuccess} />;
   }
 
   return (
